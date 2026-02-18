@@ -135,7 +135,26 @@
   <!-- RESULT -->
   <section id="resultArea" class="max-w-3xl mx-auto px-4 hidden">
     <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 max-h-[520px] overflow-y-auto pretty-scroll">
-      <div class="flex items-center gap-3 mb-6">
+      <div class="flex items-center justify-between gap-3 mb-6">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+            <i class="ri-robot-2-line text-xl"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-900" id="targetLabel">Risposta per Bambino</h3>
+            <p class="text-xs text-gray-400">API su Vercel (key nascosta)</p>
+          </div>
+        </div>
+      
+        <button
+          id="copyBtn"
+          onclick="copyAnswer()"
+          class="text-sm font-semibold px-4 py-2 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition flex items-center gap-2"
+        >
+          <i class="ri-file-copy-line"></i>
+          <span id="copyBtnText">Copia</span>
+        </button>
+      </div>
         <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
           <i class="ri-robot-2-line text-xl"></i>
         </div>
@@ -207,6 +226,26 @@
       }
     }
 
+    function copyAnswer() {
+      const responseEl = document.getElementById("geminiResponse");
+      const text = responseEl.innerText.trim();
+    
+      if (!text) {
+        alert("Nessuna risposta da copiare!");
+        return;
+      }
+    
+      navigator.clipboard.writeText(text).then(() => {
+        const btnText = document.getElementById("copyBtnText");
+        btnText.textContent = "Copiato!";
+    
+        setTimeout(() => {
+          btnText.textContent = "Copia";
+        }, 1500);
+      });
+    }
+
+    
     async function chiediAGemini() {
       const query = document.getElementById("userQuery").value.trim();
       const area = document.getElementById("resultArea");
@@ -291,6 +330,7 @@
 
 </body>
 </html>
+
 
 
 
