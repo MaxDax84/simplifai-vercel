@@ -5,51 +5,67 @@ export default async function handler(req, res) {
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: "GEMINI_API_KEY non configurata su Vercel." });
+    return res
+      .status(500)
+      .json({ error: "GEMINI_API_KEY non configurata su Vercel." });
   }
 
   try {
     const { query, target } = req.body || {};
-    if (!query) return res.status(400).json({ error: "Query mancante." });
+
+    if (!query) {
+      return res.status(400).json({ error: "Query mancante." });
+    }
 
     const prompt = `
 Spiega il seguente concetto: "${query}"
-Target: ${target || "un Bambino sotto i 10 anni"}.
+
+Adatta il linguaggio, gli esempi, il tono e il livello di profondità
+specificamente per questo target: ${target || "Bambino (fino ai 10 anni)"}.
 
 Regole:
-- Adatta linguaggio, esempi e profondità al target.
-- Paragrafi brevi.
-- Tono coinvolgente.
+- Paragrafi brevi
+- Esempi concreti
+- Linguaggio chiaro
+- Se utile, usa punti elenco
 `.trim();
 
-    // ✅ endpoint v1beta + modello "latest" (più compatibile)
-    const MODEL = "gemini-1.5-flash-latest";
+    // ✅ MODELLO GIUSTO DISPONIBILE NEL TUO ACCOUNT
+    const MODEL = "gemini-2.5-flash";
 
-    const r = await fetch(
+    const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 800 },
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 900,
+          },
         }),
       }
     );
 
-    const data = await r.json();
+    const data = await response.json();
 
-    if (!r.ok || data?.error) {
+    if (!response.ok || data?.error) {
       return res.status(500).json({
-        error: data?.error?.message || `Errore Gemini (HTTP ${r.status})`,
+        error:
+          data?.error?.message ||
+          `Errore Gemini (HTTP ${response.status})`,
       });
     }
 
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) return res.status(500).json({ error: "Risposta vuota da Gemini." });
+
+    if (!text) {
+      return res.status(500).json({ error: "Risposta vuota da Gemini." });
+    }
 
     return res.status(200).json({ text });
-  } catch (e) {
-    return res.status(500).json({ error: e?.message || "Errore interno server." });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
   }
 }
