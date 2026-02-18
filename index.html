@@ -18,6 +18,14 @@
     /* Spinner */
     .spin { animation: spin 0.9s linear infinite; }
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* ✅ FIX: impedisce testo troncato */
+    .answer-text {
+      white-space: normal;         /* permette a capo */
+      overflow-wrap: anywhere;     /* spezza anche parole lunghe */
+      word-break: break-word;      /* fallback */
+      line-height: 1.8;
+    }
   </style>
 </head>
 
@@ -115,7 +123,7 @@
         </div>
       </div>
 
-      <!-- Loading box migliorato -->
+      <!-- Loading box -->
       <div id="loadingBox" class="hidden">
         <div class="flex items-center gap-3 text-gray-600 mb-4">
           <i class="ri-loader-4-line spin text-2xl text-indigo-600"></i>
@@ -132,7 +140,8 @@
         </div>
       </div>
 
-      <div id="geminiResponse" class="text-gray-700 leading-relaxed"></div>
+      <!-- ✅ FIX: classe answer-text -->
+      <div id="geminiResponse" class="answer-text text-gray-700 leading-relaxed"></div>
     </div>
   </section>
 
@@ -210,6 +219,7 @@
 
         if (!data?.text) throw new Error("Risposta vuota dall'API.");
 
+        // (manteniamo il tuo sistema di formattazione semplice)
         const safeHtml = String(data.text)
           .replace(/</g, "&lt;").replace(/>/g, "&gt;")
           .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
