@@ -65,7 +65,7 @@
         />
         <button
           id="btnGenerate"
-          onclick="fakeDemo()"
+          onclick="chiediAGemini()"
           class="ai-gradient text-white px-8 py-4 rounded-xl font-bold hover:scale-105 transition active:scale-95"
         >
           Genera
@@ -104,7 +104,7 @@
         </div>
         <div>
           <h3 class="font-bold text-gray-900" id="targetLabel">Risposta per Bambino</h3>
-          <p class="text-xs text-gray-400">Demo locale (passo successivo: Vercel API)</p>
+          <p class="text-xs text-gray-400">API su Vercel (key nascosta)</p>
         </div>
       </div>
 
@@ -129,19 +129,23 @@
       const input = document.getElementById("userQuery");
       if (input) {
         input.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") fakeDemo();
+          if (e.key === "Enter") chiediAGemini();
         });
       }
     });
 
-    function fakeDemo() {
+    async function chiediAGemini() {
       const query = document.getElementById("userQuery").value.trim();
       const area = document.getElementById("resultArea");
       const responseEl = document.getElementById("geminiResponse");
+      const btn = document.getElementById("btnGenerate");
 
       if (!query) return alert("Inserisci una domanda!");
 
       area.classList.remove("hidden");
+      btn.disabled = true;
+      btn.classList.add("opacity-60");
+
       responseEl.innerHTML = `
         <div class="animate-pulse space-y-4">
           <div class="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -152,12 +156,46 @@
 
       window.scrollTo({ top: area.offsetTop - 50, behavior: "smooth" });
 
-      setTimeout(() => {
-        responseEl.innerHTML =
-          `<strong>Demo:</strong> Hai chiesto: <em>${query}</em><br><br>` +
-          `Target selezionato: <strong>${selectedTarget.label}</strong><br><br>` +
-          `Nel prossimo passo lo colleghiamo davvero a Gemini tramite Vercel (API key nascosta).`;
-      }, 700);
+      try {
+        const res = await fetch("/api/gemini", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            query,
+            target: selectedTarget.prompt
+          })
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          const msg = data?.error || `Errore HTTP ${res.status}`;
+          throw new Error(msg);
+        }
+
+        if (!data?.text) throw new Error("Risposta vuota dall'API.");
+
+        const safeHtml = String(data.text)
+          .replace(/</g, "&lt;").replace(/>/g, "&gt;")
+          .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+          .replace(/\n/g, "<br>");
+
+        responseEl.innerHTML = safeHtml;
+
+      } catch (err) {
+        responseEl.innerHTML = `
+          <p class="text-red-600 font-semibold">
+            <i class="ri-error-warning-line"></i>
+            Errore: ${String(err.message || err)}
+          </p>
+          <p class="text-gray-500 text-sm mt-2">
+            Se vedi questo online, controlliamo subito la variabile GEMINI_API_KEY su Vercel e i log della funzione.
+          </p>
+        `;
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove("opacity-60");
+      }
     }
   </script>
 
