@@ -1,6 +1,4 @@
-export const config = {
-  runtime: "edge",
-};
+export const config = { runtime: "edge" };
 
 function jsonError(message, status = 500) {
   return new Response(JSON.stringify({ error: message }), {
@@ -39,7 +37,6 @@ export default async function handler(req) {
 
     const {
       query,
-      targetLabel,
       targetPrompt,
       maxTokens,
       maxChars,
@@ -114,7 +111,6 @@ Ora continua dal punto esatto in cui si è interrotta.
       return jsonError(msg, 500);
     }
 
-    // Pass-through SSE
     return new Response(upstream.body, {
       status: 200,
       headers: {
