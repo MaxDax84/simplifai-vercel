@@ -255,68 +255,96 @@
       const secs = (typeof retrySeconds === "number" && isFinite(retrySeconds))
         ? Math.max(1, Math.ceil(retrySeconds))
         : null;
-
+    
+      // testo super semplice (per pubblico giovane)
+      const title = "Ops! Sei arrivato al limite gratuito 😅";
+      const subtitle = secs
+        ? `Riprova tra <b id="retrySecs">${secs}</b> secondi`
+        : "Riprova tra poco";
+    
       responseEl.innerHTML = `
-        <div class="max-w-2xl mx-auto">
-          <div class="rounded-3xl border border-amber-200 bg-amber-50 p-6 shadow-sm">
-            <div class="flex items-start gap-3">
-              <div class="w-10 h-10 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-700 font-extrabold">!</div>
-              <div class="text-left">
-                <div class="font-extrabold text-amber-800 text-lg">Limite gratuito raggiunto</div>
-                <div class="text-sm text-amber-900/80 mt-1">
-                  ${secs ? `Puoi riprovare tra <b id="retrySecs">${secs}</b> secondi.` : `Hai raggiunto il limite del piano gratuito.`}
-                </div>
-                <div class="text-xs text-amber-900/70 mt-2 break-words">
-                  ${escapeHtml(errorMessage || "")}
-                </div>
-              </div>
+        <div class="max-w-xl mx-auto">
+          <div class="rounded-3xl border border-amber-200 bg-amber-50 p-8 shadow-sm text-center">
+            <div class="mx-auto w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-700 text-2xl font-extrabold mb-4">
+              !
             </div>
-
-            <div class="mt-5 flex flex-col sm:flex-row gap-3">
+    
+            <div class="text-xl md:text-2xl font-extrabold text-amber-800">
+              ${title}
+            </div>
+    
+            <div class="text-sm md:text-base text-amber-900/80 mt-2">
+              ${subtitle}
+            </div>
+    
+            <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
               <button id="retryBtn"
-                class="px-4 py-3 rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
+                class="px-5 py-3 rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
                 type="button">
                 ${secs ? `Riprova tra ${secs}s` : "Riprova"}
               </button>
-
+    
               <a
-                class="px-4 py-3 rounded-2xl bg-white border border-amber-200 text-amber-900 font-semibold hover:bg-amber-100 transition text-center"
+                class="px-5 py-3 rounded-2xl bg-white border border-amber-200 text-amber-900 font-semibold hover:bg-amber-100 transition text-center"
                 href="/prezzi.html"
               >
-                Vedi piani PRO/BUSINESS
+                Vedi i piani
               </a>
-
+    
               <a
-                class="px-4 py-3 rounded-2xl ai-gradient text-white font-semibold text-center hover:scale-[1.01] transition"
+                class="px-5 py-3 rounded-2xl ai-gradient text-white font-semibold text-center hover:scale-[1.01] transition"
                 href="/checkout.html"
               >
                 Upgrade (mock)
               </a>
             </div>
+    
+            <!-- Dettagli tecnici nascosti -->
+            <button id="toggleTech"
+              class="mt-6 text-xs text-amber-900/60 hover:text-amber-900 underline"
+              type="button">
+              Mostra dettagli tecnici
+            </button>
+    
+            <div id="techBox" class="hidden mt-3 text-left text-xs text-amber-900/70 bg-white/60 border border-amber-200 rounded-2xl p-4 whitespace-pre-wrap break-words">
+              ${escapeHtml(errorMessage || "")}
+            </div>
           </div>
         </div>
       `;
-
+    
+      // Toggle dettagli tecnici
+      const toggle = document.getElementById("toggleTech");
+      const tech = document.getElementById("techBox");
+      if (toggle && tech) {
+        toggle.addEventListener("click", () => {
+          const isHidden = tech.classList.contains("hidden");
+          tech.classList.toggle("hidden");
+          toggle.textContent = isHidden ? "Nascondi dettagli tecnici" : "Mostra dettagli tecnici";
+        });
+      }
+    
+      // Retry
       const retryBtn = document.getElementById("retryBtn");
       if (!retryBtn) return;
-
+    
       const doRetry = (typeof retryAction === "function") ? retryAction : () => {};
-
+    
       if (!secs) {
         retryBtn.onclick = doRetry;
         return;
       }
-
+    
       retryBtn.disabled = true;
-
+    
       let remaining = secs;
       const retrySecsEl = document.getElementById("retrySecs");
-
+    
       const timer = setInterval(() => {
         remaining--;
         if (retrySecsEl) retrySecsEl.textContent = String(remaining);
         retryBtn.textContent = remaining > 0 ? `Riprova tra ${remaining}s` : "Riprova ora";
-
+    
         if (remaining <= 0) {
           clearInterval(timer);
           retryBtn.disabled = false;
@@ -324,6 +352,7 @@
         }
       }, 1000);
     }
+
 
     // ✅ parser SSE più robusto (gestisce \r\n, blocchi, JSON diversi)
     function extractTextFromSseJson(obj) {
@@ -557,3 +586,4 @@
   </script>
 </body>
 </html>
+
