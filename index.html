@@ -15,6 +15,7 @@
     .btn-target { transition: all 0.2s; border: 2px solid transparent; }
     .btn-target.active { border-color: #6366f1; background-color: #eef2ff; color: #4f46e5; font-weight: 700; }
     #geminiResponse { white-space: pre-wrap; word-break: break-word; }
+
     .loaderSpinner{
       width:18px;
       height:18px;
@@ -23,11 +24,9 @@
       border-radius:50%;
       animation: spin .8s linear infinite;
     }
-    
-    @keyframes spin{
-      to{ transform: rotate(360deg); }
-    }
+    @keyframes spin{ to{ transform: rotate(360deg); } }
 
+    button:disabled{ opacity:.6; cursor:not-allowed; }
   </style>
 </head>
 
@@ -125,31 +124,35 @@
           >
             <i class="ri-file-copy-line"></i> Copia
           </button>
-
-          <button
-            id="continueBtn"
-            onclick="chiediAGeminiContinue()"
-            class="px-4 py-2 rounded-xl bg-gray-900 text-white font-semibold text-sm hover:bg-gray-800 transition hidden inline-flex items-center gap-2"
-            type="button"
-          >
-            <i class="ri-arrow-down-line"></i> Continua
-          </button>
         </div>
       </div>
 
       <div class="px-6 md:px-8 pb-8">
         <div class="h-px bg-gray-100 mb-5"></div>
-        <!-- Loading bar -->
-        <div id="loadingBar" class="hidden items-center gap-3 mb-4 text-sm text-gray-500">
+
+        <!-- Loading -->
+        <div id="loadingBar" class="hidden items-center justify-center gap-3 mb-4 text-sm text-gray-500">
           <div class="loaderSpinner"></div>
           <div id="loadingText">Sto generando…</div>
         </div>
 
-        <div class="max-h-[520px] overflow-y-auto pr-2">
+        <div id="scrollBox" class="max-h-[520px] overflow-y-auto pr-2">
           <div id="geminiResponse" class="text-gray-700 leading-relaxed text-[15px] md:text-base"></div>
         </div>
 
-        <p id="hintContinue" class="text-xs text-gray-400 mt-4 hidden">
+        <!-- Continua (bottom center) -->
+        <div class="flex justify-center mt-5">
+          <button
+            id="continueBtn"
+            onclick="chiediAGeminiContinue()"
+            class="px-5 py-3 rounded-2xl bg-gray-900 text-white font-semibold text-sm hover:bg-gray-800 transition hidden inline-flex items-center gap-2 shadow"
+            type="button"
+          >
+            <i class="ri-arrow-down-line"></i> Continua
+          </button>
+        </div>
+
+        <p id="hintContinue" class="text-xs text-gray-400 mt-4 hidden text-center">
           La risposta è lunga: usa <b>Continua</b> per completarla.
         </p>
       </div>
@@ -202,6 +205,7 @@
     let lastQuery = "";
     let fullText = "";
     let needsContinue = false;
+    let streaming = false;
 
     function selectTarget(btn, key) {
       document.querySelectorAll('.btn-target').forEach(b => b.classList.remove('active'));
@@ -222,7 +226,7 @@
       window.scrollTo({ top: area.offsetTop - 80, behavior: 'smooth' });
     }
 
-    function setLoading() {
+    function setSkeleton() {
       const responseEl = document.getElementById('geminiResponse');
       responseEl.innerHTML = `
         <div class="animate-pulse space-y-4">
@@ -232,40 +236,29 @@
         </div>
       `;
     }
-    
+
     function setBusy(isBusy, message = "Sto generando…") {
       const loadingBar = document.getElementById("loadingBar");
       const loadingText = document.getElementById("loadingText");
-    
+
       const generateBtn = document.getElementById("generateBtn");
       const continueBtn = document.getElementById("continueBtn");
       const copyBtn = document.getElementById("copyBtn");
-    
+
       if (loadingText) loadingText.textContent = message;
-    
-      if (isBusy) {
-        loadingBar.classList.remove("hidden");
-      } else {
-        loadingBar.classList.add("hidden");
-      }
-    
-      // Disabilita bottoni mentre genera
-      if (generateBtn) {
-        generateBtn.disabled = isBusy;
-        generateBtn.classList.toggle("opacity-70", isBusy);
-      }
-      if (continueBtn) {
-        continueBtn.disabled = isBusy;
-        continueBtn.classList.toggle("opacity-70", isBusy);
-      }
-      if (copyBtn) {
-        copyBtn.disabled = isBusy;
-        copyBtn.classList.toggle("opacity-70", isBusy);
-      }
+
+      if (isBusy) loadingBar.classList.remove("hidden");
+      else loadingBar.classList.add("hidden");
+
+      if (generateBtn) generateBtn.disabled = isBusy;
+      if (continueBtn) continueBtn.disabled = isBusy;
+      if (copyBtn) copyBtn.disabled = isBusy;
+
+      streaming = isBusy;
     }
 
     function escapeHtml(s) {
-      return s
+      return String(s)
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;");
@@ -299,18 +292,75 @@
       }
     }
 
-    async function callGeminiApi(payload) {
+    // ---------- STREAMING CLIENT (SSE over fetch) ----------
+    async function streamGemini(payload, { onChunk, onDone, onError } = {}) {
       const r = await fetch("/api/gemini", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
 
-      const data = await r.json();
-      if (!r.ok || data?.error) {
-        throw new Error(data?.error || `Errore HTTP ${r.status}`);
+      if (!r.ok) {
+        let msg = `Errore HTTP ${r.status}`;
+        try {
+          const j = await r.json();
+          msg = j?.error || msg;
+        } catch {}
+        throw new Error(msg);
       }
-      return data;
+
+      const reader = r.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+
+      let buf = "";
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        buf += decoder.decode(value, { stream: true });
+
+        // SSE: eventi separati da "\n\n"
+        const events = buf.split("\n\n");
+        buf = events.pop() || "";
+
+        for (const evt of events) {
+          const line = evt.trim();
+          if (!line) continue;
+
+          // Prendiamo tutte le righe "data: ..."
+          const dataLines = line.split("\n").filter(l => l.startsWith("data:"));
+          for (const dl of dataLines) {
+            const jsonStr = dl.slice(5).trim();
+            if (!jsonStr) continue;
+
+            let obj;
+            try {
+              obj = JSON.parse(jsonStr);
+            } catch {
+              continue;
+            }
+
+            if (obj.type === "chunk") {
+              onChunk && onChunk(obj.text || "");
+            } else if (obj.type === "done") {
+              onDone && onDone(obj);
+            } else if (obj.type === "error") {
+              onError && onError(obj.error || "Errore sconosciuto");
+            }
+          }
+        }
+      }
+    }
+
+    function maybeAutoScroll() {
+      const box = document.getElementById("scrollBox");
+      if (!box) return;
+
+      // Auto-scroll solo se l'utente è già vicino al fondo
+      const threshold = 80;
+      const isNearBottom = (box.scrollHeight - box.scrollTop - box.clientHeight) < threshold;
+      if (isNearBottom) box.scrollTop = box.scrollHeight;
     }
 
     async function chiediAGeminiStart() {
@@ -322,12 +372,16 @@
       needsContinue = false;
 
       showResultCard();
-      setLoading();
+      setSkeleton();
       setBusy(true, "Sto generando…");
+      updateContinueUI();
 
+      // Mostra subito area testo vuota (così lo streaming appare subito)
+      const responseEl = document.getElementById("geminiResponse");
+      responseEl.textContent = "";
 
       try {
-        const data = await callGeminiApi({
+        await streamGemini({
           query: lastQuery,
           targetLabel: selectedTarget.label,
           targetPrompt: selectedTarget.prompt,
@@ -335,18 +389,28 @@
           maxChars: selectedTarget.maxChars,
           mode: "start",
           previousText: ""
+        }, {
+          onChunk: (t) => {
+            fullText += t;
+            responseEl.textContent = fullText;
+            maybeAutoScroll();
+          },
+          onDone: (meta) => {
+            needsContinue = !!meta.needsContinue;
+          },
+          onError: (err) => {
+            throw new Error(err);
+          }
         });
 
-        fullText = data.text || "";
-        needsContinue = !!data.needsContinue;
-
-        document.getElementById("geminiResponse").innerHTML = renderText(fullText);
+        // Rendering finale "pulito" (titoli/grassetti)
+        responseEl.innerHTML = renderText(fullText.trimEnd());
         updateContinueUI();
 
       } catch (e) {
         needsContinue = false;
         updateContinueUI();
-        document.getElementById("geminiResponse").innerHTML = `
+        responseEl.innerHTML = `
           <div class="text-red-600 font-semibold">
             <i class="ri-error-warning-line"></i> Errore: ${escapeHtml(e.message)}
           </div>
@@ -363,10 +427,16 @@
       if (!lastQuery) return;
       showResultCard();
 
+      const responseEl = document.getElementById("geminiResponse");
+
+      // togli marker finale prima di continuare
+      fullText = fullText.replace(/\s*\.\.\.\(continua\)\s*$/i, "").trimEnd();
+
       setBusy(true, "Sto continuando…");
+      updateContinueUI();
 
       try {
-        const data = await callGeminiApi({
+        await streamGemini({
           query: lastQuery,
           targetLabel: selectedTarget.label,
           targetPrompt: selectedTarget.prompt,
@@ -374,30 +444,31 @@
           maxChars: selectedTarget.maxChars,
           mode: "continue",
           previousText: fullText
+        }, {
+          onChunk: (t) => {
+            fullText += t;
+            responseEl.textContent = fullText;
+            maybeAutoScroll();
+          },
+          onDone: (meta) => {
+            needsContinue = !!meta.needsContinue;
+          },
+          onError: (err) => {
+            throw new Error(err);
+          }
         });
 
-        const newPart = (data.text || "").trim();
-        const cleanNew = newPart.replace(/\s*\.\.\.\(continua\)\s*$/i, "").trimEnd();
-
-        fullText = fullText.replace(/\s*\.\.\.\(continua\)\s*$/i, "").trimEnd();
-        fullText = (fullText + "\n\n" + cleanNew).trimEnd();
-
-        needsContinue = !!data.needsContinue;
-        if (needsContinue) {
-          fullText = fullText.trimEnd() + "\n\n...(continua)";
-        }
-
-        document.getElementById("geminiResponse").innerHTML = renderText(fullText);
+        responseEl.innerHTML = renderText(fullText.trimEnd());
         updateContinueUI();
 
       } catch (e) {
-        document.getElementById("geminiResponse").innerHTML += `
+        responseEl.innerHTML += `
           <br><br>
           <span class="text-red-600 font-semibold">
             <i class="ri-error-warning-line"></i> Errore nel continua: ${escapeHtml(e.message)}
           </span>
         `;
-        } finally {
+      } finally {
         setBusy(false);
       }
     }
@@ -416,7 +487,7 @@
     }
 
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && document.activeElement?.id === "userQuery") {
+      if (e.key === "Enter" && document.activeElement?.id === "userQuery" && !streaming) {
         chiediAGeminiStart();
       }
     });
@@ -427,4 +498,3 @@
   </script>
 </body>
 </html>
-
