@@ -10,64 +10,46 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+    body { font-family: 'Inter', sans-serif; background: #f8fafc; }
     .ai-gradient { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
     .btn-target { transition: all 0.2s; border: 2px solid transparent; }
-    .btn-target.active { border-color: #6366f1; background-color: #eef2ff; color: #4f46e5; font-weight: 700; }
+    .btn-target.active { border-color: #6366f1; background-color: #eef2ff; color: #6366f1; font-weight: 700; }
 
     /* Spinner */
-    .spin { animation: spin 0.9s linear infinite; }
+    .spin { animation: spin 1s linear infinite; }
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-    /* ✅ FIX: impedisce testo troncato */
-    .answer-text {
-      white-space: normal;         /* permette a capo */
-      overflow-wrap: anywhere;     /* spezza anche parole lunghe */
-      word-break: break-word;      /* fallback */
-      line-height: 1.8;
-    }
     /* Scrollbar "iOS style" (Chrome/Edge/Safari) */
-      .pretty-scroll::-webkit-scrollbar {
-        width: 10px;
-      }
-      .pretty-scroll::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      .pretty-scroll::-webkit-scrollbar-thumb {
-        background: rgba(99, 102, 241, 0.35);
-        border-radius: 999px;
-        border: 3px solid rgba(255, 255, 255, 0.6);
-      }
-      .pretty-scroll::-webkit-scrollbar-thumb:hover {
-        background: rgba(99, 102, 241, 0.55);
-      }
-      
-      /* Firefox */
-      .pretty-scroll {
-        scrollbar-width: thin;
-        scrollbar-color: rgba(99, 102, 241, 0.45) transparent;
-      }
+    .pretty-scroll::-webkit-scrollbar { width: 10px; }
+    .pretty-scroll::-webkit-scrollbar-track { background: transparent; }
+    .pretty-scroll::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.35);
+      border-radius: 999px;
+      border: 3px solid rgba(255, 255, 255, 0.6);
+    }
+    .pretty-scroll::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.55); }
 
+    /* Firefox */
+    .pretty-scroll { scrollbar-width: thin; scrollbar-color: rgba(99, 102, 241, 0.45) transparent; }
   </style>
 </head>
 
-<body class="pb-20">
+<body class="pb-24">
 
   <!-- NAV -->
   <nav class="w-full h-16 flex items-center justify-between px-8 border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
-    <div class="flex items-center gap-2">
-      <div class="ai-gradient w-8 h-8 rounded-lg flex items-center justify-center text-white">
-        <i class="ri-flashlight-fill"></i>
+    <div class="flex items-center gap-3">
+      <div class="ai-gradient w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm">
+        <i class="ri-flashlight-fill text-xl"></i>
       </div>
-      <span class="text-xl font-bold tracking-tight text-gray-900">
+      <span class="text-xl font-extrabold tracking-tight text-gray-900">
         SimplifAI <span class="text-indigo-600">Clone</span>
       </span>
     </div>
-
-    <div class="hidden md:flex gap-6 text-sm font-medium text-gray-500">
-      <a href="#" class="hover:text-indigo-600">Home</a>
-      <a href="#" class="hover:text-indigo-600">Come funziona</a>
-      <a href="#" class="hover:text-indigo-600">Prezzi</a>
+    <div class="hidden md:flex gap-8 text-sm font-medium text-gray-500">
+      <a href="#" class="hover:text-indigo-600 transition">Home</a>
+      <a href="#" class="hover:text-indigo-600 transition">Come funziona</a>
+      <a href="#" class="hover:text-indigo-600 transition">Prezzi</a>
     </div>
   </nav>
 
@@ -86,54 +68,62 @@
       Trasforma concetti complessi in spiegazioni adatte a chiunque.
     </p>
 
-    <!-- SEARCH -->
-    <div class="max-w-2xl mx-auto relative mb-8 group">
+    <!-- Search box -->
+    <div class="max-w-3xl mx-auto relative mb-6 group">
       <div class="absolute -inset-1 ai-gradient rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-
       <div class="relative bg-white rounded-2xl shadow-xl p-2 flex border border-gray-100">
         <input
           type="text"
           id="userQuery"
           placeholder="Cosa vuoi che ti spieghi?"
           class="w-full p-4 outline-none text-lg rounded-xl"
+          onkeydown="if(event.key==='Enter'){ chiediAGemini(); }"
         />
         <button
-          id="btnGenerate"
           onclick="chiediAGemini()"
-          class="ai-gradient text-white px-8 py-4 rounded-xl font-bold hover:scale-105 transition active:scale-95 flex items-center gap-2 justify-center"
+          class="ai-gradient text-white px-8 py-4 rounded-xl font-bold hover:scale-[1.03] transition active:scale-95"
         >
-          <span id="btnText">Genera</span>
-          <span id="btnSpinner" class="hidden">
-            <i class="ri-loader-4-line spin text-xl"></i>
-          </span>
+          Genera
         </button>
       </div>
     </div>
 
-    <!-- TARGET BUTTONS -->
-    <div class="max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-3 px-4 mb-12">
+    <!-- Targets -->
+    <div class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-3 px-4 mb-12">
       <button class="btn-target bg-white p-3 rounded-xl shadow-sm text-sm text-gray-600 active"
-              onclick="setActiveTarget(this,'Bambino','un Bambino sotto i 10 anni')">👶 Bambino</button>
+        onclick="setActiveTarget(this, {label:'Bambino', prompt:'un Bambino sotto i 10 anni', maxTokens:800, maxChars:2500})">
+        👶 Bambino
+      </button>
 
       <button class="btn-target bg-white p-3 rounded-xl shadow-sm text-sm text-gray-600"
-              onclick="setActiveTarget(this,'Ragazzino','un Ragazzino fino ai 18 anni')">🧒 Ragazzino</button>
+        onclick="setActiveTarget(this, {label:'Ragazzino', prompt:'un Ragazzino fino ai 18 anni', maxTokens:1100, maxChars:3500})">
+        🧒 Ragazzino
+      </button>
 
       <button class="btn-target bg-white p-3 rounded-xl shadow-sm text-sm text-gray-600"
-              onclick="setActiveTarget(this,'Universitario','uno Studente universitario')">🎓 Universitario</button>
+        onclick="setActiveTarget(this, {label:'Universitario', prompt:'uno Studente universitario', maxTokens:1600, maxChars:5500})">
+        🎓 Universitario
+      </button>
 
       <button class="btn-target bg-white p-3 rounded-xl shadow-sm text-sm text-gray-600"
-              onclick="setActiveTarget(this,'Adulto','un Adulto')">🧑 Adulto</button>
+        onclick="setActiveTarget(this, {label:'Adulto', prompt:'un Adulto', maxTokens:1400, maxChars:5000})">
+        👨 Adulto
+      </button>
 
       <button class="btn-target bg-white p-3 rounded-xl shadow-sm text-sm text-gray-600"
-              onclick="setActiveTarget(this,'Esperto','un Esperto di settore')">💼 Esperto</button>
+        onclick="setActiveTarget(this, {label:'Esperto', prompt:'un Esperto di settore', maxTokens:2400, maxChars:8000})">
+        💼 Esperto
+      </button>
 
       <button class="btn-target bg-white p-3 rounded-xl shadow-sm text-sm text-gray-600"
-              onclick="setActiveTarget(this,'Scienziato','uno Scienziato')">🔬 Scienziato</button>
+        onclick="setActiveTarget(this, {label:'Scienziato', prompt:'uno Scienziato', maxTokens:3200, maxChars:12000})">
+        🔬 Scienziato
+      </button>
     </div>
   </section>
 
   <!-- RESULT -->
-    <section id="resultArea" class="max-w-3xl mx-auto px-4 hidden">
+  <section id="resultArea" class="max-w-3xl mx-auto px-4 hidden">
     <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 max-h-[520px] overflow-y-auto pretty-scroll">
       <div class="flex items-center justify-between gap-3 mb-6">
         <div class="flex items-center gap-3">
@@ -142,21 +132,21 @@
           </div>
           <div>
             <h3 class="font-bold text-gray-900" id="targetLabel">Risposta per Bambino</h3>
-            <p class="text-xs text-gray-400">API su Vercel (key nascosta)</p>
+            <p class="text-xs text-gray-400" id="limitsLabel">Limite: 800 token • 2500 caratteri</p>
           </div>
         </div>
-  
+
         <button
           id="copyBtn"
           onclick="copyAnswer()"
-          class="text-sm font-semibold px-4 py-2 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition flex items-center gap-2"
+          class="text-sm font-semibold px-4 py-2 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition flex items-center gap-2 hidden"
         >
           <i class="ri-file-copy-line"></i>
           <span id="copyBtnText">Copia</span>
         </button>
       </div>
-  
-      <!-- Loading box -->
+
+      <!-- Loading -->
       <div id="loadingBox" class="hidden">
         <div class="flex items-center gap-3 text-gray-600 mb-4">
           <i class="ri-loader-4-line spin text-2xl text-indigo-600"></i>
@@ -172,159 +162,125 @@
           <div class="h-4 bg-gray-200 rounded w-2/3"></div>
         </div>
       </div>
-  
-      <!-- Risposta -->
-      <div id="geminiResponse" class="answer-text text-gray-700 leading-relaxed"></div>
+
+      <!-- Answer -->
+      <div id="geminiResponse" class="text-gray-700 leading-relaxed"></div>
     </div>
   </section>
 
-
   <script>
-    let selectedTarget = {
-      label: "Bambino",
-      prompt: "un Bambino sotto i 10 anni"
-    };
+    // Target di default
+    let selectedTarget = { label: "Bambino", prompt: "un Bambino sotto i 10 anni", maxTokens: 800, maxChars: 2500 };
 
-    function setActiveTarget(btn, label, prompt) {
+    function setActiveTarget(btn, targetObj) {
       document.querySelectorAll(".btn-target").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      selectedTarget = { label, prompt };
-      document.getElementById("targetLabel").innerText = "Risposta per " + label;
+
+      selectedTarget = targetObj;
+
+      document.getElementById("targetLabel").innerText = "Risposta per " + targetObj.label;
+      document.getElementById("limitsLabel").innerText = `Limite: ${targetObj.maxTokens} token • ${targetObj.maxChars} caratteri`;
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const input = document.getElementById("userQuery");
-      if (input) {
-        input.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") chiediAGemini();
-        });
-      }
-    });
+    function markdownToHtml(md) {
+      let html = String(md || "");
 
-    function setLoading(isLoading) {
-      const btn = document.getElementById("btnGenerate");
-      const btnText = document.getElementById("btnText");
-      const btnSpinner = document.getElementById("btnSpinner");
+      // escape HTML base
+      html = html.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-      if (isLoading) {
-        btn.disabled = true;
-        btn.classList.add("opacity-70");
-        btnText.textContent = "Sto generando…";
-        btnSpinner.classList.remove("hidden");
-      } else {
-        btn.disabled = false;
-        btn.classList.remove("opacity-70");
-        btnText.textContent = "Genera";
-        btnSpinner.classList.add("hidden");
-      }
+      // titoli
+      html = html.replace(/^### (.*)$/gm, "<h3 class='text-xl font-bold mt-6 mb-2'>$1</h3>");
+      html = html.replace(/^## (.*)$/gm, "<h2 class='text-2xl font-bold mt-6 mb-3'>$1</h2>");
+      html = html.replace(/^# (.*)$/gm, "<h1 class='text-3xl font-extrabold mt-6 mb-4'>$1</h1>");
+
+      // grassetto
+      html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+      // separatore ---
+      html = html.replace(/^---$/gm, "<hr class='my-6 border-gray-200' />");
+
+      // liste con "-", "*"
+      html = html.replace(/^\- (.*)$/gm, "<li class='ml-6 list-disc'>$1</li>");
+      html = html.replace(/^\* (.*)$/gm, "<li class='ml-6 list-disc'>$1</li>");
+      html = html.replace(/(<li.*<\/li>)/gs, "<ul class='space-y-2 my-4'>$1</ul>");
+
+      // paragrafi (a capo doppio)
+      html = html.replace(/\n\n+/g, "</p><p class='mb-4'>");
+      html = "<p class='mb-4'>" + html + "</p>";
+
+      // a capo singolo
+      html = html.replace(/\n/g, "<br>");
+
+      return html;
     }
 
     function copyAnswer() {
       const responseEl = document.getElementById("geminiResponse");
       const text = responseEl.innerText.trim();
-    
+
       if (!text) {
         alert("Nessuna risposta da copiare!");
         return;
       }
-    
+
       navigator.clipboard.writeText(text).then(() => {
         const btnText = document.getElementById("copyBtnText");
         btnText.textContent = "Copiato!";
-    
-        setTimeout(() => {
-          btnText.textContent = "Copia";
-        }, 1500);
+        setTimeout(() => btnText.textContent = "Copia", 1500);
       });
     }
 
-    
     async function chiediAGemini() {
       const query = document.getElementById("userQuery").value.trim();
       const area = document.getElementById("resultArea");
       const responseEl = document.getElementById("geminiResponse");
       const loadingBox = document.getElementById("loadingBox");
+      const copyBtn = document.getElementById("copyBtn");
 
       if (!query) return alert("Inserisci una domanda!");
 
+      // UI
       area.classList.remove("hidden");
-      responseEl.innerHTML = "";
       loadingBox.classList.remove("hidden");
-      setLoading(true);
+      responseEl.innerHTML = "";
+      copyBtn.classList.add("hidden");
 
-      window.scrollTo({ top: area.offsetTop - 50, behavior: "smooth" });
+      window.scrollTo({ top: area.offsetTop - 80, behavior: "smooth" });
 
       try {
-        const res = await fetch("/api/gemini", {
+        const resp = await fetch("/api/gemini", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             query,
-            target: selectedTarget.prompt
+            targetLabel: selectedTarget.label,
+            targetPrompt: selectedTarget.prompt,
+            maxTokens: selectedTarget.maxTokens,
+            maxChars: selectedTarget.maxChars
           })
         });
 
-        const data = await res.json().catch(() => ({}));
+        const data = await resp.json();
+        if (!resp.ok || data.error) throw new Error(data.error || "Errore sconosciuto");
 
-        if (!res.ok) {
-          const msg = data?.error || `Errore HTTP ${res.status}`;
-          throw new Error(msg);
-        }
-
-        if (!data?.text) throw new Error("Risposta vuota dall'API.");
-
-        // (manteniamo il tuo sistema di formattazione semplice)
-        function markdownToHtml(md) {
-          let html = md;
-        
-          // escape HTML base
-          html = html.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        
-          // titoli
-          html = html.replace(/^### (.*)$/gm, "<h3 class='text-xl font-bold mt-6 mb-2'>$1</h3>");
-          html = html.replace(/^## (.*)$/gm, "<h2 class='text-2xl font-bold mt-6 mb-3'>$1</h2>");
-          html = html.replace(/^# (.*)$/gm, "<h1 class='text-3xl font-extrabold mt-6 mb-4'>$1</h1>");
-        
-          // grassetto
-          html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-        
-          // separatore ---
-          html = html.replace(/^---$/gm, "<hr class='my-6 border-gray-200' />");
-        
-          // liste con "-"
-          html = html.replace(/^\- (.*)$/gm, "<li class='ml-6 list-disc'>$1</li>");
-          html = html.replace(/(<li.*<\/li>)/gs, "<ul class='space-y-2 my-4'>$1</ul>");
-        
-          // paragrafi (a capo doppio)
-          html = html.replace(/\n\n+/g, "</p><p class='mb-4'>");
-          html = "<p class='mb-4'>" + html + "</p>";
-        
-          // a capo singolo
-          html = html.replace(/\n/g, "<br>");
-        
-          return html;
-        }
-        
+        loadingBox.classList.add("hidden");
         responseEl.innerHTML = markdownToHtml(data.text);
 
+        // Mostra copia solo se c'è testo
+        if ((data.text || "").trim().length > 0) copyBtn.classList.remove("hidden");
+
       } catch (err) {
+        loadingBox.classList.add("hidden");
         responseEl.innerHTML = `
-          <p class="text-red-600 font-semibold">
-            <i class="ri-error-warning-line"></i>
-            Errore: ${String(err.message || err)}
+          <p class="text-red-600 font-semibold flex items-center gap-2">
+            <i class="ri-error-warning-line"></i> Errore: ${String(err.message || err)}
+          </p>
+          <p class="text-sm text-gray-500 mt-2">
+            Se succede online, controlla i log della Function su Vercel e la variabile GEMINI_API_KEY.
           </p>
         `;
-      } finally {
-        loadingBox.classList.add("hidden");
-        setLoading(false);
       }
     }
   </script>
-
 </body>
 </html>
-
-
-
-
-
