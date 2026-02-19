@@ -1,833 +1,283 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SimplifAI Clone</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SimplifAI Clone</title>
 
-  <!-- Remix Icon (opzionale ma utile se già lo usavi) -->
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b1020;
+  --card:#111833;
+  --border:rgba(255,255,255,.08);
+  --text:#e9edff;
+  --muted:rgba(255,255,255,.65);
+  --accent:#7c5cff;
+}
 
-  <style>
-    :root{
-      --bg: #0b1020;
-      --card: #0f1730;
-      --card2:#0c1329;
-      --text: #e9edff;
-      --muted: rgba(233,237,255,.75);
-      --muted2: rgba(233,237,255,.55);
-      --border: rgba(233,237,255,.10);
-      --shadow: 0 14px 50px rgba(0,0,0,.35);
-      --accent: #7c5cff;
-      --accent2:#26c6ff;
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  background:
+    radial-gradient(900px 600px at 20% 10%, rgba(124,92,255,.25), transparent 60%),
+    radial-gradient(700px 520px at 85% 30%, rgba(38,198,255,.18), transparent 55%),
+    var(--bg);
+  color:var(--text);
+}
 
-      --radius: 18px;
-    }
+.wrap{width:min(1100px,92vw);margin:40px auto}
 
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      background:
-        radial-gradient(900px 600px at 20% 10%, rgba(124,92,255,.25), transparent 60%),
-        radial-gradient(700px 520px at 85% 30%, rgba(38,198,255,.18), transparent 55%),
-        radial-gradient(900px 700px at 55% 90%, rgba(255,140,66,.10), transparent 55%),
-        var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+}
 
-    a{ color:inherit; }
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+  width:40px;height:40px;border-radius:12px;
+  background:linear-gradient(135deg,#7c5cff,#26c6ff);
+}
 
-    .wrap{
-      width:min(1040px, 92vw);
-      margin: 0 auto;
-      padding: 28px 0 60px;
-    }
+nav a{
+  color:var(--muted);
+  text-decoration:none;
+  margin-left:20px;
+  font-size:14px;
+}
+nav a:hover{color:white}
 
-    header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 12px;
-      margin-bottom: 22px;
-    }
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+}
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr}
+}
 
-    .brand{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      user-select:none;
-    }
+.card{
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:20px;
+}
 
-    .logo{
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, rgba(124,92,255,1), rgba(38,198,255,1));
-      box-shadow: 0 10px 30px rgba(124,92,255,.25);
-    }
-    .brand h1{
-      font-size: 16px;
-      margin:0;
-      letter-spacing:.2px;
-      font-weight: 650;
-    }
-    .brand span{
-      display:block;
-      margin-top:2px;
-      font-size: 12px;
-      color: var(--muted2);
-      font-weight: 450;
-    }
+h2{
+  margin:0 0 8px;
+  font-size:18px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
 
-    nav{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-    }
-    nav a{
-      text-decoration:none;
-      color: var(--muted);
-      font-size: 13px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid transparent;
-    }
-    nav a:hover{
-      border-color: var(--border);
-      background: rgba(255,255,255,.03);
-      color: var(--text);
-    }
+textarea{
+  width:100%;
+  min-height:140px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  background:#0e152c;
+  color:white;
+  padding:12px;
+  resize:vertical;
+}
 
-    .hero{
-      display:grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap: 18px;
-      align-items: start;
-    }
+.targets{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
 
-    @media (max-width: 940px){
-      .hero{ grid-template-columns: 1fr; }
-      nav{ display:none; }
-    }
+.pill{
+  padding:6px 12px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--muted);
+  cursor:pointer;
+  font-size:13px;
+}
+.pill.active{
+  background:rgba(124,92,255,.2);
+  color:white;
+  border-color:#7c5cff;
+}
 
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
+.actions{
+  margin-top:14px;
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+}
 
-    .card-inner{
-      padding: 18px;
-    }
+button{
+  padding:10px 16px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:#1a2142;
+  color:white;
+  cursor:pointer;
+  font-size:14px;
+}
+button.primary{
+  background:linear-gradient(135deg,#7c5cff,#26c6ff);
+  border:none;
+}
+button:disabled{opacity:.5;cursor:not-allowed}
 
-    .title{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      margin: 0 0 10px;
-      font-size: 18px;
-      font-weight: 650;
-      letter-spacing:.2px;
-    }
-    .title i{
-      color: rgba(233,237,255,.85);
-      font-size: 18px;
-    }
+.response-box{
+  min-height:220px;
+  border-radius:14px;
+  background:#0e152c;
+  padding:14px;
+  border:1px solid var(--border);
+  white-space:pre-wrap;
+  font-size:14px;
+  line-height:1.5;
+}
 
-    .hint{
-      margin: 0 0 14px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
-    }
-
-    .row{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-
-    textarea{
-      width:100%;
-      min-height: 120px;
-      resize: vertical;
-      background: rgba(0,0,0,.22);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px 12px;
-      color: var(--text);
-      font-size: 14px;
-      line-height: 1.45;
-      outline: none;
-    }
-    textarea:focus{
-      border-color: rgba(124,92,255,.50);
-      box-shadow: 0 0 0 4px rgba(124,92,255,.15);
-    }
-
-    .controls{
-      display:flex;
-      flex-wrap: wrap;
-      align-items:center;
-      justify-content:space-between;
-      gap: 12px;
-      margin-top: 10px;
-    }
-
-    .targets{
-      display:flex;
-      flex-wrap:wrap;
-      gap: 8px;
-    }
-
-    .pill{
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.02);
-      color: var(--muted);
-      padding: 8px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      cursor:pointer;
-      user-select:none;
-      transition: .15s ease;
-    }
-    .pill:hover{
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-    }
-    .pill.active{
-      border-color: rgba(124,92,255,.55);
-      background: rgba(124,92,255,.15);
-      color: var(--text);
-    }
-
-    .actions{
-      display:flex;
-      gap: 10px;
-      align-items:center;
-      justify-content:flex-end;
-      flex: 1;
-      min-width: 220px;
-    }
-
-    .btn{
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 14px;
-      font-size: 13px;
-      cursor:pointer;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap: 8px;
-      min-height: 42px;
-      transition: .15s ease;
-      text-decoration:none;
-      white-space: nowrap;
-    }
-    .btn:hover{ background: rgba(255,255,255,.06); }
-    .btn:disabled{
-      opacity:.55;
-      cursor:not-allowed;
-    }
-
-    .btn-primary{
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(38,198,255,.85));
-      border-color: rgba(124,92,255,.45);
-    }
-    .btn-primary:hover{
-      filter: brightness(1.02);
-    }
-
-    .btn-ghost{
-      background: transparent;
-    }
-
-    .right-card .card-inner{
-      padding: 18px;
-    }
-
-    .response-card{
-      background: rgba(0,0,0,.18);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px;
-      min-height: 240px;
-      display:flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .response-text{
-      font-size: 14px;
-      line-height: 1.55;
-      color: rgba(233,237,255,.92);
-      white-space: pre-wrap;
-      word-break: break-word;
-      flex: 1;
-    }
-
-    .response-footer{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 10px;
-      padding-top: 6px;
-      border-top: 1px solid rgba(233,237,255,.08);
-    }
-
-    .status{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .spinner{
-      width: 14px;
-      height: 14px;
-      border-radius: 999px;
-      border: 2px solid rgba(233,237,255,.25);
-      border-top-color: rgba(233,237,255,.85);
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .continue-wrap{
-      display:flex;
-      justify-content:center;
-      margin-top: 8px;
-    }
-
-    /* ===== Premium Quota Card (Option 1) ===== */
-
-    .quota-premium-card {
-      max-width: 640px;
-      margin: 12px auto 0 auto;
-      background: #fff9e6;
-      border: 1px solid #ffe3a3;
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-      animation: quotaFadeIn 0.45s cubic-bezier(.2,.8,.2,1);
-      color: #111;
-    }
-
-    @keyframes quotaFadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px) scale(0.98);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    .quota-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 8px;
-    }
-
-    .quota-icon {
-      font-size: 22px;
-      animation: quotaBounce 0.6s ease;
-    }
-
-    @keyframes quotaBounce {
-      0% { transform: translateY(0); }
-      30% { transform: translateY(-6px); }
-      60% { transform: translateY(0); }
-      100% { transform: translateY(-2px); }
-    }
-
-    .quota-title {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: .1px;
-    }
-
-    .quota-sub {
-      font-size: 14px;
-      color: rgba(0,0,0,.72);
-      margin-bottom: 10px;
-      line-height: 1.4;
-    }
-
-    .quota-progress {
-      height: 8px;
-      border-radius: 999px;
-      background: #ffe9b8;
-      overflow: hidden;
-      margin: 10px 0 14px 0;
-    }
-
-    .quota-progress-bar {
-      height: 100%;
-      width: 100%;
-      background: linear-gradient(90deg, #f5b942, #ff8c42);
-      transition: width 1s linear;
-    }
-
-    .quota-cta-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-    }
-    @media (max-width: 560px){
-      .quota-cta-grid{ grid-template-columns: 1fr; }
-    }
-
-    .quota-btn {
-      min-height: 52px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      font-weight: 600;
-      text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      transition: all 0.18s ease;
-      line-height: 1.15;
-      border: 1px solid rgba(0,0,0,.12);
-      background: #fff;
-      color: #111;
-      cursor: pointer;
-    }
-
-    .quota-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.06);
-    }
-
-    .quota-btn-primary {
-      background: #111;
-      color: #fff;
-      border-color: #111;
-    }
-
-    .quota-btn-primary:disabled {
-      background: #bbb;
-      border-color: #bbb;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-
-    .quota-pulse {
-      animation: quotaPulse 1s ease 2;
-    }
-
-    @keyframes quotaPulse {
-      0% { box-shadow: 0 0 0 0 rgba(0,0,0,0.35); }
-      70% { box-shadow: 0 0 0 10px rgba(0,0,0,0); }
-      100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
-    }
-
-    details.quota-details{
-      margin-top: 12px;
-      font-size: 13px;
-      color: rgba(0,0,0,.70);
-    }
-    details.quota-details summary{
-      cursor:pointer;
-      user-select:none;
-      font-weight: 600;
-    }
-    details.quota-details .quota-tech{
-      margin-top: 8px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: rgba(0,0,0,.04);
-      border: 1px solid rgba(0,0,0,.08);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      white-space: pre-wrap;
-    }
-  </style>
+.status{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:10px;
+}
+</style>
 </head>
 
 <body>
-  <div class="wrap">
-    <header>
-      <div class="brand">
-        <div class="logo"></div>
-        <div>
-          <h1>SimplifAI Clone</h1>
-          <span>Risposte su misura, con “Continua” quando serve</span>
-        </div>
-      </div>
 
-      <nav>
-        <a href="/come-funziona.html">Come funziona</a>
-        <a href="/prezzi.html">Prezzi</a>
-      </nav>
-    </header>
+<div class="wrap">
 
-    <section class="hero">
-      <!-- LEFT: Input -->
-      <div class="card">
-        <div class="card-inner">
-          <div class="title"><i class="ri-magic-line"></i> Scrivi una domanda</div>
-          <p class="hint">
-            Scegli un target e genera la risposta. Se è lunga, usa <b>Continua</b>.
-          </p>
-
-          <div class="row">
-            <textarea id="query" placeholder="Esempio: Spiegami cos’è l’entropia e perché è importante."></textarea>
-          </div>
-
-          <div class="controls">
-            <div class="targets" id="targets"></div>
-
-            <div class="actions">
-              <button class="btn btn-ghost" id="copyBtn" disabled>
-                <i class="ri-file-copy-line"></i> Copia
-              </button>
-              <button class="btn btn-primary" id="generateBtn">
-                <i class="ri-play-line"></i> Genera
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- RIGHT: Output -->
-      <div class="card right-card">
-        <div class="card-inner">
-          <div class="title"><i class="ri-chat-3-line"></i> Risposta</div>
-
-          <div class="response-card">
-            <div class="response-text" id="response"></div>
-
-            <div class="response-footer">
-              <div class="status" id="status">
-                <span id="statusSpinner" class="spinner" style="display:none;"></span>
-                <span id="statusText">Pronto.</span>
-              </div>
-
-              <button class="btn" id="continueBtn" disabled>
-                <i class="ri-more-2-fill"></i> Continua
-              </button>
-            </div>
-
-            <div class="continue-wrap" id="continueWrap" style="display:none;"></div>
-          </div>
-        </div>
-      </div>
-    </section>
+<header>
+  <div class="brand">
+    <div class="logo"></div>
+    <div>
+      <strong>SimplifAI Clone</strong><br>
+      <small style="color:var(--muted)">Risposte su misura, con “Continua” quando serve</small>
+    </div>
   </div>
 
+  <nav>
+    <a href="/come-funziona.html">Come funziona</a>
+    <a href="/prezzi.html">Prezzi</a>
+  </nav>
+</header>
+
+<div class="grid">
+
+<!-- INPUT -->
+<div class="card">
+  <h2>✦ Scrivi una domanda</h2>
+
+  <textarea id="query" placeholder="Es: Spiegami cos'è l'entropia"></textarea>
+
+  <div class="targets" id="targets"></div>
+
+  <div class="actions">
+    <button id="copyBtn" disabled>⧉ Copia</button>
+    <button class="primary" id="generateBtn">▶ Genera</button>
+  </div>
+</div>
+
+<!-- OUTPUT -->
+<div class="card">
+  <h2>💬 Risposta</h2>
+
+  <div class="response-box" id="response"></div>
+
+  <div class="actions">
+    <button id="continueBtn" disabled>⋯ Continua</button>
+  </div>
+
+  <div class="status" id="status">Pronto.</div>
+</div>
+
+</div>
+</div>
+
 <script>
-  // ===== Targets & limits =====
-  const TARGETS = [
-    { label: "Bambino", prompt: "Spiega come a un bambino: usa parole semplici, esempi concreti, frasi brevi.", maxTokens: 2500, maxChars: 6000 },
-    { label: "Ragazzino", prompt: "Spiega come a un ragazzino: semplice ma un po' più dettagliato, esempi e analogie.", maxTokens: 2500, maxChars: 7000 },
-    { label: "Universitario", prompt: "Spiega come a uno studente universitario: struttura chiara, concetti corretti, qualche formula se utile.", maxTokens: 2500, maxChars: 9000 },
-    { label: "Adulto", prompt: "Spiega come a un adulto: diretto, pratico, con esempi, senza banalizzare troppo.", maxTokens: 2500, maxChars: 8000 },
-    { label: "Esperto", prompt: "Spiega come a un esperto: dettagli tecnici, assunzioni esplicite, caveat, esempi realistici.", maxTokens: 3500, maxChars: 12000 },
-    { label: "Scienziato", prompt: "Spiega come a uno scienziato: rigore, struttura, definizioni, limiti, riferimenti concettuali.", maxTokens: 3500, maxChars: 14000 }
-  ];
+const TARGETS=[
+{label:"Bambino",prompt:"Spiega come a un bambino."},
+{label:"Ragazzino",prompt:"Spiega come a un ragazzino."},
+{label:"Universitario",prompt:"Spiega come a uno studente universitario."},
+{label:"Adulto",prompt:"Spiega come a un adulto."},
+{label:"Esperto",prompt:"Spiega come a un esperto."},
+{label:"Scienziato",prompt:"Spiega come a uno scienziato."}
+];
 
-  let selectedIndex = 0;
-  let accumulatedText = "";
-  let isGenerating = false;
+let selected=0;
+let accumulated="";
 
-  const els = {
-    targets: document.getElementById("targets"),
-    query: document.getElementById("query"),
-    response: document.getElementById("response"),
-    generateBtn: document.getElementById("generateBtn"),
-    continueBtn: document.getElementById("continueBtn"),
-    copyBtn: document.getElementById("copyBtn"),
-    statusText: document.getElementById("statusText"),
-    spinner: document.getElementById("statusSpinner"),
-    responseCard: document.querySelector(".response-card"),
-  };
+const targetsEl=document.getElementById("targets");
+const responseEl=document.getElementById("response");
+const statusEl=document.getElementById("status");
 
-  function renderTargets(){
-    els.targets.innerHTML = "";
-    TARGETS.forEach((t, i) => {
-      const b = document.createElement("button");
-      b.className = "pill" + (i === selectedIndex ? " active" : "");
-      b.type = "button";
-      b.textContent = t.label;
-      b.addEventListener("click", () => {
-        if (isGenerating) return;
-        selectedIndex = i;
-        renderTargets();
-      });
-      els.targets.appendChild(b);
-    });
-  }
-  renderTargets();
+function renderTargets(){
+targetsEl.innerHTML="";
+TARGETS.forEach((t,i)=>{
+const b=document.createElement("button");
+b.className="pill"+(i===selected?" active":"");
+b.textContent=t.label;
+b.onclick=()=>{selected=i;renderTargets()};
+targetsEl.appendChild(b);
+});
+}
+renderTargets();
 
-  function setStatus(text, loading=false){
-    els.statusText.textContent = text;
-    els.spinner.style.display = loading ? "inline-block" : "none";
-  }
+async function generate(mode="generate"){
+const query=document.getElementById("query").value.trim();
+if(!query)return;
 
-  function setButtons({ generating }){
-    isGenerating = generating;
-    els.generateBtn.disabled = generating;
-    els.continueBtn.disabled = generating || !canContinue();
-    els.copyBtn.disabled = generating || !els.response.textContent.trim();
-  }
+statusEl.textContent="Generazione in corso...";
+responseEl.textContent="";
+accumulated="";
 
-  function clearQuotaBoxes(){
-    document.querySelectorAll(".quota-premium-card").forEach(n => n.remove());
-  }
+try{
+const res=await fetch("/api/gemini",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+query,
+targetPrompt:TARGETS[selected].prompt,
+mode,
+previousText:accumulated
+})
+});
 
-  function canContinue(){
-    const t = TARGETS[selectedIndex];
-    // euristica semplice: se siamo vicini al limite di char o termina senza punteggiatura forte
-    const text = accumulatedText.trim();
-    if (!text) return false;
-    if (text.length >= Math.floor(t.maxChars * 0.92)) return true;
-    const last = text.slice(-1);
-    return ![".", "!", "?", "”", "\""].includes(last);
-  }
+if(!res.ok){
+const txt=await res.text();
+throw new Error(txt||"Errore API");
+}
 
-  // ===== SSE streaming parser =====
-  async function streamGemini(payload, onTextChunk){
-    const res = await fetch("/api/gemini", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+const reader=res.body.getReader();
+const decoder=new TextDecoder();
 
-    // Non-SSE error -> read json error
-    if (!res.ok) {
-      let msg = "Errore sconosciuto.";
-      try {
-        const j = await res.json();
-        msg = j?.error || msg;
-      } catch (e) {}
-      throw new Error(msg);
-    }
+while(true){
+const {value,done}=await reader.read();
+if(done)break;
+const chunk=decoder.decode(value);
+accumulated+=chunk;
+responseEl.textContent+=chunk;
+}
 
-    // Some deployments might return JSON (non-stream) in edge errors; handle anyway:
-    const contentType = res.headers.get("content-type") || "";
-    if (!contentType.includes("text/event-stream")) {
-      // fallback: read full text
-      const txt = await res.text();
-      onTextChunk(txt);
-      return;
-    }
+statusEl.textContent="Fatto.";
+document.getElementById("continueBtn").disabled=false;
+document.getElementById("copyBtn").disabled=false;
 
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder("utf-8");
+}catch(e){
+statusEl.textContent="Errore: "+e.message;
+}
+}
 
-    let buffer = "";
-    let uiBuffer = "";
-    const FLUSH_EVERY = 30;
-
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-
-      // SSE: split by new lines
-      const lines = buffer.split("\n");
-      buffer = lines.pop() || "";
-
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed.startsWith("data:")) continue;
-
-        const data = trimmed.slice(5).trim();
-        if (!data || data === "[DONE]") continue;
-
-        try {
-          const obj = JSON.parse(data);
-          // Gemini SSE often has candidates[0].content.parts[].text
-          const parts = obj?.candidates?.[0]?.content?.parts || [];
-          for (const p of parts) {
-            if (typeof p?.text === "string") {
-              uiBuffer += p.text;
-              if (uiBuffer.length >= FLUSH_EVERY) {
-                onTextChunk(uiBuffer);
-                uiBuffer = "";
-              }
-            }
-          }
-        } catch (e) {
-          // ignore parse errors
-        }
-      }
-    }
-
-    if (uiBuffer) onTextChunk(uiBuffer);
-  }
-
-  // ===== Premium Quota Box =====
-  function showQuotaBox(message){
-    clearQuotaBoxes();
-
-    const retryMatch = message.match(/retry in (\d+)s/i);
-    const retrySeconds = retryMatch ? parseInt(retryMatch[1], 10) : 0;
-
-    const box = document.createElement("div");
-    box.className = "quota-premium-card";
-
-    box.innerHTML = `
-      <div class="quota-header">
-        <div class="quota-icon">⚠️</div>
-        <div class="quota-title">Limite gratuito raggiunto</div>
-      </div>
-
-      <div class="quota-sub">
-        Hai esaurito le richieste disponibili per ora.
-        ${retrySeconds > 0 ? `Puoi riprovare tra <strong id="retry-count">${retrySeconds}</strong> secondi.` : ""}
-      </div>
-
-      <div class="quota-progress">
-        <div class="quota-progress-bar" id="quota-bar"></div>
-      </div>
-
-      <div class="quota-cta-grid">
-        <button id="retry-btn" class="quota-btn quota-btn-primary" disabled>Riprova</button>
-        <a class="quota-btn" href="/prezzi.html">Vedi i piani</a>
-        <a class="quota-btn" href="/checkout.html">Upgrade</a>
-      </div>
-
-      <details class="quota-details">
-        <summary>Dettagli tecnici</summary>
-        <div class="quota-tech">${escapeHtml(message)}</div>
-      </details>
-    `;
-
-    els.responseCard.appendChild(box);
-
-    const retryBtn = box.querySelector("#retry-btn");
-    const retryCount = box.querySelector("#retry-count");
-    const quotaBar = box.querySelector("#quota-bar");
-
-    if (retrySeconds > 0) {
-      let remaining = retrySeconds;
-      quotaBar.style.width = "100%";
-
-      const interval = setInterval(() => {
-        remaining--;
-        if (retryCount) retryCount.textContent = String(Math.max(0, remaining));
-        quotaBar.style.width = (Math.max(0, remaining) / retrySeconds) * 100 + "%";
-
-        if (remaining <= 0) {
-          clearInterval(interval);
-          retryBtn.disabled = false;
-          retryBtn.classList.add("quota-pulse");
-        }
-      }, 1000);
-    } else {
-      retryBtn.disabled = false;
-      quotaBar.style.width = "0%";
-    }
-
-    retryBtn.addEventListener("click", () => {
-      box.remove();
-      setStatus("Pronto.");
-      setButtons({ generating:false });
-    });
-  }
-
-  function escapeHtml(str){
-    return String(str)
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
-
-  function buildPayload({ mode }){
-    const t = TARGETS[selectedIndex];
-    return {
-      query: els.query.value.trim(),
-      targetPrompt: t.prompt,
-      maxTokens: t.maxTokens,
-      maxChars: t.maxChars,
-      mode,
-      previousText: mode === "continue" ? accumulatedText : ""
-    };
-  }
-
-  async function runGenerate(mode){
-    clearQuotaBoxes();
-
-    const q = els.query.value.trim();
-    if (!q) {
-      setStatus("Scrivi una domanda prima di generare.");
-      return;
-    }
-
-    setButtons({ generating:true });
-    setStatus(mode === "continue" ? "Sto continuando…" : "Sto generando…", true);
-
-    if (mode === "generate") {
-      accumulatedText = "";
-      els.response.textContent = "";
-    }
-
-    try{
-      await streamGemini(buildPayload({ mode }), (chunk) => {
-        accumulatedText += chunk;
-        els.response.textContent += chunk;
-        // Auto-enable copy while text grows (but not during generation)
-      });
-
-      setStatus("Fatto.");
-      setButtons({ generating:false });
-      els.continueBtn.disabled = !canContinue();
-      els.copyBtn.disabled = !els.response.textContent.trim();
-
-    } catch(err){
-      // Quota exceeded -> premium box
-      const msg = err?.message || "Errore.";
-      if (/quota|exceeded|retry in/i.test(msg)) {
-        setStatus("Limite raggiunto.", false);
-        showQuotaBox(msg);
-      } else {
-        setStatus("Errore: " + msg, false);
-      }
-      setButtons({ generating:false });
-    }
-  }
-
-  // ===== Events =====
-  els.generateBtn.addEventListener("click", () => runGenerate("generate"));
-  els.continueBtn.addEventListener("click", () => runGenerate("continue"));
-
-  els.copyBtn.addEventListener("click", async () => {
-    const text = els.response.textContent || "";
-    if (!text.trim()) return;
-    try{
-      await navigator.clipboard.writeText(text);
-      setStatus("Copiato ✅");
-      setTimeout(() => setStatus("Pronto."), 900);
-    } catch(e){
-      setStatus("Non riesco a copiare (permessi).");
-    }
-  });
-
-  // Enable copy button when user selects / after first generation
-  const observer = new MutationObserver(() => {
-    if (!isGenerating) els.copyBtn.disabled = !els.response.textContent.trim();
-    if (!isGenerating) els.continueBtn.disabled = !canContinue();
-  });
-  observer.observe(els.response, { childList: true, characterData: true, subtree: true });
-
-  setButtons({ generating:false });
-  setStatus("Pronto.");
+document.getElementById("generateBtn").onclick=()=>generate();
+document.getElementById("continueBtn").onclick=()=>generate("continue");
+document.getElementById("copyBtn").onclick=()=>{
+navigator.clipboard.writeText(responseEl.textContent);
+};
 </script>
+
 </body>
 </html>
