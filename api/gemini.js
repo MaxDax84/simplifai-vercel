@@ -13,7 +13,6 @@ function jsonError(message, status = 500) {
 }
 
 export default async function handler(req) {
-  // CORS
   if (req.method === "OPTIONS") {
     return new Response(null, {
       status: 200,
@@ -34,15 +33,7 @@ export default async function handler(req) {
     if (!apiKey) return jsonError("GEMINI_API_KEY mancante su Vercel.", 500);
 
     const body = await req.json();
-
-    const {
-      query,
-      targetPrompt,
-      maxTokens,
-      maxChars,
-      mode,
-      previousText,
-    } = body || {};
+    const { query, targetPrompt, maxTokens, maxChars, mode, previousText } = body || {};
 
     if (!query || !targetPrompt) {
       return jsonError("Parametri mancanti (query/targetPrompt).", 400);
@@ -55,7 +46,6 @@ export default async function handler(req) {
     const prev = String(previousText || "").slice(0, 20000);
 
     let prompt = "";
-
     if (safeMode === "start") {
       prompt = `
 Spiega il seguente concetto: "${query}".
@@ -95,10 +85,7 @@ Ora continua dal punto esatto in cui si è interrotta.
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.6,
-          maxOutputTokens: tokens,
-        },
+        generationConfig: { temperature: 0.6, maxOutputTokens: tokens },
       }),
     });
 
