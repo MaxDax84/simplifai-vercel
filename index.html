@@ -256,59 +256,81 @@
         ? Math.max(1, Math.ceil(retrySeconds))
         : null;
     
-      // testo super semplice (per pubblico giovane)
       const title = "Ops! Sei arrivato al limite gratuito 😅";
       const subtitle = secs
         ? `Riprova tra <b id="retrySecs">${secs}</b> secondi`
         : "Riprova tra poco";
     
       responseEl.innerHTML = `
-        <div class="max-w-xl mx-auto">
+        <div class="max-w-2xl mx-auto">
           <div class="rounded-3xl border border-amber-200 bg-amber-50 p-8 shadow-sm text-center">
-            <div class="mx-auto w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-700 text-2xl font-extrabold mb-4">
-              !
+            
+            <div class="mx-auto w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-700 text-2xl font-extrabold mb-4">
+              <i class="ri-error-warning-line"></i>
             </div>
     
-            <div class="text-xl md:text-2xl font-extrabold text-amber-800">
+            <div class="text-2xl md:text-3xl font-extrabold text-amber-900">
               ${title}
             </div>
     
-            <div class="text-sm md:text-base text-amber-900/80 mt-2">
+            <div class="text-sm md:text-base text-amber-900/80 mt-3">
               ${subtitle}
             </div>
     
-            <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+            <!-- Progress bar -->
+            <div class="mt-6">
+              <div class="h-3 w-full bg-amber-100 rounded-full overflow-hidden border border-amber-200">
+                <div id="retryBar" class="h-full bg-amber-400 rounded-full" style="width: 100%"></div>
+              </div>
+              <div class="text-xs text-amber-900/60 mt-2">
+                Attendi un attimo e riprova ✨
+              </div>
+            </div>
+    
+            <!-- Buttons -->
+            <div class="mt-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              
               <button id="retryBtn"
-                class="px-5 py-3 rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
+                class="px-5 py-4 rounded-2xl bg-gray-900 text-white font-extrabold text-base hover:bg-gray-800 transition shadow flex flex-col items-center justify-center gap-2"
                 type="button">
-                ${secs ? `Riprova tra ${secs}s` : "Riprova"}
+                <i class="ri-refresh-line text-xl"></i>
+                <div class="leading-tight text-center">
+                  ${secs ? `Riprova tra <span id="retryBtnSecs">${secs}</span>s` : "Riprova"}
+                </div>
               </button>
     
               <a
-                class="px-5 py-3 rounded-2xl bg-white border border-amber-200 text-amber-900 font-semibold hover:bg-amber-100 transition text-center"
+                class="px-5 py-4 rounded-2xl bg-white border-2 border-amber-200 text-amber-900 font-extrabold text-base hover:bg-amber-100 transition shadow flex flex-col items-center justify-center gap-2 text-center"
                 href="/prezzi.html"
               >
-                Vedi i piani
+                <i class="ri-price-tag-3-line text-xl"></i>
+                <div class="leading-tight text-center">
+                  Vedi gli altri piani
+                </div>
               </a>
     
               <a
-                class="px-5 py-3 rounded-2xl ai-gradient text-white font-semibold text-center hover:scale-[1.01] transition"
+                class="px-5 py-4 rounded-2xl ai-gradient text-white font-extrabold text-base hover:scale-[1.01] transition shadow-lg flex flex-col items-center justify-center gap-2 text-center"
                 href="/checkout.html"
               >
-                Upgrade (mock)
+                <i class="ri-rocket-2-line text-xl"></i>
+                <div class="leading-tight text-center">
+                  Upgrade (mock)
+                </div>
               </a>
             </div>
     
-            <!-- Dettagli tecnici nascosti -->
+            <!-- Technical details (hidden) -->
             <button id="toggleTech"
-              class="mt-6 text-xs text-amber-900/60 hover:text-amber-900 underline"
+              class="mt-7 text-xs text-amber-900/60 hover:text-amber-900 underline"
               type="button">
               Mostra dettagli tecnici
             </button>
     
-            <div id="techBox" class="hidden mt-3 text-left text-xs text-amber-900/70 bg-white/60 border border-amber-200 rounded-2xl p-4 whitespace-pre-wrap break-words">
+            <div id="techBox" class="hidden mt-3 text-left text-xs text-amber-900/70 bg-white/70 border border-amber-200 rounded-2xl p-4 whitespace-pre-wrap break-words">
               ${escapeHtml(errorMessage || "")}
             </div>
+    
           </div>
         </div>
       `;
@@ -324,35 +346,53 @@
         });
       }
     
-      // Retry
+      // Retry + countdown + progress bar
       const retryBtn = document.getElementById("retryBtn");
-      if (!retryBtn) return;
+      const retrySecsEl = document.getElementById("retrySecs");
+      const retryBtnSecsEl = document.getElementById("retryBtnSecs");
+      const retryBar = document.getElementById("retryBar");
     
       const doRetry = (typeof retryAction === "function") ? retryAction : () => {};
     
+      if (!retryBtn) return;
+    
+      // se non abbiamo secondi, abilita subito
       if (!secs) {
+        retryBtn.disabled = false;
         retryBtn.onclick = doRetry;
+        if (retryBar) retryBar.style.width = "100%";
         return;
       }
     
       retryBtn.disabled = true;
     
+      const total = secs;
       let remaining = secs;
-      const retrySecsEl = document.getElementById("retrySecs");
+    
+      // iniziale
+      if (retrySecsEl) retrySecsEl.textContent = String(remaining);
+      if (retryBtnSecsEl) retryBtnSecsEl.textContent = String(remaining);
+      if (retryBar) retryBar.style.width = "100%";
     
       const timer = setInterval(() => {
         remaining--;
+    
         if (retrySecsEl) retrySecsEl.textContent = String(remaining);
-        retryBtn.textContent = remaining > 0 ? `Riprova tra ${remaining}s` : "Riprova ora";
+        if (retryBtnSecsEl) retryBtnSecsEl.textContent = String(remaining);
+    
+        // progress
+        const pct = Math.max(0, Math.min(100, (remaining / total) * 100));
+        if (retryBar) retryBar.style.width = pct + "%";
     
         if (remaining <= 0) {
           clearInterval(timer);
           retryBtn.disabled = false;
           retryBtn.onclick = doRetry;
+          retryBtn.querySelector("div").textContent = "Riprova ora";
+          if (retryBar) retryBar.style.width = "0%";
         }
       }, 1000);
     }
-
 
     // ✅ parser SSE più robusto (gestisce \r\n, blocchi, JSON diversi)
     function extractTextFromSseJson(obj) {
@@ -586,4 +626,5 @@
   </script>
 </body>
 </html>
+
 
