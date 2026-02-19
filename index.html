@@ -13,47 +13,36 @@
     body { font-family: 'Inter', sans-serif; background: #f8fafc; }
     .ai-gradient { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
     .btn-target { transition: all 0.2s; border: 2px solid transparent; }
-    .btn-target.active { border-color: #6366f1; background-color: #eef2ff; color: #6366f1; font-weight: 700; }
-
-    .spin { animation: spin 1s linear infinite; }
-    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-    .pretty-scroll::-webkit-scrollbar { width: 10px; }
-    .pretty-scroll::-webkit-scrollbar-track { background: transparent; }
-    .pretty-scroll::-webkit-scrollbar-thumb {
-      background: rgba(99, 102, 241, 0.35);
-      border-radius: 999px;
-      border: 3px solid rgba(255, 255, 255, 0.6);
-    }
-    .pretty-scroll::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.55); }
-    .pretty-scroll { scrollbar-width: thin; scrollbar-color: rgba(99, 102, 241, 0.45) transparent; }
+    .btn-target.active { border-color: #6366f1; background-color: #eef2ff; color: #4f46e5; font-weight: 700; }
+    /* Per testi lunghi: evita layout "strano" e permette scroll interno */
+    #geminiResponse { white-space: pre-wrap; word-break: break-word; }
   </style>
 </head>
 
 <body class="pb-24">
 
-  <nav class="w-full h-16 flex items-center justify-between px-8 border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
-    <div class="flex items-center gap-3">
-      <div class="ai-gradient w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm">
-        <i class="ri-flashlight-fill text-xl"></i>
+  <!-- NAV -->
+  <nav class="w-full h-16 flex items-center justify-between px-6 md:px-10 border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="flex items-center gap-2">
+      <div class="ai-gradient w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-sm">
+        <i class="ri-flashlight-fill"></i>
       </div>
-      <span class="text-xl font-extrabold tracking-tight text-gray-900">
-        SimplifAI <span class="text-indigo-600">Clone</span>
-      </span>
+      <span class="text-xl font-extrabold tracking-tight text-gray-900">SimplifAI <span class="text-indigo-600">Clone</span></span>
     </div>
-    <div class="hidden md:flex gap-8 text-sm font-medium text-gray-500">
-      <a href="#" class="hover:text-indigo-600 transition">Home</a>
-      <a href="#" class="hover:text-indigo-600 transition">Come funziona</a>
-      <a href="#" class="hover:text-indigo-600 transition">Prezzi</a>
+    <div class="hidden md:flex gap-6 text-sm font-medium text-gray-500">
+      <a href="#" class="hover:text-indigo-600">Home</a>
+      <a href="#" class="hover:text-indigo-600">Come funziona</a>
+      <a href="#" class="hover:text-indigo-600">Prezzi</a>
     </div>
   </nav>
 
-  <section class="pt-20 text-center px-4">
+  <!-- HERO -->
+  <section class="pt-16 md:pt-20 text-center px-4">
     <span class="inline-block py-1 px-3 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-4">
       Powered by Google Gemini
     </span>
 
-    <h1 class="text-5xl md:text-6xl font-extrabold text-gray-900 mb-4">
+    <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 mb-4 tracking-tight">
       Semplifica il tuo <br>
       <span class="text-transparent bg-clip-text ai-gradient">Apprendimento.</span>
     </h1>
@@ -62,287 +51,364 @@
       Trasforma concetti complessi in spiegazioni adatte a chiunque.
     </p>
 
+    <!-- INPUT -->
     <div class="max-w-3xl mx-auto relative mb-6 group">
-      <div class="absolute -inset-1 ai-gradient rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-      <div class="relative bg-white rounded-2xl shadow-xl p-2 flex border border-gray-100">
+      <div class="absolute -inset-1 ai-gradient rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+      <div class="relative bg-white rounded-3xl shadow-xl p-2 flex border border-gray-100">
         <input
           type="text"
           id="userQuery"
           placeholder="Cosa vuoi che ti spieghi?"
-          class="w-full p-4 outline-none text-lg rounded-xl"
-          onkeydown="if(event.key==='Enter'){ chiediAGemini(); }"
-        />
+          class="w-full p-4 outline-none text-lg rounded-2xl"
+        >
         <button
-          onclick="chiediAGemini()"
-          class="ai-gradient text-white px-8 py-4 rounded-xl font-bold hover:scale-[1.03] transition active:scale-95"
+          id="generateBtn"
+          onclick="chiediAGeminiStart()"
+          class="ai-gradient text-white px-8 py-4 rounded-2xl font-bold hover:scale-[1.02] transition active:scale-95 shadow-lg"
         >
           Genera
         </button>
       </div>
     </div>
 
-    <div class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-3 px-4 mb-12">
-      <button class="btn-target bg-white p-3 rounded-xl shadow-sm text-sm text-gray-600 active"
-        onclick="setActiveTarget(this, {label:'Bambino', prompt:'un Bambino sotto i 10 anni', maxTokens:800, maxChars:2500})">
+    <!-- TARGET BUTTONS -->
+    <div class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-3 px-2 md:px-4 mb-10">
+      <button onclick="selectTarget(this, 'Bambino')" class="btn-target bg-white p-3 rounded-2xl shadow-sm text-sm text-gray-600 active">
         👶 Bambino
       </button>
-
-      <button class="btn-target bg-white p-3 rounded-xl shadow-sm text-sm text-gray-600"
-        onclick="setActiveTarget(this, {label:'Ragazzino', prompt:'un Ragazzino fino ai 18 anni', maxTokens:1100, maxChars:3500})">
+      <button onclick="selectTarget(this, 'Ragazzino')" class="btn-target bg-white p-3 rounded-2xl shadow-sm text-sm text-gray-600">
         🧒 Ragazzino
       </button>
-
-      <button class="btn-target bg-white p-3 rounded-xl shadow-sm text-sm text-gray-600"
-        onclick="setActiveTarget(this, {label:'Universitario', prompt:'uno Studente universitario', maxTokens:1600, maxChars:5500})">
+      <button onclick="selectTarget(this, 'Universitario')" class="btn-target bg-white p-3 rounded-2xl shadow-sm text-sm text-gray-600">
         🎓 Universitario
       </button>
-
-      <button class="btn-target bg-white p-3 rounded-xl shadow-sm text-sm text-gray-600"
-        onclick="setActiveTarget(this, {label:'Adulto', prompt:'un Adulto', maxTokens:1400, maxChars:5000})">
+      <button onclick="selectTarget(this, 'Adulto')" class="btn-target bg-white p-3 rounded-2xl shadow-sm text-sm text-gray-600">
         👨 Adulto
       </button>
-
-      <button class="btn-target bg-white p-3 rounded-xl shadow-sm text-sm text-gray-600"
-        onclick="setActiveTarget(this, {label:'Esperto', prompt:'un Esperto di settore', maxTokens:2400, maxChars:8000})">
+      <button onclick="selectTarget(this, 'Esperto')" class="btn-target bg-white p-3 rounded-2xl shadow-sm text-sm text-gray-600">
         💼 Esperto
       </button>
-
-      <button class="btn-target bg-white p-3 rounded-xl shadow-sm text-sm text-gray-600"
-        onclick="setActiveTarget(this, {label:'Scienziato', prompt:'uno Scienziato', maxTokens:3200, maxChars:12000})">
+      <button onclick="selectTarget(this, 'Scienziato')" class="btn-target bg-white p-3 rounded-2xl shadow-sm text-sm text-gray-600">
         🔬 Scienziato
       </button>
     </div>
   </section>
 
-  <section id="resultArea" class="max-w-3xl mx-auto px-4 hidden">
-    <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 max-h-[520px] overflow-y-auto pretty-scroll">
-      <div class="flex items-center justify-between gap-3 mb-6">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+  <!-- RESULT -->
+  <section id="resultArea" class="max-w-4xl mx-auto px-4 hidden">
+    <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+      <!-- header card -->
+      <div class="p-6 md:p-8 flex items-start justify-between gap-4">
+        <div class="flex items-start gap-3">
+          <div class="w-11 h-11 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
             <i class="ri-robot-2-line text-xl"></i>
           </div>
-          <div>
-            <h3 class="font-bold text-gray-900" id="targetLabel">Risposta per Bambino</h3>
-            <p class="text-xs text-gray-400" id="limitsLabel">Limite: 800 token • 2500 caratteri</p>
+
+          <div class="text-left">
+            <h3 class="font-extrabold text-gray-900" id="targetLabel">Risposta per Bambino</h3>
+            <p class="text-xs text-gray-400" id="limitsLabel">Limite: —</p>
           </div>
         </div>
 
         <div class="flex items-center gap-2">
           <button
-            id="continueBtn"
-            onclick="continuaRisposta()"
-            class="text-sm font-semibold px-4 py-2 rounded-xl bg-white border border-indigo-200 text-indigo-700 hover:bg-indigo-50 transition flex items-center gap-2 hidden"
-            title="Genera la parte successiva"
+            id="copyBtn"
+            onclick="copyAnswer()"
+            class="px-4 py-2 rounded-xl bg-indigo-50 text-indigo-600 font-semibold text-sm hover:bg-indigo-100 transition inline-flex items-center gap-2"
+            type="button"
           >
-            <i class="ri-arrow-right-line"></i>
-            <span>Continua</span>
+            <i class="ri-file-copy-line"></i> Copia
           </button>
 
           <button
-            id="copyBtn"
-            onclick="copyAnswer()"
-            class="text-sm font-semibold px-4 py-2 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition flex items-center gap-2 hidden"
+            id="continueBtn"
+            onclick="chiediAGeminiContinue()"
+            class="px-4 py-2 rounded-xl bg-gray-900 text-white font-semibold text-sm hover:bg-gray-800 transition hidden inline-flex items-center gap-2"
+            type="button"
           >
-            <i class="ri-file-copy-line"></i>
-            <span id="copyBtnText">Copia</span>
+            <i class="ri-arrow-down-line"></i> Continua
           </button>
         </div>
       </div>
 
-      <div id="loadingBox" class="hidden">
-        <div class="flex items-center gap-3 text-gray-600 mb-4">
-          <i class="ri-loader-4-line spin text-2xl text-indigo-600"></i>
-          <div class="text-left">
-            <p class="font-semibold text-gray-800">Sto generando la risposta…</p>
-            <p class="text-sm text-gray-500">Di solito ci mette pochi secondi.</p>
-          </div>
-        </div>
-        <div class="animate-pulse space-y-3">
-          <div class="h-4 bg-gray-200 rounded w-3/4"></div>
-          <div class="h-4 bg-gray-200 rounded w-full"></div>
-          <div class="h-4 bg-gray-200 rounded w-5/6"></div>
-          <div class="h-4 bg-gray-200 rounded w-2/3"></div>
-        </div>
-      </div>
+      <!-- content -->
+      <div class="px-6 md:px-8 pb-8">
+        <div class="h-px bg-gray-100 mb-5"></div>
 
-      <div id="geminiResponse" class="text-gray-700 leading-relaxed"></div>
+        <!-- Scroll interno: così il layout non esplode -->
+        <div class="max-h-[520px] overflow-y-auto pr-2">
+          <div id="geminiResponse" class="text-gray-700 leading-relaxed text-[15px] md:text-base"></div>
+        </div>
+
+        <p id="hintContinue" class="text-xs text-gray-400 mt-4 hidden">
+          La risposta è lunga: usa <b>Continua</b> per completarla.
+        </p>
+      </div>
     </div>
   </section>
 
   <script>
-    let selectedTarget = { label: "Bambino", prompt: "un Bambino sotto i 10 anni", maxTokens: 800, maxChars: 2500 };
+    // ====== TARGETS (con limiti diversi) ======
+    const TARGETS = {
+      "Bambino": {
+        label: "Bambino",
+        prompt: "un Bambino fino ai 10 anni (parole semplici, esempi quotidiani, frasi corte)",
+        maxTokens: 800,
+        maxChars: 2500
+      },
+      "Ragazzino": {
+        label: "Ragazzino",
+        prompt: "un Ragazzino fino ai 18 anni (chiaro ma più ricco, esempi scolastici, analogie)",
+        maxTokens: 1200,
+        maxChars: 3500
+      },
+      "Universitario": {
+        label: "Studente universitario",
+        prompt: "uno Studente universitario (strutturato, concetti corretti, termini tecnici spiegati)",
+        maxTokens: 2000,
+        maxChars: 5500
+      },
+      "Adulto": {
+        label: "Adulto",
+        prompt: "un Adulto (pratico, orientato a decisioni, esempi reali, linguaggio medio)",
+        maxTokens: 1600,
+        maxChars: 4500
+      },
+      "Esperto": {
+        label: "Esperto di settore",
+        prompt: "un Esperto di settore (dettagli, framework, pro/contro, terminologia specialistica)",
+        maxTokens: 2800,
+        maxChars: 8000
+      },
+      "Scienziato": {
+        label: "Scienziato",
+        prompt: "uno Scienziato (rigore, struttura, concetti avanzati, eventuali formule o notazioni se utili)",
+        maxTokens: 4500,
+        maxChars: 12000
+      }
+    };
 
-    // Stato: per continuare
+    // selectedTarget = { label, prompt, maxTokens, maxChars }
+    let selectedTarget = TARGETS["Bambino"];
+
+    // Stato per continuazioni
     let lastQuery = "";
-    let lastFullText = "";
+    let fullText = "";          // testo accumulato
+    let needsContinue = false;  // server lo dice
 
-    function setActiveTarget(btn, targetObj) {
-      document.querySelectorAll(".btn-target").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
+    function selectTarget(btn, key) {
+      document.querySelectorAll('.btn-target').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedTarget = TARGETS[key];
 
-      selectedTarget = targetObj;
-      document.getElementById("targetLabel").innerText = "Risposta per " + targetObj.label;
-      document.getElementById("limitsLabel").innerText = `Limite: ${targetObj.maxTokens} token • ${targetObj.maxChars} caratteri`;
+      // aggiorna titolo se la card è già visibile
+      document.getElementById('targetLabel').innerText = "Risposta per " + selectedTarget.label;
+      document.getElementById('limitsLabel').innerText =
+        `Limite: ${selectedTarget.maxTokens} token • ${selectedTarget.maxChars} caratteri`;
     }
 
-    function markdownToHtml(md) {
-      let html = String(md || "");
-      html = html.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    function showResultCard() {
+      const area = document.getElementById('resultArea');
+      area.classList.remove('hidden');
+      document.getElementById('targetLabel').innerText = "Risposta per " + selectedTarget.label;
+      document.getElementById('limitsLabel').innerText =
+        `Limite: ${selectedTarget.maxTokens} token • ${selectedTarget.maxChars} caratteri`;
 
-      html = html.replace(/^### (.*)$/gm, "<h3 class='text-xl font-bold mt-6 mb-2'>$1</h3>");
-      html = html.replace(/^## (.*)$/gm, "<h2 class='text-2xl font-bold mt-6 mb-3'>$1</h2>");
-      html = html.replace(/^# (.*)$/gm, "<h1 class='text-3xl font-extrabold mt-6 mb-4'>$1</h1>");
-
-      html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-      html = html.replace(/^---$/gm, "<hr class='my-6 border-gray-200' />");
-
-      html = html.replace(/^\- (.*)$/gm, "<li class='ml-6 list-disc'>$1</li>");
-      html = html.replace(/^\* (.*)$/gm, "<li class='ml-6 list-disc'>$1</li>");
-      html = html.replace(/(<li.*<\/li>)/gs, "<ul class='space-y-2 my-4'>$1</ul>");
-
-      html = html.replace(/\n\n+/g, "</p><p class='mb-4'>");
-      html = "<p class='mb-4'>" + html + "</p>";
-      html = html.replace(/\n/g, "<br>");
-      return html;
+      // scroll dolce alla card
+      window.scrollTo({ top: area.offsetTop - 80, behavior: 'smooth' });
     }
 
-    function copyAnswer() {
-      const responseEl = document.getElementById("geminiResponse");
-      const text = responseEl.innerText.trim();
-      if (!text) return alert("Nessuna risposta da copiare!");
-
-      navigator.clipboard.writeText(text).then(() => {
-        const btnText = document.getElementById("copyBtnText");
-        btnText.textContent = "Copiato!";
-        setTimeout(() => btnText.textContent = "Copia", 1500);
-      });
+    function setLoading() {
+      const responseEl = document.getElementById('geminiResponse');
+      responseEl.innerHTML = `
+        <div class="animate-pulse space-y-4">
+          <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+          <div class="h-4 bg-gray-200 rounded w-full"></div>
+          <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+        </div>
+      `;
     }
 
-    function updateButtonsVisibility(text) {
-      const copyBtn = document.getElementById("copyBtn");
+    function escapeHtml(s) {
+      return s
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    // mini-render: mantiene a capo e rende un po' più leggibile
+    function renderText(raw) {
+      // Evita che il marker finisca con formattazione strana
+      const safe = escapeHtml(raw);
+
+      // semplice: grassetto markdown ** **
+      const bolded = safe.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+      // headings # ## ### -> stile semplice
+      const headed = bolded
+        .replace(/^######\s?(.*)$/gm, "<div class='mt-4 font-semibold text-gray-900 text-sm'>$1</div>")
+        .replace(/^#####\s?(.*)$/gm, "<div class='mt-5 font-semibold text-gray-900 text-base'>$1</div>")
+        .replace(/^####\s?(.*)$/gm, "<div class='mt-6 font-bold text-gray-900 text-lg'>$1</div>")
+        .replace(/^###\s?(.*)$/gm, "<div class='mt-7 font-extrabold text-gray-900 text-xl'>$1</div>")
+        .replace(/^##\s?(.*)$/gm, "<div class='mt-8 font-extrabold text-gray-900 text-2xl'>$1</div>")
+        .replace(/^#\s?(.*)$/gm, "<div class='mt-9 font-extrabold text-gray-900 text-3xl'>$1</div>");
+
+      // nuove linee -> <br>
+      return headed.replace(/\n/g, "<br>");
+    }
+
+    function updateContinueUI() {
       const continueBtn = document.getElementById("continueBtn");
+      const hint = document.getElementById("hintContinue");
 
-      if ((text || "").trim().length > 0) copyBtn.classList.remove("hidden");
-      else copyBtn.classList.add("hidden");
-
-      // Se termina con ...(continua) mostro “Continua”
-      if ((text || "").trim().endsWith("...(continua)")) continueBtn.classList.remove("hidden");
-      else continueBtn.classList.add("hidden");
+      if (needsContinue) {
+        continueBtn.classList.remove("hidden");
+        hint.classList.remove("hidden");
+      } else {
+        continueBtn.classList.add("hidden");
+        hint.classList.add("hidden");
+      }
     }
 
-    async function chiediAGemini() {
-      const query = document.getElementById("userQuery").value.trim();
+    async function callGeminiApi(payload) {
+      const r = await fetch("/api/gemini", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await r.json();
+      if (!r.ok || data?.error) {
+        throw new Error(data?.error || `Errore HTTP ${r.status}`);
+      }
+      return data;
+    }
+
+    async function chiediAGeminiStart() {
+      const query = document.getElementById('userQuery').value.trim();
       if (!query) return alert("Inserisci una domanda!");
 
       lastQuery = query;
-      lastFullText = ""; // reset
+      fullText = "";
+      needsContinue = false;
 
-      const area = document.getElementById("resultArea");
-      const responseEl = document.getElementById("geminiResponse");
-      const loadingBox = document.getElementById("loadingBox");
+      showResultCard();
+      setLoading();
 
-      area.classList.remove("hidden");
-      loadingBox.classList.remove("hidden");
-      responseEl.innerHTML = "";
-      document.getElementById("copyBtn").classList.add("hidden");
-      document.getElementById("continueBtn").classList.add("hidden");
-
-      window.scrollTo({ top: area.offsetTop - 80, behavior: "smooth" });
+      // disabilita bottone mentre carica
+      const btn = document.getElementById("generateBtn");
+      btn.disabled = true;
+      btn.classList.add("opacity-70");
 
       try {
-        const resp = await fetch("/api/gemini", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            mode: "start",
-            query,
-            targetLabel: selectedTarget.label,
-            targetPrompt: selectedTarget.prompt,
-            maxTokens: selectedTarget.maxTokens,
-            maxChars: selectedTarget.maxChars
-          })
+        const data = await callGeminiApi({
+          query: lastQuery,
+          targetLabel: selectedTarget.label,
+          targetPrompt: selectedTarget.prompt,
+          maxTokens: selectedTarget.maxTokens,
+          maxChars: selectedTarget.maxChars,
+          mode: "start",
+          previousText: ""
         });
 
-        const data = await resp.json();
-        if (!resp.ok || data.error) throw new Error(data.error || "Errore sconosciuto");
+        fullText = data.text || "";
+        needsContinue = !!data.needsContinue;
 
-        loadingBox.classList.add("hidden");
+        document.getElementById("geminiResponse").innerHTML = renderText(fullText);
+        updateContinueUI();
 
-        lastFullText = data.text || "";
-        responseEl.innerHTML = markdownToHtml(lastFullText);
-        updateButtonsVisibility(lastFullText);
-
-      } catch (err) {
-        loadingBox.classList.add("hidden");
-        responseEl.innerHTML = `
-          <p class="text-red-600 font-semibold flex items-center gap-2">
-            <i class="ri-error-warning-line"></i> Errore: ${String(err.message || err)}
-          </p>
-          <p class="text-sm text-gray-500 mt-2">
-            Controlla i log della Function su Vercel e la variabile GEMINI_API_KEY.
-          </p>
+      } catch (e) {
+        needsContinue = false;
+        updateContinueUI();
+        document.getElementById("geminiResponse").innerHTML = `
+          <div class="text-red-600 font-semibold">
+            <i class="ri-error-warning-line"></i> Errore: ${escapeHtml(e.message)}
+          </div>
+          <div class="text-xs text-gray-400 mt-2">
+            Se succede online, controlliamo i log su Vercel e la variabile <b>GEMINI_API_KEY</b>.
+          </div>
         `;
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove("opacity-70");
       }
     }
 
-    async function continuaRisposta() {
-      if (!lastQuery || !lastFullText) return;
+    async function chiediAGeminiContinue() {
+      if (!lastQuery) return;
+      showResultCard();
 
-      const responseEl = document.getElementById("geminiResponse");
-      const loadingBox = document.getElementById("loadingBox");
+      // disabilita bottone continua mentre carica
       const continueBtn = document.getElementById("continueBtn");
-
-      // UI
-      loadingBox.classList.remove("hidden");
-      continueBtn.classList.add("hidden");
+      continueBtn.disabled = true;
+      continueBtn.classList.add("opacity-70");
 
       try {
-        const resp = await fetch("/api/gemini", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            mode: "continue",
-            query: lastQuery,
-            previousText: lastFullText,
-            targetLabel: selectedTarget.label,
-            targetPrompt: selectedTarget.prompt,
-            maxTokens: selectedTarget.maxTokens,
-            maxChars: selectedTarget.maxChars
-          })
+        const data = await callGeminiApi({
+          query: lastQuery,
+          targetLabel: selectedTarget.label,
+          targetPrompt: selectedTarget.prompt,
+          maxTokens: selectedTarget.maxTokens,
+          maxChars: selectedTarget.maxChars,
+          mode: "continue",
+          previousText: fullText
         });
 
-        const data = await resp.json();
-        if (!resp.ok || data.error) throw new Error(data.error || "Errore sconosciuto");
-
-        loadingBox.classList.add("hidden");
-
-        // Aggiungo solo la nuova parte (senza riscrivere tutto)
+        // Accoda (senza duplicare marker)
         const newPart = (data.text || "").trim();
+        const cleanNew = newPart.replace(/\s*\.\.\.\(continua\)\s*$/i, "").trimEnd();
 
-        // Evita di duplicare ...(continua) precedente: lo togliamo prima di appendere
-        lastFullText = lastFullText.replace(/\.\.\.\(continua\)\s*$/m, "").trimEnd();
+        // Rimuovo eventuale marker dal testo precedente prima di unire
+        fullText = fullText.replace(/\s*\.\.\.\(continua\)\s*$/i, "").trimEnd();
 
-        // Se la nuova parte inizia ripetendo troppo, comunque la appendiamo: il prompt prova a evitarlo
-        lastFullText = (lastFullText + "\n\n" + newPart).trim();
+        fullText = (fullText + "\n\n" + cleanNew).trimEnd();
 
-        responseEl.innerHTML = markdownToHtml(lastFullText);
-        updateButtonsVisibility(lastFullText);
+        // Se il server dice ancora "needsContinue", rimettiamo il marker (solo visivo)
+        needsContinue = !!data.needsContinue;
+        if (needsContinue) {
+          fullText = fullText.trimEnd() + "\n\n...(continua)";
+        }
 
-        // scroll in fondo alla card (dopo append)
-        const container = responseEl.closest(".pretty-scroll");
-        if (container) container.scrollTop = container.scrollHeight;
+        document.getElementById("geminiResponse").innerHTML = renderText(fullText);
+        updateContinueUI();
 
-      } catch (err) {
-        loadingBox.classList.add("hidden");
-        responseEl.innerHTML += `
-          <hr class="my-6 border-gray-200" />
-          <p class="text-red-600 font-semibold flex items-center gap-2">
-            <i class="ri-error-warning-line"></i> Errore nel continuare: ${String(err.message || err)}
-          </p>
+      } catch (e) {
+        document.getElementById("geminiResponse").innerHTML += `
+          <br><br>
+          <span class="text-red-600 font-semibold">
+            <i class="ri-error-warning-line"></i> Errore nel continua: ${escapeHtml(e.message)}
+          </span>
         `;
+      } finally {
+        continueBtn.disabled = false;
+        continueBtn.classList.remove("opacity-70");
       }
     }
-  </script>
 
+    async function copyAnswer() {
+      try {
+        const textToCopy = fullText || "";
+        await navigator.clipboard.writeText(textToCopy);
+        const btn = document.getElementById("copyBtn");
+        const old = btn.innerHTML;
+        btn.innerHTML = `<i class="ri-check-line"></i> Copiato`;
+        setTimeout(() => btn.innerHTML = old, 1200);
+      } catch {
+        alert("Non riesco a copiare automaticamente. Seleziona il testo e copia manualmente.");
+      }
+    }
+
+    // Invio con ENTER
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && document.activeElement?.id === "userQuery") {
+        chiediAGeminiStart();
+      }
+    });
+
+    // Init label limiti
+    document.getElementById('targetLabel').innerText = "Risposta per " + selectedTarget.label;
+    document.getElementById('limitsLabel').innerText =
+      `Limite: ${selectedTarget.maxTokens} token • ${selectedTarget.maxChars} caratteri`;
+  </script>
 </body>
 </html>
