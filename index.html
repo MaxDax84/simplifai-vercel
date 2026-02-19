@@ -15,11 +15,9 @@
     .btn-target { transition: all 0.2s; border: 2px solid transparent; }
     .btn-target.active { border-color: #6366f1; background-color: #eef2ff; color: #6366f1; font-weight: 700; }
 
-    /* Spinner */
     .spin { animation: spin 1s linear infinite; }
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-    /* Scrollbar "iOS style" (Chrome/Edge/Safari) */
     .pretty-scroll::-webkit-scrollbar { width: 10px; }
     .pretty-scroll::-webkit-scrollbar-track { background: transparent; }
     .pretty-scroll::-webkit-scrollbar-thumb {
@@ -28,15 +26,12 @@
       border: 3px solid rgba(255, 255, 255, 0.6);
     }
     .pretty-scroll::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.55); }
-
-    /* Firefox */
     .pretty-scroll { scrollbar-width: thin; scrollbar-color: rgba(99, 102, 241, 0.45) transparent; }
   </style>
 </head>
 
 <body class="pb-24">
 
-  <!-- NAV -->
   <nav class="w-full h-16 flex items-center justify-between px-8 border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
     <div class="flex items-center gap-3">
       <div class="ai-gradient w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm">
@@ -53,7 +48,6 @@
     </div>
   </nav>
 
-  <!-- HERO -->
   <section class="pt-20 text-center px-4">
     <span class="inline-block py-1 px-3 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-4">
       Powered by Google Gemini
@@ -68,7 +62,6 @@
       Trasforma concetti complessi in spiegazioni adatte a chiunque.
     </p>
 
-    <!-- Search box -->
     <div class="max-w-3xl mx-auto relative mb-6 group">
       <div class="absolute -inset-1 ai-gradient rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
       <div class="relative bg-white rounded-2xl shadow-xl p-2 flex border border-gray-100">
@@ -88,7 +81,6 @@
       </div>
     </div>
 
-    <!-- Targets -->
     <div class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-3 px-4 mb-12">
       <button class="btn-target bg-white p-3 rounded-xl shadow-sm text-sm text-gray-600 active"
         onclick="setActiveTarget(this, {label:'Bambino', prompt:'un Bambino sotto i 10 anni', maxTokens:800, maxChars:2500})">
@@ -122,7 +114,6 @@
     </div>
   </section>
 
-  <!-- RESULT -->
   <section id="resultArea" class="max-w-3xl mx-auto px-4 hidden">
     <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 max-h-[520px] overflow-y-auto pretty-scroll">
       <div class="flex items-center justify-between gap-3 mb-6">
@@ -136,17 +127,28 @@
           </div>
         </div>
 
-        <button
-          id="copyBtn"
-          onclick="copyAnswer()"
-          class="text-sm font-semibold px-4 py-2 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition flex items-center gap-2 hidden"
-        >
-          <i class="ri-file-copy-line"></i>
-          <span id="copyBtnText">Copia</span>
-        </button>
+        <div class="flex items-center gap-2">
+          <button
+            id="continueBtn"
+            onclick="continuaRisposta()"
+            class="text-sm font-semibold px-4 py-2 rounded-xl bg-white border border-indigo-200 text-indigo-700 hover:bg-indigo-50 transition flex items-center gap-2 hidden"
+            title="Genera la parte successiva"
+          >
+            <i class="ri-arrow-right-line"></i>
+            <span>Continua</span>
+          </button>
+
+          <button
+            id="copyBtn"
+            onclick="copyAnswer()"
+            class="text-sm font-semibold px-4 py-2 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition flex items-center gap-2 hidden"
+          >
+            <i class="ri-file-copy-line"></i>
+            <span id="copyBtnText">Copia</span>
+          </button>
+        </div>
       </div>
 
-      <!-- Loading -->
       <div id="loadingBox" class="hidden">
         <div class="flex items-center gap-3 text-gray-600 mb-4">
           <i class="ri-loader-4-line spin text-2xl text-indigo-600"></i>
@@ -163,65 +165,51 @@
         </div>
       </div>
 
-      <!-- Answer -->
       <div id="geminiResponse" class="text-gray-700 leading-relaxed"></div>
     </div>
   </section>
 
   <script>
-    // Target di default
     let selectedTarget = { label: "Bambino", prompt: "un Bambino sotto i 10 anni", maxTokens: 800, maxChars: 2500 };
+
+    // Stato: per continuare
+    let lastQuery = "";
+    let lastFullText = "";
 
     function setActiveTarget(btn, targetObj) {
       document.querySelectorAll(".btn-target").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
 
       selectedTarget = targetObj;
-
       document.getElementById("targetLabel").innerText = "Risposta per " + targetObj.label;
       document.getElementById("limitsLabel").innerText = `Limite: ${targetObj.maxTokens} token • ${targetObj.maxChars} caratteri`;
     }
 
     function markdownToHtml(md) {
       let html = String(md || "");
-
-      // escape HTML base
       html = html.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-      // titoli
       html = html.replace(/^### (.*)$/gm, "<h3 class='text-xl font-bold mt-6 mb-2'>$1</h3>");
       html = html.replace(/^## (.*)$/gm, "<h2 class='text-2xl font-bold mt-6 mb-3'>$1</h2>");
       html = html.replace(/^# (.*)$/gm, "<h1 class='text-3xl font-extrabold mt-6 mb-4'>$1</h1>");
 
-      // grassetto
       html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-
-      // separatore ---
       html = html.replace(/^---$/gm, "<hr class='my-6 border-gray-200' />");
 
-      // liste con "-", "*"
       html = html.replace(/^\- (.*)$/gm, "<li class='ml-6 list-disc'>$1</li>");
       html = html.replace(/^\* (.*)$/gm, "<li class='ml-6 list-disc'>$1</li>");
       html = html.replace(/(<li.*<\/li>)/gs, "<ul class='space-y-2 my-4'>$1</ul>");
 
-      // paragrafi (a capo doppio)
       html = html.replace(/\n\n+/g, "</p><p class='mb-4'>");
       html = "<p class='mb-4'>" + html + "</p>";
-
-      // a capo singolo
       html = html.replace(/\n/g, "<br>");
-
       return html;
     }
 
     function copyAnswer() {
       const responseEl = document.getElementById("geminiResponse");
       const text = responseEl.innerText.trim();
-
-      if (!text) {
-        alert("Nessuna risposta da copiare!");
-        return;
-      }
+      if (!text) return alert("Nessuna risposta da copiare!");
 
       navigator.clipboard.writeText(text).then(() => {
         const btnText = document.getElementById("copyBtnText");
@@ -230,20 +218,34 @@
       });
     }
 
+    function updateButtonsVisibility(text) {
+      const copyBtn = document.getElementById("copyBtn");
+      const continueBtn = document.getElementById("continueBtn");
+
+      if ((text || "").trim().length > 0) copyBtn.classList.remove("hidden");
+      else copyBtn.classList.add("hidden");
+
+      // Se termina con ...(continua) mostro “Continua”
+      if ((text || "").trim().endsWith("...(continua)")) continueBtn.classList.remove("hidden");
+      else continueBtn.classList.add("hidden");
+    }
+
     async function chiediAGemini() {
       const query = document.getElementById("userQuery").value.trim();
+      if (!query) return alert("Inserisci una domanda!");
+
+      lastQuery = query;
+      lastFullText = ""; // reset
+
       const area = document.getElementById("resultArea");
       const responseEl = document.getElementById("geminiResponse");
       const loadingBox = document.getElementById("loadingBox");
-      const copyBtn = document.getElementById("copyBtn");
 
-      if (!query) return alert("Inserisci una domanda!");
-
-      // UI
       area.classList.remove("hidden");
       loadingBox.classList.remove("hidden");
       responseEl.innerHTML = "";
-      copyBtn.classList.add("hidden");
+      document.getElementById("copyBtn").classList.add("hidden");
+      document.getElementById("continueBtn").classList.add("hidden");
 
       window.scrollTo({ top: area.offsetTop - 80, behavior: "smooth" });
 
@@ -252,6 +254,7 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            mode: "start",
             query,
             targetLabel: selectedTarget.label,
             targetPrompt: selectedTarget.prompt,
@@ -264,10 +267,10 @@
         if (!resp.ok || data.error) throw new Error(data.error || "Errore sconosciuto");
 
         loadingBox.classList.add("hidden");
-        responseEl.innerHTML = markdownToHtml(data.text);
 
-        // Mostra copia solo se c'è testo
-        if ((data.text || "").trim().length > 0) copyBtn.classList.remove("hidden");
+        lastFullText = data.text || "";
+        responseEl.innerHTML = markdownToHtml(lastFullText);
+        updateButtonsVisibility(lastFullText);
 
       } catch (err) {
         loadingBox.classList.add("hidden");
@@ -276,11 +279,70 @@
             <i class="ri-error-warning-line"></i> Errore: ${String(err.message || err)}
           </p>
           <p class="text-sm text-gray-500 mt-2">
-            Se succede online, controlla i log della Function su Vercel e la variabile GEMINI_API_KEY.
+            Controlla i log della Function su Vercel e la variabile GEMINI_API_KEY.
+          </p>
+        `;
+      }
+    }
+
+    async function continuaRisposta() {
+      if (!lastQuery || !lastFullText) return;
+
+      const responseEl = document.getElementById("geminiResponse");
+      const loadingBox = document.getElementById("loadingBox");
+      const continueBtn = document.getElementById("continueBtn");
+
+      // UI
+      loadingBox.classList.remove("hidden");
+      continueBtn.classList.add("hidden");
+
+      try {
+        const resp = await fetch("/api/gemini", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            mode: "continue",
+            query: lastQuery,
+            previousText: lastFullText,
+            targetLabel: selectedTarget.label,
+            targetPrompt: selectedTarget.prompt,
+            maxTokens: selectedTarget.maxTokens,
+            maxChars: selectedTarget.maxChars
+          })
+        });
+
+        const data = await resp.json();
+        if (!resp.ok || data.error) throw new Error(data.error || "Errore sconosciuto");
+
+        loadingBox.classList.add("hidden");
+
+        // Aggiungo solo la nuova parte (senza riscrivere tutto)
+        const newPart = (data.text || "").trim();
+
+        // Evita di duplicare ...(continua) precedente: lo togliamo prima di appendere
+        lastFullText = lastFullText.replace(/\.\.\.\(continua\)\s*$/m, "").trimEnd();
+
+        // Se la nuova parte inizia ripetendo troppo, comunque la appendiamo: il prompt prova a evitarlo
+        lastFullText = (lastFullText + "\n\n" + newPart).trim();
+
+        responseEl.innerHTML = markdownToHtml(lastFullText);
+        updateButtonsVisibility(lastFullText);
+
+        // scroll in fondo alla card (dopo append)
+        const container = responseEl.closest(".pretty-scroll");
+        if (container) container.scrollTop = container.scrollHeight;
+
+      } catch (err) {
+        loadingBox.classList.add("hidden");
+        responseEl.innerHTML += `
+          <hr class="my-6 border-gray-200" />
+          <p class="text-red-600 font-semibold flex items-center gap-2">
+            <i class="ri-error-warning-line"></i> Errore nel continuare: ${String(err.message || err)}
           </p>
         `;
       }
     }
   </script>
+
 </body>
 </html>
