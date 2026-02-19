@@ -228,56 +228,112 @@ targetsEl.appendChild(b);
 renderTargets();
 
 async function generate(mode="generate"){
-const query=document.getElementById("query").value.trim();
-if(!query)return;
+  const query=document.getElementById("query").value.trim();
+  if(!query) return;
 
-statusEl.textContent="Generazione in corso...";
-responseEl.textContent="";
-accumulated="";
+  // UI
+  statusEl.textContent = mode==="continue" ? "Continuo..." : "Generazione in corso...";
+  document.getElementById("generateBtn").disabled = true;
+  document.getElementById("continueBtn").disabled = true;
 
-try{
-const res=await fetch("/api/gemini",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-query,
-targetPrompt:TARGETS[selected].prompt,
-mode,
-previousText:accumulated
-})
-});
+  if(mode==="generate"){
+    responseEl.textContent = "";
+    accumulated = "";
+  }
 
-if(!res.ok){
-const txt=await res.text();
-throw new Error(txt||"Errore API");
+  try{
+    const res=await fetch("/api/gemini",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        query,
+        targetPrompt: TARGETS[selected].prompt,
+        // se il tuo backend usa maxTokens/maxChars, puoi rimetterli qui
+        mode,
+        previousText: mode==="continue" ? accumulated : ""
+      })
+    });
+
+    if(!res.ok){
+      const txt=await res.text();
+      throw new Error(txt || ("Errore HTTP " + res.status));
+    }
+
+    const ct=(res.headers.get("content-type")||"").toLowerCase();
+
+    // Se NON è SSE, fallback: testo diretto
+    if(!ct.includes("text/event-stream")){
+      const txt = await res.text();
+      accumulated += txt;
+      responseEl.textContent += txt;
+      statusEl.textContent="Fatto.";
+      document.getElementById("generateBtn").disabled = false;
+      document.getElementById("continueBtn").disabled = false;
+      document.getElementById("copyBtn").disabled = !responseEl.textContent.trim();
+      return;
+    }
+
+    const reader=res.body.getReader();
+    const decoder=new TextDecoder("utf-8");
+
+    let buffer = "";
+    let uiBuffer = "";
+    const FLUSH = 30;
+
+    while(true){
+      const {value,done}=await reader.read();
+      if(done) break;
+
+      buffer += decoder.decode(value, {stream:true});
+
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+
+      for(const line of lines){
+        const t = line.trim();
+        if(!t.startsWith("data:")) continue;
+
+        const data = t.slice(5).trim();
+        if(!data || data === "[DONE]") continue;
+
+        try{
+          const obj = JSON.parse(data);
+          const parts = obj?.candidates?.[0]?.content?.parts || [];
+          for(const p of parts){
+            if(typeof p?.text === "string"){
+              uiBuffer += p.text;
+              if(uiBuffer.length >= FLUSH){
+                accumulated += uiBuffer;
+                responseEl.textContent += uiBuffer;
+                uiBuffer = "";
+              }
+            }
+          }
+        } catch(e){
+          // ignora JSON parziale o non valido
+        }
+      }
+    }
+
+    if(uiBuffer){
+      accumulated += uiBuffer;
+      responseEl.textContent += uiBuffer;
+    }
+
+    statusEl.textContent="Fatto.";
+    document.getElementById("generateBtn").disabled = false;
+    document.getElementById("continueBtn").disabled = false;
+    document.getElementById("copyBtn").disabled = !responseEl.textContent.trim();
+
+  }catch(e){
+    statusEl.textContent="Errore: "+ (e?.message || e);
+    document.getElementById("generateBtn").disabled = false;
+    document.getElementById("continueBtn").disabled = true;
+  }
 }
 
-const reader=res.body.getReader();
-const decoder=new TextDecoder();
-
-while(true){
-const {value,done}=await reader.read();
-if(done)break;
-const chunk=decoder.decode(value);
-accumulated+=chunk;
-responseEl.textContent+=chunk;
-}
-
-statusEl.textContent="Fatto.";
-document.getElementById("continueBtn").disabled=false;
-document.getElementById("copyBtn").disabled=false;
-
-}catch(e){
-statusEl.textContent="Errore: "+e.message;
-}
-}
-
-document.getElementById("generateBtn").onclick=()=>generate();
-document.getElementById("continueBtn").onclick=()=>generate("continue");
-document.getElementById("copyBtn").onclick=()=>{
-navigator.clipboard.writeText(responseEl.textContent);
-};
 </script>
 
 </body>
 </html>
+
