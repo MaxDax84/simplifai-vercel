@@ -43,7 +43,7 @@ export default async function handler(req) {
       targetPrompt,
       maxTokens,
       maxChars,
-      mode, // "start" | "continue"
+      mode,
       previousText,
     } = body || {};
 
@@ -51,7 +51,6 @@ export default async function handler(req) {
       return jsonError("Parametri mancanti (query/targetPrompt).", 400);
     }
 
-    // Limiti safe
     const tokens = Math.min(Math.max(Number(maxTokens) || 1200, 256), 8000);
     const charsLimit = Math.min(Math.max(Number(maxChars) || 4000, 500), 50000);
 
@@ -92,7 +91,6 @@ Ora continua dal punto esatto in cui si è interrotta.
 `.trim();
     }
 
-    // ✅ Stream SSE vero da Gemini (alt=sse)
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key=${apiKey}`;
 
     const upstream = await fetch(url, {
@@ -116,7 +114,7 @@ Ora continua dal punto esatto in cui si è interrotta.
       return jsonError(msg, 500);
     }
 
-    // ✅ PASS-THROUGH: inoltriamo LO STESSO SSE di Gemini al browser
+    // Pass-through SSE
     return new Response(upstream.body, {
       status: 200,
       headers: {
