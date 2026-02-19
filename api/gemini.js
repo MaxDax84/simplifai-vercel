@@ -1,71 +1,72 @@
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Metodo non consentito. Usa POST." });
-  }
+  // CORS base
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    return res
-      .status(500)
-      .json({ error: "GEMINI_API_KEY non configurata su Vercel." });
-  }
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "POST") return res.status(405).json({ error: "Metodo non consentito. Usa POST." });
 
   try {
-    const { query, target } = req.body || {};
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) return res.status(500).json({ error: "GEMINI_API_KEY mancante su Vercel." });
 
-    if (!query) {
-      return res.status(400).json({ error: "Query mancante." });
+    const { query, targetLabel, targetPrompt, maxTokens, maxChars } = req.body || {};
+
+    if (!query || !targetPrompt) {
+      return res.status(400).json({ error: "Parametri mancanti (query/targetPrompt)." });
     }
+
+    // ✅ Limiti “safe”
+    const tokens = Math.min(Math.max(Number(maxTokens) || 1200, 256), 8000); // tra 256 e 8000
+    const charsLimit = Math.min(Math.max(Number(maxChars) || 4000, 500), 50000); // tra 500 e 50k
 
     const prompt = `
-Spiega il seguente concetto: "${query}"
+Spiega il seguente concetto: "${query}".
 
-Adatta il linguaggio, gli esempi, il tono e il livello di profondità
-specificamente per questo target: ${target || "Bambino (fino ai 10 anni)"}.
+Target: ${targetPrompt}.
+Stile: chiaro, ben strutturato, con esempi adatti al target.
+Vincolo LUNGHEZZA: resta ENTRO circa ${Math.floor(charsLimit * 0.85)} caratteri (massimo ${charsLimit}).
+Se non basta spazio, dai una sintesi e poi una sezione "In breve" finale.
 
-Regole:
-- Paragrafi brevi
-- Esempi concreti
-- Linguaggio chiaro
-- Se utile, usa punti elenco
+Formatta con titoli e liste quando utile.
 `.trim();
 
-    // ✅ MODELLO GIUSTO DISPONIBILE NEL TUO ACCOUNT
-    const MODEL = "gemini-2.5-flash";
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 3500,
-          },
-        }),
-      }
-    );
+    const r = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.6,
+          maxOutputTokens: tokens
+        }
+      })
+    });
 
-    const data = await response.json();
+    const data = await r.json();
 
-    if (!response.ok || data?.error) {
-      return res.status(500).json({
-        error:
-          data?.error?.message ||
-          `Errore Gemini (HTTP ${response.status})`,
-      });
+    if (!r.ok || data?.error) {
+      const msg = data?.error?.message || `Errore API (${r.status})`;
+      return res.status(500).json({ error: msg });
     }
 
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    let out = String(text);
 
-    if (!text) {
-      return res.status(500).json({ error: "Risposta vuota da Gemini." });
+    // ✅ Taglio “hard” per rispettare SEMPRE maxChars
+    if (out.length > charsLimit) {
+      out = out.slice(0, charsLimit).trimEnd() + "\n\n…(continua)";
     }
 
-    return res.status(200).json({ text });
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
+    return res.status(200).json({
+      text: out,
+      used: { maxTokens: tokens, maxChars: charsLimit },
+      target: targetLabel || ""
+    });
+  } catch (e) {
+    return res.status(500).json({ error: e?.message || "Errore sconosciuto" });
   }
 }
