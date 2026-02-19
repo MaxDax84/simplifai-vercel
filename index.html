@@ -160,7 +160,6 @@
   </section>
 
   <script>
-    // ====== TARGETS (NUOVI LIMITI) ======
     const TARGETS = {
       "Bambino": {
         label: "Bambino",
@@ -201,7 +200,6 @@
     };
 
     let selectedTarget = TARGETS["Bambino"];
-
     let lastQuery = "";
     let fullText = "";
     let needsContinue = false;
@@ -226,17 +224,6 @@
       window.scrollTo({ top: area.offsetTop - 80, behavior: 'smooth' });
     }
 
-    function setSkeleton() {
-      const responseEl = document.getElementById('geminiResponse');
-      responseEl.innerHTML = `
-        <div class="animate-pulse space-y-4">
-          <div class="h-4 bg-gray-200 rounded w-3/4"></div>
-          <div class="h-4 bg-gray-200 rounded w-full"></div>
-          <div class="h-4 bg-gray-200 rounded w-5/6"></div>
-        </div>
-      `;
-    }
-
     function setBusy(isBusy, message = "Sto generando…") {
       const loadingBar = document.getElementById("loadingBar");
       const loadingText = document.getElementById("loadingText");
@@ -245,8 +232,7 @@
       const continueBtn = document.getElementById("continueBtn");
       const copyBtn = document.getElementById("copyBtn");
 
-      if (loadingText) loadingText.textContent = message;
-
+      loadingText.textContent = message;
       if (isBusy) loadingBar.classList.remove("hidden");
       else loadingBar.classList.add("hidden");
 
@@ -292,8 +278,16 @@
       }
     }
 
-    // ---------- STREAMING CLIENT (SSE over fetch) ----------
-    async function streamGemini(payload, { onChunk, onDone, onError } = {}) {
+    function maybeAutoScroll() {
+      const box = document.getElementById("scrollBox");
+      if (!box) return;
+      const threshold = 80;
+      const isNearBottom = (box.scrollHeight - box.scrollTop - box.clientHeight) < threshold;
+      if (isNearBottom) box.scrollTop = box.scrollHeight;
+    }
+
+    // ✅ Stream reader (SSE)
+    async function streamGemini(payload, { onChunk, onDone } = {}) {
       const r = await fetch("/api/gemini", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -302,16 +296,12 @@
 
       if (!r.ok) {
         let msg = `Errore HTTP ${r.status}`;
-        try {
-          const j = await r.json();
-          msg = j?.error || msg;
-        } catch {}
+        try { msg = (await r.json())?.error || msg; } catch {}
         throw new Error(msg);
       }
 
       const reader = r.body.getReader();
       const decoder = new TextDecoder("utf-8");
-
       let buf = "";
 
       while (true) {
@@ -320,47 +310,29 @@
 
         buf += decoder.decode(value, { stream: true });
 
-        // SSE: eventi separati da "\n\n"
         const events = buf.split("\n\n");
         buf = events.pop() || "";
 
         for (const evt of events) {
-          const line = evt.trim();
-          if (!line) continue;
-
-          // Prendiamo tutte le righe "data: ..."
-          const dataLines = line.split("\n").filter(l => l.startsWith("data:"));
-          for (const dl of dataLines) {
-            const jsonStr = dl.slice(5).trim();
+          const lines = evt.split("\n").map(l => l.trim());
+          for (const line of lines) {
+            if (!line.startsWith("data:")) continue;
+            const jsonStr = line.slice(5).trim();
             if (!jsonStr) continue;
 
             let obj;
-            try {
-              obj = JSON.parse(jsonStr);
-            } catch {
-              continue;
-            }
+            try { obj = JSON.parse(jsonStr); } catch { continue; }
 
             if (obj.type === "chunk") {
               onChunk && onChunk(obj.text || "");
             } else if (obj.type === "done") {
               onDone && onDone(obj);
             } else if (obj.type === "error") {
-              onError && onError(obj.error || "Errore sconosciuto");
+              throw new Error(obj.error || "Errore sconosciuto");
             }
           }
         }
       }
-    }
-
-    function maybeAutoScroll() {
-      const box = document.getElementById("scrollBox");
-      if (!box) return;
-
-      // Auto-scroll solo se l'utente è già vicino al fondo
-      const threshold = 80;
-      const isNearBottom = (box.scrollHeight - box.scrollTop - box.clientHeight) < threshold;
-      if (isNearBottom) box.scrollTop = box.scrollHeight;
     }
 
     async function chiediAGeminiStart() {
@@ -372,11 +344,9 @@
       needsContinue = false;
 
       showResultCard();
-      setSkeleton();
       setBusy(true, "Sto generando…");
       updateContinueUI();
 
-      // Mostra subito area testo vuota (così lo streaming appare subito)
       const responseEl = document.getElementById("geminiResponse");
       responseEl.textContent = "";
 
@@ -397,13 +367,9 @@
           },
           onDone: (meta) => {
             needsContinue = !!meta.needsContinue;
-          },
-          onError: (err) => {
-            throw new Error(err);
           }
         });
 
-        // Rendering finale "pulito" (titoli/grassetti)
         responseEl.innerHTML = renderText(fullText.trimEnd());
         updateContinueUI();
 
@@ -413,9 +379,6 @@
         responseEl.innerHTML = `
           <div class="text-red-600 font-semibold">
             <i class="ri-error-warning-line"></i> Errore: ${escapeHtml(e.message)}
-          </div>
-          <div class="text-xs text-gray-400 mt-2">
-            Se succede online, controlliamo i log su Vercel e la variabile <b>GEMINI_API_KEY</b>.
           </div>
         `;
       } finally {
@@ -429,7 +392,6 @@
 
       const responseEl = document.getElementById("geminiResponse");
 
-      // togli marker finale prima di continuare
       fullText = fullText.replace(/\s*\.\.\.\(continua\)\s*$/i, "").trimEnd();
 
       setBusy(true, "Sto continuando…");
@@ -452,9 +414,6 @@
           },
           onDone: (meta) => {
             needsContinue = !!meta.needsContinue;
-          },
-          onError: (err) => {
-            throw new Error(err);
           }
         });
 
@@ -475,8 +434,7 @@
 
     async function copyAnswer() {
       try {
-        const textToCopy = fullText || "";
-        await navigator.clipboard.writeText(textToCopy);
+        await navigator.clipboard.writeText(fullText || "");
         const btn = document.getElementById("copyBtn");
         const old = btn.innerHTML;
         btn.innerHTML = `<i class="ri-check-line"></i> Copiato`;
