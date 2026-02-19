@@ -17,15 +17,13 @@
     #geminiResponse { white-space: pre-wrap; word-break: break-word; }
 
     .loaderSpinner{
-      width:18px;
-      height:18px;
+      width:18px; height:18px;
       border:3px solid rgba(0,0,0,.15);
       border-top-color: rgba(0,0,0,.6);
       border-radius:50%;
       animation: spin .8s linear infinite;
     }
     @keyframes spin{ to{ transform: rotate(360deg); } }
-
     button:disabled{ opacity:.6; cursor:not-allowed; }
   </style>
 </head>
@@ -33,21 +31,23 @@
 <body class="pb-24">
 
   <nav class="w-full h-16 flex items-center justify-between px-6 md:px-10 border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
-    <div class="flex items-center gap-2">
+    <a href="/" class="flex items-center gap-2">
       <div class="ai-gradient w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-sm">
         <i class="ri-flashlight-fill"></i>
       </div>
-      <span class="text-xl font-extrabold tracking-tight text-gray-900">SimplifAI <span class="text-indigo-600">Clone</span></span>
-    </div>
+      <span class="text-xl font-extrabold tracking-tight text-gray-900">
+        SimplifAI <span class="text-indigo-600">Clone</span>
+      </span>
+    </a>
+
     <div class="hidden md:flex gap-6 text-sm font-medium text-gray-500">
-      <a href="#home" class="hover:text-indigo-600">Home</a>
-      <a href="#how" class="hover:text-indigo-600">Come funziona</a>
-      <a href="#pricing" class="hover:text-indigo-600">Prezzi</a>
+      <a href="/" class="hover:text-indigo-600">Home</a>
+      <a href="/come-funziona.html" class="hover:text-indigo-600">Come funziona</a>
+      <a href="/prezzi.html" class="hover:text-indigo-600">Prezzi</a>
     </div>
   </nav>
 
-  <!-- HERO -->
-  <section id="home" class="pt-16 md:pt-20 text-center px-4">
+  <section class="pt-16 md:pt-20 text-center px-4">
     <span class="inline-block py-1 px-3 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-4">
       Powered by Google Gemini
     </span>
@@ -102,148 +102,7 @@
     </div>
   </section>
 
-  <!-- HOW IT WORKS -->
-  <section id="how" class="max-w-5xl mx-auto px-4 mt-2 md:mt-6">
-    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
-      <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900">Come funziona</h2>
-      <ol class="mt-5 space-y-3 text-gray-600">
-        <li><b>1)</b> Scrivi una domanda (es: “Cos’è il DNA?”)</li>
-        <li><b>2)</b> Scegli il target (Bambino → Scienziato)</li>
-        <li><b>3)</b> Clicca <b>Genera</b> e leggi la risposta</li>
-        <li><b>4)</b> Se è lunga, usa <b>Continua</b></li>
-      </ol>
-      <p class="text-xs text-gray-400 mt-4">
-        Nota: se usi il piano gratuito di Gemini, potresti vedere attese (rate limit).
-      </p>
-    </div>
-  </section>
-
-  <!-- PRICING -->
-  <section id="pricing" class="max-w-6xl mx-auto px-4 mt-10 md:mt-14">
-    <div class="text-center mb-10">
-      <span class="inline-block py-1 px-3 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-3">
-        Piani & Prezzi
-      </span>
-      <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
-        Scegli il piano giusto per te
-      </h2>
-      <p class="text-gray-500 mt-3">
-        Inizia gratis, poi fai upgrade quando vuoi più richieste e risposte più lunghe.
-      </p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <!-- FREE -->
-      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-extrabold text-gray-900">FREE</h3>
-          <span class="text-xs font-bold text-gray-500 bg-gray-50 px-3 py-1 rounded-full">Per provare</span>
-        </div>
-
-        <div class="mt-4">
-          <div class="text-4xl font-extrabold text-gray-900">€0</div>
-          <div class="text-sm text-gray-500 mt-1">Perfetto per iniziare</div>
-        </div>
-
-        <ul class="mt-6 space-y-3 text-sm text-gray-600">
-          <li>✅ Fino a <b>10</b> richieste al giorno</li>
-          <li>✅ Risposte fino a <b>~1200 token</b> (consigliato per test)</li>
-          <li>✅ Target (Bambino → Scienziato)</li>
-          <li>✅ Pulsante <b>Continua</b></li>
-          <li>✅ Copia risposta</li>
-        </ul>
-
-        <button
-          class="mt-7 w-full px-4 py-3 rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
-          onclick="alert('Sei già nel piano FREE 🙂')"
-          type="button"
-        >
-          Inizia gratis
-        </button>
-
-        <p class="text-xs text-gray-400 mt-3">
-          Limiti più bassi e possibili attese quando superi la quota.
-        </p>
-      </div>
-
-      <!-- PRO -->
-      <div class="bg-white rounded-3xl shadow-2xl border-2 border-indigo-200 p-6 relative">
-        <div class="absolute -top-3 left-1/2 -translate-x-1/2">
-          <div class="ai-gradient text-white text-xs font-extrabold px-4 py-1 rounded-full shadow">
-            Consigliato
-          </div>
-        </div>
-
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-extrabold text-gray-900">PRO</h3>
-          <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full">Per uso serio</span>
-        </div>
-
-        <div class="mt-4">
-          <div class="text-4xl font-extrabold text-gray-900">€14,99</div>
-          <div class="text-sm text-gray-500 mt-1">al mese</div>
-        </div>
-
-        <ul class="mt-6 space-y-3 text-sm text-gray-600">
-          <li>🚀 Fino a <b>150</b> richieste al giorno</li>
-          <li>🚀 Risposte fino a <b>~4500 token</b></li>
-          <li>✅ Priorità più alta (meno attese)</li>
-          <li>✅ Risposte più lunghe per Esperto/Scienziato</li>
-          <li>✅ Cronologia (in arrivo)</li>
-        </ul>
-
-        <a
-          class="mt-7 w-full block text-center px-4 py-3 rounded-2xl ai-gradient text-white font-semibold hover:scale-[1.01] transition shadow-lg"
-          href="/checkout.html"
-        >
-          Passa a PRO (mock)
-        </a>
-
-        <p class="text-xs text-gray-400 mt-3">
-          Pagina mock. Più avanti colleghiamo Stripe.
-        </p>
-      </div>
-
-      <!-- BUSINESS -->
-      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-extrabold text-gray-900">BUSINESS</h3>
-          <span class="text-xs font-bold text-gray-500 bg-gray-50 px-3 py-1 rounded-full">Per team</span>
-        </div>
-
-        <div class="mt-4">
-          <div class="text-4xl font-extrabold text-gray-900">€79,99</div>
-          <div class="text-sm text-gray-500 mt-1">al mese</div>
-        </div>
-
-        <ul class="mt-6 space-y-3 text-sm text-gray-600">
-          <li>🏢 Richieste elevate (team)</li>
-          <li>🏢 Risposte fino a <b>~8000 token</b></li>
-          <li>✅ Utenti multipli (in arrivo)</li>
-          <li>✅ Supporto prioritario</li>
-          <li>✅ Branding / personalizzazioni</li>
-        </ul>
-
-        <a
-          class="mt-7 w-full block text-center px-4 py-3 rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
-          href="/checkout.html"
-        >
-          Contattaci (mock)
-        </a>
-
-        <p class="text-xs text-gray-400 mt-3">
-          Ideale per scuole, aziende o team.
-        </p>
-      </div>
-    </div>
-
-    <div class="text-center mt-8 text-sm text-gray-500">
-      (Mock) Vuoi l’upgrade? Vai su <a href="/checkout.html" class="font-semibold text-indigo-600 hover:underline">checkout</a>.
-    </div>
-  </section>
-
-  <!-- RESULT -->
-  <section id="resultArea" class="max-w-4xl mx-auto px-4 mt-10 hidden">
+  <section id="resultArea" class="max-w-4xl mx-auto px-4 hidden">
     <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
       <div class="p-6 md:p-8 flex items-start justify-between gap-4">
         <div class="flex items-start gap-3">
@@ -282,7 +141,7 @@
           <div id="geminiResponse" class="text-gray-700 leading-relaxed text-[15px] md:text-base"></div>
         </div>
 
-        <!-- Continua (bottom center) -->
+        <!-- Continua bottom center -->
         <div class="flex justify-center mt-5">
           <button
             id="continueBtn"
@@ -382,75 +241,9 @@
       hint.classList.toggle("hidden", !needsContinue);
     }
 
-    function extractGeminiText(obj) {
-      const parts = obj?.candidates?.[0]?.content?.parts;
-      if (!Array.isArray(parts)) return "";
-      return parts.map(p => (typeof p?.text === "string" ? p.text : "")).join("");
-    }
-
-    async function streamGemini(payload, { onDelta, onEnd } = {}) {
-      const r = await fetch("/api/gemini", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-
-      // Se non è SSE, leggiamo JSON e mostriamo errore chiaro
-      const ct = r.headers.get("content-type") || "";
-      if (!ct.includes("text/event-stream")) {
-        let msg = `Errore (non-stream). Content-Type: ${ct}`;
-        try {
-          const j = await r.json();
-          msg = j?.error || msg;
-        } catch {}
-        throw new Error(msg);
-      }
-
-      const reader = r.body.getReader();
-      const decoder = new TextDecoder("utf-8");
-      let buf = "";
-      let lastModelText = "";
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-
-        buf += decoder.decode(value, { stream: true });
-
-        const events = buf.split("\n\n");
-        buf = events.pop() || "";
-
-        for (const evt of events) {
-          const lines = evt.split("\n");
-          for (const line of lines) {
-            const t = line.trim();
-            if (!t.startsWith("data:")) continue;
-
-            const jsonStr = t.slice(5).trim();
-            if (!jsonStr || jsonStr === "[DONE]") continue;
-
-            let obj;
-            try { obj = JSON.parse(jsonStr); } catch { continue; }
-
-            const modelText = extractGeminiText(obj);
-            if (!modelText) continue;
-
-            let delta = modelText;
-            if (modelText.startsWith(lastModelText)) {
-              delta = modelText.slice(lastModelText.length);
-            }
-            lastModelText = modelText;
-
-            if (delta) onDelta && onDelta(delta);
-          }
-        }
-      }
-
-      onEnd && onEnd();
-    }
-
     function computeNeedsContinue(text, maxChars) {
-      const out = String(text).trimEnd();
+      const out = String(text || "").trimEnd();
+      if (!out) return false; // IMPORTANTISSIMO: se non c'è testo, non mostrare Continua
       const endsWithMarker = out.endsWith("...(continua)");
       const endsNicely = /[.!?…]"?\s*$/.test(out);
       const nearLimit = out.length >= Math.floor(maxChars * 0.92);
@@ -486,13 +279,12 @@
                 ${secs ? `Riprova tra ${secs}s` : "Riprova"}
               </button>
 
-              <button
-                class="px-4 py-3 rounded-2xl bg-white border border-amber-200 text-amber-900 font-semibold hover:bg-amber-100 transition"
-                type="button"
-                onclick="document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth', block: 'start' })"
+              <a
+                class="px-4 py-3 rounded-2xl bg-white border border-amber-200 text-amber-900 font-semibold hover:bg-amber-100 transition text-center"
+                href="/prezzi.html"
               >
                 Vedi piani PRO/BUSINESS
-              </button>
+              </a>
 
               <a
                 class="px-4 py-3 rounded-2xl ai-gradient text-white font-semibold text-center hover:scale-[1.01] transition"
@@ -510,7 +302,6 @@
 
       const doRetry = (typeof retryAction === "function") ? retryAction : () => {};
 
-      // se non abbiamo secs, abilita subito
       if (!secs) {
         retryBtn.onclick = doRetry;
         return;
@@ -534,6 +325,82 @@
       }, 1000);
     }
 
+    // ✅ parser SSE più robusto (gestisce \r\n, blocchi, JSON diversi)
+    function extractTextFromSseJson(obj) {
+      // forma standard
+      const parts = obj?.candidates?.[0]?.content?.parts;
+      if (Array.isArray(parts)) {
+        const t = parts.map(p => typeof p?.text === "string" ? p.text : "").join("");
+        if (t) return t;
+      }
+
+      // fallback: a volte testo in "text" diretto o altrove (raro)
+      if (typeof obj?.text === "string") return obj.text;
+
+      return "";
+    }
+
+    async function streamGemini(payload, { onChunkText } = {}) {
+      const r = await fetch("/api/gemini", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      // se non è SSE, è un JSON (errore)
+      const ct = r.headers.get("content-type") || "";
+      if (!ct.includes("text/event-stream")) {
+        let msg = `Errore (non-stream). Content-Type: ${ct}`;
+        try {
+          const j = await r.json();
+          msg = j?.error || msg;
+        } catch {}
+        throw new Error(msg);
+      }
+
+      const reader = r.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let buffer = "";
+      let gotAnyText = false;
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        buffer = buffer.replace(/\r\n/g, "\n"); // importantissimo
+
+        // eventi separati da blank line
+        const events = buffer.split("\n\n");
+        buffer = events.pop() || "";
+
+        for (const evt of events) {
+          const lines = evt.split("\n");
+          for (const line of lines) {
+            const t = line.trim();
+            if (!t.startsWith("data:")) continue;
+
+            const jsonStr = t.slice(5).trim();
+            if (!jsonStr || jsonStr === "[DONE]") continue;
+
+            let obj;
+            try { obj = JSON.parse(jsonStr); } catch { continue; }
+
+            const text = extractTextFromSseJson(obj);
+            if (!text) continue;
+
+            gotAnyText = true;
+            onChunkText && onChunkText(text);
+          }
+        }
+      }
+
+      // se non è arrivato nulla, alziamo un errore "chiaro"
+      if (!gotAnyText) {
+        throw new Error("Streaming attivo ma nessun testo ricevuto. (Possibile rate limit/errore upstream).");
+      }
+    }
+
     async function chiediAGeminiStart() {
       const query = document.getElementById('userQuery').value.trim();
       if (!query) return alert("Inserisci una domanda!");
@@ -549,6 +416,18 @@
       const responseEl = document.getElementById("geminiResponse");
       responseEl.textContent = "";
 
+      // ✅ “a blocchi”: mostriamo ogni ~30 caratteri (3–5 parole circa)
+      let displayBuffer = "";
+      let rafScheduled = false;
+
+      const flushToUI = () => {
+        rafScheduled = false;
+        fullText += displayBuffer;
+        displayBuffer = "";
+        responseEl.textContent = fullText;
+        maybeAutoScroll();
+      };
+
       try {
         await streamGemini({
           query: lastQuery,
@@ -559,14 +438,23 @@
           mode: "start",
           previousText: ""
         }, {
-          onDelta: (d) => {
-            fullText += d;
-            responseEl.textContent = fullText;
-            maybeAutoScroll();
+          onChunkText: (chunk) => {
+            displayBuffer += chunk;
+
+            // aggiorna UI ogni tot per avere “blocchi” invece di parola-per-parola
+            if (displayBuffer.length >= 30 && !rafScheduled) {
+              rafScheduled = true;
+              requestAnimationFrame(flushToUI);
+            }
           }
         });
 
+        // flush finale
+        if (displayBuffer) flushToUI();
+
         needsContinue = computeNeedsContinue(fullText, selectedTarget.maxChars);
+
+        // render finale bello
         responseEl.innerHTML = renderText(fullText.trimEnd());
         updateContinueUI();
 
@@ -595,6 +483,17 @@
       setBusy(true, "Sto continuando…");
       updateContinueUI();
 
+      let displayBuffer = "";
+      let rafScheduled = false;
+
+      const flushToUI = () => {
+        rafScheduled = false;
+        fullText += displayBuffer;
+        displayBuffer = "";
+        responseEl.textContent = fullText;
+        maybeAutoScroll();
+      };
+
       try {
         await streamGemini({
           query: lastQuery,
@@ -605,12 +504,16 @@
           mode: "continue",
           previousText: fullText
         }, {
-          onDelta: (d) => {
-            fullText += d;
-            responseEl.textContent = fullText;
-            maybeAutoScroll();
+          onChunkText: (chunk) => {
+            displayBuffer += chunk;
+            if (displayBuffer.length >= 30 && !rafScheduled) {
+              rafScheduled = true;
+              requestAnimationFrame(flushToUI);
+            }
           }
         });
+
+        if (displayBuffer) flushToUI();
 
         needsContinue = computeNeedsContinue(fullText, selectedTarget.maxChars);
         responseEl.innerHTML = renderText(fullText.trimEnd());
@@ -624,7 +527,6 @@
         const m = msg.match(/retry in ([0-9.]+)s/i);
         const seconds = m ? Number(m[1]) : null;
 
-        // retryAction qui richiama CONTINUE
         showQuotaBox(msg, seconds, () => chiediAGeminiContinue());
       } finally {
         setBusy(false);
