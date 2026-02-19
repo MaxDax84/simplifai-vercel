@@ -161,42 +161,12 @@
 
   <script>
     const TARGETS = {
-      "Bambino": {
-        label: "Bambino",
-        prompt: "un Bambino fino ai 10 anni (parole semplici, esempi quotidiani, frasi corte)",
-        maxTokens: 2500,
-        maxChars: 6000
-      },
-      "Ragazzino": {
-        label: "Ragazzino",
-        prompt: "un Ragazzino fino ai 18 anni (chiaro ma più ricco, esempi scolastici, analogie)",
-        maxTokens: 2500,
-        maxChars: 7000
-      },
-      "Universitario": {
-        label: "Studente universitario",
-        prompt: "uno Studente universitario (strutturato, concetti corretti, termini tecnici spiegati)",
-        maxTokens: 2500,
-        maxChars: 9000
-      },
-      "Adulto": {
-        label: "Adulto",
-        prompt: "un Adulto (pratico, orientato a decisioni, esempi reali, linguaggio medio)",
-        maxTokens: 2500,
-        maxChars: 8000
-      },
-      "Esperto": {
-        label: "Esperto di settore",
-        prompt: "un Esperto di settore (dettagli, framework, pro/contro, terminologia specialistica)",
-        maxTokens: 3500,
-        maxChars: 12000
-      },
-      "Scienziato": {
-        label: "Scienziato",
-        prompt: "uno Scienziato (rigore, struttura, concetti avanzati, eventuali formule o notazioni se utili)",
-        maxTokens: 3500,
-        maxChars: 14000
-      }
+      "Bambino": { label: "Bambino", prompt: "un Bambino fino ai 10 anni (parole semplici, esempi quotidiani, frasi corte)", maxTokens: 2500, maxChars: 6000 },
+      "Ragazzino": { label: "Ragazzino", prompt: "un Ragazzino fino ai 18 anni (chiaro ma più ricco, esempi scolastici, analogie)", maxTokens: 2500, maxChars: 7000 },
+      "Universitario": { label: "Studente universitario", prompt: "uno Studente universitario (strutturato, concetti corretti, termini tecnici spiegati)", maxTokens: 2500, maxChars: 9000 },
+      "Adulto": { label: "Adulto", prompt: "un Adulto (pratico, orientato a decisioni, esempi reali, linguaggio medio)", maxTokens: 2500, maxChars: 8000 },
+      "Esperto": { label: "Esperto di settore", prompt: "un Esperto di settore (dettagli, framework, pro/contro, terminologia specialistica)", maxTokens: 3500, maxChars: 12000 },
+      "Scienziato": { label: "Scienziato", prompt: "uno Scienziato (rigore, struttura, concetti avanzati, eventuali formule o notazioni se utili)", maxTokens: 3500, maxChars: 14000 }
     };
 
     let selectedTarget = TARGETS["Bambino"];
@@ -209,51 +179,42 @@
       document.querySelectorAll('.btn-target').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       selectedTarget = TARGETS[key];
-
       document.getElementById('targetLabel').innerText = "Risposta per " + selectedTarget.label;
-      document.getElementById('limitsLabel').innerText =
-        `Limite: ${selectedTarget.maxTokens} token • ${selectedTarget.maxChars} caratteri`;
+      document.getElementById('limitsLabel').innerText = `Limite: ${selectedTarget.maxTokens} token • ${selectedTarget.maxChars} caratteri`;
     }
 
     function showResultCard() {
       const area = document.getElementById('resultArea');
       area.classList.remove('hidden');
       document.getElementById('targetLabel').innerText = "Risposta per " + selectedTarget.label;
-      document.getElementById('limitsLabel').innerText =
-        `Limite: ${selectedTarget.maxTokens} token • ${selectedTarget.maxChars} caratteri`;
+      document.getElementById('limitsLabel').innerText = `Limite: ${selectedTarget.maxTokens} token • ${selectedTarget.maxChars} caratteri`;
       window.scrollTo({ top: area.offsetTop - 80, behavior: 'smooth' });
     }
 
     function setBusy(isBusy, message = "Sto generando…") {
       const loadingBar = document.getElementById("loadingBar");
       const loadingText = document.getElementById("loadingText");
-
       const generateBtn = document.getElementById("generateBtn");
       const continueBtn = document.getElementById("continueBtn");
       const copyBtn = document.getElementById("copyBtn");
 
       loadingText.textContent = message;
-      if (isBusy) loadingBar.classList.remove("hidden");
-      else loadingBar.classList.add("hidden");
+      loadingBar.classList.toggle("hidden", !isBusy);
 
-      if (generateBtn) generateBtn.disabled = isBusy;
-      if (continueBtn) continueBtn.disabled = isBusy;
-      if (copyBtn) copyBtn.disabled = isBusy;
+      generateBtn.disabled = isBusy;
+      continueBtn.disabled = isBusy;
+      copyBtn.disabled = isBusy;
 
       streaming = isBusy;
     }
 
     function escapeHtml(s) {
-      return String(s)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;");
+      return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
     }
 
     function renderText(raw) {
       const safe = escapeHtml(raw);
       const bolded = safe.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-
       const headed = bolded
         .replace(/^######\s?(.*)$/gm, "<div class='mt-4 font-semibold text-gray-900 text-sm'>$1</div>")
         .replace(/^#####\s?(.*)$/gm, "<div class='mt-5 font-semibold text-gray-900 text-base'>$1</div>")
@@ -261,33 +222,32 @@
         .replace(/^###\s?(.*)$/gm, "<div class='mt-7 font-extrabold text-gray-900 text-xl'>$1</div>")
         .replace(/^##\s?(.*)$/gm, "<div class='mt-8 font-extrabold text-gray-900 text-2xl'>$1</div>")
         .replace(/^#\s?(.*)$/gm, "<div class='mt-9 font-extrabold text-gray-900 text-3xl'>$1</div>");
-
       return headed.replace(/\n/g, "<br>");
     }
 
     function updateContinueUI() {
       const continueBtn = document.getElementById("continueBtn");
       const hint = document.getElementById("hintContinue");
-
-      if (needsContinue) {
-        continueBtn.classList.remove("hidden");
-        hint.classList.remove("hidden");
-      } else {
-        continueBtn.classList.add("hidden");
-        hint.classList.add("hidden");
-      }
+      continueBtn.classList.toggle("hidden", !needsContinue);
+      hint.classList.toggle("hidden", !needsContinue);
     }
 
     function maybeAutoScroll() {
       const box = document.getElementById("scrollBox");
-      if (!box) return;
       const threshold = 80;
       const isNearBottom = (box.scrollHeight - box.scrollTop - box.clientHeight) < threshold;
       if (isNearBottom) box.scrollTop = box.scrollHeight;
     }
 
-    // ✅ Stream reader (SSE)
-    async function streamGemini(payload, { onChunk, onDone } = {}) {
+    // ✅ Estrae testo da un evento SSE di Gemini
+    function extractGeminiText(obj) {
+      const parts = obj?.candidates?.[0]?.content?.parts;
+      if (!Array.isArray(parts)) return "";
+      return parts.map(p => (typeof p?.text === "string" ? p.text : "")).join("");
+    }
+
+    // ✅ Client streaming: legge SSE (data: {...}) e costruisce delta
+    async function streamGemini(payload, { onDelta, onEnd } = {}) {
       const r = await fetch("/api/gemini", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -303,6 +263,7 @@
       const reader = r.body.getReader();
       const decoder = new TextDecoder("utf-8");
       let buf = "";
+      let lastModelText = "";
 
       while (true) {
         const { value, done } = await reader.read();
@@ -310,29 +271,46 @@
 
         buf += decoder.decode(value, { stream: true });
 
+        // SSE: eventi separati da \n\n
         const events = buf.split("\n\n");
         buf = events.pop() || "";
 
         for (const evt of events) {
-          const lines = evt.split("\n").map(l => l.trim());
+          const lines = evt.split("\n");
           for (const line of lines) {
-            if (!line.startsWith("data:")) continue;
-            const jsonStr = line.slice(5).trim();
-            if (!jsonStr) continue;
+            const t = line.trim();
+            if (!t.startsWith("data:")) continue;
+
+            const jsonStr = t.slice(5).trim();
+            if (!jsonStr || jsonStr === "[DONE]") continue;
 
             let obj;
             try { obj = JSON.parse(jsonStr); } catch { continue; }
 
-            if (obj.type === "chunk") {
-              onChunk && onChunk(obj.text || "");
-            } else if (obj.type === "done") {
-              onDone && onDone(obj);
-            } else if (obj.type === "error") {
-              throw new Error(obj.error || "Errore sconosciuto");
+            const modelText = extractGeminiText(obj);
+            if (!modelText) continue;
+
+            // delta robusto
+            let delta = modelText;
+            if (modelText.startsWith(lastModelText)) {
+              delta = modelText.slice(lastModelText.length);
             }
+            lastModelText = modelText;
+
+            if (delta) onDelta && onDelta(delta);
           }
         }
       }
+
+      onEnd && onEnd();
+    }
+
+    function computeNeedsContinue(text, maxChars) {
+      const out = String(text).trimEnd();
+      const endsWithMarker = out.endsWith("...(continua)");
+      const endsNicely = /[.!?…]"?\s*$/.test(out);
+      const nearLimit = out.length >= Math.floor(maxChars * 0.92);
+      return endsWithMarker || nearLimit || !endsNicely;
     }
 
     async function chiediAGeminiStart() {
@@ -360,15 +338,16 @@
           mode: "start",
           previousText: ""
         }, {
-          onChunk: (t) => {
-            fullText += t;
+          onDelta: (d) => {
+            fullText += d;
             responseEl.textContent = fullText;
             maybeAutoScroll();
           },
-          onDone: (meta) => {
-            needsContinue = !!meta.needsContinue;
-          }
+          onEnd: () => {}
         });
+
+        // se Gemini non mette marker, lo deduciamo
+        needsContinue = computeNeedsContinue(fullText, selectedTarget.maxChars);
 
         responseEl.innerHTML = renderText(fullText.trimEnd());
         updateContinueUI();
@@ -392,6 +371,7 @@
 
       const responseEl = document.getElementById("geminiResponse");
 
+      // togli marker finale prima di continuare
       fullText = fullText.replace(/\s*\.\.\.\(continua\)\s*$/i, "").trimEnd();
 
       setBusy(true, "Sto continuando…");
@@ -407,15 +387,15 @@
           mode: "continue",
           previousText: fullText
         }, {
-          onChunk: (t) => {
-            fullText += t;
+          onDelta: (d) => {
+            fullText += d;
             responseEl.textContent = fullText;
             maybeAutoScroll();
           },
-          onDone: (meta) => {
-            needsContinue = !!meta.needsContinue;
-          }
+          onEnd: () => {}
         });
+
+        needsContinue = computeNeedsContinue(fullText, selectedTarget.maxChars);
 
         responseEl.innerHTML = renderText(fullText.trimEnd());
         updateContinueUI();
