@@ -14,14 +14,12 @@
     .ai-gradient { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
     .btn-target { transition: all 0.2s; border: 2px solid transparent; }
     .btn-target.active { border-color: #6366f1; background-color: #eef2ff; color: #4f46e5; font-weight: 700; }
-    /* Per testi lunghi: evita layout "strano" e permette scroll interno */
     #geminiResponse { white-space: pre-wrap; word-break: break-word; }
   </style>
 </head>
 
 <body class="pb-24">
 
-  <!-- NAV -->
   <nav class="w-full h-16 flex items-center justify-between px-6 md:px-10 border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
     <div class="flex items-center gap-2">
       <div class="ai-gradient w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-sm">
@@ -36,7 +34,6 @@
     </div>
   </nav>
 
-  <!-- HERO -->
   <section class="pt-16 md:pt-20 text-center px-4">
     <span class="inline-block py-1 px-3 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-4">
       Powered by Google Gemini
@@ -51,7 +48,6 @@
       Trasforma concetti complessi in spiegazioni adatte a chiunque.
     </p>
 
-    <!-- INPUT -->
     <div class="max-w-3xl mx-auto relative mb-6 group">
       <div class="absolute -inset-1 ai-gradient rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
       <div class="relative bg-white rounded-3xl shadow-xl p-2 flex border border-gray-100">
@@ -71,7 +67,6 @@
       </div>
     </div>
 
-    <!-- TARGET BUTTONS -->
     <div class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-3 px-2 md:px-4 mb-10">
       <button onclick="selectTarget(this, 'Bambino')" class="btn-target bg-white p-3 rounded-2xl shadow-sm text-sm text-gray-600 active">
         👶 Bambino
@@ -94,10 +89,8 @@
     </div>
   </section>
 
-  <!-- RESULT -->
   <section id="resultArea" class="max-w-4xl mx-auto px-4 hidden">
     <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
-      <!-- header card -->
       <div class="p-6 md:p-8 flex items-start justify-between gap-4">
         <div class="flex items-start gap-3">
           <div class="w-11 h-11 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
@@ -131,11 +124,9 @@
         </div>
       </div>
 
-      <!-- content -->
       <div class="px-6 md:px-8 pb-8">
         <div class="h-px bg-gray-100 mb-5"></div>
 
-        <!-- Scroll interno: così il layout non esplode -->
         <div class="max-h-[520px] overflow-y-auto pr-2">
           <div id="geminiResponse" class="text-gray-700 leading-relaxed text-[15px] md:text-base"></div>
         </div>
@@ -148,60 +139,57 @@
   </section>
 
   <script>
-    // ====== TARGETS (con limiti diversi) ======
+    // ====== TARGETS (NUOVI LIMITI) ======
     const TARGETS = {
       "Bambino": {
         label: "Bambino",
         prompt: "un Bambino fino ai 10 anni (parole semplici, esempi quotidiani, frasi corte)",
-        maxTokens: 800,
-        maxChars: 2500
+        maxTokens: 2500,
+        maxChars: 6000
       },
       "Ragazzino": {
         label: "Ragazzino",
         prompt: "un Ragazzino fino ai 18 anni (chiaro ma più ricco, esempi scolastici, analogie)",
-        maxTokens: 1200,
-        maxChars: 3500
+        maxTokens: 2500,
+        maxChars: 7000
       },
       "Universitario": {
         label: "Studente universitario",
         prompt: "uno Studente universitario (strutturato, concetti corretti, termini tecnici spiegati)",
-        maxTokens: 2000,
-        maxChars: 5500
+        maxTokens: 2500,
+        maxChars: 9000
       },
       "Adulto": {
         label: "Adulto",
         prompt: "un Adulto (pratico, orientato a decisioni, esempi reali, linguaggio medio)",
-        maxTokens: 1600,
-        maxChars: 4500
+        maxTokens: 2500,
+        maxChars: 8000
       },
       "Esperto": {
         label: "Esperto di settore",
         prompt: "un Esperto di settore (dettagli, framework, pro/contro, terminologia specialistica)",
-        maxTokens: 2800,
-        maxChars: 8000
+        maxTokens: 3500,
+        maxChars: 12000
       },
       "Scienziato": {
         label: "Scienziato",
         prompt: "uno Scienziato (rigore, struttura, concetti avanzati, eventuali formule o notazioni se utili)",
-        maxTokens: 4500,
-        maxChars: 12000
+        maxTokens: 3500,
+        maxChars: 14000
       }
     };
 
-    // selectedTarget = { label, prompt, maxTokens, maxChars }
     let selectedTarget = TARGETS["Bambino"];
 
-    // Stato per continuazioni
     let lastQuery = "";
-    let fullText = "";          // testo accumulato
-    let needsContinue = false;  // server lo dice
+    let fullText = "";
+    let needsContinue = false;
 
     function selectTarget(btn, key) {
       document.querySelectorAll('.btn-target').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       selectedTarget = TARGETS[key];
 
-      // aggiorna titolo se la card è già visibile
       document.getElementById('targetLabel').innerText = "Risposta per " + selectedTarget.label;
       document.getElementById('limitsLabel').innerText =
         `Limite: ${selectedTarget.maxTokens} token • ${selectedTarget.maxChars} caratteri`;
@@ -213,8 +201,6 @@
       document.getElementById('targetLabel').innerText = "Risposta per " + selectedTarget.label;
       document.getElementById('limitsLabel').innerText =
         `Limite: ${selectedTarget.maxTokens} token • ${selectedTarget.maxChars} caratteri`;
-
-      // scroll dolce alla card
       window.scrollTo({ top: area.offsetTop - 80, behavior: 'smooth' });
     }
 
@@ -236,15 +222,10 @@
         .replaceAll(">", "&gt;");
     }
 
-    // mini-render: mantiene a capo e rende un po' più leggibile
     function renderText(raw) {
-      // Evita che il marker finisca con formattazione strana
       const safe = escapeHtml(raw);
-
-      // semplice: grassetto markdown ** **
       const bolded = safe.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
 
-      // headings # ## ### -> stile semplice
       const headed = bolded
         .replace(/^######\s?(.*)$/gm, "<div class='mt-4 font-semibold text-gray-900 text-sm'>$1</div>")
         .replace(/^#####\s?(.*)$/gm, "<div class='mt-5 font-semibold text-gray-900 text-base'>$1</div>")
@@ -253,7 +234,6 @@
         .replace(/^##\s?(.*)$/gm, "<div class='mt-8 font-extrabold text-gray-900 text-2xl'>$1</div>")
         .replace(/^#\s?(.*)$/gm, "<div class='mt-9 font-extrabold text-gray-900 text-3xl'>$1</div>");
 
-      // nuove linee -> <br>
       return headed.replace(/\n/g, "<br>");
     }
 
@@ -295,7 +275,6 @@
       showResultCard();
       setLoading();
 
-      // disabilita bottone mentre carica
       const btn = document.getElementById("generateBtn");
       btn.disabled = true;
       btn.classList.add("opacity-70");
@@ -338,7 +317,6 @@
       if (!lastQuery) return;
       showResultCard();
 
-      // disabilita bottone continua mentre carica
       const continueBtn = document.getElementById("continueBtn");
       continueBtn.disabled = true;
       continueBtn.classList.add("opacity-70");
@@ -354,16 +332,12 @@
           previousText: fullText
         });
 
-        // Accoda (senza duplicare marker)
         const newPart = (data.text || "").trim();
         const cleanNew = newPart.replace(/\s*\.\.\.\(continua\)\s*$/i, "").trimEnd();
 
-        // Rimuovo eventuale marker dal testo precedente prima di unire
         fullText = fullText.replace(/\s*\.\.\.\(continua\)\s*$/i, "").trimEnd();
-
         fullText = (fullText + "\n\n" + cleanNew).trimEnd();
 
-        // Se il server dice ancora "needsContinue", rimettiamo il marker (solo visivo)
         needsContinue = !!data.needsContinue;
         if (needsContinue) {
           fullText = fullText.trimEnd() + "\n\n...(continua)";
@@ -398,14 +372,12 @@
       }
     }
 
-    // Invio con ENTER
     document.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && document.activeElement?.id === "userQuery") {
         chiediAGeminiStart();
       }
     });
 
-    // Init label limiti
     document.getElementById('targetLabel').innerText = "Risposta per " + selectedTarget.label;
     document.getElementById('limitsLabel').innerText =
       `Limite: ${selectedTarget.maxTokens} token • ${selectedTarget.maxChars} caratteri`;
