@@ -43,10 +43,10 @@
       <a href="#home" class="hover:text-indigo-600">Home</a>
       <a href="#how" class="hover:text-indigo-600">Come funziona</a>
       <a href="#pricing" class="hover:text-indigo-600">Prezzi</a>
-
     </div>
   </nav>
 
+  <!-- HERO -->
   <section id="home" class="pt-16 md:pt-20 text-center px-4">
     <span class="inline-block py-1 px-3 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-4">
       Powered by Google Gemini
@@ -102,7 +102,148 @@
     </div>
   </section>
 
-  <section id="resultArea" class="max-w-4xl mx-auto px-4 hidden">
+  <!-- HOW IT WORKS -->
+  <section id="how" class="max-w-5xl mx-auto px-4 mt-2 md:mt-6">
+    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900">Come funziona</h2>
+      <ol class="mt-5 space-y-3 text-gray-600">
+        <li><b>1)</b> Scrivi una domanda (es: “Cos’è il DNA?”)</li>
+        <li><b>2)</b> Scegli il target (Bambino → Scienziato)</li>
+        <li><b>3)</b> Clicca <b>Genera</b> e leggi la risposta</li>
+        <li><b>4)</b> Se è lunga, usa <b>Continua</b></li>
+      </ol>
+      <p class="text-xs text-gray-400 mt-4">
+        Nota: se usi il piano gratuito di Gemini, potresti vedere attese (rate limit).
+      </p>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing" class="max-w-6xl mx-auto px-4 mt-10 md:mt-14">
+    <div class="text-center mb-10">
+      <span class="inline-block py-1 px-3 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-3">
+        Piani & Prezzi
+      </span>
+      <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+        Scegli il piano giusto per te
+      </h2>
+      <p class="text-gray-500 mt-3">
+        Inizia gratis, poi fai upgrade quando vuoi più richieste e risposte più lunghe.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- FREE -->
+      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-extrabold text-gray-900">FREE</h3>
+          <span class="text-xs font-bold text-gray-500 bg-gray-50 px-3 py-1 rounded-full">Per provare</span>
+        </div>
+
+        <div class="mt-4">
+          <div class="text-4xl font-extrabold text-gray-900">€0</div>
+          <div class="text-sm text-gray-500 mt-1">Perfetto per iniziare</div>
+        </div>
+
+        <ul class="mt-6 space-y-3 text-sm text-gray-600">
+          <li>✅ Fino a <b>10</b> richieste al giorno</li>
+          <li>✅ Risposte fino a <b>~1200 token</b> (consigliato per test)</li>
+          <li>✅ Target (Bambino → Scienziato)</li>
+          <li>✅ Pulsante <b>Continua</b></li>
+          <li>✅ Copia risposta</li>
+        </ul>
+
+        <button
+          class="mt-7 w-full px-4 py-3 rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
+          onclick="alert('Sei già nel piano FREE 🙂')"
+          type="button"
+        >
+          Inizia gratis
+        </button>
+
+        <p class="text-xs text-gray-400 mt-3">
+          Limiti più bassi e possibili attese quando superi la quota.
+        </p>
+      </div>
+
+      <!-- PRO -->
+      <div class="bg-white rounded-3xl shadow-2xl border-2 border-indigo-200 p-6 relative">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+          <div class="ai-gradient text-white text-xs font-extrabold px-4 py-1 rounded-full shadow">
+            Consigliato
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-extrabold text-gray-900">PRO</h3>
+          <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full">Per uso serio</span>
+        </div>
+
+        <div class="mt-4">
+          <div class="text-4xl font-extrabold text-gray-900">€14,99</div>
+          <div class="text-sm text-gray-500 mt-1">al mese</div>
+        </div>
+
+        <ul class="mt-6 space-y-3 text-sm text-gray-600">
+          <li>🚀 Fino a <b>150</b> richieste al giorno</li>
+          <li>🚀 Risposte fino a <b>~4500 token</b></li>
+          <li>✅ Priorità più alta (meno attese)</li>
+          <li>✅ Risposte più lunghe per Esperto/Scienziato</li>
+          <li>✅ Cronologia (in arrivo)</li>
+        </ul>
+
+        <a
+          class="mt-7 w-full block text-center px-4 py-3 rounded-2xl ai-gradient text-white font-semibold hover:scale-[1.01] transition shadow-lg"
+          href="/checkout.html"
+        >
+          Passa a PRO (mock)
+        </a>
+
+        <p class="text-xs text-gray-400 mt-3">
+          Pagina mock. Più avanti colleghiamo Stripe.
+        </p>
+      </div>
+
+      <!-- BUSINESS -->
+      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-extrabold text-gray-900">BUSINESS</h3>
+          <span class="text-xs font-bold text-gray-500 bg-gray-50 px-3 py-1 rounded-full">Per team</span>
+        </div>
+
+        <div class="mt-4">
+          <div class="text-4xl font-extrabold text-gray-900">€79,99</div>
+          <div class="text-sm text-gray-500 mt-1">al mese</div>
+        </div>
+
+        <ul class="mt-6 space-y-3 text-sm text-gray-600">
+          <li>🏢 Richieste elevate (team)</li>
+          <li>🏢 Risposte fino a <b>~8000 token</b></li>
+          <li>✅ Utenti multipli (in arrivo)</li>
+          <li>✅ Supporto prioritario</li>
+          <li>✅ Branding / personalizzazioni</li>
+        </ul>
+
+        <a
+          class="mt-7 w-full block text-center px-4 py-3 rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
+          href="/checkout.html"
+        >
+          Contattaci (mock)
+        </a>
+
+        <p class="text-xs text-gray-400 mt-3">
+          Ideale per scuole, aziende o team.
+        </p>
+      </div>
+    </div>
+
+    <div class="text-center mt-8 text-sm text-gray-500">
+      (Mock) Vuoi l’upgrade? Vai su <a href="/checkout.html" class="font-semibold text-indigo-600 hover:underline">checkout</a>.
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="resultArea" class="max-w-4xl mx-auto px-4 mt-10 hidden">
     <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
       <div class="p-6 md:p-8 flex items-start justify-between gap-4">
         <div class="flex items-start gap-3">
@@ -160,144 +301,8 @@
     </div>
   </section>
 
-  <!-- HOW IT WORKS -->
-    <section id="how" class="max-w-5xl mx-auto px-4 mt-14">
-      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
-        <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900">Come funziona</h2>
-        <ol class="mt-5 space-y-3 text-gray-600">
-          <li><b>1)</b> Scrivi una domanda (es: “Cos’è il DNA?”)</li>
-          <li><b>2)</b> Scegli il target (Bambino → Scienziato)</li>
-          <li><b>3)</b> Clicca <b>Genera</b> e leggi la risposta</li>
-          <li><b>4)</b> Se è lunga, usa <b>Continua</b></li>
-        </ol>
-      </div>
-    </section>
-
-  <!-- PRICING -->
-    <section id="pricing" class="max-w-6xl mx-auto px-4 mt-10 md:mt-14">
-      <div class="text-center mb-10">
-        <span class="inline-block py-1 px-3 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-3">
-          Piani & Prezzi
-        </span>
-        <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
-          Scegli il piano giusto per te
-        </h2>
-        <p class="text-gray-500 mt-3">
-          Inizia gratis, poi fai upgrade quando vuoi più richieste e risposte più lunghe.
-        </p>
-      </div>
-    
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- FREE -->
-        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
-          <div class="flex items-center justify-between">
-            <h3 class="text-lg font-extrabold text-gray-900">FREE</h3>
-            <span class="text-xs font-bold text-gray-500 bg-gray-50 px-3 py-1 rounded-full">Per provare</span>
-          </div>
-    
-          <div class="mt-4">
-            <div class="text-4xl font-extrabold text-gray-900">€0</div>
-            <div class="text-sm text-gray-500 mt-1">Perfetto per iniziare</div>
-          </div>
-    
-          <ul class="mt-6 space-y-3 text-sm text-gray-600">
-            <li>✅ Fino a <b>10</b> richieste al giorno</li>
-            <li>✅ Risposte fino a <b>~1200 token</b></li>
-            <li>✅ Target (Bambino → Scienziato)</li>
-            <li>✅ Pulsante <b>Continua</b></li>
-            <li>✅ Copia risposta</li>
-          </ul>
-    
-          <button
-            class="mt-7 w-full px-4 py-3 rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
-            onclick="alert('Sei già nel piano FREE 🙂')"
-            type="button"
-          >
-            Inizia gratis
-          </button>
-    
-          <p class="text-xs text-gray-400 mt-3">
-            Limiti più bassi e possibili attese quando superi la quota.
-          </p>
-        </div>
-    
-        <!-- PRO -->
-        <div class="bg-white rounded-3xl shadow-2xl border-2 border-indigo-200 p-6 relative">
-          <div class="absolute -top-3 left-1/2 -translate-x-1/2">
-            <div class="ai-gradient text-white text-xs font-extrabold px-4 py-1 rounded-full shadow">
-              Consigliato
-            </div>
-          </div>
-    
-          <div class="flex items-center justify-between">
-            <h3 class="text-lg font-extrabold text-gray-900">PRO</h3>
-            <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full">Per uso serio</span>
-          </div>
-    
-          <div class="mt-4">
-            <div class="text-4xl font-extrabold text-gray-900">€14,99</div>
-            <div class="text-sm text-gray-500 mt-1">al mese</div>
-          </div>
-    
-          <ul class="mt-6 space-y-3 text-sm text-gray-600">
-            <li>🚀 Fino a <b>150</b> richieste al giorno</li>
-            <li>🚀 Risposte fino a <b>~4500 token</b></li>
-            <li>✅ Priorità più alta (meno attese)</li>
-            <li>✅ Risposte più lunghe per Esperto/Scienziato</li>
-            <li>✅ Cronologia (in arrivo)</li>
-          </ul>
-    
-          <a
-            class="mt-7 w-full block text-center px-4 py-3 rounded-2xl ai-gradient text-white font-semibold hover:scale-[1.01] transition shadow-lg"
-            href="mailto:info@tuodominio.it?subject=Upgrade%20a%20PRO&body=Ciao!%20Vorrei%20fare%20upgrade%20a%20PRO."
-          >
-            Passa a PRO
-          </a>
-    
-          <p class="text-xs text-gray-400 mt-3">
-            (Per ora apre una mail. Più avanti lo colleghiamo a Stripe.)
-          </p>
-        </div>
-    
-        <!-- BUSINESS -->
-        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
-          <div class="flex items-center justify-between">
-            <h3 class="text-lg font-extrabold text-gray-900">BUSINESS</h3>
-            <span class="text-xs font-bold text-gray-500 bg-gray-50 px-3 py-1 rounded-full">Per team</span>
-          </div>
-    
-          <div class="mt-4">
-            <div class="text-4xl font-extrabold text-gray-900">€79,99</div>
-            <div class="text-sm text-gray-500 mt-1">al mese</div>
-          </div>
-    
-          <ul class="mt-6 space-y-3 text-sm text-gray-600">
-            <li>🏢 Richieste elevate (team)</li>
-            <li>🏢 Risposte fino a <b>~8000 token</b></li>
-            <li>✅ Utenti multipli (in arrivo)</li>
-            <li>✅ Supporto prioritario</li>
-            <li>✅ Branding / personalizzazioni</li>
-          </ul>
-    
-          <a
-            class="mt-7 w-full block text-center px-4 py-3 rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
-            href="mailto:info@tuodominio.it?subject=Richiesta%20BUSINESS&body=Ciao!%20Vorrei%20info%20sul%20piano%20BUSINESS."
-          >
-            Contattaci
-          </a>
-    
-          <p class="text-xs text-gray-400 mt-3">
-            Ideale per scuole, aziende o team.
-          </p>
-        </div>
-      </div>
-    
-      <div class="text-center mt-8 text-sm text-gray-500">
-        Hai dubbi? Scrivici: <span class="font-semibold text-gray-900">info@tuodominio.it</span>
-      </div>
-    </section>
-
-    <script>
+  <script>
+    // ====== TARGETS ======
     const TARGETS = {
       "Bambino": { label: "Bambino", prompt: "un Bambino fino ai 10 anni (parole semplici, esempi quotidiani, frasi corte)", maxTokens: 2500, maxChars: 6000 },
       "Ragazzino": { label: "Ragazzino", prompt: "un Ragazzino fino ai 18 anni (chiaro ma più ricco, esempi scolastici, analogie)", maxTokens: 2500, maxChars: 7000 },
@@ -363,13 +368,6 @@
       return headed.replace(/\n/g, "<br>");
     }
 
-    function updateContinueUI() {
-      const continueBtn = document.getElementById("continueBtn");
-      const hint = document.getElementById("hintContinue");
-      continueBtn.classList.toggle("hidden", !needsContinue);
-      hint.classList.toggle("hidden", !needsContinue);
-    }
-
     function maybeAutoScroll() {
       const box = document.getElementById("scrollBox");
       const threshold = 80;
@@ -377,14 +375,19 @@
       if (isNearBottom) box.scrollTop = box.scrollHeight;
     }
 
-    // ✅ Estrae testo da un evento SSE di Gemini
+    function updateContinueUI() {
+      const continueBtn = document.getElementById("continueBtn");
+      const hint = document.getElementById("hintContinue");
+      continueBtn.classList.toggle("hidden", !needsContinue);
+      hint.classList.toggle("hidden", !needsContinue);
+    }
+
     function extractGeminiText(obj) {
       const parts = obj?.candidates?.[0]?.content?.parts;
       if (!Array.isArray(parts)) return "";
       return parts.map(p => (typeof p?.text === "string" ? p.text : "")).join("");
     }
 
-    // ✅ Client streaming: legge SSE (data: {...}) e costruisce delta
     async function streamGemini(payload, { onDelta, onEnd } = {}) {
       const r = await fetch("/api/gemini", {
         method: "POST",
@@ -392,20 +395,14 @@
         body: JSON.stringify(payload)
       });
 
+      // Se non è SSE, leggiamo JSON e mostriamo errore chiaro
       const ct = r.headers.get("content-type") || "";
       if (!ct.includes("text/event-stream")) {
-        // Non è streaming: probabilmente errore JSON
         let msg = `Errore (non-stream). Content-Type: ${ct}`;
         try {
           const j = await r.json();
           msg = j?.error || msg;
         } catch {}
-        throw new Error(msg);
-      }
- 
-      if (!r.ok) {
-        let msg = `Errore HTTP ${r.status}`;
-        try { msg = (await r.json())?.error || msg; } catch {}
         throw new Error(msg);
       }
 
@@ -420,7 +417,6 @@
 
         buf += decoder.decode(value, { stream: true });
 
-        // SSE: eventi separati da \n\n
         const events = buf.split("\n\n");
         buf = events.pop() || "";
 
@@ -439,7 +435,6 @@
             const modelText = extractGeminiText(obj);
             if (!modelText) continue;
 
-            // delta robusto
             let delta = modelText;
             if (modelText.startsWith(lastModelText)) {
               delta = modelText.slice(lastModelText.length);
@@ -460,6 +455,83 @@
       const endsNicely = /[.!?…]"?\s*$/.test(out);
       const nearLimit = out.length >= Math.floor(maxChars * 0.92);
       return endsWithMarker || nearLimit || !endsNicely;
+    }
+
+    function showQuotaBox(errorMessage, retrySeconds, retryAction) {
+      const responseEl = document.getElementById("geminiResponse");
+      const secs = (typeof retrySeconds === "number" && isFinite(retrySeconds))
+        ? Math.max(1, Math.ceil(retrySeconds))
+        : null;
+
+      responseEl.innerHTML = `
+        <div class="max-w-2xl mx-auto">
+          <div class="rounded-3xl border border-amber-200 bg-amber-50 p-6 shadow-sm">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-700 font-extrabold">!</div>
+              <div class="text-left">
+                <div class="font-extrabold text-amber-800 text-lg">Limite gratuito raggiunto</div>
+                <div class="text-sm text-amber-900/80 mt-1">
+                  ${secs ? `Puoi riprovare tra <b id="retrySecs">${secs}</b> secondi.` : `Hai raggiunto il limite del piano gratuito.`}
+                </div>
+                <div class="text-xs text-amber-900/70 mt-2 break-words">
+                  ${escapeHtml(errorMessage || "")}
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-5 flex flex-col sm:flex-row gap-3">
+              <button id="retryBtn"
+                class="px-4 py-3 rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
+                type="button">
+                ${secs ? `Riprova tra ${secs}s` : "Riprova"}
+              </button>
+
+              <button
+                class="px-4 py-3 rounded-2xl bg-white border border-amber-200 text-amber-900 font-semibold hover:bg-amber-100 transition"
+                type="button"
+                onclick="document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth', block: 'start' })"
+              >
+                Vedi piani PRO/BUSINESS
+              </button>
+
+              <a
+                class="px-4 py-3 rounded-2xl ai-gradient text-white font-semibold text-center hover:scale-[1.01] transition"
+                href="/checkout.html"
+              >
+                Upgrade (mock)
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const retryBtn = document.getElementById("retryBtn");
+      if (!retryBtn) return;
+
+      const doRetry = (typeof retryAction === "function") ? retryAction : () => {};
+
+      // se non abbiamo secs, abilita subito
+      if (!secs) {
+        retryBtn.onclick = doRetry;
+        return;
+      }
+
+      retryBtn.disabled = true;
+
+      let remaining = secs;
+      const retrySecsEl = document.getElementById("retrySecs");
+
+      const timer = setInterval(() => {
+        remaining--;
+        if (retrySecsEl) retrySecsEl.textContent = String(remaining);
+        retryBtn.textContent = remaining > 0 ? `Riprova tra ${remaining}s` : "Riprova ora";
+
+        if (remaining <= 0) {
+          clearInterval(timer);
+          retryBtn.disabled = false;
+          retryBtn.onclick = doRetry;
+        }
+      }, 1000);
     }
 
     async function chiediAGeminiStart() {
@@ -491,24 +563,22 @@
             fullText += d;
             responseEl.textContent = fullText;
             maybeAutoScroll();
-          },
-          onEnd: () => {}
+          }
         });
 
-        // se Gemini non mette marker, lo deduciamo
         needsContinue = computeNeedsContinue(fullText, selectedTarget.maxChars);
-
         responseEl.innerHTML = renderText(fullText.trimEnd());
         updateContinueUI();
 
       } catch (e) {
         needsContinue = false;
         updateContinueUI();
-        responseEl.innerHTML = `
-          <div class="text-red-600 font-semibold">
-            <i class="ri-error-warning-line"></i> Errore: ${escapeHtml(e.message)}
-          </div>
-        `;
+
+        const msg = String(e?.message || "");
+        const m = msg.match(/retry in ([0-9.]+)s/i);
+        const seconds = m ? Number(m[1]) : null;
+
+        showQuotaBox(msg, seconds, () => chiediAGeminiStart());
       } finally {
         setBusy(false);
       }
@@ -520,7 +590,6 @@
 
       const responseEl = document.getElementById("geminiResponse");
 
-      // togli marker finale prima di continuare
       fullText = fullText.replace(/\s*\.\.\.\(continua\)\s*$/i, "").trimEnd();
 
       setBusy(true, "Sto continuando…");
@@ -540,22 +609,23 @@
             fullText += d;
             responseEl.textContent = fullText;
             maybeAutoScroll();
-          },
-          onEnd: () => {}
+          }
         });
 
         needsContinue = computeNeedsContinue(fullText, selectedTarget.maxChars);
-
         responseEl.innerHTML = renderText(fullText.trimEnd());
         updateContinueUI();
 
       } catch (e) {
-        responseEl.innerHTML += `
-          <br><br>
-          <span class="text-red-600 font-semibold">
-            <i class="ri-error-warning-line"></i> Errore nel continua: ${escapeHtml(e.message)}
-          </span>
-        `;
+        needsContinue = false;
+        updateContinueUI();
+
+        const msg = String(e?.message || "");
+        const m = msg.match(/retry in ([0-9.]+)s/i);
+        const seconds = m ? Number(m[1]) : null;
+
+        // retryAction qui richiama CONTINUE
+        showQuotaBox(msg, seconds, () => chiediAGeminiContinue());
       } finally {
         setBusy(false);
       }
@@ -585,6 +655,3 @@
   </script>
 </body>
 </html>
-
-
-
