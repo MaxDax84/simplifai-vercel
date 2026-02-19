@@ -5,32 +5,66 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
   if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Metodo non consentito. Usa POST." });
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Metodo non consentito. Usa POST." });
+  }
 
   try {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return res.status(500).json({ error: "GEMINI_API_KEY mancante su Vercel." });
 
-    const { query, targetLabel, targetPrompt, maxTokens, maxChars } = req.body || {};
+    const {
+      query,
+      targetLabel,
+      targetPrompt,
+      maxTokens,
+      maxChars,
+      mode,           // "start" | "continue"
+      previousText    // testo già mostrato (solo per continue)
+    } = req.body || {};
 
     if (!query || !targetPrompt) {
       return res.status(400).json({ error: "Parametri mancanti (query/targetPrompt)." });
     }
 
-    // ✅ Limiti “safe”
-    const tokens = Math.min(Math.max(Number(maxTokens) || 1200, 256), 8000); // tra 256 e 8000
-    const charsLimit = Math.min(Math.max(Number(maxChars) || 4000, 500), 50000); // tra 500 e 50k
+    // Limiti safe
+    const tokens = Math.min(Math.max(Number(maxTokens) || 1200, 256), 8000);
+    const charsLimit = Math.min(Math.max(Number(maxChars) || 4000, 500), 50000);
 
-    const prompt = `
+    const safeMode = (mode === "continue") ? "continue" : "start";
+    const prev = String(previousText || "").slice(0, 20000); // sicurezza: max 20k char nel prompt
+
+    let prompt = "";
+
+    if (safeMode === "start") {
+      prompt = `
 Spiega il seguente concetto: "${query}".
 
 Target: ${targetPrompt}.
 Stile: chiaro, ben strutturato, con esempi adatti al target.
 Vincolo LUNGHEZZA: resta ENTRO circa ${Math.floor(charsLimit * 0.85)} caratteri (massimo ${charsLimit}).
-Se non basta spazio, dai una sintesi e poi una sezione "In breve" finale.
+Se non basta spazio, arriva fino a un punto sensato e termina con la scritta esatta: ...(continua)
 
 Formatta con titoli e liste quando utile.
 `.trim();
+    } else {
+      prompt = `
+Stiamo continuando una spiegazione iniziata in precedenza.
+
+Concetto: "${query}"
+Target: ${targetPrompt}
+
+TESTO GIÀ DATO (non ripeterlo, continua da dove eri rimasto):
+"""
+${prev}
+"""
+
+Ora continua la spiegazione dal punto esatto in cui si è interrotta.
+- NON ripetere introduzioni o titoli già dati (a meno che serva un sottotitolo nuovo)
+- Mantieni lo stesso tono e livello del target
+- Se anche questa parte rischia di essere troppo lunga, termina di nuovo con: ...(continua)
+`.trim();
+    }
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
@@ -56,15 +90,17 @@ Formatta con titoli e liste quando utile.
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
     let out = String(text);
 
-    // ✅ Taglio “hard” per rispettare SEMPRE maxChars
+    // Taglio hard se supera maxChars (ma cerchiamo di lasciar finire "bene")
     if (out.length > charsLimit) {
-      out = out.slice(0, charsLimit).trimEnd() + "\n\n…(continua)";
+      out = out.slice(0, charsLimit).trimEnd();
+      if (!out.endsWith("...(continua)")) out += "\n\n...(continua)";
     }
 
     return res.status(200).json({
       text: out,
       used: { maxTokens: tokens, maxChars: charsLimit },
-      target: targetLabel || ""
+      target: targetLabel || "",
+      mode: safeMode
     });
   } catch (e) {
     return res.status(500).json({ error: e?.message || "Errore sconosciuto" });
