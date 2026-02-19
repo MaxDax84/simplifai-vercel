@@ -15,6 +15,19 @@
     .btn-target { transition: all 0.2s; border: 2px solid transparent; }
     .btn-target.active { border-color: #6366f1; background-color: #eef2ff; color: #4f46e5; font-weight: 700; }
     #geminiResponse { white-space: pre-wrap; word-break: break-word; }
+    .loaderSpinner{
+      width:18px;
+      height:18px;
+      border:3px solid rgba(0,0,0,.15);
+      border-top-color: rgba(0,0,0,.6);
+      border-radius:50%;
+      animation: spin .8s linear infinite;
+    }
+    
+    @keyframes spin{
+      to{ transform: rotate(360deg); }
+    }
+
   </style>
 </head>
 
@@ -126,6 +139,11 @@
 
       <div class="px-6 md:px-8 pb-8">
         <div class="h-px bg-gray-100 mb-5"></div>
+        <!-- Loading bar -->
+        <div id="loadingBar" class="hidden items-center gap-3 mb-4 text-sm text-gray-500">
+          <div class="loaderSpinner"></div>
+          <div id="loadingText">Sto generando…</div>
+        </div>
 
         <div class="max-h-[520px] overflow-y-auto pr-2">
           <div id="geminiResponse" class="text-gray-700 leading-relaxed text-[15px] md:text-base"></div>
@@ -214,6 +232,37 @@
         </div>
       `;
     }
+    
+    function setBusy(isBusy, message = "Sto generando…") {
+      const loadingBar = document.getElementById("loadingBar");
+      const loadingText = document.getElementById("loadingText");
+    
+      const generateBtn = document.getElementById("generateBtn");
+      const continueBtn = document.getElementById("continueBtn");
+      const copyBtn = document.getElementById("copyBtn");
+    
+      if (loadingText) loadingText.textContent = message;
+    
+      if (isBusy) {
+        loadingBar.classList.remove("hidden");
+      } else {
+        loadingBar.classList.add("hidden");
+      }
+    
+      // Disabilita bottoni mentre genera
+      if (generateBtn) {
+        generateBtn.disabled = isBusy;
+        generateBtn.classList.toggle("opacity-70", isBusy);
+      }
+      if (continueBtn) {
+        continueBtn.disabled = isBusy;
+        continueBtn.classList.toggle("opacity-70", isBusy);
+      }
+      if (copyBtn) {
+        copyBtn.disabled = isBusy;
+        copyBtn.classList.toggle("opacity-70", isBusy);
+      }
+    }
 
     function escapeHtml(s) {
       return s
@@ -274,10 +323,8 @@
 
       showResultCard();
       setLoading();
+      setBusy(true, "Sto generando…");
 
-      const btn = document.getElementById("generateBtn");
-      btn.disabled = true;
-      btn.classList.add("opacity-70");
 
       try {
         const data = await callGeminiApi({
@@ -308,8 +355,7 @@
           </div>
         `;
       } finally {
-        btn.disabled = false;
-        btn.classList.remove("opacity-70");
+        setBusy(false);
       }
     }
 
@@ -317,9 +363,7 @@
       if (!lastQuery) return;
       showResultCard();
 
-      const continueBtn = document.getElementById("continueBtn");
-      continueBtn.disabled = true;
-      continueBtn.classList.add("opacity-70");
+      setBusy(true, "Sto continuando…");
 
       try {
         const data = await callGeminiApi({
@@ -353,9 +397,8 @@
             <i class="ri-error-warning-line"></i> Errore nel continua: ${escapeHtml(e.message)}
           </span>
         `;
-      } finally {
-        continueBtn.disabled = false;
-        continueBtn.classList.remove("opacity-70");
+        } finally {
+        setBusy(false);
       }
     }
 
@@ -384,3 +427,4 @@
   </script>
 </body>
 </html>
+
