@@ -254,6 +254,17 @@
         body: JSON.stringify(payload)
       });
 
+      const ct = r.headers.get("content-type") || "";
+      if (!ct.includes("text/event-stream")) {
+        // Non è streaming: probabilmente errore JSON
+        let msg = `Errore (non-stream). Content-Type: ${ct}`;
+        try {
+          const j = await r.json();
+          msg = j?.error || msg;
+        } catch {}
+        throw new Error(msg);
+      }
+ 
       if (!r.ok) {
         let msg = `Errore HTTP ${r.status}`;
         try { msg = (await r.json())?.error || msg; } catch {}
@@ -436,3 +447,4 @@
   </script>
 </body>
 </html>
+
