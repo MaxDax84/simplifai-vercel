@@ -42,8 +42,10 @@ Spiega il seguente concetto: "${query}".
 
 Target: ${targetPrompt}.
 Stile: chiaro, ben strutturato, con esempi adatti al target.
-Vincolo LUNGHEZZA: resta ENTRO circa ${Math.floor(charsLimit * 0.85)} caratteri (massimo ${charsLimit}).
-Se non basta spazio, arriva fino a un punto sensato e termina con la scritta esatta: ...(continua)
+
+VINCOLI:
+- Resta ENTRO circa ${Math.floor(charsLimit * 0.85)} caratteri (massimo ${charsLimit}).
+- Se non basta spazio, NON iniziare una sezione nuova: chiudi con una frase completa e termina con la scritta esatta: ...(continua)
 
 Formatta con titoli e liste quando utile.
 `.trim();
@@ -59,7 +61,7 @@ TESTO GIÀ DATO (non ripeterlo, continua da dove eri rimasto):
 ${prev}
 """
 
-Ora continua la spiegazione dal punto esatto in cui si è interrotta.
+Ora continua dal punto esatto in cui si è interrotta.
 - NON ripetere introduzioni o titoli già dati (a meno che serva un sottotitolo nuovo)
 - Mantieni lo stesso tono e livello del target
 - Se anche questa parte rischia di essere troppo lunga, termina di nuovo con: ...(continua)
@@ -88,16 +90,28 @@ Ora continua la spiegazione dal punto esatto in cui si è interrotta.
     }
 
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    let out = String(text);
+    let out = String(text).trimEnd();
 
-    // Taglio hard se supera maxChars (ma cerchiamo di lasciar finire "bene")
+    // 1) Taglio hard se supera maxChars
     if (out.length > charsLimit) {
       out = out.slice(0, charsLimit).trimEnd();
-      if (!out.endsWith("...(continua)")) out += "\n\n...(continua)";
+    }
+
+    // 2) Heuristics: se sembra "tagliato" o finisce male, forziamo ...(continua)
+    const endsWithMarker = out.endsWith("...(continua)");
+    const endsNicely = /[.!?…]"?\s*$/.test(out); // finisce con punteggiatura
+    const nearLimit = out.length >= Math.floor(charsLimit * 0.92);
+
+    // se finisce senza punteggiatura (es: "con i") è quasi certamente troncato
+    const needsContinue = endsWithMarker || nearLimit || !endsNicely;
+
+    if (needsContinue && !endsWithMarker) {
+      out = out.trimEnd() + "\n\n...(continua)";
     }
 
     return res.status(200).json({
       text: out,
+      needsContinue,
       used: { maxTokens: tokens, maxChars: charsLimit },
       target: targetLabel || "",
       mode: safeMode
