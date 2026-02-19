@@ -40,13 +40,14 @@
       <span class="text-xl font-extrabold tracking-tight text-gray-900">SimplifAI <span class="text-indigo-600">Clone</span></span>
     </div>
     <div class="hidden md:flex gap-6 text-sm font-medium text-gray-500">
-      <a href="#" class="hover:text-indigo-600">Home</a>
-      <a href="#" class="hover:text-indigo-600">Come funziona</a>
-      <a href="#" class="hover:text-indigo-600">Prezzi</a>
+      <a href="#home" class="hover:text-indigo-600">Home</a>
+      <a href="#how" class="hover:text-indigo-600">Come funziona</a>
+      <a href="#pricing" class="hover:text-indigo-600">Prezzi</a>
+
     </div>
   </nav>
 
-  <section class="pt-16 md:pt-20 text-center px-4">
+  <section id="home" class="pt-16 md:pt-20 text-center px-4">
     <span class="inline-block py-1 px-3 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-4">
       Powered by Google Gemini
     </span>
@@ -158,6 +159,143 @@
       </div>
     </div>
   </section>
+
+    <!-- PRICING -->
+    <section id="pricing" class="max-w-6xl mx-auto px-4 mt-10 md:mt-14">
+      <div class="text-center mb-10">
+        <span class="inline-block py-1 px-3 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-3">
+          Piani & Prezzi
+        </span>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+          Scegli il piano giusto per te
+        </h2>
+        <p class="text-gray-500 mt-3">
+          Inizia gratis, poi fai upgrade quando vuoi più richieste e risposte più lunghe.
+        </p>
+      </div>
+    
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- FREE -->
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-extrabold text-gray-900">FREE</h3>
+            <span class="text-xs font-bold text-gray-500 bg-gray-50 px-3 py-1 rounded-full">Per provare</span>
+          </div>
+    
+          <div class="mt-4">
+            <div class="text-4xl font-extrabold text-gray-900">€0</div>
+            <div class="text-sm text-gray-500 mt-1">Perfetto per iniziare</div>
+          </div>
+    
+          <ul class="mt-6 space-y-3 text-sm text-gray-600">
+            <li>✅ Fino a <b>10</b> richieste al giorno</li>
+            <li>✅ Risposte fino a <b>~1200 token</b></li>
+            <li>✅ Target (Bambino → Scienziato)</li>
+            <li>✅ Pulsante <b>Continua</b></li>
+            <li>✅ Copia risposta</li>
+          </ul>
+    
+          <button
+            class="mt-7 w-full px-4 py-3 rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
+            onclick="alert('Sei già nel piano FREE 🙂')"
+            type="button"
+          >
+            Inizia gratis
+          </button>
+    
+          <p class="text-xs text-gray-400 mt-3">
+            Limiti più bassi e possibili attese quando superi la quota.
+          </p>
+        </div>
+    
+        <!-- PRO -->
+        <div class="bg-white rounded-3xl shadow-2xl border-2 border-indigo-200 p-6 relative">
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+            <div class="ai-gradient text-white text-xs font-extrabold px-4 py-1 rounded-full shadow">
+              Consigliato
+            </div>
+          </div>
+    
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-extrabold text-gray-900">PRO</h3>
+            <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full">Per uso serio</span>
+          </div>
+    
+          <div class="mt-4">
+            <div class="text-4xl font-extrabold text-gray-900">€14,99</div>
+            <div class="text-sm text-gray-500 mt-1">al mese</div>
+          </div>
+    
+          <ul class="mt-6 space-y-3 text-sm text-gray-600">
+            <li>🚀 Fino a <b>150</b> richieste al giorno</li>
+            <li>🚀 Risposte fino a <b>~4500 token</b></li>
+            <li>✅ Priorità più alta (meno attese)</li>
+            <li>✅ Risposte più lunghe per Esperto/Scienziato</li>
+            <li>✅ Cronologia (in arrivo)</li>
+          </ul>
+    
+          <a
+            class="mt-7 w-full block text-center px-4 py-3 rounded-2xl ai-gradient text-white font-semibold hover:scale-[1.01] transition shadow-lg"
+            href="mailto:info@tuodominio.it?subject=Upgrade%20a%20PRO&body=Ciao!%20Vorrei%20fare%20upgrade%20a%20PRO."
+          >
+            Passa a PRO
+          </a>
+    
+          <p class="text-xs text-gray-400 mt-3">
+            (Per ora apre una mail. Più avanti lo colleghiamo a Stripe.)
+          </p>
+        </div>
+    
+        <!-- BUSINESS -->
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-extrabold text-gray-900">BUSINESS</h3>
+            <span class="text-xs font-bold text-gray-500 bg-gray-50 px-3 py-1 rounded-full">Per team</span>
+          </div>
+    
+          <div class="mt-4">
+            <div class="text-4xl font-extrabold text-gray-900">€79,99</div>
+            <div class="text-sm text-gray-500 mt-1">al mese</div>
+          </div>
+    
+          <ul class="mt-6 space-y-3 text-sm text-gray-600">
+            <li>🏢 Richieste elevate (team)</li>
+            <li>🏢 Risposte fino a <b>~8000 token</b></li>
+            <li>✅ Utenti multipli (in arrivo)</li>
+            <li>✅ Supporto prioritario</li>
+            <li>✅ Branding / personalizzazioni</li>
+          </ul>
+    
+          <a
+            class="mt-7 w-full block text-center px-4 py-3 rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
+            href="mailto:info@tuodominio.it?subject=Richiesta%20BUSINESS&body=Ciao!%20Vorrei%20info%20sul%20piano%20BUSINESS."
+          >
+            Contattaci
+          </a>
+    
+          <p class="text-xs text-gray-400 mt-3">
+            Ideale per scuole, aziende o team.
+          </p>
+        </div>
+      </div>
+    
+      <div class="text-center mt-8 text-sm text-gray-500">
+        Hai dubbi? Scrivici: <span class="font-semibold text-gray-900">info@tuodominio.it</span>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how" class="max-w-5xl mx-auto px-4 mt-14">
+      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
+        <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900">Come funziona</h2>
+        <ol class="mt-5 space-y-3 text-gray-600">
+          <li><b>1)</b> Scrivi una domanda (es: “Cos’è il DNA?”)</li>
+          <li><b>2)</b> Scegli il target (Bambino → Scienziato)</li>
+          <li><b>3)</b> Clicca <b>Genera</b> e leggi la risposta</li>
+          <li><b>4)</b> Se è lunga, usa <b>Continua</b></li>
+        </ol>
+      </div>
+    </section>
 
   <script>
     const TARGETS = {
@@ -447,4 +585,5 @@
   </script>
 </body>
 </html>
+
 
