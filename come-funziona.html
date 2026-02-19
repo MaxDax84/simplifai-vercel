@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Come funziona – SimplifAI</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+    .ai-gradient { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
+  </style>
+</head>
+
+<body class="pb-16">
+  <nav class="w-full h-16 flex items-center justify-between px-6 md:px-10 border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
+    <a href="/" class="flex items-center gap-2">
+      <div class="ai-gradient w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-sm">⚡</div>
+      <span class="text-xl font-extrabold tracking-tight text-gray-900">SimplifAI <span class="text-indigo-600">Clone</span></span>
+    </a>
+    <div class="hidden md:flex gap-6 text-sm font-medium text-gray-500">
+      <a href="/" class="hover:text-indigo-600">Home</a>
+      <a href="/come-funziona.html" class="hover:text-indigo-600">Come funziona</a>
+      <a href="/prezzi.html" class="hover:text-indigo-600">Prezzi</a>
+    </div>
+  </nav>
+
+  <main class="max-w-5xl mx-auto px-4 pt-14">
+    <div class="text-center mb-10">
+      <span class="inline-block py-1 px-3 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-3">
+        Guida rapida
+      </span>
+      <h1 class="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
+        Come funziona SimplifAI
+      </h1>
+      <p class="text-gray-500 mt-3">
+        2 minuti e inizi subito a usarlo.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-7">
+        <div class="flex items-center gap-3">
+          <div class="ai-gradient w-10 h-10 rounded-2xl flex items-center justify-center text-white font-extrabold">1</div>
+          <h2 class="text-xl font-extrabold text-gray-900">Scrivi la domanda</h2>
+        </div>
+        <p class="text-gray-600 mt-3">
+          Inserisci cosa vuoi capire (es. “Cos’è il DNA?”, “Spiegami l’inflazione”).
+        </p>
+        <p class="text-xs text-gray-400 mt-3">
+          Tip: più la domanda è specifica, migliore sarà la risposta.
+        </p>
+      </div>
+
+      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-7">
+        <div class="flex items-center gap-3">
+          <div class="ai-gradient w-10 h-10 rounded-2xl flex items-center justify-center text-white font-extrabold">2</div>
+          <h2 class="text-xl font-extrabold text-gray-900">Scegli il target</h2>
+        </div>
+        <p class="text-gray-600 mt-3">
+          Bambino, Ragazzino, Universitario, Adulto, Esperto, Scienziato.
+          Cambia lo stile e la profondità della spiegazione.
+        </p>
+      </div>
+
+      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-7">
+        <div class="flex items-center gap-3">
+          <div class="ai-gradient w-10 h-10 rounded-2xl flex items-center justify-center text-white font-extrabold">3</div>
+          <h2 class="text-xl font-extrabold text-gray-900">Genera la risposta</h2>
+        </div>
+        <p class="text-gray-600 mt-3">
+          Clicca <b>Genera</b>. Vedrai un indicatore mentre il testo arriva.
+        </p>
+        <p class="text-xs text-gray-400 mt-3">
+          Nota: con il piano gratuito possono esserci attese (“retry in Xs”).
+        </p>
+      </div>
+
+      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-7">
+        <div class="flex items-center gap-3">
+          <div class="ai-gradient w-10 h-10 rounded-2xl flex items-center justify-center text-white font-extrabold">4</div>
+          <h2 class="text-xl font-extrabold text-gray-900">Continua e copia</h2>
+        </div>
+        <p class="text-gray-600 mt-3">
+          Se la risposta è lunga, appare <b>Continua</b> al centro in basso.
+          Puoi anche copiare tutto con <b>Copia</b>.
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-10 bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
+      <h3 class="text-xl font-extrabold text-gray-900">Domande frequenti</h3>
+      <div class="mt-4 space-y-4 text-gray-600">
+        <div>
+          <div class="font-semibold text-gray-900">Perché a volte non genera?</div>
+          <div>Se vedi “retry in Xs”, hai raggiunto un limite temporaneo del free tier: aspetta e riprova.</div>
+        </div>
+        <div>
+          <div class="font-semibold text-gray-900">Posso avere risposte più lunghe?</div>
+          <div>Sì: con piani PRO/BUSINESS (pagina Prezzi) aumenti limiti e priorità.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-10">
+      <a href="/" class="inline-block px-6 py-3 rounded-2xl ai-gradient text-white font-semibold shadow-lg hover:scale-[1.01] transition">
+        Vai all’app
+      </a>
+    </div>
+  </main>
+</body>
+</html>
