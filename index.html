@@ -4,169 +4,290 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SimplifAI Clone</title>
+  <link rel="stylesheet" href="/theme.css">
 
   <style>
-:root{
-  --bg:#0f1226;
-  --card:#151937;
-  --card-soft:#11152e;
-  --border:rgba(255,255,255,.06);
-  --text:#ffffff;
-  --muted:rgba(255,255,255,.65);
-  --accent:#7c5cff;
-  --accent2:#4ecbff;
-  --radius:18px;
-}
+    /* Wizard layout */
+    .wiz{
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+    }
 
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-  background:
-    radial-gradient(800px 600px at 15% 20%, rgba(124,92,255,.35), transparent 60%),
-    radial-gradient(700px 500px at 85% 30%, rgba(78,203,255,.25), transparent 60%),
-    var(--bg);
-  color:var(--text);
-}
+    .progress{
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid var(--border);
+      overflow:hidden;
+    }
+    .bar{
+      height:100%;
+      width: 33.333%;
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(38,198,255,.85));
+      transition: width .35s cubic-bezier(.2,.8,.2,1);
+    }
 
-.wrap{width:min(1100px,92vw);margin:40px auto}
+    .steps-wrap{
+      position: relative;
+      overflow:hidden;
+      border-radius: var(--radius);
+    }
+    .track{
+      display:flex;
+      width: 300%;
+      transform: translateX(0%);
+      transition: transform .45s cubic-bezier(.2,.8,.2,1);
+      will-change: transform;
+    }
+    .panel{
+      width: 100%;
+      flex: 0 0 100%;
+      padding: 18px;
+      min-height: 420px;
+    }
 
-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:28px;
-}
+    .panel-title{
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: .2px;
+      margin: 0 0 8px;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+    }
+    .panel-sub{
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 14px;
+    }
 
-.brand{display:flex;align-items:center;gap:12px}
-.logo{
-  width:40px;height:40px;border-radius:12px;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-}
+    .sym{
+      width: 18px;
+      display:inline-flex;
+      justify-content:center;
+      opacity:.92;
+    }
 
-nav a{
-  color:var(--muted);
-  text-decoration:none;
-  margin-left:20px;
-  font-size:14px;
-}
-nav a:hover{color:white}
+    textarea{
+      width:100%;
+      min-height: 180px;
+      resize: vertical;
+      background: rgba(0,0,0,.22);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 12px;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.45;
+      outline: none;
+    }
+    textarea:focus{
+      border-color: rgba(124,92,255,.50);
+      box-shadow: 0 0 0 4px rgba(124,92,255,.15);
+    }
 
-.hero{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:24px;
-}
-@media(max-width:900px){
-  .hero{grid-template-columns:1fr}
-}
+    .wizard-actions{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    .wizard-actions .left,
+    .wizard-actions .right{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap: wrap;
+    }
 
-.card{
-  background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:20px;
-  backdrop-filter:blur(8px);
-}
+    /* Target grid */
+    .targets-grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    @media (max-width: 880px){
+      .targets-grid{ grid-template-columns: 1fr; }
+    }
 
-.title{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size:18px;
-  font-weight:600;
-  margin-bottom:10px;
-}
+    .target-card{
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      cursor:pointer;
+      transition: .15s ease;
+      display:flex;
+      gap: 12px;
+      align-items:flex-start;
+      min-height: 84px;
+    }
+    .target-card:hover{
+      background: rgba(255,255,255,.05);
+      transform: translateY(-1px);
+    }
+    .target-card.active{
+      border-color: rgba(124,92,255,.55);
+      background: rgba(124,92,255,.14);
+    }
+    .ticon{
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      font-size: 18px;
+      flex: 0 0 auto;
+    }
+    .tname{ font-weight: 900; margin:0; }
+    .tdesc{ margin: 4px 0 0; color: var(--muted); font-size: 13px; line-height:1.35; }
 
-.sym{
-  width:18px;
-  display:inline-flex;
-  justify-content:center;
-}
+    /* Response area */
+    .response-card{
+      background: rgba(0,0,0,.18);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      min-height: 240px;
+      display:flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .response-text{
+      font-size: 14px;
+      line-height: 1.55;
+      color: rgba(233,237,255,.92);
+      white-space: pre-wrap;
+      word-break: break-word;
+      flex: 1;
+    }
+    .response-footer{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(233,237,255,.08);
+      flex-wrap: wrap;
+    }
 
-textarea{
-  width:100%;
-  min-height:140px;
-  border-radius:14px;
-  border:1px solid var(--border);
-  background:var(--card-soft);
-  color:white;
-  padding:12px;
-  resize:vertical;
-}
+    .status{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .spinner{
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 2px solid rgba(233,237,255,.25);
+      border-top-color: rgba(233,237,255,.85);
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-.targets{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-top:14px;
-}
+    /* Premium quota box (dark glass to match theme) */
+    .quota-premium-card{
+      border-radius: 18px;
+      border: 1px solid rgba(124,92,255,.35);
+      background: rgba(124,92,255,.10);
+      padding: 16px;
+      animation: qfade .35s cubic-bezier(.2,.8,.2,1);
+    }
+    @keyframes qfade{ from{opacity:0; transform: translateY(10px);} to{opacity:1; transform: translateY(0);} }
 
-.pill{
-  padding:6px 14px;
-  border-radius:999px;
-  border:1px solid var(--border);
-  background:transparent;
-  color:var(--muted);
-  cursor:pointer;
-  font-size:13px;
-}
-.pill.active{
-  background:rgba(124,92,255,.25);
-  border-color:var(--accent);
-  color:white;
-}
+    .qhead{
+      display:flex; align-items:center; gap:10px; margin-bottom: 6px;
+      font-weight: 900;
+    }
+    .qsub{ color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .qprogress{
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.07);
+      border:1px solid var(--border);
+      overflow:hidden;
+      margin: 10px 0 12px;
+    }
+    .qbar{
+      height:100%;
+      width:100%;
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(38,198,255,.85));
+      transition: width 1s linear;
+    }
+    .qgrid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    @media (max-width: 560px){
+      .qgrid{ grid-template-columns: 1fr; }
+    }
 
-.actions{
-  margin-top:16px;
-  display:flex;
-  justify-content:flex-end;
-  gap:10px;
-}
+    .qbtn{
+      min-height: 44px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      font-weight: 800;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      transition:.15s ease;
+    }
+    .qbtn:hover{ background: rgba(255,255,255,.06); transform: translateY(-1px); }
 
-.btn{
-  padding:10px 18px;
-  border-radius:12px;
-  border:1px solid var(--border);
-  background:var(--card-soft);
-  color:white;
-  cursor:pointer;
-  font-size:14px;
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-.btn:hover{background:#1c2246}
+    .qbtn.primary{
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(38,198,255,.85));
+      border-color: rgba(124,92,255,.45);
+      color: #0b1020;
+    }
+    .qbtn.primary:disabled{
+      opacity: .55;
+      cursor:not-allowed;
+      transform:none;
+    }
+    .pulse{ animation: pulse 1s ease 2; }
+    @keyframes pulse{
+      0%{ box-shadow: 0 0 0 0 rgba(124,92,255,.35); }
+      70%{ box-shadow: 0 0 0 10px rgba(124,92,255,0); }
+      100%{ box-shadow: 0 0 0 0 rgba(124,92,255,0); }
+    }
 
-.btn-primary{
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  border:none;
-}
-
-.response-card{
-  min-height:260px;
-  border-radius:14px;
-  background:var(--card-soft);
-  padding:16px;
-  border:1px solid var(--border);
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-}
-
-.response-text{
-  white-space:pre-wrap;
-  font-size:14px;
-  line-height:1.55;
-}
-
-.status{
-  font-size:12px;
-  color:var(--muted);
-  margin-top:12px;
-}
-</style>
-
+    details.qdetails{
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    details.qdetails summary{
+      cursor:pointer;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .qtech{
+      margin-top: 8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.18);
+      border: 1px solid var(--border);
+      white-space: pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      color: rgba(233,237,255,.9);
+    }
+  </style>
 </head>
 
 <body>
@@ -180,114 +301,150 @@ textarea{
         </div>
       </div>
 
-      <nav>
-        <a href="/come-funziona.html">Come funziona</a>
-        <a href="/prezzi.html">Prezzi</a>
+      <nav id="mainNav">
+        <a href="/index.html" data-nav="home">Home</a>
+        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
+        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
       </nav>
     </header>
 
-    <section class="hero">
-      <!-- LEFT -->
-      <div class="card">
-        <div class="card-inner">
-          <div class="title"><span class="sym">✦</span>Scrivi una domanda</div>
-          <p class="hint">
-            Scegli un target e genera la risposta. Se è lunga, usa <b>Continua</b>.
-          </p>
+    <div class="wiz">
+      <div class="progress"><div class="bar" id="bar"></div></div>
 
-          <textarea id="query" placeholder="Esempio: Spiegami cos’è l’entropia e perché è importante."></textarea>
+      <div class="card steps-wrap">
+        <div class="track" id="track">
 
-          <div class="controls">
-            <div class="targets" id="targets"></div>
+          <!-- STEP 1 -->
+          <div class="panel">
+            <div class="panel-title"><span class="sym">✦</span>Step 1 — Scrivi la domanda</div>
+            <p class="panel-sub">Inserisci la tua domanda. Poi vai avanti per scegliere il livello di spiegazione.</p>
 
-            <div class="actions">
-              <button class="btn btn-ghost" id="copyBtn" disabled>
-                <span class="sym">⧉</span>Copia
-              </button>
-              <button class="btn btn-primary" id="generateBtn">
-                <span class="sym">▶</span>Genera
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+            <textarea id="query" placeholder="Esempio: Spiegami cos’è l’entropia e perché è importante."></textarea>
 
-      <!-- RIGHT -->
-      <div class="card">
-        <div class="card-inner">
-          <div class="title"><span class="sym">💬</span>Risposta</div>
-
-          <div class="response-card" id="responseCard">
-            <div class="response-text" id="response"></div>
-
-            <div class="response-footer">
-              <div class="status">
-                <span id="statusSpinner" class="spinner" style="display:none;"></span>
-                <span id="statusText">Pronto.</span>
+            <div class="wizard-actions">
+              <div class="left">
+                <span class="pilltag">Suggerimento: aggiungi “con esempi”</span>
               </div>
-
-              <button class="btn" id="continueBtn" disabled>
-                <span class="sym">⋯</span>Continua
-              </button>
+              <div class="right">
+                <button class="btn btn-primary" id="toStep2">Avanti →</button>
+              </div>
             </div>
           </div>
+
+          <!-- STEP 2 -->
+          <div class="panel">
+            <div class="panel-title"><span class="sym">🎯</span>Step 2 — Scegli il target</div>
+            <p class="panel-sub">Seleziona il target. Puoi cambiare più volte finché non trovi lo stile giusto.</p>
+
+            <div class="targets-grid" id="targets"></div>
+
+            <div class="wizard-actions">
+              <div class="left">
+                <button class="btn" id="back1">← Indietro</button>
+              </div>
+              <div class="right">
+                <button class="btn btn-primary" id="toStep3" disabled>Vai alla risposta →</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="panel">
+            <div class="panel-title"><span class="sym">💬</span>Step 3 — Risposta</div>
+            <p class="panel-sub">Premi “Genera” per ricevere la risposta in streaming. Se si interrompe, usa “Continua”.</p>
+
+            <div class="response-card" id="responseCard">
+              <div class="response-text" id="response"></div>
+
+              <div class="response-footer">
+                <div class="status">
+                  <span id="spinner" class="spinner" style="display:none;"></span>
+                  <span id="status">Pronto.</span>
+                </div>
+
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                  <button class="btn" id="copyBtn" disabled><span class="sym">⧉</span>Copia</button>
+                  <button class="btn" id="continueBtn" disabled><span class="sym">⋯</span>Continua</button>
+                  <button class="btn btn-primary" id="generateBtn"><span class="sym">▶</span>Genera</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="wizard-actions">
+              <div class="left">
+                <button class="btn" id="back2">← Cambia target</button>
+              </div>
+              <div class="right">
+                <a class="btn" href="/prezzi.html">Vedi Prezzi</a>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
-    </section>
+
+    </div>
   </div>
 
 <script>
-  // ===== Target & limits =====
+  // ===== Navbar active =====
+  (function(){
+    const path = location.pathname.toLowerCase();
+    let key = "home";
+    if (path.includes("come-funziona")) key = "how";
+    else if (path.includes("prezzi")) key = "pricing";
+    else if (path.includes("checkout")) key = "pricing";
+    document.querySelectorAll('#mainNav a').forEach(a=>{
+      if(a.dataset.nav === key) a.classList.add('nav-active');
+    });
+  })();
+
+  // ===== Targets & limits =====
   const TARGETS = [
-    { label: "Bambino", prompt: "Spiega come a un bambino: usa parole semplici, esempi concreti, frasi brevi.", maxTokens: 2500, maxChars: 6000 },
-    { label: "Ragazzino", prompt: "Spiega come a un ragazzino: semplice ma un po' più dettagliato, esempi e analogie.", maxTokens: 2500, maxChars: 7000 },
-    { label: "Universitario", prompt: "Spiega come a uno studente universitario: struttura chiara, concetti corretti.", maxTokens: 2500, maxChars: 9000 },
-    { label: "Adulto", prompt: "Spiega come a un adulto: diretto, pratico, con esempi.", maxTokens: 2500, maxChars: 8000 },
-    { label: "Esperto", prompt: "Spiega come a un esperto: dettagli tecnici, assunzioni esplicite, caveat.", maxTokens: 3500, maxChars: 12000 },
-    { label: "Scienziato", prompt: "Spiega come a uno scienziato: rigore, definizioni, limiti, struttura.", maxTokens: 3500, maxChars: 14000 }
+    { label: "Bambino", icon:"🧒", desc:"Semplice, analogie, frasi brevi.", prompt: "Spiega come a un bambino: usa parole semplici, esempi concreti, frasi brevi.", maxTokens: 2500, maxChars: 6000 },
+    { label: "Ragazzino", icon:"🧑‍🎓", desc:"Chiaro e un po’ più dettagliato.", prompt: "Spiega come a un ragazzino: semplice ma più dettagliato, esempi e analogie.", maxTokens: 2500, maxChars: 7000 },
+    { label: "Universitario", icon:"🎓", desc:"Struttura e concetti corretti.", prompt: "Spiega come a uno studente universitario: struttura chiara, concetti corretti.", maxTokens: 2500, maxChars: 9000 },
+    { label: "Adulto", icon:"🧑", desc:"Pratico e diretto, senza banalizzare.", prompt: "Spiega come a un adulto: diretto, pratico, con esempi.", maxTokens: 2500, maxChars: 8000 },
+    { label: "Esperto", icon:"🧠", desc:"Dettagli tecnici e caveat.", prompt: "Spiega come a un esperto: dettagli tecnici, assunzioni esplicite, caveat.", maxTokens: 3500, maxChars: 12000 },
+    { label: "Scienziato", icon:"🧪", desc:"Rigore, limiti, definizioni.", prompt: "Spiega come a uno scienziato: rigore, definizioni, limiti, struttura.", maxTokens: 3500, maxChars: 14000 }
   ];
 
-  let selectedIndex = 0;
+  // ===== Wizard state =====
+  let step = 1; // 1..3
+  let selectedIndex = -1;
+
+  const track = document.getElementById("track");
+  const bar = document.getElementById("bar");
+
+  const q = document.getElementById("query");
+  const targetsEl = document.getElementById("targets");
+
+  const toStep2 = document.getElementById("toStep2");
+  const toStep3 = document.getElementById("toStep3");
+  const back1 = document.getElementById("back1");
+  const back2 = document.getElementById("back2");
+
+  const responseCard = document.getElementById("responseCard");
+  const responseEl = document.getElementById("response");
+  const statusEl = document.getElementById("status");
+  const spinnerEl = document.getElementById("spinner");
+
+  const generateBtn = document.getElementById("generateBtn");
+  const continueBtn = document.getElementById("continueBtn");
+  const copyBtn = document.getElementById("copyBtn");
+
   let accumulatedText = "";
   let isGenerating = false;
 
-  const els = {
-    targets: document.getElementById("targets"),
-    query: document.getElementById("query"),
-    response: document.getElementById("response"),
-    responseCard: document.getElementById("responseCard"),
-    generateBtn: document.getElementById("generateBtn"),
-    continueBtn: document.getElementById("continueBtn"),
-    copyBtn: document.getElementById("copyBtn"),
-    statusText: document.getElementById("statusText"),
-    spinner: document.getElementById("statusSpinner"),
-  };
-
-  function renderTargets(){
-    els.targets.innerHTML = "";
-    TARGETS.forEach((t, i) => {
-      const b = document.createElement("button");
-      b.className = "pill" + (i === selectedIndex ? " active" : "");
-      b.type = "button";
-      b.textContent = t.label;
-      b.addEventListener("click", () => {
-        if (isGenerating) return;
-        selectedIndex = i;
-        renderTargets();
-        updateButtons();
-      });
-      els.targets.appendChild(b);
-    });
+  function setStep(n){
+    step = n;
+    track.style.transform = `translateX(${-(step-1) * 100}%)`;
+    bar.style.width = (step * 33.3333) + "%";
   }
-  renderTargets();
 
   function setStatus(text, loading=false){
-    els.statusText.textContent = text;
-    els.spinner.style.display = loading ? "inline-block" : "none";
-  }
-
-  function clearQuotaBoxes(){
-    document.querySelectorAll(".quota-premium-card").forEach(n => n.remove());
+    statusEl.textContent = text;
+    spinnerEl.style.display = loading ? "inline-block" : "none";
   }
 
   function escapeHtml(str){
@@ -299,29 +456,63 @@ textarea{
       .replaceAll("'","&#039;");
   }
 
+  function clearQuotaBoxes(){
+    document.querySelectorAll(".quota-premium-card").forEach(n => n.remove());
+  }
+
   function canContinue(){
+    if(selectedIndex < 0) return false;
     const t = TARGETS[selectedIndex];
     const text = accumulatedText.trim();
     if (!text) return false;
-
-    // marker esplicito
     if (/\.\.\.\(continua\)\s*$/i.test(text)) return true;
-
-    // vicino al limite
     if (text.length >= Math.floor(t.maxChars * 0.92)) return true;
-
-    // finisce “a metà” (euristica)
     const last = text.slice(-1);
     return ![".", "!", "?", "”", "\""].includes(last);
   }
 
   function updateButtons(){
-    els.generateBtn.disabled = isGenerating;
-    els.continueBtn.disabled = isGenerating || !canContinue();
-    els.copyBtn.disabled = isGenerating || !els.response.textContent.trim();
+    generateBtn.disabled = isGenerating;
+    continueBtn.disabled = isGenerating || !canContinue();
+    copyBtn.disabled = isGenerating || !responseEl.textContent.trim();
   }
 
-  // ===== Premium Quota Box =====
+  // Render targets
+  function renderTargets(){
+    targetsEl.innerHTML = "";
+    TARGETS.forEach((t,i)=>{
+      const el = document.createElement("div");
+      el.className = "target-card" + (i===selectedIndex ? " active":"");
+      el.innerHTML = `
+        <div class="ticon">${t.icon}</div>
+        <div>
+          <p class="tname">${t.label}</p>
+          <p class="tdesc">${t.desc}</p>
+        </div>
+      `;
+      el.addEventListener("click", ()=>{
+        selectedIndex = i;
+        renderTargets();
+        toStep3.disabled = false;
+      });
+      targetsEl.appendChild(el);
+    });
+  }
+  renderTargets();
+
+  // Step navigation
+  toStep2.addEventListener("click", ()=>{
+    if(!q.value.trim()){
+      q.focus();
+      return;
+    }
+    setStep(2);
+  });
+  back1.addEventListener("click", ()=> setStep(1));
+  toStep3.addEventListener("click", ()=> setStep(3));
+  back2.addEventListener("click", ()=> setStep(2));
+
+  // ===== Quota box (dark) =====
   function showQuotaBox(message){
     clearQuotaBoxes();
 
@@ -330,58 +521,51 @@ textarea{
 
     const box = document.createElement("div");
     box.className = "quota-premium-card";
-
     box.innerHTML = `
-      <div class="quota-header">
-        <div class="quota-icon">⚠️</div>
-        <div class="quota-title">Limite gratuito raggiunto</div>
-      </div>
-
-      <div class="quota-sub">
+      <div class="qhead">⚠️ Limite gratuito raggiunto</div>
+      <div class="qsub">
         Hai esaurito le richieste disponibili per ora.
-        ${retrySeconds > 0 ? `Puoi riprovare tra <strong id="retry-count">${retrySeconds}</strong> secondi.` : ""}
+        ${retrySeconds > 0 ? `Puoi riprovare tra <b id="retry-count">${retrySeconds}</b> secondi.` : ""}
       </div>
 
-      <div class="quota-progress">
-        <div class="quota-progress-bar" id="quota-bar"></div>
+      <div class="qprogress"><div class="qbar" id="qbar"></div></div>
+
+      <div class="qgrid">
+        <button class="qbtn primary" id="retry-btn" disabled>Riprova</button>
+        <a class="qbtn" href="/prezzi.html">Vedi i piani</a>
+        <a class="qbtn" href="/checkout.html">Upgrade</a>
       </div>
 
-      <div class="quota-cta-grid">
-        <button id="retry-btn" class="quota-btn quota-btn-primary" disabled>Riprova</button>
-        <a class="quota-btn" href="/prezzi.html">Vedi i piani</a>
-        <a class="quota-btn" href="/checkout.html">Upgrade</a>
-      </div>
-
-      <details class="quota-details">
+      <details class="qdetails">
         <summary>Dettagli tecnici</summary>
-        <div class="quota-tech">${escapeHtml(message)}</div>
+        <div class="qtech">${escapeHtml(message)}</div>
       </details>
     `;
 
-    els.responseCard.appendChild(box);
+    responseCard.appendChild(box);
 
     const retryBtn = box.querySelector("#retry-btn");
     const retryCount = box.querySelector("#retry-count");
-    const quotaBar = box.querySelector("#quota-bar");
+    const qbar = box.querySelector("#qbar");
 
     if (retrySeconds > 0) {
       let remaining = retrySeconds;
-      quotaBar.style.width = "100%";
+      qbar.style.width = "100%";
 
       const interval = setInterval(() => {
         remaining--;
         if (retryCount) retryCount.textContent = String(Math.max(0, remaining));
-        quotaBar.style.width = (Math.max(0, remaining) / retrySeconds) * 100 + "%";
+        qbar.style.width = (Math.max(0, remaining) / retrySeconds) * 100 + "%";
 
         if (remaining <= 0) {
           clearInterval(interval);
           retryBtn.disabled = false;
-          retryBtn.classList.add("quota-pulse");
+          retryBtn.classList.add("pulse");
         }
       }, 1000);
     } else {
       retryBtn.disabled = false;
-      quotaBar.style.width = "0%";
+      qbar.style.width = "0%";
     }
 
     retryBtn.addEventListener("click", () => {
@@ -408,7 +592,7 @@ textarea{
           msg = j?.error || j?.message || msg;
         } else {
           const t = await res.text();
-          if (t && t.trim()) msg = t.trim().slice(0, 500);
+          if (t && t.trim()) msg = t.trim().slice(0, 600);
         }
       } catch {}
       throw new Error(msg);
@@ -456,9 +640,7 @@ textarea{
               }
             }
           }
-        } catch {
-          // ignore
-        }
+        } catch {}
       }
     }
 
@@ -468,7 +650,7 @@ textarea{
   function buildPayload(mode){
     const t = TARGETS[selectedIndex];
     return {
-      query: els.query.value.trim(),
+      query: q.value.trim(),
       targetPrompt: t.prompt,
       maxTokens: t.maxTokens,
       maxChars: t.maxChars,
@@ -480,15 +662,12 @@ textarea{
   async function run(mode){
     clearQuotaBoxes();
 
-    const q = els.query.value.trim();
-    if (!q) {
-      setStatus("Scrivi una domanda prima di generare.");
-      return;
-    }
+    if (!q.value.trim()) { setStep(1); q.focus(); return; }
+    if (selectedIndex < 0) { setStep(2); return; }
 
     if (mode === "generate") {
       accumulatedText = "";
-      els.response.textContent = "";
+      responseEl.textContent = "";
     }
 
     isGenerating = true;
@@ -498,7 +677,7 @@ textarea{
     try{
       await streamGemini(buildPayload(mode), (chunk) => {
         accumulatedText += chunk;
-        els.response.textContent += chunk;
+        responseEl.textContent += chunk;
       });
 
       isGenerating = false;
@@ -508,7 +687,6 @@ textarea{
     } catch(err){
       isGenerating = false;
       const msg = err?.message || "Errore.";
-      // se quota/429 ecc -> box premium
       if (/quota|exceeded|retry in|429/i.test(msg)) {
         setStatus("Limite raggiunto.", false);
         showQuotaBox(msg);
@@ -519,12 +697,11 @@ textarea{
     }
   }
 
-  // Events
-  els.generateBtn.addEventListener("click", () => run("generate"));
-  els.continueBtn.addEventListener("click", () => run("continue"));
+  generateBtn.addEventListener("click", () => run("generate"));
+  continueBtn.addEventListener("click", () => run("continue"));
 
-  els.copyBtn.addEventListener("click", async () => {
-    const text = els.response.textContent || "";
+  copyBtn.addEventListener("click", async () => {
+    const text = responseEl.textContent || "";
     if (!text.trim()) return;
     try{
       await navigator.clipboard.writeText(text);
@@ -535,10 +712,10 @@ textarea{
     }
   });
 
-  // Initial
-  updateButtons();
+  // initial
+  setStep(1);
   setStatus("Pronto.", false);
+  updateButtons();
 </script>
 </body>
 </html>
-
