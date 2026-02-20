@@ -521,9 +521,14 @@
         targetChipLabel.textContent = TARGETS[selectedIndex].label;
 
         // scroll to answer
+        // scroll to answer
         scrollToSection(sec3, card3);
-        setTimeout(()=> generateBtn.focus(), 120);
-      });
+        
+        // 🔥 auto-generate subito dopo la scelta del target
+        setTimeout(() => {
+          // evita doppie chiamate se l’utente clicca velocemente
+          if (!isGenerating) run("generate");
+        }, 220);
       targetsEl.appendChild(el);
     });
   }
@@ -713,3 +718,4 @@
 </script>
 </body>
 </html>
+
