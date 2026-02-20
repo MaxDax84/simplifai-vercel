@@ -1,721 +1,286 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SimplifAI Clone</title>
-  <link rel="stylesheet" href="/theme.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SimplifAI Clone</title>
+<link rel="stylesheet" href="/theme.css">
 
-  <style>
-    /* Layout: pagina scorrevole, sezioni verticali */
-    .wrap{
-      width: min(1100px, 92vw);
-      margin: 0 auto;
-    }
+<style>
+.wrap{width:min(1100px,92vw);margin:0 auto;}
+.section{margin-top:24px;}
+.card{padding:22px;border-radius:18px;}
+.badge{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.title{font-weight:900;font-size:20px;margin-bottom:6px;}
+.sub{color:var(--muted);font-size:14px;margin-bottom:14px;}
 
-    .hero-row{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 12px;
-      flex-wrap:wrap;
-      margin-top: 6px;
-    }
+textarea{
+  width:100%;
+  min-height:180px;
+  background:rgba(0,0,0,.22);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:12px;
+  color:var(--text);
+  font-size:14px;
+}
 
-    .credit-pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      color: var(--muted);
-      font-size: 12px;
-      user-select:none;
-    }
-    .credit-pill b{ color: var(--text); }
+.actions{
+  display:flex;
+  justify-content:space-between;
+  margin-top:14px;
+  flex-wrap:wrap;
+  gap:10px;
+}
 
-    .section{
-      margin-top: 16px;
-    }
+.targets-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+@media(max-width:900px){
+  .targets-grid{grid-template-columns:1fr;}
+}
 
-    .section .card{
-      padding: 18px;
-    }
+.target-card{
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.03);
+  border-radius:16px;
+  padding:14px;
+  display:flex;
+  gap:12px;
+  cursor:pointer;
+  transition:.15s ease;
+}
+.target-card:hover{background:rgba(255,255,255,.05);}
+.target-card.active{
+  border-color:rgba(124,92,255,.55);
+  background:rgba(124,92,255,.14);
+}
 
-    .section-title{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      font-size: 18px;
-      font-weight: 900;
-      margin: 0 0 8px;
-    }
-    .section-sub{
-      margin: 0 0 14px;
-      color: var(--muted);
-      line-height: 1.45;
-      font-size: 14px;
-    }
+.ticon{
+  width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.06);
+  border-radius:12px;
+  font-size:18px;
+}
 
-    .badge-step{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 10px;
-    }
+.response-card{
+  background:rgba(0,0,0,.18);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px;
+  min-height:240px;
+  display:flex;
+  flex-direction:column;
+}
 
-    textarea{
-      width:100%;
-      min-height: 180px;
-      resize: vertical;
-      background: rgba(0,0,0,.22);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px 12px;
-      color: var(--text);
-      font-size: 14px;
-      line-height: 1.45;
-      outline: none;
-    }
-    textarea:focus{
-      border-color: rgba(124,92,255,.50);
-      box-shadow: 0 0 0 4px rgba(124,92,255,.15);
-    }
+.response-text{
+  white-space:pre-wrap;
+  line-height:1.6;
+  flex:1;
+}
 
-    .actions{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
-    .actions .left,
-    .actions .right{
-      display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items:center;
-    }
+.status{
+  font-size:12px;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
 
-    .hint{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.02);
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    /* Targets */
-    .targets-grid{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-    }
-    @media (max-width: 920px){
-      .targets-grid{ grid-template-columns: 1fr; }
-    }
-
-    .target-card{
-      padding: 14px;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      cursor:pointer;
-      transition: .15s ease;
-      display:flex;
-      gap: 12px;
-      align-items:flex-start;
-      min-height: 84px;
-    }
-    .target-card:hover{ background: rgba(255,255,255,.05); transform: translateY(-1px); }
-    .target-card.active{
-      border-color: rgba(124,92,255,.55);
-      background: rgba(124,92,255,.14);
-    }
-
-    .ticon{
-      width: 36px;
-      height: 36px;
-      border-radius: 12px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background: rgba(255,255,255,.06);
-      border: 1px solid var(--border);
-      font-size: 18px;
-      flex: 0 0 auto;
-    }
-    .tname{ font-weight: 900; margin:0; }
-    .tdesc{ margin: 4px 0 0; color: var(--muted); font-size: 13px; line-height:1.35; }
-
-    /* Response */
-    .target-chip{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
-    .target-chip b{ color: var(--text); }
-
-    .response-card{
-      background: rgba(0,0,0,.18);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px;
-      min-height: 240px;
-      display:flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .response-text{
-      font-size: 14px;
-      line-height: 1.55;
-      color: rgba(233,237,255,.92);
-      white-space: pre-wrap;
-      word-break: break-word;
-      flex: 1;
-    }
-
-    .response-footer{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 10px;
-      padding-top: 6px;
-      border-top: 1px solid rgba(233,237,255,.08);
-      flex-wrap: wrap;
-    }
-
-    .status{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-    .spinner{
-      width: 14px;
-      height: 14px;
-      border-radius: 999px;
-      border: 2px solid rgba(233,237,255,.25);
-      border-top-color: rgba(233,237,255,.85);
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Gentle highlight when section becomes active */
-    .flash{
-      outline: 1px solid rgba(124,92,255,.45);
-      box-shadow: 0 0 0 6px rgba(124,92,255,.12);
-      transition: .35s ease;
-    }
-
-    /* Quota/Credits box minimal */
-    .quota-card{
-      margin-top: 12px;
-      border-radius: 18px;
-      border: 1px solid rgba(124,92,255,.35);
-      background: rgba(124,92,255,.10);
-      padding: 16px;
-    }
-    .qhead{ font-weight: 900; margin-bottom: 6px; display:flex; gap:10px; align-items:center; }
-    .qsub{ color: var(--muted); font-size: 13px; line-height: 1.45; }
-    .qgrid{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 10px;
-      margin-top: 12px;
-    }
-    @media (max-width: 520px){
-      .qgrid{ grid-template-columns: 1fr; }
-    }
-    .qbtn{
-      min-height: 44px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: rgba(0,0,0,.18);
-      color: var(--text);
-      font-weight: 800;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-decoration:none;
-      transition:.15s ease;
-    }
-    .qbtn:hover{ background: rgba(255,255,255,.06); transform: translateY(-1px); }
-    .qbtn.primary{
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(38,198,255,.85));
-      border-color: rgba(124,92,255,.45);
-      color: #0b1020;
-    }
-  </style>
+.spinner{
+  width:14px;height:14px;
+  border:2px solid rgba(255,255,255,.25);
+  border-top-color:white;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
 </head>
 
 <body>
-  <div class="wrap">
-    <header>
-      <div class="brand">
-        <div class="logo"></div>
-        <div>
-          <h1>SimplifAI Clone</h1>
-          <span>Risposte su misura, con “Continua” quando serve</span>
-        </div>
-      </div>
+<div class="wrap">
 
-      <nav id="mainNav">
-        <a href="/index.html" data-nav="home">Home</a>
-        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
-        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
-      </nav>
-    </header>
+<header>
+<div class="brand">
+<div class="logo"></div>
+<div>
+<h1>SimplifAI Clone</h1>
+<span>Risposte su misura</span>
+</div>
+</div>
+</header>
 
-    <div class="hero-row">
-      <div class="pilltag">✨ Flow</div>
-      <div class="credit-pill">⚡ Crediti disponibili: <b id="creditsValue">—</b></div>
-    </div>
+<!-- STEP 1 -->
+<section class="section" id="sec1">
+<div class="card">
+<div class="badge">1) Domanda</div>
+<div class="title">Scrivi la domanda</div>
+<div class="sub">Inserisci la domanda e poi scegli il target.</div>
 
-    <!-- SEZIONE 1: DOMANDA -->
-    <section class="section" id="sec1">
-      <div class="card" id="card1">
-        <div class="badge-step">1) Domanda</div>
-        <div class="section-title">✦ Scrivi la domanda</div>
-        <p class="section-sub">Inserisci la tua domanda e poi clicca “Scegli target”. Scorreremo alla sezione successiva.</p>
+<textarea id="query" placeholder="Esempio: Cos'è il DNA e a cosa serve?"></textarea>
 
-        <textarea id="query" placeholder="Esempio: Spiegami cos’è il DNA e a cosa serve."></textarea>
+<div class="actions">
+<div></div>
+<button class="btn btn-primary" id="goTargets">Scegli target ↓</button>
+</div>
+</div>
+</section>
 
-        <div class="actions">
-          <div class="left">
-            <span class="hint">💡 Suggerimento: aggiungi “con esempi”</span>
-          </div>
-          <div class="right">
-            <button class="btn btn-primary" id="goTargets">Scegli target ↓</button>
-          </div>
-        </div>
-      </div>
-    </section>
+<!-- STEP 2 -->
+<section class="section" id="sec2">
+<div class="card">
+<div class="badge">2) Target</div>
+<div class="title">Seleziona il target</div>
+<div class="sub">Clicca un target per generare automaticamente la risposta.</div>
 
-    <!-- SEZIONE 2: TARGET -->
-    <section class="section" id="sec2">
-      <div class="card" id="card2">
-        <div class="badge-step">2) Target</div>
-        <div class="section-title">🎯 Seleziona il target</div>
-        <p class="section-sub">Clicca un target: ti porto automaticamente alla risposta.</p>
+<div class="targets-grid" id="targets"></div>
 
-        <div class="targets-grid" id="targets"></div>
+<div class="actions">
+<button class="btn" id="backToQ">↑ Torna alla domanda</button>
+</div>
+</div>
+</section>
 
-        <div class="actions">
-          <div class="left">
-            <button class="btn" id="backToQ">↑ Torna alla domanda</button>
-          </div>
-          <div class="right">
-            <button class="btn btn-primary" id="goAnswer" disabled>Vai alla risposta ↓</button>
-          </div>
-        </div>
-      </div>
-    </section>
+<!-- STEP 3 -->
+<section class="section" id="sec3">
+<div class="card">
+<div class="badge">3) Risposta</div>
+<div class="title">Risposta</div>
 
-    <!-- SEZIONE 3: RISPOSTA -->
-    <section class="section" id="sec3">
-      <div class="card" id="card3">
-        <div class="badge-step">3) Risposta</div>
-        <div class="section-title">💬 Risposta</div>
-        <p class="section-sub">Premi “Genera”. Se serve, il sistema continuerà automaticamente per mostrarti tutta la risposta.</p>
+<div class="response-card">
+<div class="response-text" id="response"></div>
 
-        <div class="target-chip" id="targetChip" style="display:none;">
-          🎯 Target selezionato: <b id="targetChipLabel"></b>
-        </div>
+<div class="actions">
+<div class="status">
+<span id="spinner" class="spinner" style="display:none"></span>
+<span id="status">Pronto.</span>
+</div>
 
-        <div class="response-card" id="responseCard">
-          <div class="response-text" id="response"></div>
+<div style="display:flex;gap:10px;">
+<button class="btn" id="copyBtn">Copia</button>
+<button class="btn btn-primary" id="generateBtn">Genera</button>
+</div>
+</div>
 
-          <div class="response-footer">
-            <div class="status">
-              <span id="spinner" class="spinner" style="display:none;"></span>
-              <span id="status">Pronto.</span>
-            </div>
+</div>
+</div>
+</section>
 
-            <div style="display:flex; gap:10px; flex-wrap:wrap;">
-              <button class="btn" id="copyBtn" disabled>⧉ Copia</button>
-              <button class="btn" id="generateBtn">▶ Genera</button>
-            </div>
-          </div>
-
-          <div id="quotaMount"></div>
-        </div>
-
-        <div class="actions">
-          <div class="left">
-            <button class="btn" id="backToTargets">↑ Cambia target</button>
-          </div>
-          <div class="right">
-            <a class="btn" href="/prezzi.html">Vedi Prezzi</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <div style="height: 28px;"></div>
-  </div>
+</div>
 
 <script>
-  // Navbar active
-  (function(){
-    const path = location.pathname.toLowerCase();
-    let key = "home";
-    if (path.includes("come-funziona")) key = "how";
-    else if (path.includes("prezzi")) key = "pricing";
-    else if (path.includes("checkout")) key = "pricing";
-    document.querySelectorAll('#mainNav a').forEach(a=>{
-      if(a.dataset.nav === key) a.classList.add('nav-active');
-    });
-  })();
+const TARGETS = [
+{label:"Bambino",icon:"🧒",prompt:"Spiega come a un bambino."},
+{label:"Ragazzino",icon:"🧑‍🎓",prompt:"Spiega come a un ragazzino."},
+{label:"Universitario",icon:"🎓",prompt:"Spiega come a uno studente universitario."},
+{label:"Adulto",icon:"🧑",prompt:"Spiega come a un adulto."},
+{label:"Esperto",icon:"🧠",prompt:"Spiega come a un esperto."},
+{label:"Scienziato",icon:"🧪",prompt:"Spiega come a uno scienziato con rigore tecnico."}
+];
 
-  const TARGETS = [
-    { label: "Bambino", icon:"🧒", desc:"Semplice, analogie, frasi brevi.", prompt: "Spiega come a un bambino: usa parole semplici, esempi concreti, frasi brevi.", maxTokens: 2500, maxChars: 6000 },
-    { label: "Ragazzino", icon:"🧑‍🎓", desc:"Chiaro e un po’ più dettagliato.", prompt: "Spiega come a un ragazzino: semplice ma più dettagliato, esempi e analogie.", maxTokens: 2500, maxChars: 7000 },
-    { label: "Universitario", icon:"🎓", desc:"Struttura e concetti corretti.", prompt: "Spiega come a uno studente universitario: struttura chiara, concetti corretti.", maxTokens: 2500, maxChars: 9000 },
-    { label: "Adulto", icon:"🧑", desc:"Pratico e diretto, senza banalizzare.", prompt: "Spiega come a un adulto: diretto, pratico, con esempi.", maxTokens: 2500, maxChars: 8000 },
-    { label: "Esperto", icon:"🧠", desc:"Dettagli tecnici e caveat.", prompt: "Spiega come a un esperto: dettagli tecnici, assunzioni esplicite, caveat.", maxTokens: 3500, maxChars: 12000 },
-    { label: "Scienziato", icon:"🧪", desc:"Rigore, limiti, definizioni.", prompt: "Spiega come a uno scienziato: rigore, definizioni, limiti, struttura.", maxTokens: 3500, maxChars: 14000 }
-  ];
+let selectedIndex=-1;
+let accumulated="";
+let generating=false;
 
-  // State
-  let selectedIndex = -1;
-  let accumulatedText = "";
-  let isGenerating = false;
+const q=document.getElementById("query");
+const targetsEl=document.getElementById("targets");
+const responseEl=document.getElementById("response");
+const spinner=document.getElementById("spinner");
+const statusEl=document.getElementById("status");
+const generateBtn=document.getElementById("generateBtn");
 
-  // Auto-continue
-  const AUTO_CONTINUE_MAX_HOPS = 5;
-  let autoHopCount = 0;
+function scrollToSection(id){
+document.getElementById(id).scrollIntoView({behavior:"smooth"});
+}
 
-  // DOM
-  const q = document.getElementById("query");
-  const targetsEl = document.getElementById("targets");
-  const responseEl = document.getElementById("response");
-  const responseCard = document.getElementById("responseCard");
-  const statusEl = document.getElementById("status");
-  const spinnerEl = document.getElementById("spinner");
-  const copyBtn = document.getElementById("copyBtn");
-  const generateBtn = document.getElementById("generateBtn");
-  const quotaMount = document.getElementById("quotaMount");
+function setStatus(t,load=false){
+statusEl.textContent=t;
+spinner.style.display=load?"inline-block":"none";
+}
 
-  const creditsValueEl = document.getElementById("creditsValue");
-  function setCredits(v){ creditsValueEl.textContent = v ?? "—"; }
+function renderTargets(){
+targetsEl.innerHTML="";
+TARGETS.forEach((t,i)=>{
+const el=document.createElement("div");
+el.className="target-card"+(i===selectedIndex?" active":"");
+el.innerHTML=`<div class="ticon">${t.icon}</div><div><b>${t.label}</b></div>`;
+el.onclick=()=>{
+selectedIndex=i;
+renderTargets();
+scrollToSection("sec3");
+preflight();
+setTimeout(()=>run(),250);
+};
+targetsEl.appendChild(el);
+});
+}
+renderTargets();
 
-  const targetChip = document.getElementById("targetChip");
-  const targetChipLabel = document.getElementById("targetChipLabel");
+function preflight(){
+accumulated="";
+responseEl.textContent="";
+setStatus("Ok! Sto generando…",true);
+generating=true;
+}
 
-  const card1 = document.getElementById("card1");
-  const card2 = document.getElementById("card2");
-  const card3 = document.getElementById("card3");
+async function run(){
+if(generating===false)return;
+if(!q.value.trim()){scrollToSection("sec1");return;}
+if(selectedIndex<0){scrollToSection("sec2");return;}
 
-  const sec1 = document.getElementById("sec1");
-  const sec2 = document.getElementById("sec2");
-  const sec3 = document.getElementById("sec3");
+try{
+const res=await fetch("/api/gemini",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+query:q.value,
+targetPrompt:TARGETS[selectedIndex].prompt
+})
+});
 
-  const goTargets = document.getElementById("goTargets");
-  const backToQ = document.getElementById("backToQ");
-  const goAnswer = document.getElementById("goAnswer");
-  const backToTargets = document.getElementById("backToTargets");
+if(!res.ok){
+setStatus("Errore.",false);
+generating=false;
+return;
+}
 
-  function flash(el){
-    el.classList.add("flash");
-    setTimeout(()=> el.classList.remove("flash"), 420);
-  }
+const reader=res.body.getReader();
+const decoder=new TextDecoder();
+let done=false;
 
-  function scrollToSection(sec, card){
-    sec.scrollIntoView({ behavior: "smooth", block: "start" });
-    flash(card);
-  }
+while(!done){
+const {value,done:doneReading}=await reader.read();
+done=doneReading;
+if(value){
+const chunk=decoder.decode(value);
+responseEl.textContent+=chunk;
+}
+}
 
-  function setStatus(text, loading=false){
-    statusEl.textContent = text;
-    spinnerEl.style.display = loading ? "inline-block" : "none";
-  }
+setStatus("Fatto.",false);
+generating=false;
 
-  function updateButtons(){
-    generateBtn.disabled = isGenerating;
-    copyBtn.disabled = isGenerating || !responseEl.textContent.trim();
-  }
+}catch(e){
+setStatus("Errore.",false);
+generating=false;
+}
+}
 
-  function clearQuotaBox(){
-    quotaMount.innerHTML = "";
-  }
+document.getElementById("goTargets").onclick=()=>{
+if(!q.value.trim()){q.focus();return;}
+scrollToSection("sec2");
+};
 
-  function showQuotaBox(message){
-    quotaMount.innerHTML = `
-      <div class="quota-card">
-        <div class="qhead">⚠️ Limite raggiunto</div>
-        <div class="qsub">${escapeHtml(message || "Limite temporaneo. Riprova tra poco oppure fai upgrade.")}</div>
-        <div class="qgrid">
-          <a class="qbtn" href="/prezzi.html">Vedi i piani</a>
-          <a class="qbtn primary" href="/checkout.html">Upgrade</a>
-        </div>
-      </div>
-    `;
-  }
+document.getElementById("backToQ").onclick=()=>scrollToSection("sec1");
+generateBtn.onclick=()=>{generating=true;run();};
 
-  function escapeHtml(str){
-    return String(str)
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
-
-  function stripContinueMarker(txt){
-    return txt.replace(/\.\.\.\(continua\)\s*$/i, "").trimEnd();
-  }
-
-  // Continue heuristic: ONLY if marker present OR near maxChars
-  function needsContinue(){
-    if (selectedIndex < 0) return false;
-    const t = TARGETS[selectedIndex];
-    const text = accumulatedText.trim();
-    if (!text) return false;
-    if (/\.\.\.\(continua\)\s*$/i.test(text)) return true;
-    if (text.length >= Math.floor(t.maxChars * 0.92)) return true;
-    return false;
-  }
-
-  // Render targets
-  function renderTargets(){
-    targetsEl.innerHTML = "";
-    TARGETS.forEach((t,i)=>{
-      const el = document.createElement("div");
-      el.className = "target-card" + (i===selectedIndex ? " active":"");
-      el.innerHTML = `
-        <div class="ticon">${t.icon}</div>
-        <div>
-          <p class="tname">${t.label}</p>
-          <p class="tdesc">${t.desc}</p>
-        </div>
-      `;
-      el.addEventListener("click", ()=>{
-        selectedIndex = i;
-        renderTargets();
-        goAnswer.disabled = false;
-
-        targetChip.style.display = "inline-flex";
-        targetChipLabel.textContent = TARGETS[selectedIndex].label;
-
-        // scroll to answer
-        // scroll to answer
-        scrollToSection(sec3, card3);
-        
-        // 🔥 auto-generate subito dopo la scelta del target
-        setTimeout(() => {
-          // evita doppie chiamate se l’utente clicca velocemente
-          if (!isGenerating) run("generate");
-        }, 220);
-      targetsEl.appendChild(el);
-    });
-  }
-  renderTargets();
-
-  // Navigation buttons (scroll down approach)
-  goTargets.addEventListener("click", ()=>{
-    if (!q.value.trim()) { q.focus(); return; }
-    scrollToSection(sec2, card2);
-  });
-
-  backToQ.addEventListener("click", ()=> scrollToSection(sec1, card1));
-
-  goAnswer.addEventListener("click", ()=> {
-    if (selectedIndex < 0) return;
-    scrollToSection(sec3, card3);
-  });
-
-  backToTargets.addEventListener("click", ()=> scrollToSection(sec2, card2));
-
-  // Credits from headers (if present)
-  function updateCreditsFromHeaders(headers){
-    const rem = headers.get("x-credits-remaining");
-    const lim = headers.get("x-credits-limit");
-    if (rem && String(rem).trim() !== "") {
-      const r = String(rem).trim();
-      const l = lim && String(lim).trim() !== "" ? String(lim).trim() : "";
-      setCredits(l ? `${r}/${l}` : r);
-    }
-  }
-
-  // SSE streaming
-  async function streamGemini(payload, onTextChunk){
-    const res = await fetch("/api/gemini", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-
-    updateCreditsFromHeaders(res.headers);
-
-    if (!res.ok) {
-      let msg = `Errore HTTP ${res.status}`;
-      const ct = (res.headers.get("content-type") || "").toLowerCase();
-      try {
-        if (ct.includes("application/json")) {
-          const j = await res.json();
-          msg = j?.error || j?.message || msg;
-        } else {
-          const t = await res.text();
-          if (t && t.trim()) msg = t.trim().slice(0, 800);
-        }
-      } catch {}
-      const err = new Error(msg);
-      err.status = res.status;
-      throw err;
-    }
-
-    const contentType = (res.headers.get("content-type") || "").toLowerCase();
-    if (!contentType.includes("text/event-stream")) {
-      const txt = await res.text();
-      if (txt) onTextChunk(txt);
-      return;
-    }
-
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder("utf-8");
-
-    let buffer = "";
-    let uiBuffer = "";
-    const FLUSH_EVERY = 30;
-
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop() || "";
-
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed.startsWith("data:")) continue;
-        const data = trimmed.slice(5).trim();
-        if (!data || data === "[DONE]") continue;
-
-        try {
-          const obj = JSON.parse(data);
-          const parts = obj?.candidates?.[0]?.content?.parts || [];
-          for (const p of parts) {
-            if (typeof p?.text === "string") {
-              uiBuffer += p.text;
-              if (uiBuffer.length >= FLUSH_EVERY) {
-                onTextChunk(uiBuffer);
-                uiBuffer = "";
-              }
-            }
-          }
-        } catch {}
-      }
-    }
-
-    if (uiBuffer) onTextChunk(uiBuffer);
-  }
-
-  function buildPayload(mode){
-    const t = TARGETS[selectedIndex];
-    return {
-      query: q.value.trim(),
-      targetPrompt: t.prompt,
-      maxTokens: t.maxTokens,
-      maxChars: t.maxChars,
-      mode,
-      previousText: mode === "continue" ? accumulatedText : ""
-    };
-  }
-
-  async function run(mode){
-    clearQuotaBox();
-
-    if (!q.value.trim()) { scrollToSection(sec1, card1); q.focus(); return; }
-    if (selectedIndex < 0) { scrollToSection(sec2, card2); return; }
-
-    if (mode === "generate") {
-      accumulatedText = "";
-      responseEl.textContent = "";
-      autoHopCount = 0;
-    }
-
-    isGenerating = true;
-    updateButtons();
-    setStatus(mode === "continue" ? "Sto continuando…" : "Sto generando…", true);
-
-    try{
-      await streamGemini(buildPayload(mode), (chunk) => {
-        accumulatedText += chunk;
-        responseEl.textContent += chunk;
-      });
-
-      // remove ...(continua) marker if present
-      accumulatedText = stripContinueMarker(accumulatedText);
-      responseEl.textContent = stripContinueMarker(responseEl.textContent);
-
-      isGenerating = false;
-      setStatus("Fatto.", false);
-      updateButtons();
-
-      // Auto-continue ONLY if marker/near limit
-      if (needsContinue() && autoHopCount < AUTO_CONTINUE_MAX_HOPS) {
-        autoHopCount++;
-        await new Promise(r => setTimeout(r, 180));
-        return run("continue");
-      }
-
-    } catch(err){
-      isGenerating = false;
-      updateButtons();
-
-      const msg = err?.message || "Errore.";
-      setStatus("Errore.", false);
-
-      if (err?.status === 429 || /quota|exceeded|retry in/i.test(msg)) {
-        showQuotaBox(msg);
-      } else {
-        showQuotaBox(msg);
-      }
-    }
-  }
-
-  generateBtn.addEventListener("click", ()=> run("generate"));
-
-  copyBtn.addEventListener("click", async ()=>{
-    const text = responseEl.textContent || "";
-    if (!text.trim()) return;
-    try{
-      await navigator.clipboard.writeText(text);
-      setStatus("Copiato ✅", false);
-      setTimeout(()=> setStatus("Pronto.", false), 900);
-    } catch {
-      setStatus("Non riesco a copiare (permessi).", false);
-    }
-  });
-
-  // initial
-  setStatus("Pronto.", false);
-  updateButtons();
+document.getElementById("copyBtn").onclick=()=>{
+navigator.clipboard.writeText(responseEl.textContent);
+};
 </script>
 </body>
 </html>
-
