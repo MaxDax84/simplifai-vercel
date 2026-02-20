@@ -6,7 +6,7 @@
   <title>Simplif-AI</title>
   <link rel="stylesheet" href="/theme.css">
 
-  <!-- KaTeX (render equazioni) -->
+  <!-- KaTeX (equazioni) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
@@ -73,7 +73,15 @@
       grid-template-columns:repeat(3, minmax(0,1fr));
       gap:12px;
     }
-    @media(max-width:900px){ .targets-grid{grid-template-columns:1fr;} }
+    .len-grid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:12px;
+    }
+    @media(max-width:900px){
+      .targets-grid{grid-template-columns:1fr;}
+      .len-grid{grid-template-columns:1fr;}
+    }
 
     .target-card{
       border:1px solid var(--border);
@@ -103,6 +111,23 @@
     .tname{margin:0;font-weight:900;}
     .tdesc{margin:4px 0 0;color:var(--muted);font-size:13px;line-height:1.35;}
 
+    .len-card{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:14px;
+      display:flex;gap:12px;
+      cursor:pointer;
+      transition:.15s ease;
+      min-height:78px;
+      align-items:flex-start;
+    }
+    .len-card:hover{background:rgba(255,255,255,.05);transform:translateY(-1px);}
+    .len-card.active{
+      border-color:rgba(124,92,255,.55);
+      background:rgba(124,92,255,.14);
+    }
+
     .target-chip{
       display:inline-flex;align-items:center;gap:10px;
       padding:10px 12px;border-radius:14px;
@@ -110,6 +135,7 @@
       background:rgba(255,255,255,.03);
       color:var(--muted);font-size:13px;
       margin-bottom:10px;
+      flex-wrap:wrap;
     }
     .target-chip b{color:var(--text);}
 
@@ -132,7 +158,7 @@
       padding: 16px;
     }
 
-    /* Markdown styles */
+    /* Markdown */
     .response-text{
       color: rgba(233,237,255,.92);
       font-size:14px;
@@ -185,7 +211,7 @@
       color: rgba(233,237,255,.90);
     }
 
-    /* KaTeX leggibile su dark */
+    /* KaTeX */
     .katex { font-size: 1.05em; }
     .katex-display { margin: 12px 0; }
 
@@ -242,8 +268,8 @@
       color:#0b1020;
     }
 
-    /* Colori sezioni: 1 e 2 più chiare, 3 più scura */
-    #card1, #card2{ background: rgba(255,255,255,.06) !important; }
+    /* Colori sezioni */
+    #card1, #card2, #cardLen{ background: rgba(255,255,255,.06) !important; }
     #card3{ background: rgba(255,255,255,.03) !important; }
   </style>
 </head>
@@ -293,12 +319,28 @@
     <div class="card" id="card2">
       <div class="badge">2) Target</div>
       <h2 class="title">🎯 Seleziona il target</h2>
-      <p class="sub">Clicca un target: scorro alla risposta e parte la generazione automaticamente.</p>
+      <p class="sub">Scegli il target: poi passiamo alla lunghezza della risposta.</p>
 
       <div class="targets-grid" id="targets"></div>
 
       <div class="actions">
         <button class="btn" id="backToQ">↑ Torna alla domanda</button>
+        <button class="btn btn-primary" id="goLen" disabled>Scelta lunghezza ↓</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2.5) LUNGHEZZA -->
+  <section class="section" id="secLen">
+    <div class="card" id="cardLen">
+      <div class="badge">2.5) Lunghezza</div>
+      <h2 class="title">📏 Quanto lunga vuoi la risposta?</h2>
+      <p class="sub">Scegli una lunghezza: scorro alla risposta e parte la generazione automaticamente.</p>
+
+      <div class="len-grid" id="lengths"></div>
+
+      <div class="actions">
+        <button class="btn" id="backToTargets">↑ Cambia target</button>
         <button class="btn btn-primary" id="goAnswer" disabled>Vai alla risposta ↓</button>
       </div>
     </div>
@@ -312,7 +354,9 @@
       <p class="sub">Se serve, continuerò automaticamente fino a completare la risposta (con limite di sicurezza).</p>
 
       <div class="target-chip" id="targetChip" style="display:none;">
-        🎯 Target selezionato: <b id="targetChipLabel"></b>
+        🎯 Target: <b id="targetChipLabel"></b>
+        <span style="opacity:.6;">•</span>
+        📏 Lunghezza: <b id="lenChipLabel"></b>
       </div>
 
       <div class="response-card" id="responseCard">
@@ -335,7 +379,7 @@
       </div>
 
       <div class="actions">
-        <button class="btn" id="backToTargets">↑ Cambia target</button>
+        <button class="btn" id="backToLen">↑ Cambia lunghezza</button>
         <a class="btn" href="/prezzi.html">Vedi Prezzi</a>
       </div>
     </div>
@@ -359,10 +403,10 @@ window.addEventListener("DOMContentLoaded", () => {
   })();
 
   // marked config
-  function canUseMarked(){ return typeof window.marked?.parse === "function"; }
-  function canUsePurify(){ return typeof window.DOMPurify?.sanitize === "function"; }
+  const hasMarked = typeof window.marked?.parse === "function";
+  const hasPurify = typeof window.DOMPurify?.sanitize === "function";
 
-  if (canUseMarked()) {
+  if (hasMarked) {
     window.marked.setOptions({
       gfm: true,
       breaks: true,
@@ -380,16 +424,26 @@ window.addEventListener("DOMContentLoaded", () => {
     { label:"Scienziato", icon:"🧪", desc:"Rigore, limiti, definizioni.", prompt:"Spiega come a uno scienziato: rigore, definizioni, limiti, struttura.", maxTokens:3500, maxChars:14000 }
   ];
 
+  const LENGTHS = [
+    { key:"breve", label:"Breve", icon:"⚡", desc:"Sintetica e diretta.", tokensMul:0.55, charsMul:0.55, extra:"Rispondi in modo breve e diretto (max ~8 frasi)."},
+    { key:"medio", label:"Medio", icon:"📝", desc:"Completa ma non prolissa.", tokensMul:1.00, charsMul:1.00, extra:"Rispondi in modo completo ma non prolisso, con esempi essenziali."},
+    { key:"lungo", label:"Lungo", icon:"📚", desc:"Molto dettagliata.", tokensMul:1.45, charsMul:1.45, extra:"Rispondi in modo molto dettagliato, con sezioni, esempi e approfondimenti."}
+  ];
+
   const AUTO_CONTINUE_MAX_HOPS = 6;
   let autoHopCount = 0;
 
   let selectedIndex = -1;
+  let selectedLen = ""; // "breve"|"medio"|"lungo"
+
   let isGenerating = false;
   let rawText = "";
   let cleanText = "";
 
+  // DOM
   const q = document.getElementById("query");
   const targetsEl = document.getElementById("targets");
+  const lengthsEl = document.getElementById("lengths");
   const responseEl = document.getElementById("response");
   const spinner = document.getElementById("spinner");
   const statusEl = document.getElementById("status");
@@ -399,18 +453,24 @@ window.addEventListener("DOMContentLoaded", () => {
 
   const targetChip = document.getElementById("targetChip");
   const targetChipLabel = document.getElementById("targetChipLabel");
+  const lenChipLabel = document.getElementById("lenChipLabel");
 
   const sec1 = document.getElementById("sec1");
   const sec2 = document.getElementById("sec2");
+  const secLen = document.getElementById("secLen");
   const sec3 = document.getElementById("sec3");
+
   const card1 = document.getElementById("card1");
   const card2 = document.getElementById("card2");
+  const cardLen = document.getElementById("cardLen");
   const card3 = document.getElementById("card3");
 
   const goTargets = document.getElementById("goTargets");
   const backToQ = document.getElementById("backToQ");
-  const goAnswer = document.getElementById("goAnswer");
+  const goLen = document.getElementById("goLen");
   const backToTargets = document.getElementById("backToTargets");
+  const goAnswer = document.getElementById("goAnswer");
+  const backToLen = document.getElementById("backToLen");
 
   function setCredits(v){ creditsValueEl.textContent = v ?? "—"; }
 
@@ -454,6 +514,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
   function updateButtons(){
     copyBtn.disabled = isGenerating || !(responseEl.textContent || "").trim();
+    goLen.disabled = selectedIndex < 0;
+    goAnswer.disabled = !selectedLen;
   }
 
   function endsWithContinueMarker(txt){
@@ -465,9 +527,11 @@ window.addEventListener("DOMContentLoaded", () => {
   function nearLimitHeuristic(txt){
     if (selectedIndex < 0) return false;
     const t = TARGETS[selectedIndex];
+    const l = LENGTHS.find(x=>x.key===selectedLen) || LENGTHS[1];
+    const maxChars = Math.round(t.maxChars * l.charsMul);
     const s = (txt || "").trim();
     if (!s) return false;
-    return s.length >= Math.floor(t.maxChars * 0.92);
+    return s.length >= Math.floor(maxChars * 0.92);
   }
   function looksTruncated(txt){
     const s = (txt || "").trim();
@@ -478,15 +542,13 @@ window.addEventListener("DOMContentLoaded", () => {
     return false;
   }
 
-  // Markdown -> HTML (safe)
+  // Markdown -> HTML safe
   function mdToHtml(md){
     const safeText = String(md || "");
-    if (!canUseMarked() || !canUsePurify()) {
-      // fallback safe
+    if (!hasMarked || !hasPurify) {
       return escapeHtml(safeText).replaceAll("\n","<br>");
     }
     const html = window.marked.parse(safeText);
-    // (DOMPurify di default è già aggressivo)
     return window.DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
   }
 
@@ -498,9 +560,9 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function renderNow(final=false){
-    responseEl.innerHTML = mdToHtml(final ? cleanText : rawText);
+    const src = final ? cleanText : rawText;
+    responseEl.innerHTML = mdToHtml(src);
 
-    // KaTeX (solo se presente)
     if (window.renderMathInElement) {
       try{
         window.renderMathInElement(responseEl, {
@@ -512,20 +574,43 @@ window.addEventListener("DOMContentLoaded", () => {
         });
       } catch {}
     }
-
     updateButtons();
   }
 
-  function preflightGenerateUX(){
+  function resetAnswerUI(){
     clearQuotaBox();
     rawText = "";
     cleanText = "";
     responseEl.innerHTML = "";
     autoHopCount = 0;
+  }
 
+  function preflightGenerateUX(){
+    resetAnswerUI();
     isGenerating = true;
     updateButtons();
     setStatus("Ok! Sto generando…", true);
+  }
+
+  function setChips(){
+    if (selectedIndex < 0 || !selectedLen) {
+      targetChip.style.display = "none";
+      return;
+    }
+    const t = TARGETS[selectedIndex];
+    const l = LENGTHS.find(x=>x.key===selectedLen);
+    targetChip.style.display = "inline-flex";
+    targetChipLabel.textContent = t.label;
+    lenChipLabel.textContent = l ? l.label : selectedLen;
+  }
+
+  function maybeRestartGeneration(reason){
+    // se l'utente modifica target o lunghezza dopo aver già scelto entrambi -> riparti
+    if (selectedIndex >= 0 && selectedLen) {
+      scrollTo(sec3, card3);
+      preflightGenerateUX();
+      setTimeout(() => run("start"), 240);
+    }
   }
 
   function renderTargets(){
@@ -541,21 +626,60 @@ window.addEventListener("DOMContentLoaded", () => {
         </div>
       `;
       el.addEventListener("click", () => {
+        const changed = selectedIndex !== i;
         selectedIndex = i;
         renderTargets();
-        goAnswer.disabled = false;
 
-        targetChip.style.display = "inline-flex";
-        targetChipLabel.textContent = TARGETS[selectedIndex].label;
+        // Se cambi target, resetto scelta lunghezza per forzare selezione consapevole
+        // (se preferisci mantenerla, dimmelo)
+        if (changed) selectedLen = "";
 
-        scrollTo(sec3, card3);
-        preflightGenerateUX();
-        setTimeout(() => run("start"), 260);
+        renderLengths();
+        setChips();
+        updateButtons();
+
+        // dopo target -> vai alla sezione lunghezza
+        scrollTo(secLen, cardLen);
+
+        // se c'era già una lunghezza (caso: non reset), riparti
+        if (!changed && selectedLen) maybeRestartGeneration("target");
       });
       targetsEl.appendChild(el);
     });
   }
+
+  function renderLengths(){
+    lengthsEl.innerHTML = "";
+    LENGTHS.forEach((l) => {
+      const el = document.createElement("div");
+      el.className = "len-card" + (l.key === selectedLen ? " active" : "");
+      el.innerHTML = `
+        <div class="ticon">${l.icon}</div>
+        <div>
+          <p class="tname">${l.label}</p>
+          <p class="tdesc">${l.desc}</p>
+        </div>
+      `;
+      el.addEventListener("click", () => {
+        const changed = selectedLen !== l.key;
+        selectedLen = l.key;
+        renderLengths();
+        setChips();
+        updateButtons();
+
+        // scelto tutto -> scroll risposta + start
+        scrollTo(sec3, card3);
+        preflightGenerateUX();
+        setTimeout(() => run("start"), 260);
+      });
+      lengthsEl.appendChild(el);
+    });
+  }
+
   renderTargets();
+  renderLengths();
+  updateButtons();
+  setStatus("Pronto.", false);
 
   function updateCreditsFromHeaders(headers){
     const rem = headers.get("x-credits-remaining");
@@ -645,11 +769,16 @@ window.addEventListener("DOMContentLoaded", () => {
 
   function buildPayload(mode){
     const t = TARGETS[selectedIndex];
+    const l = LENGTHS.find(x=>x.key===selectedLen) || LENGTHS[1];
+
+    const maxTokens = Math.max(256, Math.round(t.maxTokens * l.tokensMul));
+    const maxChars  = Math.max(1200, Math.round(t.maxChars  * l.charsMul));
+
     return {
       query: q.value.trim(),
-      targetPrompt: t.prompt,
-      maxTokens: t.maxTokens,
-      maxChars: t.maxChars,
+      targetPrompt: t.prompt + "\n\n" + l.extra,
+      maxTokens,
+      maxChars,
       mode: mode === "continue" ? "continue" : "start",
       previousText: mode === "continue" ? cleanText : ""
     };
@@ -673,6 +802,13 @@ window.addEventListener("DOMContentLoaded", () => {
       scrollTo(sec2, card2);
       return;
     }
+    if (!selectedLen) {
+      isGenerating = false;
+      updateButtons();
+      setStatus("Scegli la lunghezza.", false);
+      scrollTo(secLen, cardLen);
+      return;
+    }
 
     isGenerating = true;
     updateButtons();
@@ -681,12 +817,12 @@ window.addEventListener("DOMContentLoaded", () => {
     try {
       await streamGemini(buildPayload(mode), (chunk) => {
         rawText += chunk;
-        scheduleRender(false); // live render (debounced)
+        scheduleRender(false);
       });
 
       const hadMarker = endsWithContinueMarker(rawText);
       cleanText = stripContinueMarker(rawText);
-      scheduleRender(true); // final render (clean + KaTeX)
+      scheduleRender(true);
 
       isGenerating = false;
       updateButtons();
@@ -700,7 +836,7 @@ window.addEventListener("DOMContentLoaded", () => {
         updateButtons();
         setStatus(`Sto continuando automaticamente… (${autoHopCount})`, true);
         await new Promise(r => setTimeout(r, 220));
-        rawText = cleanText; // riparti dal pulito
+        rawText = cleanText;
         return run("continue");
       }
 
@@ -714,7 +850,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Navigation buttons
+  // Nav buttons
   goTargets.addEventListener("click", () => {
     if (!q.value.trim()) { q.focus(); return; }
     scrollTo(sec2, card2);
@@ -722,14 +858,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
   backToQ.addEventListener("click", () => scrollTo(sec1, card1));
 
-  goAnswer.addEventListener("click", () => {
-    if (selectedIndex < 0) return;
-    scrollTo(sec3, card3);
-  });
+  goLen.addEventListener("click", () => scrollTo(secLen, cardLen));
+  goAnswer.addEventListener("click", () => scrollTo(sec3, card3));
 
   backToTargets.addEventListener("click", () => scrollTo(sec2, card2));
+  backToLen.addEventListener("click", () => scrollTo(secLen, cardLen));
 
-  // Copy (copi Markdown “pulito”)
+  // Copy markdown pulito
   copyBtn.addEventListener("click", async () => {
     const text = (cleanText || rawText || "").trim();
     if (!text) return;
@@ -741,10 +876,6 @@ window.addEventListener("DOMContentLoaded", () => {
       setStatus("Non riesco a copiare (permessi).", false);
     }
   });
-
-  // Init
-  setStatus("Pronto.", false);
-  updateButtons();
 });
 </script>
 </body>
