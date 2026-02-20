@@ -5,7 +5,157 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Come funziona – SimplifAI Clone</title>
   <link rel="stylesheet" href="/theme.css">
+
+  <style>
+    /* Stepper layout */
+    .how-hero{
+      text-align:center;
+      padding: 26px 18px;
+    }
+
+    .how-shell{
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap: 18px;
+      margin-top: 16px;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .how-shell{ grid-template-columns: 1fr; }
+    }
+
+    .sticky{
+      position: sticky;
+      top: 18px;
+    }
+    @media (max-width: 980px){
+      .sticky{ position: static; }
+    }
+
+    .mini-nav{
+      display:flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .mini-nav a{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      text-decoration:none;
+      color: var(--muted);
+      transition:.15s ease;
+    }
+    .mini-nav a:hover{
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+    }
+    .mini-nav a.active{
+      border-color: rgba(124,92,255,.55);
+      background: rgba(124,92,255,.14);
+      color: var(--text);
+    }
+    .mini-dot{
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      font-weight: 900;
+      color: var(--text);
+      flex: 0 0 auto;
+    }
+
+    /* Steps column */
+    .steps{
+      display:flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .step-card{
+      padding: 18px;
+    }
+    .step-top{
+      display:flex;
+      align-items:flex-start;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .step-num{
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 900;
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(38,198,255,.85));
+      color: #0b1020;
+      flex: 0 0 auto;
+    }
+    .step-title{
+      margin:0;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing:.1px;
+    }
+    .step-sub{
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 14px;
+    }
+
+    .step-points{
+      margin: 12px 0 0;
+      padding: 0;
+      list-style: none;
+      display:flex;
+      flex-direction: column;
+      gap: 10px;
+      color: var(--muted);
+    }
+    .step-points li{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      line-height: 1.4;
+    }
+    .step-points .icon{
+      width: 18px;
+      display:inline-flex;
+      justify-content:center;
+      opacity:.92;
+      flex: 0 0 auto;
+      margin-top: 1px;
+    }
+
+    /* Reveal transitions */
+    .reveal{
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .6s cubic-bezier(.2,.8,.2,1), transform .6s cubic-bezier(.2,.8,.2,1);
+      will-change: opacity, transform;
+    }
+    .reveal.in{
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Pricing reveal anchor */
+    .pricing-anchor{
+      margin-top: 18px;
+    }
+  </style>
 </head>
+
 <body>
   <div class="wrap">
     <header>
@@ -17,143 +167,224 @@
         </div>
       </div>
 
-      <nav>
-        <a href="/index.html">Home</a>
-        <a href="/come-funziona.html" style="color:var(--text); background:rgba(255,255,255,.03); border:1px solid var(--border);">Come funziona</a>
-        <a href="/prezzi.html">Prezzi</a>
+      <nav id="mainNav">
+        <a href="/index.html" data-nav="home">Home</a>
+        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
+        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
       </nav>
     </header>
 
     <!-- HERO -->
     <div class="card">
-      <div class="card-inner" style="text-align:center; padding:24px 18px;">
+      <div class="card-inner how-hero reveal">
         <span class="pilltag">🧭 COME FUNZIONA</span>
-        <div class="h1">Dalla domanda alla risposta, in pochi secondi</div>
-        <p class="sub">Scrivi una domanda, scegli un target e ottieni una spiegazione calibrata. Se la risposta è lunga, premi <b>Continua</b>.</p>
-      </div>
-    </div>
-
-    <div style="height:16px;"></div>
-
-    <!-- 3 cards: cosa fa -->
-    <div class="grid-3">
-      <div class="card">
-        <div class="card-inner">
-          <div style="font-weight:900; font-size:16px; margin-bottom:6px;">✍️ 1) Inserisci la domanda</div>
-          <p class="sub">Una frase o più righe: anche domande complesse vanno bene. Più contesto dai, meglio è.</p>
-          <div style="height:10px;"></div>
-          <span class="pilltag">Tip: aggiungi un esempio</span>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-inner">
-          <div style="font-weight:900; font-size:16px; margin-bottom:6px;">🎯 2) Scegli il target</div>
-          <p class="sub">Bambino → Scienziato: cambia stile, rigore e profondità. È come cambiare “livello di spiegazione”.</p>
-          <div style="height:10px;"></div>
-          <span class="pilltag">Stesso concetto, tono diverso</span>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-inner">
-          <div style="font-weight:900; font-size:16px; margin-bottom:6px;">⚡ 3) Streaming + Continua</div>
-          <p class="sub">La risposta arriva a pezzi (streaming). Se si interrompe per limite, premi Continua e prosegue.</p>
-          <div style="height:10px;"></div>
-          <span class="pilltag">Esperienza “ChatGPT-style”</span>
-        </div>
-      </div>
-    </div>
-
-    <div style="height:16px;"></div>
-
-    <!-- Cosa cambia per target -->
-    <div class="card">
-      <div class="card-inner">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
-          <div style="font-weight:900; font-size:16px;">🧠 Cosa cambia tra i target</div>
-          <span class="pilltag">Esempi rapidi</span>
-        </div>
-
-        <div style="height:10px;"></div>
-
-        <div class="grid-3">
-          <div class="card" style="box-shadow:none;">
-            <div class="card-inner">
-              <div style="font-weight:800; margin-bottom:6px;">Bambino</div>
-              <p class="sub">Parole semplici, esempi concreti, frasi brevi.</p>
-              <div style="height:8px;"></div>
-              <p class="sub"><b>Stile:</b> “come lo spiegheresti a 8 anni”.</p>
-            </div>
-          </div>
-
-          <div class="card" style="box-shadow:none;">
-            <div class="card-inner">
-              <div style="font-weight:800; margin-bottom:6px;">Universitario</div>
-              <p class="sub">Struttura, definizioni, passaggi logici, qualche formula se utile.</p>
-              <div style="height:8px;"></div>
-              <p class="sub"><b>Stile:</b> “chiaro e corretto”.</p>
-            </div>
-          </div>
-
-          <div class="card" style="box-shadow:none;">
-            <div class="card-inner">
-              <div style="font-weight:800; margin-bottom:6px;">Scienziato</div>
-              <p class="sub">Rigore, assunzioni, limiti, caveat, linguaggio tecnico.</p>
-              <div style="height:8px;"></div>
-              <p class="sub"><b>Stile:</b> “paper / lab notes”.</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <div style="height:16px;"></div>
-
-    <!-- Rate limit -->
-    <div class="card">
-      <div class="card-inner">
-        <div style="font-weight:900; font-size:16px; margin-bottom:6px;">⛔ Rate limit (quota) – cosa succede</div>
-        <p class="sub">
-          Se usi il free tier e finisci le richieste, vedrai un box pulito con countdown e CTA verso <b>Prezzi</b> / <b>Upgrade</b>.
-          Niente panico: è normale con le quote gratuite.
-        </p>
+        <div class="h1">Step-by-step, super semplice</div>
+        <p class="sub">Segui i passaggi 1 → 4. Le sezioni entrano in transizione mentre scorri. Sotto trovi anche i prezzi.</p>
         <div style="height:12px;"></div>
-
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <a class="btn" href="/index.html">Torna alla home</a>
-          <a class="btn btn-primary" href="/prezzi.html">Vedi i piani</a>
-        </div>
+        <a class="btn btn-primary" href="#step-1">Inizia dai passaggi</a>
       </div>
     </div>
 
-    <div style="height:16px;"></div>
-
-    <!-- FAQ -->
-    <div class="card">
-      <div class="card-inner">
-        <div style="font-weight:900; font-size:16px; margin-bottom:8px;">❓ FAQ (mock)</div>
-
-        <div style="display:flex; flex-direction:column; gap:10px;">
-          <div>
-            <div style="font-weight:800; margin-bottom:4px;">Le risposte vengono salvate?</div>
-            <p class="sub">In questa demo no. Puoi aggiungere cronologia con un database (in arrivo nei piani mock).</p>
+    <div class="how-shell">
+      <!-- LEFT sticky mini-nav -->
+      <div class="sticky">
+        <div class="card">
+          <div class="card-inner">
+            <div style="font-weight:900; margin-bottom:10px;">📍 Passaggi</div>
+            <div class="mini-nav" id="miniNav">
+              <a href="#step-1" data-step="1"><span class="mini-dot">1</span> Scrivi la domanda</a>
+              <a href="#step-2" data-step="2"><span class="mini-dot">2</span> Scegli il target</a>
+              <a href="#step-3" data-step="3"><span class="mini-dot">3</span> Genera la risposta</a>
+              <a href="#step-4" data-step="4"><span class="mini-dot">4</span> Continua & Copia</a>
+              <a href="#pricing" data-step="pricing"><span class="mini-dot">€</span> Prezzi</a>
+            </div>
           </div>
+        </div>
 
-          <div>
-            <div style="font-weight:800; margin-bottom:4px;">Perché “Continua” a volte ripete?</div>
-            <p class="sub">Dipende dal modello e dai limiti token. Si può mitigare tagliando la “coda” del testo e guidando meglio il prompt.</p>
-          </div>
+        <div style="height:14px;"></div>
 
-          <div>
-            <div style="font-weight:800; margin-bottom:4px;">Si può cambiare stile e lunghezza per target?</div>
-            <p class="sub">Sì: ogni target ha un prompt + limiti token/char diversi. “Continua” resta come fallback.</p>
+        <div class="card">
+          <div class="card-inner">
+            <div style="font-weight:900; margin-bottom:6px;">✨ Tip veloce</div>
+            <p class="sub" style="margin:0;">
+              Se vuoi risposte migliori, aggiungi contesto: “sto studiando”, “mi serve un esempio”, “in 5 punti”, ecc.
+            </p>
           </div>
         </div>
       </div>
-    </div>
 
+      <!-- RIGHT steps -->
+      <div class="steps">
+        <div class="card step-card reveal" id="step-1">
+          <div class="step-top">
+            <div class="step-num">1</div>
+            <div>
+              <p class="step-title">Scrivi la domanda</p>
+              <p class="step-sub">Inserisci il tema (anche solo una parola) oppure una domanda completa. Più contesto = risposta più precisa.</p>
+            </div>
+          </div>
+          <ul class="step-points">
+            <li><span class="icon">✍️</span><span>Puoi scrivere anche multi-riga.</span></li>
+            <li><span class="icon">🎯</span><span>Aggiungi un obiettivo: “spiegalo”, “con esempi”, “in 10 righe”.</span></li>
+            <li><span class="icon">🧩</span><span>Per temi tecnici, aggiungi il contesto (esame, lavoro, curiosità).</span></li>
+          </ul>
+        </div>
+
+        <div class="card step-card reveal" id="step-2">
+          <div class="step-top">
+            <div class="step-num">2</div>
+            <div>
+              <p class="step-title">Scegli il target</p>
+              <p class="step-sub">Il target cambia tono, profondità e lessico: dallo stile “bambino” fino a “scienziato”.</p>
+            </div>
+          </div>
+          <ul class="step-points">
+            <li><span class="icon">🧒</span><span><b>Bambino</b>: semplice, analogie, frasi brevi.</span></li>
+            <li><span class="icon">🎓</span><span><b>Universitario</b>: struttura, definizioni, passaggi logici.</span></li>
+            <li><span class="icon">🧪</span><span><b>Scienziato</b>: rigore, limiti, assunzioni, caveat.</span></li>
+          </ul>
+        </div>
+
+        <div class="card step-card reveal" id="step-3">
+          <div class="step-top">
+            <div class="step-num">3</div>
+            <div>
+              <p class="step-title">Genera la risposta (con streaming)</p>
+              <p class="step-sub">La risposta arriva “a pezzi” in tempo reale. È più reattivo e piacevole da leggere.</p>
+            </div>
+          </div>
+          <ul class="step-points">
+            <li><span class="icon">⚡</span><span>Vedi subito i primi paragrafi.</span></li>
+            <li><span class="icon">🧭</span><span>Se è lunga, non “si blocca”: ti propone <b>Continua</b>.</span></li>
+            <li><span class="icon">🛡️</span><span>Se scatta il limite quota, compare un box pulito con countdown + CTA.</span></li>
+          </ul>
+        </div>
+
+        <div class="card step-card reveal" id="step-4">
+          <div class="step-top">
+            <div class="step-num">4</div>
+            <div>
+              <p class="step-title">Continua & Copia</p>
+              <p class="step-sub">Se la risposta è stata troncata dal limite, premi <b>Continua</b>. Se ti serve fuori, usa <b>Copia</b>.</p>
+            </div>
+          </div>
+          <ul class="step-points">
+            <li><span class="icon">⋯</span><span>“Continua” riparte dal punto in cui si era interrotta.</span></li>
+            <li><span class="icon">⧉</span><span>“Copia” prende tutto il testo generato.</span></li>
+            <li><span class="icon">🧹</span><span>Si può migliorare la continuità evitando ripetizioni (anti-duplicate).</span></li>
+          </ul>
+        </div>
+
+        <!-- Pricing section that appears with transition -->
+        <div class="pricing-anchor reveal" id="pricing">
+          <div class="card">
+            <div class="card-inner" style="text-align:center; padding:24px 18px;">
+              <span class="pilltag">💳 PIANI & PREZZI</span>
+              <div class="h1">Scegli il piano giusto per te</div>
+              <p class="sub">Stesso look della home. Prezzi mock (puoi collegare Stripe quando vuoi).</p>
+              <div style="height:12px;"></div>
+              <a class="btn btn-primary" href="/prezzi.html">Apri pagina Prezzi</a>
+            </div>
+          </div>
+
+          <div style="height:14px;"></div>
+
+          <!-- Embedded pricing preview (dark) -->
+          <div class="grid-3">
+            <div class="card plan">
+              <div class="name">
+                <h3>FREE</h3>
+                <span class="pilltag">Per provare</span>
+              </div>
+              <div class="price">€0</div>
+              <div class="per">Perfetto per iniziare</div>
+              <ul>
+                <li><span class="icon">✓</span><span>Generazioni limitate (free tier)</span></li>
+                <li><span class="icon">✓</span><span>Target (Bambino → Scienziato)</span></li>
+                <li><span class="icon">⚠</span><span>Possibili attese (rate limit)</span></li>
+              </ul>
+              <div class="cta">
+                <a class="btn" href="/index.html">Torna alla home</a>
+              </div>
+            </div>
+
+            <div class="card plan featured">
+              <div class="name">
+                <h3>PRO</h3>
+                <span class="pilltag">Per uso serio</span>
+              </div>
+              <div class="price">€14,99</div>
+              <div class="per">al mese</div>
+              <ul>
+                <li><span class="icon">⚡</span><span>Molte più richieste al giorno</span></li>
+                <li><span class="icon">🧠</span><span>Risposte più lunghe</span></li>
+                <li><span class="icon">🔔</span><span>Priorità più alta</span></li>
+              </ul>
+              <div class="cta">
+                <a class="btn btn-primary" href="/checkout.html?plan=pro&billing=monthly">Upgrade (mock)</a>
+                <a class="btn" href="/prezzi.html">Dettagli</a>
+              </div>
+            </div>
+
+            <div class="card plan">
+              <div class="name">
+                <h3>BUSINESS</h3>
+                <span class="pilltag">Per team</span>
+              </div>
+              <div class="price">€79,99</div>
+              <div class="per">al mese</div>
+              <ul>
+                <li><span class="icon">🏢</span><span>Richieste elevate (team)</span></li>
+                <li><span class="icon">📄</span><span>Risposte più lunghe</span></li>
+                <li><span class="icon">🛟</span><span>Supporto prioritario</span></li>
+              </ul>
+              <div class="cta">
+                <a class="btn btn-primary" href="/checkout.html?plan=business&billing=monthly">Upgrade (mock)</a>
+                <a class="btn" href="/prezzi.html">Dettagli</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </div>
+
+  <script>
+    // Navbar active
+    (function(){
+      const path = location.pathname.toLowerCase();
+      let key = "home";
+      if (path.includes("come-funziona")) key = "how";
+      else if (path.includes("prezzi")) key = "pricing";
+      else if (path.includes("checkout")) key = "pricing";
+      document.querySelectorAll('#mainNav a').forEach(a=>{
+        if(a.dataset.nav === key) a.classList.add('nav-active');
+      });
+    })();
+
+    // Reveal on scroll
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if(e.isIntersecting) e.target.classList.add("in");
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+
+    // Mini-nav active on scroll
+    const miniLinks = Array.from(document.querySelectorAll("#miniNav a"));
+    const stepSections = ["step-1","step-2","step-3","step-4","pricing"].map(id => document.getElementById(id));
+
+    const io2 = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if(!e.isIntersecting) return;
+        const id = e.target.id;
+        miniLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === ("#" + id)));
+      });
+    }, { threshold: 0.6 });
+
+    stepSections.forEach(s => io2.observe(s));
+  </script>
 </body>
 </html>
