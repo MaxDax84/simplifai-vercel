@@ -6,7 +6,15 @@
   <title>Simplif-AI</title>
   <link rel="stylesheet" href="/theme.css">
 
+  <!-- KaTeX (render equazioni) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
+
   <style>
+    /* Forza uno sfondo piatto anche se il theme cambia */
+    html, body { background: var(--bg) !important; }
+
     .wrap{width:min(1100px,92vw);margin:0 auto;}
     .section{margin-top:22px;}
     .card{padding:22px;border-radius:18px;}
@@ -102,7 +110,7 @@
     }
     .target-chip b{color:var(--text);}
 
-    /* --- Response: niente “fascia” e nessuna riga netta --- */
+    /* Risposta: niente fascia netta */
     .response-card{
       background: transparent;
       border: none;
@@ -128,6 +136,10 @@
       font-size:14px;
       min-height: 120px;
     }
+
+    /* KaTeX leggibile su dark */
+    .katex { font-size: 1.05em; }
+    .katex-display { margin: 12px 0; }
 
     .status{
       font-size:12px;color:var(--muted);
@@ -182,13 +194,9 @@
       color:#0b1020;
     }
 
-    /* --- Colori per sezioni: 1 e 2 più chiare, 3 più scura --- */
-    #card1, #card2{
-      background: rgba(255,255,255,.06) !important;
-    }
-    #card3{
-      background: rgba(255,255,255,.03) !important;
-    }
+    /* Colori sezioni: 1 e 2 più chiare, 3 più scura */
+    #card1, #card2{ background: rgba(255,255,255,.06) !important; }
+    #card3{ background: rgba(255,255,255,.03) !important; }
   </style>
 </head>
 
@@ -302,8 +310,11 @@
   })();
 
   const TARGETS = [
-    { label:"Bambino", icon:"👶", desc:"Semplice, analogie, frasi brevi.", prompt:"Spiega come a un bambino: usa parole semplici, esempi concreti, frasi brevi.", maxTokens:2500, maxChars:6000 },
-    { label:"Ragazzino", icon:"🧑", desc:"Chiaro e un po’ più dettagliato.", prompt:"Spiega come a un ragazzino: semplice ma più dettagliato, esempi e analogie.", maxTokens:2500, maxChars:7000 },
+    // Se vuoi aggiungere "Bebè", decommenta e magari tieni 7 target:
+    // { label:"Bebè", icon:"👶", desc:"Ultra semplice, pochissime parole.", prompt:"Spiega come a un bebè: pochissime parole, super semplice.", maxTokens:1800, maxChars:4500 },
+
+    { label:"Bambino", icon:"🧒", desc:"Semplice, analogie, frasi brevi.", prompt:"Spiega come a un bambino: usa parole semplici, esempi concreti, frasi brevi.", maxTokens:2500, maxChars:6000 },
+    { label:"Ragazzo", icon:"👨", desc:"Chiaro e un po’ più dettagliato.", prompt:"Spiega come a un ragazzo: semplice ma più dettagliato, esempi e analogie.", maxTokens:2500, maxChars:7000 },
     { label:"Universitario", icon:"🎓", desc:"Struttura e concetti corretti.", prompt:"Spiega come a uno studente universitario: struttura chiara, concetti corretti.", maxTokens:2500, maxChars:9000 },
     { label:"Adulto", icon:"🧑", desc:"Pratico e diretto.", prompt:"Spiega come a un adulto: diretto, pratico, con esempi.", maxTokens:2500, maxChars:8000 },
     { label:"Esperto", icon:"🧠", desc:"Dettagli tecnici e caveat.", prompt:"Spiega come a un esperto: dettagli tecnici, assunzioni esplicite, caveat.", maxTokens:3500, maxChars:12000 },
@@ -311,13 +322,14 @@
   ];
 
   // Auto-continue controls
-  const AUTO_CONTINUE_MAX_HOPS = 6; // anti-loop
+  const AUTO_CONTINUE_MAX_HOPS = 6;
   let autoHopCount = 0;
 
   // State
   let selectedIndex = -1;
-  let accumulatedText = "";
   let isGenerating = false;
+  let rawText = "";        // testo così com’è arrivato (con eventuale ...(continua))
+  let cleanText = "";      // testo senza marker
 
   // DOM
   const q = document.getElementById("query");
@@ -327,9 +339,7 @@
   const statusEl = document.getElementById("status");
   const copyBtn = document.getElementById("copyBtn");
   const quotaMount = document.getElementById("quotaMount");
-
   const creditsValueEl = document.getElementById("creditsValue");
-  function setCredits(v){ creditsValueEl.textContent = v ?? "—"; }
 
   const targetChip = document.getElementById("targetChip");
   const targetChipLabel = document.getElementById("targetChipLabel");
@@ -345,6 +355,8 @@
   const backToQ = document.getElementById("backToQ");
   const goAnswer = document.getElementById("goAnswer");
   const backToTargets = document.getElementById("backToTargets");
+
+  function setCredits(v){ creditsValueEl.textContent = v ?? "—"; }
 
   function flash(card){
     card.classList.add("flash");
@@ -388,29 +400,63 @@
     copyBtn.disabled = isGenerating || !responseEl.textContent.trim();
   }
 
-  function stripContinueMarker(txt){
-    return txt.replace(/\.\.\.\(continua\)\s*$/i, "").trimEnd();
-  }
-
   function endsWithContinueMarker(txt){
     return /\.\.\.\(continua\)\s*$/i.test((txt||"").trim());
   }
 
-  function nearLimitHeuristic(){
+  function stripContinueMarker(txt){
+    return (txt || "").replace(/\.\.\.\(continua\)\s*$/i, "").trimEnd();
+  }
+
+  function nearLimitHeuristic(txt){
     if (selectedIndex < 0) return false;
     const t = TARGETS[selectedIndex];
-    const text = (accumulatedText || "").trim();
-    if (!text) return false;
-    return text.length >= Math.floor(t.maxChars * 0.92);
+    const s = (txt || "").trim();
+    if (!s) return false;
+    return s.length >= Math.floor(t.maxChars * 0.92);
+  }
+
+  function looksTruncated(txt){
+    // euristica: finisce con "..." / ":" / "," / "-" / oppure manca punteggiatura finale su testo abbastanza lungo
+    const s = (txt || "").trim();
+    if (!s) return false;
+
+    if (/[,:;–—-]$/.test(s)) return true;
+    if (/\.\.\.$/.test(s)) return true;
+    if (/\b(oh|oppure|ma|e|perché)\s*$/i.test(s)) return true;
+
+    // se è lungo e non finisce con . ! ? ) " ' … allora è sospetto
+    if (s.length > 220 && !/[.!?…)"'\]]$/.test(s)) return true;
+
+    return false;
   }
 
   function shouldAutoContinue(){
-    return endsWithContinueMarker(accumulatedText) || nearLimitHeuristic();
+    // attenzione: qui usiamo rawText (con marker) e cleanText (senza marker)
+    if (endsWithContinueMarker(rawText)) return true;
+    if (nearLimitHeuristic(cleanText)) return true;
+    if (looksTruncated(cleanText)) return true;
+    return false;
+  }
+
+  // KaTeX render (solo dopo che abbiamo finito di scrivere testo, per non rompere lo streaming)
+  function renderMath(){
+    if (!window.renderMathInElement) return;
+    try{
+      renderMathInElement(responseEl, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false
+      });
+    } catch {}
   }
 
   function preflightGenerateUX(){
     clearQuotaBox();
-    accumulatedText = "";
+    rawText = "";
+    cleanText = "";
     responseEl.textContent = "";
     autoHopCount = 0;
 
@@ -439,7 +485,6 @@
         targetChip.style.display = "inline-flex";
         targetChipLabel.textContent = TARGETS[selectedIndex].label;
 
-        // scroll + auto start
         scrollTo(sec3, card3);
         preflightGenerateUX();
         setTimeout(() => run("start"), 260);
@@ -449,7 +494,6 @@
   }
   renderTargets();
 
-  // Credits from headers
   function updateCreditsFromHeaders(headers){
     const rem = headers.get("x-credits-remaining");
     const lim = headers.get("x-credits-limit");
@@ -460,7 +504,6 @@
     }
   }
 
-  // Robust SSE parsing
   async function streamGemini(payload, onTextChunk){
     const res = await fetch("/api/gemini", {
       method: "POST",
@@ -545,7 +588,7 @@
       maxTokens: t.maxTokens,
       maxChars: t.maxChars,
       mode: mode === "continue" ? "continue" : "start",
-      previousText: mode === "continue" ? accumulatedText : ""
+      previousText: mode === "continue" ? cleanText : ""
     };
   }
 
@@ -568,51 +611,50 @@
       return;
     }
 
-    if (mode === "continue") {
-      isGenerating = true;
-      updateButtons();
-      setStatus(`Sto continuando… (${autoHopCount + 1})`, true);
-    } else {
-      isGenerating = true;
-      updateButtons();
-      if (statusEl.textContent.trim() !== "Ok! Sto generando…") {
-        setStatus("Sto generando…", true);
-      } else {
-        spinner.style.display = "inline-block";
-      }
-    }
+    isGenerating = true;
+    updateButtons();
+    if (mode === "continue") setStatus(`Sto continuando… (${autoHopCount + 1})`, true);
+    else setStatus("Sto generando…", true);
 
     try {
       await streamGemini(buildPayload(mode), (chunk) => {
-        accumulatedText += chunk;
-        responseEl.textContent += chunk;
+        // Non renderizzare KaTeX durante lo streaming (rompe il DOM).
+        rawText += chunk;
+        cleanText = rawText; // per ora
+        responseEl.textContent = rawText;
       });
 
-      accumulatedText = stripContinueMarker(accumulatedText);
-      responseEl.textContent = stripContinueMarker(responseEl.textContent);
+      // Ora puliamo marker SOLO per la logica e per inviare in continue
+      const hadMarker = endsWithContinueMarker(rawText);
+      cleanText = stripContinueMarker(rawText);
+      responseEl.textContent = cleanText;
 
       isGenerating = false;
       updateButtons();
       setStatus("Fatto.", false);
 
-      if (shouldAutoContinue() && autoHopCount < AUTO_CONTINUE_MAX_HOPS) {
+      // Auto-continue robusto
+      if ((hadMarker || nearLimitHeuristic(cleanText) || looksTruncated(cleanText)) && autoHopCount < AUTO_CONTINUE_MAX_HOPS) {
         autoHopCount++;
         isGenerating = true;
         updateButtons();
         setStatus(`Sto continuando automaticamente… (${autoHopCount})`, true);
-        await new Promise(r => setTimeout(r, 200));
+        await new Promise(r => setTimeout(r, 220));
+        // Importante: per il continue usiamo cleanText come base
+        rawText = cleanText;
         return run("continue");
       }
 
       autoHopCount = 0;
 
+      // Render KaTeX alla fine (su testo definitivo)
+      renderMath();
+
     } catch (err) {
       isGenerating = false;
       updateButtons();
-
-      const msg = err?.message || "Errore.";
       setStatus("Errore.", false);
-      showQuotaBox(msg);
+      showQuotaBox(err?.message || "Errore.");
     }
   }
 
@@ -650,4 +692,3 @@
 </script>
 </body>
 </html>
-
