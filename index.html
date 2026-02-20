@@ -616,13 +616,13 @@
   });
 
   backToQ.addEventListener("click", () => scrollTo(sec1, card1));
+
   goAnswer.addEventListener("click", () => {
     if (selectedIndex < 0) return;
     scrollTo(sec3, card3);
   });
+
   backToTargets.addEventListener("click", () => scrollTo(sec2, card2));
-    run("start");
-  });
 
   // Copy
   copyBtn.addEventListener("click", async () => {
@@ -643,3 +643,4 @@
 </script>
 </body>
 </html>
+
