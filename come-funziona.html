@@ -7,6 +7,21 @@
   <link rel="stylesheet" href="/theme.css">
 
   <style>
+    /* Mantieni lo stesso “container” della Home */
+    .wrap{width:min(1100px,92vw);margin:0 auto;}
+
+    /* ✅ CARD LOOK = HOME
+       Nella Home: card 1–2 sono più chiare, la risposta è più scura.
+       In "Come funziona" vogliamo la stessa resa delle card “chiare”. */
+    .card{
+      background: rgba(255,255,255,.06) !important;
+      border: 1px solid var(--border) !important;
+      box-shadow: var(--shadow) !important;
+      border-radius: 18px;
+    }
+    /* Se in theme.css esiste .card-inner con un overlay, lo neutralizziamo */
+    .card-inner{ background: transparent !important; }
+
     /* Stepper layout */
     .how-hero{
       text-align:center;
@@ -250,7 +265,7 @@
           <ul class="step-points">
             <li><span class="icon">⚡</span><span>Vedi subito i primi paragrafi.</span></li>
             <li><span class="icon">🧭</span><span>Se è lunga, non “si blocca”: ti propone <b>Continua</b>.</span></li>
-            <li><span class="icon">🛡️</span><span>Se scatta il limite quota, compare un box pulito con countdown + CTA.</span></li>
+            <li><span class="icon">🛡️</span><span>Se scatta il limite quota, compare un box pulito con CTA.</span></li>
           </ul>
         </div>
 
@@ -265,9 +280,14 @@
           <ul class="step-points">
             <li><span class="icon">⋯</span><span>“Continua” riparte dal punto in cui si era interrotta.</span></li>
             <li><span class="icon">⧉</span><span>“Copia” prende tutto il testo generato.</span></li>
-            <li><span class="icon">🧹</span><span>Si può migliorare la continuità evitando ripetizioni (anti-duplicate).</span></li>
+            <li><span class="icon">🧹</span><span>Possiamo migliorare la continuità evitando ripetizioni (anti-duplicate).</span></li>
           </ul>
-        </div>  </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:26px;"></div>
+  </div>
 
   <script>
     // Navbar active
