@@ -1,282 +1,173 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Prezzi – SimplifAI</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Inter', sans-serif; background: #f8fafc; }
-    .ai-gradient { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
-    .chip { border: 1px solid rgba(99,102,241,.25); }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Prezzi – SimplifAI Clone</title>
+  <link rel="stylesheet" href="/theme.css">
 </head>
-
-<body class="pb-16">
-  <nav class="w-full h-16 flex items-center justify-between px-6 md:px-10 border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
-    <a href="/" class="flex items-center gap-2">
-      <div class="ai-gradient w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-sm">
-        <i class="ri-flashlight-fill"></i>
-      </div>
-      <span class="text-xl font-extrabold tracking-tight text-gray-900">SimplifAI <span class="text-indigo-600">Clone</span></span>
-    </a>
-
-    <div class="hidden md:flex gap-6 text-sm font-medium text-gray-500">
-      <a href="/" class="hover:text-indigo-600">Home</a>
-      <a href="/come-funziona.html" class="hover:text-indigo-600">Come funziona</a>
-      <a href="/prezzi.html" class="text-indigo-600">Prezzi</a>
-    </div>
-
-    <button id="menuBtn" class="md:hidden w-10 h-10 rounded-xl border bg-white flex items-center justify-center" aria-label="Apri menu">
-      <i class="ri-menu-line text-xl"></i>
-    </button>
-  </nav>
-
-  <!-- Mobile menu -->
-  <div id="mobileMenu" class="md:hidden hidden border-b bg-white">
-    <div class="max-w-6xl mx-auto px-6 py-4 flex flex-col gap-3 text-sm font-semibold text-gray-700">
-      <a href="/" class="hover:text-indigo-600">Home</a>
-      <a href="/come-funziona.html" class="hover:text-indigo-600">Come funziona</a>
-      <a href="/prezzi.html" class="text-indigo-600">Prezzi</a>
-    </div>
-  </div>
-
-  <main class="max-w-6xl mx-auto px-4 pt-14">
-    <div class="text-center mb-10">
-      <span class="inline-block py-1 px-3 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-3">
-        Piani & Prezzi
-      </span>
-      <h1 class="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
-        Scegli il piano giusto per te
-      </h1>
-      <p class="text-gray-500 mt-3">
-        Inizia gratis, poi fai upgrade quando vuoi più richieste e risposte più lunghe.
-      </p>
-
-      <!-- Billing toggle (mock) -->
-      <div class="mt-6 flex items-center justify-center gap-2">
-        <span class="text-sm font-semibold text-gray-600">Mensile</span>
-        <button id="billingToggle" class="w-14 h-8 rounded-full bg-gray-200 relative transition" type="button" aria-label="Toggle billing">
-          <span id="billingKnob" class="absolute top-1 left-1 w-6 h-6 rounded-full bg-white shadow transition"></span>
-        </button>
-        <div class="flex items-center gap-2">
-          <span class="text-sm font-semibold text-gray-600">Annuale</span>
-          <span class="text-xs font-extrabold text-indigo-700 bg-indigo-50 chip px-2 py-1 rounded-full">-20% (mock)</span>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>SimplifAI Clone</h1>
+          <span>Risposte su misura, con “Continua” quando serve</span>
         </div>
       </div>
+
+      <nav>
+        <a href="/index.html">Home</a>
+        <a href="/come-funziona.html">Come funziona</a>
+        <a href="/prezzi.html" style="color:var(--text); background:rgba(255,255,255,.03); border:1px solid var(--border);">Prezzi</a>
+      </nav>
+    </header>
+
+    <div class="card">
+      <div class="card-inner" style="text-align:center; padding:24px 18px;">
+        <span class="pilltag">💳 PIANI & PREZZI</span>
+        <div class="h1">Scegli il piano giusto per te</div>
+        <p class="sub">Inizia gratis. Se vuoi più richieste e risposte più lunghe, fai upgrade quando ti serve.</p>
+
+        <div class="toggle">
+          <span>Mensile</span>
+          <div class="switch" id="billingSwitch" role="switch" aria-checked="false" tabindex="0">
+            <div class="knob"></div>
+          </div>
+          <span>Annuale</span>
+          <span class="badge">-20% (mock)</span>
+        </div>
+        <div class="kicker" id="billingHint">Prezzi mensili (mock).</div>
+      </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div style="height:16px;"></div>
+
+    <div class="grid-3">
       <!-- FREE -->
-      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-extrabold text-gray-900">FREE</h3>
-          <span class="text-xs font-bold text-gray-500 bg-gray-50 px-3 py-1 rounded-full">Per provare</span>
+      <div class="card plan">
+        <div class="name">
+          <h3>FREE</h3>
+          <span class="pilltag">Per provare</span>
         </div>
 
-        <div class="mt-4">
-          <div class="text-4xl font-extrabold text-gray-900">€0</div>
-          <div class="text-sm text-gray-500 mt-1">Perfetto per iniziare</div>
-        </div>
+        <div class="price">€0</div>
+        <div class="per">Perfetto per iniziare</div>
 
-        <ul class="mt-6 space-y-3 text-sm text-gray-600">
-          <li class="flex gap-2"><i class="ri-check-line text-indigo-600"></i>Generazioni limitate (free tier)</li>
-          <li class="flex gap-2"><i class="ri-check-line text-indigo-600"></i>Target (Bambino → Scienziato)</li>
-          <li class="flex gap-2"><i class="ri-check-line text-indigo-600"></i>Continua + Copia</li>
-          <li class="flex gap-2"><i class="ri-alert-line text-amber-600"></i>Possibili attese (rate limit)</li>
+        <ul>
+          <li><span class="icon">✓</span><span>Generazioni limitate (free tier)</span></li>
+          <li><span class="icon">✓</span><span>Target (Bambino → Scienziato)</span></li>
+          <li><span class="icon">✓</span><span>Continua + Copia</span></li>
+          <li><span class="icon">⚠</span><span>Possibili attese (rate limit)</span></li>
         </ul>
 
-        <a href="/" class="mt-7 w-full block text-center px-4 py-3 rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition">
-          Torna all’app
-        </a>
+        <div class="cta">
+          <a class="btn" href="/index.html">Torna alla home</a>
+        </div>
       </div>
 
       <!-- PRO -->
-      <div class="bg-white rounded-3xl shadow-2xl border-2 border-indigo-200 p-6 relative">
-        <div class="absolute -top-3 left-1/2 -translate-x-1/2">
-          <div class="ai-gradient text-white text-xs font-extrabold px-4 py-1 rounded-full shadow">Consigliato</div>
+      <div class="card plan featured">
+        <div class="name">
+          <h3>PRO</h3>
+          <span class="pilltag">Per uso serio</span>
         </div>
 
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-extrabold text-gray-900">PRO</h3>
-          <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full">Per uso serio</span>
-        </div>
+        <div class="price" id="proPrice">€14,99</div>
+        <div class="per" id="proPer">al mese</div>
 
-        <div class="mt-4">
-          <div class="text-4xl font-extrabold text-gray-900">
-            <span id="proPrice">€14,99</span>
-          </div>
-          <div class="text-sm text-gray-500 mt-1" id="proPeriod">al mese</div>
-        </div>
-
-        <ul class="mt-6 space-y-3 text-sm text-gray-600">
-          <li class="flex gap-2"><i class="ri-rocket-line text-indigo-600"></i>Molte più richieste al giorno</li>
-          <li class="flex gap-2"><i class="ri-rocket-line text-indigo-600"></i>Risposte più lunghe</li>
-          <li class="flex gap-2"><i class="ri-shield-star-line text-indigo-600"></i>Priorità più alta</li>
-          <li class="flex gap-2"><i class="ri-history-line text-indigo-600"></i>Cronologia (in arrivo)</li>
+        <ul>
+          <li><span class="icon">🔔</span><span>Molte più richieste al giorno</span></li>
+          <li><span class="icon">🧠</span><span>Risposte più lunghe</span></li>
+          <li><span class="icon">⚡</span><span>Priorità più alta</span></li>
+          <li><span class="icon">🕒</span><span>Cronologia (in arrivo)</span></li>
         </ul>
 
-        <a href="/checkout.html?plan=pro" class="mt-7 w-full block text-center px-4 py-3 rounded-2xl ai-gradient text-white font-semibold hover:scale-[1.01] transition shadow-lg">
-          Passa a PRO (mock)
-        </a>
+        <div class="cta">
+          <a class="btn btn-primary" id="proCta" href="/checkout.html?plan=pro&billing=monthly">Upgrade (mock)</a>
+          <a class="btn" href="/come-funziona.html">Dettagli</a>
+        </div>
       </div>
 
       <!-- BUSINESS -->
-      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-extrabold text-gray-900">BUSINESS</h3>
-          <span class="text-xs font-bold text-gray-500 bg-gray-50 px-3 py-1 rounded-full">Per team</span>
+      <div class="card plan">
+        <div class="name">
+          <h3>BUSINESS</h3>
+          <span class="pilltag">Per team</span>
         </div>
 
-        <div class="mt-4">
-          <div class="text-4xl font-extrabold text-gray-900">
-            <span id="bizPrice">€79,99</span>
-          </div>
-          <div class="text-sm text-gray-500 mt-1" id="bizPeriod">al mese</div>
-        </div>
+        <div class="price" id="bizPrice">€79,99</div>
+        <div class="per" id="bizPer">al mese</div>
 
-        <ul class="mt-6 space-y-3 text-sm text-gray-600">
-          <li class="flex gap-2"><i class="ri-building-2-line text-indigo-600"></i>Richieste elevate (team)</li>
-          <li class="flex gap-2"><i class="ri-file-text-line text-indigo-600"></i>Risposte più lunghe</li>
-          <li class="flex gap-2"><i class="ri-customer-service-2-line text-indigo-600"></i>Supporto prioritario</li>
-          <li class="flex gap-2"><i class="ri-brush-2-line text-indigo-600"></i>Branding / personalizzazioni</li>
+        <ul>
+          <li><span class="icon">🏢</span><span>Richieste elevate (team)</span></li>
+          <li><span class="icon">📄</span><span>Risposte più lunghe</span></li>
+          <li><span class="icon">🛟</span><span>Supporto prioritario</span></li>
+          <li><span class="icon">🎨</span><span>Branding / personalizzazioni</span></li>
         </ul>
 
-        <a href="/checkout.html?plan=business" class="mt-7 w-full block text-center px-4 py-3 rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 transition">
-          Contattaci (mock)
-        </a>
+        <div class="cta">
+          <a class="btn btn-primary" id="bizCta" href="/checkout.html?plan=business&billing=monthly">Upgrade (mock)</a>
+          <a class="btn" href="/come-funziona.html">Dettagli</a>
+        </div>
       </div>
     </div>
 
-    <!-- Feature comparison (light) -->
-    <section class="mt-12">
-      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-        <div class="p-7 md:p-8">
-          <h2 class="text-xl md:text-2xl font-extrabold text-gray-900">Confronto rapido</h2>
-          <p class="text-gray-500 mt-1">Numeri indicativi (mock): la UI è pronta, i limiti reali dipendono dal provider.</p>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="min-w-[720px] w-full text-sm">
-            <thead class="bg-gray-50 text-gray-700">
-              <tr>
-                <th class="text-left px-6 py-4 font-extrabold">Funzione</th>
-                <th class="text-left px-6 py-4 font-extrabold">FREE</th>
-                <th class="text-left px-6 py-4 font-extrabold">PRO</th>
-                <th class="text-left px-6 py-4 font-extrabold">BUSINESS</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y">
-              <tr>
-                <td class="px-6 py-4 font-semibold text-gray-900">Target (Bambino → Scienziato)</td>
-                <td class="px-6 py-4 text-gray-700"><i class="ri-check-line text-indigo-600"></i></td>
-                <td class="px-6 py-4 text-gray-700"><i class="ri-check-line text-indigo-600"></i></td>
-                <td class="px-6 py-4 text-gray-700"><i class="ri-check-line text-indigo-600"></i></td>
-              </tr>
-              <tr>
-                <td class="px-6 py-4 font-semibold text-gray-900">Continua + Copia</td>
-                <td class="px-6 py-4 text-gray-700"><i class="ri-check-line text-indigo-600"></i></td>
-                <td class="px-6 py-4 text-gray-700"><i class="ri-check-line text-indigo-600"></i></td>
-                <td class="px-6 py-4 text-gray-700"><i class="ri-check-line text-indigo-600"></i></td>
-              </tr>
-              <tr>
-                <td class="px-6 py-4 font-semibold text-gray-900">Priorità richieste</td>
-                <td class="px-6 py-4 text-gray-700">Base</td>
-                <td class="px-6 py-4 text-gray-700">Alta</td>
-                <td class="px-6 py-4 text-gray-700">Massima</td>
-              </tr>
-              <tr>
-                <td class="px-6 py-4 font-semibold text-gray-900">Cronologia</td>
-                <td class="px-6 py-4 text-gray-700">—</td>
-                <td class="px-6 py-4 text-gray-700">In arrivo</td>
-                <td class="px-6 py-4 text-gray-700">Inclusa</td>
-              </tr>
-              <tr>
-                <td class="px-6 py-4 font-semibold text-gray-900">Uso in team</td>
-                <td class="px-6 py-4 text-gray-700">—</td>
-                <td class="px-6 py-4 text-gray-700">Limitato</td>
-                <td class="px-6 py-4 text-gray-700"><i class="ri-check-line text-indigo-600"></i></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+    <div style="height:18px;"></div>
+
+    <div class="card">
+      <div class="card-inner">
+        <div style="font-weight:800; font-size:16px; margin-bottom:8px;">FAQ (mock)</div>
+        <p class="sub" style="margin:0;">
+          I piani sono dimostrativi. In produzione, collega un provider (Stripe) e calcola limiti reali per richieste/utente.
+        </p>
       </div>
-    </section>
+    </div>
+  </div>
 
-    <!-- FAQ -->
-    <section class="mt-12">
-      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-7 md:p-8">
-        <h2 class="text-xl md:text-2xl font-extrabold text-gray-900">FAQ</h2>
-        <div class="mt-5 space-y-5 text-gray-600">
-          <div>
-            <div class="font-extrabold text-gray-900">Sono prezzi reali?</div>
-            <div>Sono <b>mock</b> per la demo: servono a testare UI, flow e pagine.</div>
-          </div>
-          <div>
-            <div class="font-extrabold text-gray-900">Cosa cambia davvero tra i piani?</div>
-            <div>Più richieste, meno attese (rate limit), e spazio per risposte più lunghe.</div>
-          </div>
-          <div>
-            <div class="font-extrabold text-gray-900">Posso tornare indietro?</div>
-            <div>Sì: nella demo non c’è fatturazione. Nella versione reale, si gestirebbe tutto dall’account.</div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
+<script>
+  const sw = document.getElementById("billingSwitch");
+  const hint = document.getElementById("billingHint");
 
-  <script>
-    // Mobile menu
-    const menuBtn = document.getElementById('menuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    if (menuBtn && mobileMenu) {
-      menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+  const proPrice = document.getElementById("proPrice");
+  const bizPrice = document.getElementById("bizPrice");
+  const proPer = document.getElementById("proPer");
+  const bizPer = document.getElementById("bizPer");
+  const proCta = document.getElementById("proCta");
+  const bizCta = document.getElementById("bizCta");
+
+  let yearly = false;
+
+  function apply(){
+    if(yearly){
+      sw.classList.add("on");
+      sw.setAttribute("aria-checked","true");
+      hint.textContent = "Prezzi annuali (mock) con -20%.";
+      proPrice.textContent = "€143,90";
+      bizPrice.textContent = "€767,90";
+      proPer.textContent = "all'anno";
+      bizPer.textContent = "all'anno";
+      proCta.href = "/checkout.html?plan=pro&billing=yearly";
+      bizCta.href = "/checkout.html?plan=business&billing=yearly";
+    } else {
+      sw.classList.remove("on");
+      sw.setAttribute("aria-checked","false");
+      hint.textContent = "Prezzi mensili (mock).";
+      proPrice.textContent = "€14,99";
+      bizPrice.textContent = "€79,99";
+      proPer.textContent = "al mese";
+      bizPer.textContent = "al mese";
+      proCta.href = "/checkout.html?plan=pro&billing=monthly";
+      bizCta.href = "/checkout.html?plan=business&billing=monthly";
     }
+  }
 
-    // Billing toggle (mock): monthly vs yearly (-20%)
-    const toggle = document.getElementById('billingToggle');
-    const knob = document.getElementById('billingKnob');
-    const proPrice = document.getElementById('proPrice');
-    const bizPrice = document.getElementById('bizPrice');
-    const proPeriod = document.getElementById('proPeriod');
-    const bizPeriod = document.getElementById('bizPeriod');
-    let yearly = false;
-
-    function fmtEuro(n) {
-      return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(n);
-    }
-
-    function setBilling(isYearly) {
-      yearly = !!isYearly;
-      // base monthly prices
-      const pro = 14.99;
-      const biz = 79.99;
-      const mult = yearly ? 12 * 0.8 : 1;
-
-      if (knob) knob.style.transform = yearly ? 'translateX(24px)' : 'translateX(0px)';
-      if (toggle) toggle.className = yearly
-        ? 'w-14 h-8 rounded-full bg-indigo-200 relative transition'
-        : 'w-14 h-8 rounded-full bg-gray-200 relative transition';
-
-      if (proPrice) proPrice.textContent = yearly ? fmtEuro(pro * mult) : '€14,99';
-      if (bizPrice) bizPrice.textContent = yearly ? fmtEuro(biz * mult) : '€79,99';
-      if (proPeriod) proPeriod.textContent = yearly ? 'all\'anno' : 'al mese';
-      if (bizPeriod) bizPeriod.textContent = yearly ? 'all\'anno' : 'al mese';
-
-      // propagate to checkout links
-      document.querySelectorAll('a[href^="/checkout.html"]').forEach(a => {
-        const u = new URL(a.getAttribute('href'), window.location.origin);
-        u.searchParams.set('billing', yearly ? 'yearly' : 'monthly');
-        a.setAttribute('href', u.pathname + u.search);
-      });
-    }
-
-    if (toggle) {
-      toggle.addEventListener('click', () => setBilling(!yearly));
-      setBilling(false);
-    }
-  </script>
+  sw.addEventListener("click", () => { yearly = !yearly; apply(); });
+  sw.addEventListener("keydown", (e) => {
+    if(e.key === "Enter" || e.key === " "){ e.preventDefault(); yearly = !yearly; apply(); }
+  });
+  apply();
+</script>
 </body>
 </html>
