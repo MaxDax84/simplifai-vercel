@@ -1,286 +1,652 @@
 <!doctype html>
 <html lang="it">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>SimplifAI Clone</title>
-<link rel="stylesheet" href="/theme.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SimplifAI Clone</title>
+  <link rel="stylesheet" href="/theme.css">
 
-<style>
-.wrap{width:min(1100px,92vw);margin:0 auto;}
-.section{margin-top:24px;}
-.card{padding:22px;border-radius:18px;}
-.badge{font-size:12px;color:var(--muted);margin-bottom:8px;}
-.title{font-weight:900;font-size:20px;margin-bottom:6px;}
-.sub{color:var(--muted);font-size:14px;margin-bottom:14px;}
+  <style>
+    .wrap{width:min(1100px,92vw);margin:0 auto;}
+    .section{margin-top:22px;}
+    .card{padding:22px;border-radius:18px;}
+    .hero-row{
+      display:flex;align-items:center;justify-content:space-between;
+      gap:12px;flex-wrap:wrap;margin-top:8px;
+    }
+    .credit-pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);font-size:12px;user-select:none;
+    }
+    .credit-pill b{color:var(--text);}
+    .badge{font-size:12px;color:var(--muted);margin-bottom:8px;}
+    .title{font-weight:900;font-size:20px;margin:0 0 6px;}
+    .sub{color:var(--muted);font-size:14px;margin:0 0 14px;line-height:1.45;}
 
-textarea{
-  width:100%;
-  min-height:180px;
-  background:rgba(0,0,0,.22);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:12px;
-  color:var(--text);
-  font-size:14px;
-}
+    textarea{
+      width:100%;
+      min-height:180px;
+      background:rgba(0,0,0,.22);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:12px;
+      color:var(--text);
+      font-size:14px;
+      line-height:1.45;
+      outline:none;
+      resize:vertical;
+    }
+    textarea:focus{
+      border-color: rgba(124,92,255,.50);
+      box-shadow: 0 0 0 4px rgba(124,92,255,.15);
+    }
 
-.actions{
-  display:flex;
-  justify-content:space-between;
-  margin-top:14px;
-  flex-wrap:wrap;
-  gap:10px;
-}
+    .actions{
+      display:flex;justify-content:space-between;
+      margin-top:14px;flex-wrap:wrap;gap:10px;align-items:center;
+    }
+    .hint{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.02);
+      color:var(--muted);font-size:12px;
+    }
 
-.targets-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:12px;
-}
-@media(max-width:900px){
-  .targets-grid{grid-template-columns:1fr;}
-}
+    .targets-grid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:12px;
+    }
+    @media(max-width:900px){ .targets-grid{grid-template-columns:1fr;} }
 
-.target-card{
-  border:1px solid var(--border);
-  background:rgba(255,255,255,.03);
-  border-radius:16px;
-  padding:14px;
-  display:flex;
-  gap:12px;
-  cursor:pointer;
-  transition:.15s ease;
-}
-.target-card:hover{background:rgba(255,255,255,.05);}
-.target-card.active{
-  border-color:rgba(124,92,255,.55);
-  background:rgba(124,92,255,.14);
-}
+    .target-card{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:14px;
+      display:flex;gap:12px;
+      cursor:pointer;
+      transition:.15s ease;
+      min-height:84px;
+      align-items:flex-start;
+    }
+    .target-card:hover{background:rgba(255,255,255,.05);transform:translateY(-1px);}
+    .target-card.active{
+      border-color:rgba(124,92,255,.55);
+      background:rgba(124,92,255,.14);
+    }
+    .ticon{
+      width:38px;height:38px;
+      display:flex;align-items:center;justify-content:center;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--border);
+      border-radius:12px;
+      font-size:18px;
+      flex:0 0 auto;
+    }
+    .tname{margin:0;font-weight:900;}
+    .tdesc{margin:4px 0 0;color:var(--muted);font-size:13px;line-height:1.35;}
 
-.ticon{
-  width:38px;height:38px;
-  display:flex;align-items:center;justify-content:center;
-  background:rgba(255,255,255,.06);
-  border-radius:12px;
-  font-size:18px;
-}
+    .target-chip{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:10px 12px;border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);font-size:13px;
+      margin-bottom:10px;
+    }
+    .target-chip b{color:var(--text);}
 
-.response-card{
-  background:rgba(0,0,0,.18);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:16px;
-  min-height:240px;
-  display:flex;
-  flex-direction:column;
-}
+    .response-card{
+      background:rgba(0,0,0,.18);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:16px;
+      min-height:260px;
+      display:flex;flex-direction:column;gap:12px;
+    }
+    .response-text{
+      white-space:pre-wrap;
+      word-break:break-word;
+      line-height:1.6;
+      color:rgba(233,237,255,.92);
+      flex:1;
+      font-size:14px;
+    }
 
-.response-text{
-  white-space:pre-wrap;
-  line-height:1.6;
-  flex:1;
-}
+    .status{
+      font-size:12px;color:var(--muted);
+      display:flex;align-items:center;gap:10px;
+    }
+    .spinner{
+      width:14px;height:14px;
+      border:2px solid rgba(255,255,255,.25);
+      border-top-color:rgba(255,255,255,.9);
+      border-radius:50%;
+      animation:spin .8s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
 
-.status{
-  font-size:12px;
-  color:var(--muted);
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
+    .flash{
+      outline:1px solid rgba(124,92,255,.45);
+      box-shadow:0 0 0 6px rgba(124,92,255,.12);
+      transition:.35s ease;
+    }
 
-.spinner{
-  width:14px;height:14px;
-  border:2px solid rgba(255,255,255,.25);
-  border-top-color:white;
-  border-radius:50%;
-  animation:spin .8s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-</style>
+    .quota-card{
+      margin-top:12px;
+      border-radius:18px;
+      border:1px solid rgba(124,92,255,.35);
+      background:rgba(124,92,255,.10);
+      padding:16px;
+    }
+    .qhead{font-weight:900;margin-bottom:6px;display:flex;gap:10px;align-items:center;}
+    .qsub{color:var(--muted);font-size:13px;line-height:1.45;}
+    .qgrid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:10px;
+      margin-top:12px;
+    }
+    @media(max-width:520px){ .qgrid{grid-template-columns:1fr;} }
+    .qbtn{
+      min-height:44px;border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.18);
+      color:var(--text);
+      font-weight:800;
+      cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      text-decoration:none;
+      transition:.15s ease;
+    }
+    .qbtn:hover{background:rgba(255,255,255,.06);transform:translateY(-1px);}
+    .qbtn.primary{
+      background:linear-gradient(135deg, rgba(124,92,255,.95), rgba(38,198,255,.85));
+      border-color:rgba(124,92,255,.45);
+      color:#0b1020;
+    }
+  </style>
 </head>
 
 <body>
 <div class="wrap">
 
-<header>
-<div class="brand">
-<div class="logo"></div>
-<div>
-<h1>SimplifAI Clone</h1>
-<span>Risposte su misura</span>
-</div>
-</div>
-</header>
+  <header>
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <h1>SimplifAI Clone</h1>
+        <span>Risposte su misura, con “Continua” quando serve</span>
+      </div>
+    </div>
 
-<!-- STEP 1 -->
-<section class="section" id="sec1">
-<div class="card">
-<div class="badge">1) Domanda</div>
-<div class="title">Scrivi la domanda</div>
-<div class="sub">Inserisci la domanda e poi scegli il target.</div>
+    <nav id="mainNav">
+      <a href="/index.html" data-nav="home">Home</a>
+      <a href="/come-funziona.html" data-nav="how">Come funziona</a>
+      <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
+    </nav>
+  </header>
 
-<textarea id="query" placeholder="Esempio: Cos'è il DNA e a cosa serve?"></textarea>
+  <div class="hero-row">
+    <div class="pilltag">✨ Flow</div>
+    <div class="credit-pill">⚡ Crediti disponibili: <b id="creditsValue">—</b></div>
+  </div>
 
-<div class="actions">
-<div></div>
-<button class="btn btn-primary" id="goTargets">Scegli target ↓</button>
-</div>
-</div>
-</section>
+  <!-- 1) DOMANDA -->
+  <section class="section" id="sec1">
+    <div class="card" id="card1">
+      <div class="badge">1) Domanda</div>
+      <h2 class="title">✦ Scrivi la domanda</h2>
+      <p class="sub">Inserisci la domanda e poi clicca “Scegli target”. Scorriamo alla sezione successiva.</p>
 
-<!-- STEP 2 -->
-<section class="section" id="sec2">
-<div class="card">
-<div class="badge">2) Target</div>
-<div class="title">Seleziona il target</div>
-<div class="sub">Clicca un target per generare automaticamente la risposta.</div>
+      <textarea id="query" placeholder="Esempio: Cos'è il DNA e a cosa serve?"></textarea>
 
-<div class="targets-grid" id="targets"></div>
+      <div class="actions">
+        <span class="hint">💡 Suggerimento: aggiungi “con esempi”</span>
+        <button class="btn btn-primary" id="goTargets">Scegli target ↓</button>
+      </div>
+    </div>
+  </section>
 
-<div class="actions">
-<button class="btn" id="backToQ">↑ Torna alla domanda</button>
-</div>
-</div>
-</section>
+  <!-- 2) TARGET -->
+  <section class="section" id="sec2">
+    <div class="card" id="card2">
+      <div class="badge">2) Target</div>
+      <h2 class="title">🎯 Seleziona il target</h2>
+      <p class="sub">Clicca un target: scorro alla risposta e parte la generazione automaticamente.</p>
 
-<!-- STEP 3 -->
-<section class="section" id="sec3">
-<div class="card">
-<div class="badge">3) Risposta</div>
-<div class="title">Risposta</div>
+      <div class="targets-grid" id="targets"></div>
 
-<div class="response-card">
-<div class="response-text" id="response"></div>
+      <div class="actions">
+        <button class="btn" id="backToQ">↑ Torna alla domanda</button>
+        <button class="btn btn-primary" id="goAnswer" disabled>Vai alla risposta ↓</button>
+      </div>
+    </div>
+  </section>
 
-<div class="actions">
-<div class="status">
-<span id="spinner" class="spinner" style="display:none"></span>
-<span id="status">Pronto.</span>
-</div>
+  <!-- 3) RISPOSTA -->
+  <section class="section" id="sec3">
+    <div class="card" id="card3">
+      <div class="badge">3) Risposta</div>
+      <h2 class="title">💬 Risposta</h2>
+      <p class="sub">Se serve, continuerò automaticamente fino a completare la risposta (con limite di sicurezza).</p>
 
-<div style="display:flex;gap:10px;">
-<button class="btn" id="copyBtn">Copia</button>
-<button class="btn btn-primary" id="generateBtn">Genera</button>
-</div>
-</div>
+      <div class="target-chip" id="targetChip" style="display:none;">
+        🎯 Target selezionato: <b id="targetChipLabel"></b>
+      </div>
 
-</div>
-</div>
-</section>
+      <div class="response-card" id="responseCard">
+        <div class="response-text" id="response"></div>
 
+        <div class="actions" style="margin-top:0;">
+          <div class="status">
+            <span id="spinner" class="spinner" style="display:none"></span>
+            <span id="status">Pronto.</span>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn" id="copyBtn" disabled>⧉ Copia</button>
+            <button class="btn btn-primary" id="generateBtn">▶ Genera</button>
+          </div>
+        </div>
+
+        <div id="quotaMount"></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="backToTargets">↑ Cambia target</button>
+        <a class="btn" href="/prezzi.html">Vedi Prezzi</a>
+      </div>
+    </div>
+  </section>
+
+  <div style="height:26px;"></div>
 </div>
 
 <script>
-const TARGETS = [
-{label:"Bambino",icon:"🧒",prompt:"Spiega come a un bambino."},
-{label:"Ragazzino",icon:"🧑‍🎓",prompt:"Spiega come a un ragazzino."},
-{label:"Universitario",icon:"🎓",prompt:"Spiega come a uno studente universitario."},
-{label:"Adulto",icon:"🧑",prompt:"Spiega come a un adulto."},
-{label:"Esperto",icon:"🧠",prompt:"Spiega come a un esperto."},
-{label:"Scienziato",icon:"🧪",prompt:"Spiega come a uno scienziato con rigore tecnico."}
-];
+  // Navbar active
+  (function(){
+    const path = location.pathname.toLowerCase();
+    let key = "home";
+    if (path.includes("come-funziona")) key = "how";
+    else if (path.includes("prezzi")) key = "pricing";
+    else if (path.includes("checkout")) key = "pricing";
+    document.querySelectorAll('#mainNav a').forEach(a=>{
+      if(a.dataset.nav === key) a.classList.add('nav-active');
+    });
+  })();
 
-let selectedIndex=-1;
-let accumulated="";
-let generating=false;
+  const TARGETS = [
+    { label:"Bambino", icon:"🧒", desc:"Semplice, analogie, frasi brevi.", prompt:"Spiega come a un bambino: usa parole semplici, esempi concreti, frasi brevi.", maxTokens:2500, maxChars:6000 },
+    { label:"Ragazzino", icon:"🧑‍🎓", desc:"Chiaro e un po’ più dettagliato.", prompt:"Spiega come a un ragazzino: semplice ma più dettagliato, esempi e analogie.", maxTokens:2500, maxChars:7000 },
+    { label:"Universitario", icon:"🎓", desc:"Struttura e concetti corretti.", prompt:"Spiega come a uno studente universitario: struttura chiara, concetti corretti.", maxTokens:2500, maxChars:9000 },
+    { label:"Adulto", icon:"🧑", desc:"Pratico e diretto.", prompt:"Spiega come a un adulto: diretto, pratico, con esempi.", maxTokens:2500, maxChars:8000 },
+    { label:"Esperto", icon:"🧠", desc:"Dettagli tecnici e caveat.", prompt:"Spiega come a un esperto: dettagli tecnici, assunzioni esplicite, caveat.", maxTokens:3500, maxChars:12000 },
+    { label:"Scienziato", icon:"🧪", desc:"Rigore, limiti, definizioni.", prompt:"Spiega come a uno scienziato: rigore, definizioni, limiti, struttura.", maxTokens:3500, maxChars:14000 }
+  ];
 
-const q=document.getElementById("query");
-const targetsEl=document.getElementById("targets");
-const responseEl=document.getElementById("response");
-const spinner=document.getElementById("spinner");
-const statusEl=document.getElementById("status");
-const generateBtn=document.getElementById("generateBtn");
+  // Auto-continue controls
+  const AUTO_CONTINUE_MAX_HOPS = 6; // anti-loop
+  let autoHopCount = 0;
 
-function scrollToSection(id){
-document.getElementById(id).scrollIntoView({behavior:"smooth"});
-}
+  // State
+  let selectedIndex = -1;
+  let accumulatedText = "";
+  let isGenerating = false;
 
-function setStatus(t,load=false){
-statusEl.textContent=t;
-spinner.style.display=load?"inline-block":"none";
-}
+  // DOM
+  const q = document.getElementById("query");
+  const targetsEl = document.getElementById("targets");
+  const responseEl = document.getElementById("response");
+  const responseCard = document.getElementById("responseCard");
+  const spinner = document.getElementById("spinner");
+  const statusEl = document.getElementById("status");
+  const copyBtn = document.getElementById("copyBtn");
+  const generateBtn = document.getElementById("generateBtn");
+  const quotaMount = document.getElementById("quotaMount");
 
-function renderTargets(){
-targetsEl.innerHTML="";
-TARGETS.forEach((t,i)=>{
-const el=document.createElement("div");
-el.className="target-card"+(i===selectedIndex?" active":"");
-el.innerHTML=`<div class="ticon">${t.icon}</div><div><b>${t.label}</b></div>`;
-el.onclick=()=>{
-selectedIndex=i;
-renderTargets();
-scrollToSection("sec3");
-preflight();
-setTimeout(()=>run(),250);
-};
-targetsEl.appendChild(el);
-});
-}
-renderTargets();
+  const creditsValueEl = document.getElementById("creditsValue");
+  function setCredits(v){ creditsValueEl.textContent = v ?? "—"; }
 
-function preflight(){
-accumulated="";
-responseEl.textContent="";
-setStatus("Ok! Sto generando…",true);
-generating=true;
-}
+  const targetChip = document.getElementById("targetChip");
+  const targetChipLabel = document.getElementById("targetChipLabel");
 
-async function run(){
-if(generating===false)return;
-if(!q.value.trim()){scrollToSection("sec1");return;}
-if(selectedIndex<0){scrollToSection("sec2");return;}
+  const sec1 = document.getElementById("sec1");
+  const sec2 = document.getElementById("sec2");
+  const sec3 = document.getElementById("sec3");
+  const card1 = document.getElementById("card1");
+  const card2 = document.getElementById("card2");
+  const card3 = document.getElementById("card3");
 
-try{
-const res=await fetch("/api/gemini",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-query:q.value,
-targetPrompt:TARGETS[selectedIndex].prompt
-})
-});
+  const goTargets = document.getElementById("goTargets");
+  const backToQ = document.getElementById("backToQ");
+  const goAnswer = document.getElementById("goAnswer");
+  const backToTargets = document.getElementById("backToTargets");
 
-if(!res.ok){
-setStatus("Errore.",false);
-generating=false;
-return;
-}
+  function flash(card){
+    card.classList.add("flash");
+    setTimeout(()=>card.classList.remove("flash"), 420);
+  }
+  function scrollTo(sec, card){
+    sec.scrollIntoView({ behavior:"smooth", block:"start" });
+    flash(card);
+  }
 
-const reader=res.body.getReader();
-const decoder=new TextDecoder();
-let done=false;
+  function setStatus(text, loading=false){
+    statusEl.textContent = text;
+    spinner.style.display = loading ? "inline-block" : "none";
+  }
 
-while(!done){
-const {value,done:doneReading}=await reader.read();
-done=doneReading;
-if(value){
-const chunk=decoder.decode(value);
-responseEl.textContent+=chunk;
-}
-}
+  function escapeHtml(str){
+    return String(str)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
 
-setStatus("Fatto.",false);
-generating=false;
+  function clearQuotaBox(){ quotaMount.innerHTML = ""; }
 
-}catch(e){
-setStatus("Errore.",false);
-generating=false;
-}
-}
+  function showQuotaBox(message){
+    quotaMount.innerHTML = `
+      <div class="quota-card">
+        <div class="qhead">⚠️ Limite / crediti</div>
+        <div class="qsub">${escapeHtml(message || "Limite temporaneo. Riprova oppure fai upgrade.")}</div>
+        <div class="qgrid">
+          <a class="qbtn" href="/prezzi.html">Vedi i piani</a>
+          <a class="qbtn primary" href="/checkout.html">Upgrade</a>
+        </div>
+      </div>
+    `;
+  }
 
-document.getElementById("goTargets").onclick=()=>{
-if(!q.value.trim()){q.focus();return;}
-scrollToSection("sec2");
-};
+  function updateButtons(){
+    generateBtn.disabled = isGenerating;
+    copyBtn.disabled = isGenerating || !responseEl.textContent.trim();
+  }
 
-document.getElementById("backToQ").onclick=()=>scrollToSection("sec1");
-generateBtn.onclick=()=>{generating=true;run();};
+  function stripContinueMarker(txt){
+    return txt.replace(/\.\.\.\(continua\)\s*$/i, "").trimEnd();
+  }
 
-document.getElementById("copyBtn").onclick=()=>{
-navigator.clipboard.writeText(responseEl.textContent);
-};
+  function endsWithContinueMarker(txt){
+    return /\.\.\.\(continua\)\s*$/i.test((txt||"").trim());
+  }
+
+  function nearLimitHeuristic(){
+    if (selectedIndex < 0) return false;
+    const t = TARGETS[selectedIndex];
+    const text = (accumulatedText || "").trim();
+    if (!text) return false;
+    return text.length >= Math.floor(t.maxChars * 0.92);
+  }
+
+  function shouldAutoContinue(){
+    // “completo” ma sicuro: continua se marker esplicito oppure se vicino al limite
+    return endsWithContinueMarker(accumulatedText) || nearLimitHeuristic();
+  }
+
+  function preflightGenerateUX(){
+    clearQuotaBox();
+    accumulatedText = "";
+    responseEl.textContent = "";
+    autoHopCount = 0;
+
+    isGenerating = true;
+    updateButtons();
+    setStatus("Ok! Sto generando…", true);
+  }
+
+  function renderTargets(){
+    targetsEl.innerHTML = "";
+    TARGETS.forEach((t, i) => {
+      const el = document.createElement("div");
+      el.className = "target-card" + (i === selectedIndex ? " active" : "");
+      el.innerHTML = `
+        <div class="ticon">${t.icon}</div>
+        <div>
+          <p class="tname">${t.label}</p>
+          <p class="tdesc">${t.desc}</p>
+        </div>
+      `;
+      el.addEventListener("click", () => {
+        selectedIndex = i;
+        renderTargets();
+        goAnswer.disabled = false;
+
+        targetChip.style.display = "inline-flex";
+        targetChipLabel.textContent = TARGETS[selectedIndex].label;
+
+        // scroll + auto start
+        scrollTo(sec3, card3);
+        preflightGenerateUX();
+        setTimeout(() => run("start"), 260);
+      });
+      targetsEl.appendChild(el);
+    });
+  }
+  renderTargets();
+
+  // Credits from headers (intelligenti)
+  function updateCreditsFromHeaders(headers){
+    const rem = headers.get("x-credits-remaining");
+    const lim = headers.get("x-credits-limit");
+    if (rem && String(rem).trim() !== "") {
+      const r = String(rem).trim();
+      const l = lim && String(lim).trim() !== "" ? String(lim).trim() : "";
+      setCredits(l ? `${r}/${l}` : r);
+    }
+  }
+
+  // Robust SSE parsing
+  async function streamGemini(payload, onTextChunk){
+    const res = await fetch("/api/gemini", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    updateCreditsFromHeaders(res.headers);
+
+    if (!res.ok) {
+      let msg = `Errore HTTP ${res.status}`;
+      const ct = (res.headers.get("content-type") || "").toLowerCase();
+      try {
+        if (ct.includes("application/json")) {
+          const j = await res.json();
+          msg = j?.error || j?.message || msg;
+        } else {
+          const t = await res.text();
+          if (t && t.trim()) msg = t.trim().slice(0, 900);
+        }
+      } catch {}
+      const err = new Error(msg);
+      err.status = res.status;
+      throw err;
+    }
+
+    const contentType = (res.headers.get("content-type") || "").toLowerCase();
+    if (!contentType.includes("text/event-stream")) {
+      const txt = await res.text();
+      if (txt) onTextChunk(txt);
+      return;
+    }
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+
+    let buffer = "";
+    let uiBuffer = "";
+    const FLUSH_EVERY = 30;
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith("data:")) continue;
+
+        const data = trimmed.slice(5).trim();
+        if (!data || data === "[DONE]") continue;
+
+        // Gemini SSE: JSON per chunk
+        try {
+          const obj = JSON.parse(data);
+          const parts = obj?.candidates?.[0]?.content?.parts || [];
+          for (const p of parts) {
+            if (typeof p?.text === "string" && p.text.length) {
+              uiBuffer += p.text;
+              if (uiBuffer.length >= FLUSH_EVERY) {
+                onTextChunk(uiBuffer);
+                uiBuffer = "";
+              }
+            }
+          }
+        } catch {
+          // ignore chunk
+        }
+      }
+    }
+
+    if (uiBuffer) onTextChunk(uiBuffer);
+  }
+
+  function buildPayload(mode){
+    const t = TARGETS[selectedIndex];
+    return {
+      query: q.value.trim(),
+      targetPrompt: t.prompt,
+      maxTokens: t.maxTokens,
+      maxChars: t.maxChars,
+      mode: mode === "continue" ? "continue" : "start",
+      previousText: mode === "continue" ? accumulatedText : ""
+    };
+  }
+
+  async function run(mode){
+    clearQuotaBox();
+
+    if (!q.value.trim()) {
+      isGenerating = false;
+      updateButtons();
+      setStatus("Scrivi prima una domanda.", false);
+      scrollTo(sec1, card1);
+      q.focus();
+      return;
+    }
+    if (selectedIndex < 0) {
+      isGenerating = false;
+      updateButtons();
+      setStatus("Scegli un target.", false);
+      scrollTo(sec2, card2);
+      return;
+    }
+
+    // set status
+    if (mode === "continue") {
+      isGenerating = true;
+      updateButtons();
+      setStatus(`Sto continuando… (${autoHopCount + 1})`, true);
+    } else {
+      // start
+      isGenerating = true;
+      updateButtons();
+      if (statusEl.textContent.trim() !== "Ok! Sto generando…") {
+        setStatus("Sto generando…", true);
+      } else {
+        spinner.style.display = "inline-block";
+      }
+    }
+
+    try {
+      await streamGemini(buildPayload(mode), (chunk) => {
+        accumulatedText += chunk;
+        responseEl.textContent += chunk;
+      });
+
+      // strip marker on end (we’ll decide continuation after)
+      accumulatedText = stripContinueMarker(accumulatedText);
+      responseEl.textContent = stripContinueMarker(responseEl.textContent);
+
+      isGenerating = false;
+      updateButtons();
+      setStatus("Fatto.", false);
+
+      // Auto-continue logic
+      if (shouldAutoContinue() && autoHopCount < AUTO_CONTINUE_MAX_HOPS) {
+        autoHopCount++;
+        isGenerating = true;
+        updateButtons();
+        setStatus(`Sto continuando automaticamente… (${autoHopCount})`, true);
+        await new Promise(r => setTimeout(r, 200));
+        return run("continue");
+      }
+
+      // Done
+      autoHopCount = 0;
+
+    } catch (err) {
+      isGenerating = false;
+      updateButtons();
+
+      const msg = err?.message || "Errore.";
+      setStatus("Errore.", false);
+
+      // 429 / quota / credits
+      if (err?.status === 429 || /quota|exceeded|retry in|credit/i.test(msg)) {
+        showQuotaBox(msg);
+      } else {
+        showQuotaBox(msg);
+      }
+    }
+  }
+
+  // Navigation buttons
+  goTargets.addEventListener("click", () => {
+    if (!q.value.trim()) { q.focus(); return; }
+    scrollTo(sec2, card2);
+  });
+
+  backToQ.addEventListener("click", () => scrollTo(sec1, card1));
+  goAnswer.addEventListener("click", () => {
+    if (selectedIndex < 0) return;
+    scrollTo(sec3, card3);
+  });
+  backToTargets.addEventListener("click", () => scrollTo(sec2, card2));
+
+  // Manual generate (fallback)
+  generateBtn.addEventListener("click", () => {
+    preflightGenerateUX();
+    run("start");
+  });
+
+  // Copy
+  copyBtn.addEventListener("click", async () => {
+    const text = responseEl.textContent || "";
+    if (!text.trim()) return;
+    try {
+      await navigator.clipboard.writeText(text);
+      setStatus("Copiato ✅", false);
+      setTimeout(() => setStatus("Pronto.", false), 900);
+    } catch {
+      setStatus("Non riesco a copiare (permessi).", false);
+    }
+  });
+
+  // Init
+  setStatus("Pronto.", false);
+  updateButtons();
 </script>
 </body>
 </html>
