@@ -1,26 +1,27 @@
 export const config = { runtime: "edge" };
 
-function corsHeaders(extra = {}) {
-  return {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-    ...extra,
-  };
-}
-
 function jsonError(message, status = 500) {
   return new Response(JSON.stringify({ error: message }), {
     status,
-    headers: corsHeaders({
+    headers: {
       "Content-Type": "application/json; charset=utf-8",
-    }),
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
   });
 }
 
 export default async function handler(req) {
   if (req.method === "OPTIONS") {
-    return new Response(null, { status: 200, headers: corsHeaders() });
+    return new Response(null, {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    });
   }
 
   if (req.method !== "POST") {
@@ -31,16 +32,11 @@ export default async function handler(req) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return jsonError("GEMINI_API_KEY mancante su Vercel.", 500);
 
-    let body = null;
-    try {
-      body = await req.json();
-    } catch {
-      return jsonError("Body non valido.", 400);
-    }
-
+    const body = await req.json();
     const { query, targetPrompt, maxTokens, maxChars, mode, previousText } = body || {};
+
     if (!query || !targetPrompt) {
-      return jsonError("Parametri mancanti.", 400);
+      return jsonError("Parametri mancanti (query/targetPrompt).", 400);
     }
 
     const tokens = Math.min(Math.max(Number(maxTokens) || 1200, 256), 8000);
@@ -49,28 +45,38 @@ export default async function handler(req) {
     const safeMode = mode === "continue" ? "continue" : "start";
     const prev = String(previousText || "").slice(0, 20000);
 
-    const prompt = safeMode === "start"
-      ? `
+    let prompt = "";
+    if (safeMode === "start") {
+      prompt = `
 Spiega il seguente concetto: "${query}".
 
 Target: ${targetPrompt}.
 Stile: chiaro, ben strutturato, con esempi adatti al target.
 
 VINCOLI:
-- Resta entro ${Math.floor(charsLimit * 0.85)} caratteri.
-- Se finisce lo spazio, termina con: ...(continua)
-`.trim()
-      : `
-Continua questa spiegazione senza ripetere ciò che è già stato detto.
+- Resta ENTRO circa ${Math.floor(charsLimit * 0.85)} caratteri (massimo ${charsLimit}).
+- Se non basta spazio, NON iniziare una sezione nuova: chiudi con una frase completa e termina con la scritta esatta: ...(continua)
+
+Formatta con titoli e liste quando utile.
+`.trim();
+    } else {
+      prompt = `
+Stiamo continuando una spiegazione iniziata in precedenza.
 
 Concetto: "${query}"
 Target: ${targetPrompt}
 
-TESTO GIÀ DATO:
+TESTO GIÀ DATO (non ripeterlo, continua da dove eri rimasto):
 """
 ${prev}
 """
+
+Ora continua dal punto esatto in cui si è interrotta.
+- NON ripetere introduzioni o titoli già dati (a meno che serva un sottotitolo nuovo)
+- Mantieni lo stesso tono e livello del target
+- Se anche questa parte rischia di essere troppo lunga, termina di nuovo con: ...(continua)
 `.trim();
+    }
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key=${apiKey}`;
 
@@ -84,20 +90,26 @@ ${prev}
     });
 
     if (!upstream.ok) {
-      const txt = await upstream.text();
-      return jsonError(txt || `Errore API ${upstream.status}`, upstream.status);
+      let msg = `Errore API (${upstream.status})`;
+      try {
+        const j = await upstream.json();
+        msg = j?.error?.message || msg;
+      } catch {}
+      return jsonError(msg, 500);
     }
 
     return new Response(upstream.body, {
       status: 200,
-      headers: corsHeaders({
+      headers: {
         "Content-Type": "text/event-stream; charset=utf-8",
         "Cache-Control": "no-cache, no-transform",
         "Connection": "keep-alive",
-      }),
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
     });
-
   } catch (e) {
-    return jsonError(e?.message || "Errore sconosciuto.", 500);
+    return jsonError(e?.message || "Errore sconosciuto", 500);
   }
 }
