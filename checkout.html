@@ -5,7 +5,87 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Checkout – Simplif-AI</title>
   <link rel="stylesheet" href="/theme.css">
+
+  <style>
+    /* Mantieni lo stesso container della home */
+    .wrap{width:min(1100px,92vw);margin:0 auto;}
+
+    /* Layout checkout */
+    #checkoutGrid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 18px;
+      align-items:start;
+    }
+
+    /* Form fields grid */
+    .form-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+
+    .field label{
+      display:block;
+      color:var(--muted2);
+      font-size:12px;
+      margin-bottom:6px;
+    }
+
+    .field input{
+      width:100%;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.18);
+      color:var(--text);
+      outline:none;
+    }
+    .field input:focus{
+      border-color: rgba(124,92,255,.50);
+      box-shadow: 0 0 0 4px rgba(124,92,255,.15);
+    }
+
+    .help{
+      color:var(--muted2);
+      font-size:12px;
+      margin-top:6px;
+      line-height:1.35;
+    }
+
+    .actions-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+
+    .summary-box{
+      padding:14px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:rgba(0,0,0,.18);
+    }
+
+    /* ✅ MOBILE: 1 colonna + bottoni full width + campi in stack */
+    @media (max-width: 900px){
+      #checkoutGrid{
+        grid-template-columns: 1fr;
+      }
+      .form-grid{
+        grid-template-columns: 1fr;
+      }
+      .actions-row{
+        flex-direction:column;
+      }
+      .actions-row .btn{
+        width:100%;
+        justify-content:center;
+      }
+    }
+  </style>
 </head>
+
 <body>
   <div class="wrap">
     <header>
@@ -17,10 +97,10 @@
         </div>
       </div>
 
-      <nav>
-        <a href="/index.html">Home</a>
-        <a href="/come-funziona.html">Come funziona</a>
-        <a href="/prezzi.html">Prezzi</a>
+      <nav id="mainNav">
+        <a href="/index.html" data-nav="home">Home</a>
+        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
+        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
       </nav>
     </header>
 
@@ -34,36 +114,36 @@
 
     <div style="height:16px;"></div>
 
-    <div class="grid-3" style="grid-template-columns: 1.2fr .8fr .8fr;">
+    <div id="checkoutGrid">
       <!-- Form -->
-      <div class="card" style="grid-column: span 2;">
+      <div class="card">
         <div class="card-inner">
           <div style="font-weight:900; font-size:16px; margin-bottom:10px;">✉️ Dati (mock)</div>
 
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-            <div>
-              <div style="color:var(--muted2); font-size:12px; margin-bottom:6px;">Nome</div>
-              <input id="name" placeholder="Mario" style="width:100%; padding:12px; border-radius:14px; border:1px solid var(--border); background:rgba(0,0,0,.18); color:var(--text); outline:none;">
-            </div>
-            <div>
-              <div style="color:var(--muted2); font-size:12px; margin-bottom:6px;">Cognome</div>
-              <input id="surname" placeholder="Rossi" style="width:100%; padding:12px; border-radius:14px; border:1px solid var(--border); background:rgba(0,0,0,.18); color:var(--text); outline:none;">
-            </div>
-            <div style="grid-column: span 2;">
-              <div style="color:var(--muted2); font-size:12px; margin-bottom:6px;">Email</div>
-              <input id="email" placeholder="mario@email.com" style="width:100%; padding:12px; border-radius:14px; border:1px solid var(--border); background:rgba(0,0,0,.18); color:var(--text); outline:none;">
+          <div class="form-grid">
+            <div class="field">
+              <label for="name">Nome</label>
+              <input id="name" placeholder="Mario" autocomplete="given-name">
             </div>
 
-            <div style="grid-column: span 2;">
-              <div style="color:var(--muted2); font-size:12px; margin-bottom:6px;">Carta (mock)</div>
-              <input id="card" placeholder="4242 4242 4242 4242" style="width:100%; padding:12px; border-radius:14px; border:1px solid var(--border); background:rgba(0,0,0,.18); color:var(--text); outline:none;">
-              <div style="color:var(--muted2); font-size:12px; margin-top:6px;">Non viene inviato niente. È una simulazione UI.</div>
+            <div class="field">
+              <label for="surname">Cognome</label>
+              <input id="surname" placeholder="Rossi" autocomplete="family-name">
+            </div>
+
+            <div class="field" style="grid-column: 1 / -1;">
+              <label for="email">Email</label>
+              <input id="email" placeholder="mario@email.com" autocomplete="email" inputmode="email">
+            </div>
+
+            <div class="field" style="grid-column: 1 / -1;">
+              <label for="card">Carta (mock)</label>
+              <input id="card" placeholder="4242 4242 4242 4242" inputmode="numeric" autocomplete="cc-number">
+              <div class="help">Non viene inviato niente. È una simulazione UI.</div>
             </div>
           </div>
 
-          <div style="height:14px;"></div>
-
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div class="actions-row">
             <button class="btn btn-primary" id="payBtn" type="button">✅ Conferma (mock)</button>
             <a class="btn" href="/prezzi.html">← Torna ai prezzi</a>
           </div>
@@ -82,7 +162,7 @@
         <div class="card-inner">
           <div style="font-weight:900; font-size:16px; margin-bottom:10px;">📦 Riepilogo</div>
 
-          <div style="padding:14px; border:1px solid var(--border); border-radius:14px; background:rgba(0,0,0,.18);">
+          <div class="summary-box">
             <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
               <div style="font-weight:900;" id="planName">PRO</div>
               <span class="pilltag" id="billingTag">Mensile</span>
@@ -106,9 +186,24 @@
         </div>
       </div>
     </div>
+
+    <div style="height:26px;"></div>
   </div>
 
 <script>
+  // Navbar active (coerente col resto del sito)
+  (function(){
+    const path = location.pathname.toLowerCase();
+    let key = "home";
+    if (path.includes("come-funziona")) key = "how";
+    else if (path.includes("prezzi")) key = "pricing";
+    else if (path.includes("checkout")) key = "pricing";
+    document.querySelectorAll('#mainNav a').forEach(a=>{
+      if(a.dataset.nav === key) a.classList.add('nav-active');
+    });
+  })();
+
+  // Summary logic
   const params = new URLSearchParams(location.search);
   const plan = (params.get("plan") || "pro").toLowerCase();
   const billing = (params.get("billing") || "monthly").toLowerCase();
@@ -148,7 +243,6 @@
       }
     }
   }
-
   setSummary();
 
   payBtn.addEventListener("click", () => {
