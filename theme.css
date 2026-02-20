@@ -101,6 +101,10 @@ nav a:hover{
   box-shadow: none;                    /* niente ombra che crea stacco */
 }
 
+.card-response{
+  background: rgba(255,255,255,.08);   /* più chiara */
+}
+
 .card-inner{ padding:18px; }
 
 .h1{
