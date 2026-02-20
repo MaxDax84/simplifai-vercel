@@ -1,27 +1,58 @@
 export const config = { runtime: "edge" };
 
-function jsonError(message, status = 500) {
+function corsHeaders(extra = {}) {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    ...extra,
+  };
+}
+
+function jsonError(message, status = 500, extraHeaders = {}) {
   return new Response(JSON.stringify({ error: message }), {
     status,
-    headers: {
+    headers: corsHeaders({
       "Content-Type": "application/json; charset=utf-8",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
+      ...extraHeaders,
+    }),
   });
+}
+
+function pickFirstHeader(headers, names) {
+  for (const n of names) {
+    const v = headers.get(n);
+    if (v !== null && v !== undefined && String(v).trim() !== "") return String(v).trim();
+  }
+  return null;
+}
+
+/**
+ * Best-effort: tries to extract "remaining" from common rate-limit headers.
+ * If none exist, returns null (frontend will show —).
+ */
+function extractCreditsRemaining(upstreamHeaders) {
+  // Common header names seen across APIs/edge/CDNs (not guaranteed from Gemini)
+  const remaining = pickFirstHeader(upstreamHeaders, [
+    "x-credits-remaining",
+    "x-ratelimit-remaining",
+    "ratelimit-remaining",
+    "x-rate-limit-remaining",
+    "x-remaining-requests",
+    "x-requests-remaining",
+  ]);
+
+  return remaining; // may be null
+}
+
+function extractRetryAfter(upstreamHeaders) {
+  // Standard header some APIs return on 429
+  return pickFirstHeader(upstreamHeaders, ["retry-after", "x-retry-after"]);
 }
 
 export default async function handler(req) {
   if (req.method === "OPTIONS") {
-    return new Response(null, {
-      status: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
-      },
-    });
+    return new Response(null, { status: 200, headers: corsHeaders() });
   }
 
   if (req.method !== "POST") {
@@ -51,8 +82,9 @@ export default async function handler(req) {
     const safeMode = mode === "continue" ? "continue" : "start";
     const prev = String(previousText || "").slice(0, 20000);
 
-    const prompt = (safeMode === "start")
-      ? `
+    const prompt =
+      safeMode === "start"
+        ? `
 Spiega il seguente concetto: "${query}".
 
 Target: ${targetPrompt}.
@@ -64,7 +96,7 @@ VINCOLI:
 
 Formatta con titoli e liste quando utile.
 `.trim()
-      : `
+        : `
 Stiamo continuando una spiegazione iniziata in precedenza.
 
 Concetto: "${query}"
@@ -100,13 +132,19 @@ Ora continua dal punto esatto in cui si è interrotta.
       });
     } catch (e) {
       clearTimeout(t);
-      const msg = e?.name === "AbortError" ? "Timeout chiamando Gemini (25s)." : (e?.message || "Errore rete verso Gemini.");
+      const msg =
+        e?.name === "AbortError"
+          ? "Timeout chiamando Gemini (25s)."
+          : e?.message || "Errore rete verso Gemini.";
       return jsonError(msg, 502);
     } finally {
       clearTimeout(t);
     }
 
+    // If upstream error, forward status and include retry-after if present
     if (!upstream.ok) {
+      const retryAfter = extractRetryAfter(upstream.headers);
+
       let msg = `Errore API (${upstream.status})`;
       try {
         const ct = (upstream.headers.get("content-type") || "").toLowerCase();
@@ -118,19 +156,44 @@ Ora continua dal punto esatto in cui si è interrotta.
           if (txt && txt.trim()) msg = txt.trim().slice(0, 400);
         }
       } catch {}
-      return jsonError(msg, upstream.status === 429 ? 429 : 500);
+
+      return jsonError(
+        msg,
+        upstream.status === 429 ? 429 : 500,
+        retryAfter ? { "x-retry-after": retryAfter } : {}
+      );
     }
+
+    // Pass-through useful headers (best-effort)
+    const creditsRemaining = extractCreditsRemaining(upstream.headers);
+    const retryAfter = extractRetryAfter(upstream.headers);
+
+    const extra = {};
+    if (creditsRemaining) extra["x-credits-remaining"] = creditsRemaining;
+    if (retryAfter) extra["x-retry-after"] = retryAfter;
+
+    // Also expose any rate-limit related headers if present (optional but useful)
+    // These might be blocked by the browser unless exposed:
+    // We'll expose them for same-origin fetch (your frontend), still safe.
+    const expose = [
+      "x-credits-remaining",
+      "x-retry-after",
+      "x-ratelimit-remaining",
+      "ratelimit-remaining",
+      "x-rate-limit-remaining",
+      "x-remaining-requests",
+      "retry-after",
+    ].join(", ");
 
     return new Response(upstream.body, {
       status: 200,
-      headers: {
+      headers: corsHeaders({
         "Content-Type": "text/event-stream; charset=utf-8",
         "Cache-Control": "no-cache, no-transform",
         "Connection": "keep-alive",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
-      },
+        "Access-Control-Expose-Headers": expose,
+        ...extra,
+      }),
     });
   } catch (e) {
     return jsonError(e?.message || "Errore sconosciuto (edge).", 500);
