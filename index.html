@@ -51,10 +51,8 @@
       transition: width .35s cubic-bezier(.2,.8,.2,1);
     }
 
-    .steps-wrap{
-      position: relative;
-      overflow:hidden;
-      border-radius: var(--radius);
+   .steps-wrap{
+      max-height: 72vh;
     }
     .track{
       display:flex;
@@ -70,7 +68,8 @@
       padding: 18px;
       display:flex;
       flex-direction:column;
-      min-height: 520px;
+      max-height: 72vh;
+      overflow-y: auto;
     }
 
     .panel-title{
@@ -119,23 +118,22 @@
       margin-top: auto;
       position: sticky;
       bottom: 0;
-      padding-top: 12px;
-      padding-bottom: 8px;
+      padding: 12px;
       background: linear-gradient(
         180deg,
         transparent,
-        rgba(11,16,32,.75) 35%,
-        rgba(11,16,32,.92)
+        rgba(11,16,32,.85) 40%,
+        rgba(11,16,32,.95)
       );
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(8px);
       border-top: 1px solid rgba(233,237,255,.08);
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap: 10px;
       flex-wrap: wrap;
+      z-index: 10;
     }
-
     .wizard-actions .left,
     .wizard-actions .right{
       display:flex;
@@ -838,4 +836,5 @@
 </script>
 </body>
 </html>
+
 
