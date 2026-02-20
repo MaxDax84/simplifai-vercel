@@ -677,24 +677,14 @@
 
   // ===== Credits header parsing =====
   function updateCreditsFromHeaders(headers){
-    // Try common names (case-insensitive)
-    const keys = [
-      "x-credits-remaining",
-      "x-ratelimit-remaining",
-      "ratelimit-remaining",
-      "x-remaining-requests",
-      "x-rate-limit-remaining"
-    ];
-
-    for (const k of keys) {
-      const v = headers.get(k);
-      if (v !== null && v !== undefined && String(v).trim() !== "") {
-        setCredits(String(v).trim());
-        return;
-      }
+    const rem = headers.get("x-credits-remaining");
+    const lim = headers.get("x-credits-limit");
+    if (rem !== null && rem !== undefined && String(rem).trim() !== "") {
+      const r = String(rem).trim();
+      const l = (lim !== null && lim !== undefined && String(lim).trim() !== "") ? String(lim).trim() : "";
+      setCredits(l ? `${r}/${l}` : r);
+      return;
     }
-    // keep previous if already set; otherwise show —
-    if (!creditsValueEl.textContent || creditsValueEl.textContent === "") setCredits("—");
   }
 
   // ===== SSE streaming =====
@@ -848,3 +838,4 @@
 </script>
 </body>
 </html>
+
