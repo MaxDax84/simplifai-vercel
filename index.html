@@ -10,6 +10,7 @@
     .wrap{width:min(1100px,92vw);margin:0 auto;}
     .section{margin-top:22px;}
     .card{padding:22px;border-radius:18px;}
+
     .hero-row{
       display:flex;align-items:center;justify-content:space-between;
       gap:12px;flex-wrap:wrap;margin-top:8px;
@@ -101,21 +102,31 @@
     }
     .target-chip b{color:var(--text);}
 
+    /* --- Response: niente “fascia” e nessuna riga netta --- */
     .response-card{
-      background:rgba(0,0,0,.18);
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:16px;
-      min-height:260px;
-      display:flex;flex-direction:column;gap:12px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      border-radius: 16px;
+      padding: 0;
+      min-height: 260px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .response-inner{
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      padding: 16px;
     }
     .response-text{
       white-space:pre-wrap;
       word-break:break-word;
       line-height:1.6;
       color:rgba(233,237,255,.92);
-      flex:1;
       font-size:14px;
+      min-height: 120px;
     }
 
     .status{
@@ -169,6 +180,14 @@
       background:linear-gradient(135deg, rgba(124,92,255,.95), rgba(38,198,255,.85));
       border-color:rgba(124,92,255,.45);
       color:#0b1020;
+    }
+
+    /* --- Colori per sezioni: 1 e 2 più chiare, 3 più scura --- */
+    #card1, #card2{
+      background: rgba(255,255,255,.06) !important;
+    }
+    #card3{
+      background: rgba(255,255,255,.03) !important;
     }
   </style>
 </head>
@@ -232,7 +251,6 @@
   <!-- 3) RISPOSTA -->
   <section class="section" id="sec3">
     <div class="card" id="card3">
-    <div class="card card-response" id="card3">
       <div class="badge">3) Risposta</div>
       <h2 class="title">💬 Risposta</h2>
       <p class="sub">Se serve, continuerò automaticamente fino a completare la risposta (con limite di sicurezza).</p>
@@ -242,20 +260,22 @@
       </div>
 
       <div class="response-card" id="responseCard">
-        <div class="response-text" id="response"></div>
+        <div class="response-inner">
+          <div class="response-text" id="response"></div>
 
-        <div class="actions" style="margin-top:0;">
-          <div class="status">
-            <span id="spinner" class="spinner" style="display:none"></span>
-            <span id="status">Pronto.</span>
+          <div class="actions" style="margin-top:0;">
+            <div class="status">
+              <span id="spinner" class="spinner" style="display:none"></span>
+              <span id="status">Pronto.</span>
+            </div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button class="btn" id="copyBtn" disabled>⧉ Copia</button>
+            </div>
           </div>
 
-          <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <button class="btn" id="copyBtn" disabled>⧉ Copia</button>
-</div>
+          <div id="quotaMount"></div>
         </div>
-
-        <div id="quotaMount"></div>
       </div>
 
       <div class="actions">
@@ -303,7 +323,6 @@
   const q = document.getElementById("query");
   const targetsEl = document.getElementById("targets");
   const responseEl = document.getElementById("response");
-  const responseCard = document.getElementById("responseCard");
   const spinner = document.getElementById("spinner");
   const statusEl = document.getElementById("status");
   const copyBtn = document.getElementById("copyBtn");
@@ -386,7 +405,6 @@
   }
 
   function shouldAutoContinue(){
-    // “completo” ma sicuro: continua se marker esplicito oppure se vicino al limite
     return endsWithContinueMarker(accumulatedText) || nearLimitHeuristic();
   }
 
@@ -431,7 +449,7 @@
   }
   renderTargets();
 
-  // Credits from headers (intelligenti)
+  // Credits from headers
   function updateCreditsFromHeaders(headers){
     const rem = headers.get("x-credits-remaining");
     const lim = headers.get("x-credits-limit");
@@ -498,7 +516,6 @@
         const data = trimmed.slice(5).trim();
         if (!data || data === "[DONE]") continue;
 
-        // Gemini SSE: JSON per chunk
         try {
           const obj = JSON.parse(data);
           const parts = obj?.candidates?.[0]?.content?.parts || [];
@@ -551,13 +568,11 @@
       return;
     }
 
-    // set status
     if (mode === "continue") {
       isGenerating = true;
       updateButtons();
       setStatus(`Sto continuando… (${autoHopCount + 1})`, true);
     } else {
-      // start
       isGenerating = true;
       updateButtons();
       if (statusEl.textContent.trim() !== "Ok! Sto generando…") {
@@ -573,7 +588,6 @@
         responseEl.textContent += chunk;
       });
 
-      // strip marker on end (we’ll decide continuation after)
       accumulatedText = stripContinueMarker(accumulatedText);
       responseEl.textContent = stripContinueMarker(responseEl.textContent);
 
@@ -581,7 +595,6 @@
       updateButtons();
       setStatus("Fatto.", false);
 
-      // Auto-continue logic
       if (shouldAutoContinue() && autoHopCount < AUTO_CONTINUE_MAX_HOPS) {
         autoHopCount++;
         isGenerating = true;
@@ -591,7 +604,6 @@
         return run("continue");
       }
 
-      // Done
       autoHopCount = 0;
 
     } catch (err) {
@@ -600,13 +612,7 @@
 
       const msg = err?.message || "Errore.";
       setStatus("Errore.", false);
-
-      // 429 / quota / credits
-      if (err?.status === 429 || /quota|exceeded|retry in|credit/i.test(msg)) {
-        showQuotaBox(msg);
-      } else {
-        showQuotaBox(msg);
-      }
+      showQuotaBox(msg);
     }
   }
 
@@ -644,5 +650,3 @@
 </script>
 </body>
 </html>
-
-
