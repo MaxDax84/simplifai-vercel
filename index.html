@@ -11,8 +11,11 @@
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
 
+  <!-- Markdown + Sanitizzazione -->
+  <script defer src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+
   <style>
-    /* Forza uno sfondo piatto anche se il theme cambia */
     html, body { background: var(--bg) !important; }
 
     .wrap{width:min(1100px,92vw);margin:0 auto;}
@@ -128,13 +131,58 @@
       border-radius: 16px;
       padding: 16px;
     }
+
+    /* Markdown styles */
     .response-text{
-      white-space:pre-wrap;
-      word-break:break-word;
-      line-height:1.6;
-      color:rgba(233,237,255,.92);
+      color: rgba(233,237,255,.92);
       font-size:14px;
-      min-height: 120px;
+      line-height:1.65;
+    }
+    .response-text h1, .response-text h2, .response-text h3{
+      margin: 14px 0 10px;
+      line-height: 1.25;
+    }
+    .response-text h1{ font-size: 20px; }
+    .response-text h2{ font-size: 18px; }
+    .response-text h3{ font-size: 16px; }
+    .response-text p{ margin: 8px 0; }
+    .response-text ul, .response-text ol{ margin: 8px 0 8px 20px; }
+    .response-text li{ margin: 4px 0; }
+    .response-text hr{
+      border: none;
+      height: 1px;
+      background: rgba(255,255,255,.10);
+      margin: 14px 0;
+    }
+    .response-text code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.95em;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      padding: 2px 6px;
+      border-radius: 8px;
+    }
+    .response-text pre{
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.10);
+      padding: 12px;
+      border-radius: 14px;
+      overflow:auto;
+      margin: 10px 0;
+    }
+    .response-text pre code{
+      background: transparent;
+      border: none;
+      padding: 0;
+      border-radius: 0;
+    }
+    .response-text blockquote{
+      margin: 10px 0;
+      padding: 10px 12px;
+      border-left: 3px solid rgba(124,92,255,.55);
+      background: rgba(124,92,255,.10);
+      border-radius: 10px;
+      color: rgba(233,237,255,.90);
     }
 
     /* KaTeX leggibile su dark */
@@ -231,7 +279,7 @@
       <h2 class="title">✦ Scrivi la domanda</h2>
       <p class="sub">Inserisci la domanda e poi clicca “Scegli target”. Scorriamo alla sezione successiva.</p>
 
-      <textarea id="query" placeholder="Esempio: Cos'è il DNA e a cosa serve?"></textarea>
+      <textarea id="query" placeholder="Esempio: Cos'è l'entropia? Spiega con esempi e una formula."></textarea>
 
       <div class="actions">
         <span class="hint">💡 Suggerimento: aggiungi “con esempi”</span>
@@ -297,6 +345,7 @@
 </div>
 
 <script>
+window.addEventListener("DOMContentLoaded", () => {
   // Navbar active
   (function(){
     const path = location.pathname.toLowerCase();
@@ -309,10 +358,20 @@
     });
   })();
 
-  const TARGETS = [
-    // Se vuoi aggiungere "Bebè", decommenta e magari tieni 7 target:
-    // { label:"Bebè", icon:"👶", desc:"Ultra semplice, pochissime parole.", prompt:"Spiega come a un bebè: pochissime parole, super semplice.", maxTokens:1800, maxChars:4500 },
+  // marked config
+  function canUseMarked(){ return typeof window.marked?.parse === "function"; }
+  function canUsePurify(){ return typeof window.DOMPurify?.sanitize === "function"; }
 
+  if (canUseMarked()) {
+    window.marked.setOptions({
+      gfm: true,
+      breaks: true,
+      mangle: false,
+      headerIds: false
+    });
+  }
+
+  const TARGETS = [
     { label:"Bambino", icon:"🧒", desc:"Semplice, analogie, frasi brevi.", prompt:"Spiega come a un bambino: usa parole semplici, esempi concreti, frasi brevi.", maxTokens:2500, maxChars:6000 },
     { label:"Ragazzo", icon:"👨", desc:"Chiaro e un po’ più dettagliato.", prompt:"Spiega come a un ragazzo: semplice ma più dettagliato, esempi e analogie.", maxTokens:2500, maxChars:7000 },
     { label:"Universitario", icon:"🎓", desc:"Struttura e concetti corretti.", prompt:"Spiega come a uno studente universitario: struttura chiara, concetti corretti.", maxTokens:2500, maxChars:9000 },
@@ -321,17 +380,14 @@
     { label:"Scienziato", icon:"🧪", desc:"Rigore, limiti, definizioni.", prompt:"Spiega come a uno scienziato: rigore, definizioni, limiti, struttura.", maxTokens:3500, maxChars:14000 }
   ];
 
-  // Auto-continue controls
   const AUTO_CONTINUE_MAX_HOPS = 6;
   let autoHopCount = 0;
 
-  // State
   let selectedIndex = -1;
   let isGenerating = false;
-  let rawText = "";        // testo così com’è arrivato (con eventuale ...(continua))
-  let cleanText = "";      // testo senza marker
+  let rawText = "";
+  let cleanText = "";
 
-  // DOM
   const q = document.getElementById("query");
   const targetsEl = document.getElementById("targets");
   const responseEl = document.getElementById("response");
@@ -397,17 +453,15 @@
   }
 
   function updateButtons(){
-    copyBtn.disabled = isGenerating || !responseEl.textContent.trim();
+    copyBtn.disabled = isGenerating || !(responseEl.textContent || "").trim();
   }
 
   function endsWithContinueMarker(txt){
     return /\.\.\.\(continua\)\s*$/i.test((txt||"").trim());
   }
-
   function stripContinueMarker(txt){
     return (txt || "").replace(/\.\.\.\(continua\)\s*$/i, "").trimEnd();
   }
-
   function nearLimitHeuristic(txt){
     if (selectedIndex < 0) return false;
     const t = TARGETS[selectedIndex];
@@ -415,49 +469,58 @@
     if (!s) return false;
     return s.length >= Math.floor(t.maxChars * 0.92);
   }
-
   function looksTruncated(txt){
-    // euristica: finisce con "..." / ":" / "," / "-" / oppure manca punteggiatura finale su testo abbastanza lungo
     const s = (txt || "").trim();
     if (!s) return false;
-
     if (/[,:;–—-]$/.test(s)) return true;
     if (/\.\.\.$/.test(s)) return true;
-    if (/\b(oh|oppure|ma|e|perché)\s*$/i.test(s)) return true;
-
-    // se è lungo e non finisce con . ! ? ) " ' … allora è sospetto
     if (s.length > 220 && !/[.!?…)"'\]]$/.test(s)) return true;
-
     return false;
   }
 
-  function shouldAutoContinue(){
-    // attenzione: qui usiamo rawText (con marker) e cleanText (senza marker)
-    if (endsWithContinueMarker(rawText)) return true;
-    if (nearLimitHeuristic(cleanText)) return true;
-    if (looksTruncated(cleanText)) return true;
-    return false;
+  // Markdown -> HTML (safe)
+  function mdToHtml(md){
+    const safeText = String(md || "");
+    if (!canUseMarked() || !canUsePurify()) {
+      // fallback safe
+      return escapeHtml(safeText).replaceAll("\n","<br>");
+    }
+    const html = window.marked.parse(safeText);
+    // (DOMPurify di default è già aggressivo)
+    return window.DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
   }
 
-  // KaTeX render (solo dopo che abbiamo finito di scrivere testo, per non rompere lo streaming)
-  function renderMath(){
-    if (!window.renderMathInElement) return;
-    try{
-      renderMathInElement(responseEl, {
-        delimiters: [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false}
-        ],
-        throwOnError: false
-      });
-    } catch {}
+  // Render pipeline (debounced): Markdown -> HTML -> KaTeX
+  let renderTimer = null;
+  function scheduleRender(final=false){
+    clearTimeout(renderTimer);
+    renderTimer = setTimeout(() => renderNow(final), final ? 0 : 120);
+  }
+
+  function renderNow(final=false){
+    responseEl.innerHTML = mdToHtml(final ? cleanText : rawText);
+
+    // KaTeX (solo se presente)
+    if (window.renderMathInElement) {
+      try{
+        window.renderMathInElement(responseEl, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$", right: "$", display: false}
+          ],
+          throwOnError: false
+        });
+      } catch {}
+    }
+
+    updateButtons();
   }
 
   function preflightGenerateUX(){
     clearQuotaBox();
     rawText = "";
     cleanText = "";
-    responseEl.textContent = "";
+    responseEl.innerHTML = "";
     autoHopCount = 0;
 
     isGenerating = true;
@@ -613,42 +676,35 @@
 
     isGenerating = true;
     updateButtons();
-    if (mode === "continue") setStatus(`Sto continuando… (${autoHopCount + 1})`, true);
-    else setStatus("Sto generando…", true);
+    setStatus(mode === "continue" ? `Sto continuando… (${autoHopCount + 1})` : "Sto generando…", true);
 
     try {
       await streamGemini(buildPayload(mode), (chunk) => {
-        // Non renderizzare KaTeX durante lo streaming (rompe il DOM).
         rawText += chunk;
-        cleanText = rawText; // per ora
-        responseEl.textContent = rawText;
+        scheduleRender(false); // live render (debounced)
       });
 
-      // Ora puliamo marker SOLO per la logica e per inviare in continue
       const hadMarker = endsWithContinueMarker(rawText);
       cleanText = stripContinueMarker(rawText);
-      responseEl.textContent = cleanText;
+      scheduleRender(true); // final render (clean + KaTeX)
 
       isGenerating = false;
       updateButtons();
       setStatus("Fatto.", false);
 
-      // Auto-continue robusto
-      if ((hadMarker || nearLimitHeuristic(cleanText) || looksTruncated(cleanText)) && autoHopCount < AUTO_CONTINUE_MAX_HOPS) {
+      const needContinue = hadMarker || nearLimitHeuristic(cleanText) || looksTruncated(cleanText);
+
+      if (needContinue && autoHopCount < AUTO_CONTINUE_MAX_HOPS) {
         autoHopCount++;
         isGenerating = true;
         updateButtons();
         setStatus(`Sto continuando automaticamente… (${autoHopCount})`, true);
         await new Promise(r => setTimeout(r, 220));
-        // Importante: per il continue usiamo cleanText come base
-        rawText = cleanText;
+        rawText = cleanText; // riparti dal pulito
         return run("continue");
       }
 
       autoHopCount = 0;
-
-      // Render KaTeX alla fine (su testo definitivo)
-      renderMath();
 
     } catch (err) {
       isGenerating = false;
@@ -673,10 +729,10 @@
 
   backToTargets.addEventListener("click", () => scrollTo(sec2, card2));
 
-  // Copy
+  // Copy (copi Markdown “pulito”)
   copyBtn.addEventListener("click", async () => {
-    const text = responseEl.textContent || "";
-    if (!text.trim()) return;
+    const text = (cleanText || rawText || "").trim();
+    if (!text) return;
     try {
       await navigator.clipboard.writeText(text);
       setStatus("Copiato ✅", false);
@@ -689,6 +745,7 @@
   // Init
   setStatus("Pronto.", false);
   updateButtons();
+});
 </script>
 </body>
 </html>
