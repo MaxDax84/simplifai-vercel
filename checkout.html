@@ -1,270 +1,161 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Checkout (mock) – SimplifAI</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
-  <style>
-    body { font-family: 'Inter', sans-serif; background: #f8fafc; }
-    .ai-gradient { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
-    button:disabled{ opacity:.6; cursor:not-allowed; }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Checkout – SimplifAI Clone</title>
+  <link rel="stylesheet" href="/theme.css">
 </head>
-
-<body class="pb-16">
-  <nav class="w-full h-16 flex items-center justify-between px-6 md:px-10 border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
-    <a href="/" class="flex items-center gap-2">
-      <div class="ai-gradient w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-sm">
-        <i class="ri-flashlight-fill"></i>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>SimplifAI Clone</h1>
+          <span>Risposte su misura, con “Continua” quando serve</span>
+        </div>
       </div>
-      <span class="text-xl font-extrabold tracking-tight text-gray-900">SimplifAI <span class="text-indigo-600">Clone</span></span>
-    </a>
 
-    <div class="hidden md:flex gap-6 text-sm font-medium text-gray-500">
-      <a href="/" class="hover:text-indigo-600">Home</a>
-      <a href="/come-funziona.html" class="hover:text-indigo-600">Come funziona</a>
-      <a href="/prezzi.html" class="hover:text-indigo-600">Prezzi</a>
+      <nav>
+        <a href="/index.html">Home</a>
+        <a href="/come-funziona.html">Come funziona</a>
+        <a href="/prezzi.html">Prezzi</a>
+      </nav>
+    </header>
+
+    <div class="card">
+      <div class="card-inner" style="text-align:center; padding:24px 18px;">
+        <span class="pilltag">🧾 CHECKOUT</span>
+        <div class="h1">Upgrade (mock)</div>
+        <p class="sub">Questa è una pagina demo: nessun pagamento reale. Serve per simulare il flusso.</p>
+      </div>
     </div>
 
-    <button id="menuBtn" class="md:hidden w-10 h-10 rounded-xl border bg-white flex items-center justify-center" aria-label="Apri menu">
-      <i class="ri-menu-line text-xl"></i>
-    </button>
-  </nav>
+    <div style="height:16px;"></div>
 
-  <!-- Mobile menu -->
-  <div id="mobileMenu" class="md:hidden hidden border-b bg-white">
-    <div class="max-w-6xl mx-auto px-6 py-4 flex flex-col gap-3 text-sm font-semibold text-gray-700">
-      <a href="/" class="hover:text-indigo-600">Home</a>
-      <a href="/come-funziona.html" class="hover:text-indigo-600">Come funziona</a>
-      <a href="/prezzi.html" class="hover:text-indigo-600">Prezzi</a>
+    <div class="grid-3" style="grid-template-columns: 1.2fr .8fr .8fr;">
+      <!-- Form -->
+      <div class="card" style="grid-column: span 2;">
+        <div class="card-inner">
+          <div style="font-weight:900; font-size:16px; margin-bottom:10px;">✉️ Dati (mock)</div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+            <div>
+              <div style="color:var(--muted2); font-size:12px; margin-bottom:6px;">Nome</div>
+              <input id="name" placeholder="Mario" style="width:100%; padding:12px; border-radius:14px; border:1px solid var(--border); background:rgba(0,0,0,.18); color:var(--text); outline:none;">
+            </div>
+            <div>
+              <div style="color:var(--muted2); font-size:12px; margin-bottom:6px;">Cognome</div>
+              <input id="surname" placeholder="Rossi" style="width:100%; padding:12px; border-radius:14px; border:1px solid var(--border); background:rgba(0,0,0,.18); color:var(--text); outline:none;">
+            </div>
+            <div style="grid-column: span 2;">
+              <div style="color:var(--muted2); font-size:12px; margin-bottom:6px;">Email</div>
+              <input id="email" placeholder="mario@email.com" style="width:100%; padding:12px; border-radius:14px; border:1px solid var(--border); background:rgba(0,0,0,.18); color:var(--text); outline:none;">
+            </div>
+
+            <div style="grid-column: span 2;">
+              <div style="color:var(--muted2); font-size:12px; margin-bottom:6px;">Carta (mock)</div>
+              <input id="card" placeholder="4242 4242 4242 4242" style="width:100%; padding:12px; border-radius:14px; border:1px solid var(--border); background:rgba(0,0,0,.18); color:var(--text); outline:none;">
+              <div style="color:var(--muted2); font-size:12px; margin-top:6px;">Non viene inviato niente. È una simulazione UI.</div>
+            </div>
+          </div>
+
+          <div style="height:14px;"></div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn btn-primary" id="payBtn" type="button">✅ Conferma (mock)</button>
+            <a class="btn" href="/prezzi.html">← Torna ai prezzi</a>
+          </div>
+
+          <div id="success" style="display:none; margin-top:14px; padding:14px; border-radius:14px; border:1px solid rgba(124,92,255,.35); background:rgba(124,92,255,.10);">
+            <div style="font-weight:900; margin-bottom:4px;">Fatto! (mock)</div>
+            <div style="color:var(--muted);">Upgrade simulato. Ora puoi tornare alla home e continuare a provare.</div>
+            <div style="height:10px;"></div>
+            <a class="btn btn-primary" href="/index.html">Torna alla home</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="card">
+        <div class="card-inner">
+          <div style="font-weight:900; font-size:16px; margin-bottom:10px;">📦 Riepilogo</div>
+
+          <div style="padding:14px; border:1px solid var(--border); border-radius:14px; background:rgba(0,0,0,.18);">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+              <div style="font-weight:900;" id="planName">PRO</div>
+              <span class="pilltag" id="billingTag">Mensile</span>
+            </div>
+
+            <div style="height:10px;"></div>
+            <div style="font-size:34px; font-weight:900; letter-spacing:-.4px;" id="planPrice">€14,99</div>
+            <div style="color:var(--muted);" id="planPer">al mese</div>
+
+            <div style="height:12px;"></div>
+            <div style="color:var(--muted); font-size:13px; line-height:1.45;" id="planDesc">
+              Più richieste e risposte più lunghe. Priorità più alta.
+            </div>
+          </div>
+
+          <div style="height:14px;"></div>
+
+          <div style="color:var(--muted2); font-size:12px;">
+            Nota: in produzione qui integreresti Stripe e metteresti limiti reali (requests/day, max tokens, ecc.).
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <main class="max-w-6xl mx-auto px-4 pt-12">
-    <div class="text-center mb-10">
-      <span class="inline-block py-1 px-3 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-3">
-        Checkout (mock)
-      </span>
-      <h1 class="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
-        Completa l’upgrade
-      </h1>
-      <p class="text-gray-500 mt-3">
-        Questa è una demo UI: nessun pagamento reale, nessun dato salvato.
-      </p>
-    </div>
+<script>
+  const params = new URLSearchParams(location.search);
+  const plan = (params.get("plan") || "pro").toLowerCase();
+  const billing = (params.get("billing") || "monthly").toLowerCase();
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Form -->
-      <section class="lg:col-span-2">
-        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 md:p-8">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <h2 class="text-xl font-extrabold text-gray-900">Dati di fatturazione</h2>
-              <p class="text-gray-500 text-sm mt-1">Compila i campi (mock) e premi “Paga”.</p>
-            </div>
-            <a href="/prezzi.html" class="text-sm font-extrabold text-indigo-600 hover:text-indigo-700">← Torna ai prezzi</a>
-          </div>
+  const planName = document.getElementById("planName");
+  const billingTag = document.getElementById("billingTag");
+  const planPrice = document.getElementById("planPrice");
+  const planPer = document.getElementById("planPer");
+  const planDesc = document.getElementById("planDesc");
 
-          <form id="checkoutForm" class="mt-7 space-y-5">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="text-sm font-bold text-gray-700">Nome</label>
-                <input id="firstName" class="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 outline-none focus:bg-white focus:border-indigo-300" placeholder="Mario" required />
-              </div>
-              <div>
-                <label class="text-sm font-bold text-gray-700">Cognome</label>
-                <input id="lastName" class="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 outline-none focus:bg-white focus:border-indigo-300" placeholder="Rossi" required />
-              </div>
-            </div>
+  const payBtn = document.getElementById("payBtn");
+  const success = document.getElementById("success");
 
-            <div>
-              <label class="text-sm font-bold text-gray-700">Email</label>
-              <input id="email" type="email" class="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 outline-none focus:bg-white focus:border-indigo-300" placeholder="mario.rossi@email.it" required />
-            </div>
+  function setSummary(){
+    const isYearly = billing === "yearly";
+    billingTag.textContent = isYearly ? "Annuale" : "Mensile";
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div class="md:col-span-2">
-                <label class="text-sm font-bold text-gray-700">Indirizzo</label>
-                <input id="address" class="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 outline-none focus:bg-white focus:border-indigo-300" placeholder="Via Roma 1" required />
-              </div>
-              <div>
-                <label class="text-sm font-bold text-gray-700">CAP</label>
-                <input id="zip" class="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 outline-none focus:bg-white focus:border-indigo-300" placeholder="00100" required />
-              </div>
-            </div>
-
-            <div class="rounded-3xl border border-gray-100 bg-gray-50 p-5">
-              <div class="flex items-center justify-between">
-                <div class="font-extrabold text-gray-900 flex items-center gap-2"><i class="ri-bank-card-line text-indigo-600"></i>Pagamento</div>
-                <span class="text-xs font-extrabold text-gray-500 bg-white border px-3 py-1 rounded-full">Mock</span>
-              </div>
-
-              <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="md:col-span-2">
-                  <label class="text-sm font-bold text-gray-700">Numero carta</label>
-                  <input id="card" inputmode="numeric" class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 outline-none focus:border-indigo-300" placeholder="4242 4242 4242 4242" required />
-                </div>
-                <div>
-                  <label class="text-sm font-bold text-gray-700">CVV</label>
-                  <input id="cvv" inputmode="numeric" class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 outline-none focus:border-indigo-300" placeholder="123" required />
-                </div>
-              </div>
-
-              <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="text-sm font-bold text-gray-700">Scadenza</label>
-                  <input id="exp" class="mt-2 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 outline-none focus:border-indigo-300" placeholder="MM/AA" required />
-                </div>
-                <div class="flex items-end">
-                  <label class="inline-flex items-center gap-2 text-sm text-gray-700">
-                    <input id="tos" type="checkbox" class="w-4 h-4" required />
-                    Accetto i termini (mock)
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <button id="payBtn" type="submit" class="w-full rounded-2xl ai-gradient text-white font-extrabold py-4 shadow-lg hover:scale-[1.01] transition flex items-center justify-center gap-2">
-              <i class="ri-lock-2-line"></i>
-              <span id="payBtnText">Paga</span>
-            </button>
-
-            <div id="successBox" class="hidden rounded-3xl border border-emerald-200 bg-emerald-50 p-6 text-emerald-900">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-emerald-100 flex items-center justify-center">
-                  <i class="ri-check-line text-2xl"></i>
-                </div>
-                <div>
-                  <div class="font-extrabold">Pagamento simulato completato ✅</div>
-                  <div class="text-sm opacity-80">Ora puoi tornare all’app e continuare a testare il flow.</div>
-                </div>
-              </div>
-              <div class="mt-5 flex flex-col md:flex-row gap-3">
-                <a href="/" class="flex-1 text-center rounded-2xl bg-gray-900 text-white font-extrabold py-3 hover:bg-gray-800 transition">Vai all’app</a>
-                <a href="/prezzi.html" class="flex-1 text-center rounded-2xl bg-white border font-extrabold py-3 hover:bg-gray-50 transition">Torna ai prezzi</a>
-              </div>
-            </div>
-          </form>
-        </div>
-      </section>
-
-      <!-- Summary -->
-      <aside>
-        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 md:p-8 sticky top-24">
-          <h2 class="text-xl font-extrabold text-gray-900">Riepilogo</h2>
-
-          <div class="mt-5 rounded-3xl border bg-gray-50 p-5">
-            <div class="flex items-center justify-between">
-              <div class="font-extrabold text-gray-900" id="planName">PRO</div>
-              <div class="text-sm font-extrabold text-gray-900" id="planPrice">€14,99</div>
-            </div>
-            <div class="text-xs text-gray-500 mt-1" id="planPeriod">al mese</div>
-
-            <div class="mt-4 space-y-2 text-sm text-gray-700" id="planFeatures"></div>
-          </div>
-
-          <div class="mt-6 text-sm text-gray-600">
-            <div class="flex items-start gap-2">
-              <i class="ri-information-line text-indigo-600 mt-0.5"></i>
-              <div>
-                <b>Mock checkout:</b> nessun addebito, nessuna integrazione Stripe, nessun dato persistito.
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-6">
-            <a href="/come-funziona.html" class="w-full inline-flex items-center justify-center gap-2 rounded-2xl border bg-white py-3 font-extrabold text-gray-900 hover:bg-gray-50 transition">
-              <i class="ri-question-line"></i> Come funziona
-            </a>
-          </div>
-        </div>
-      </aside>
-    </div>
-  </main>
-
-  <script>
-    // Mobile menu
-    const menuBtn = document.getElementById('menuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    if (menuBtn && mobileMenu) {
-      menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-    }
-
-    // Plan selection from query string
-    const params = new URLSearchParams(window.location.search);
-    const plan = (params.get('plan') || 'pro').toLowerCase();
-    const billing = (params.get('billing') || 'monthly').toLowerCase();
-
-    const PLANS = {
-      pro: {
-        name: 'PRO',
-        monthly: 14.99,
-        yearly: 14.99 * 12 * 0.8,
-        features: [
-          'Molte più richieste al giorno',
-          'Risposte più lunghe',
-          'Priorità più alta',
-          'Cronologia (in arrivo)'
-        ]
-      },
-      business: {
-        name: 'BUSINESS',
-        monthly: 79.99,
-        yearly: 79.99 * 12 * 0.8,
-        features: [
-          'Richieste elevate (team)',
-          'Risposte più lunghe',
-          'Supporto prioritario',
-          'Branding / personalizzazioni'
-        ]
+    if(plan === "business"){
+      planName.textContent = "BUSINESS";
+      planDesc.textContent = "Per team: richieste elevate, risposte più lunghe e supporto prioritario.";
+      if(isYearly){
+        planPrice.textContent = "€767,90";
+        planPer.textContent = "all'anno";
+      } else {
+        planPrice.textContent = "€79,99";
+        planPer.textContent = "al mese";
       }
-    };
-
-    function fmtEuro(n) {
-      return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(n);
+    } else {
+      planName.textContent = "PRO";
+      planDesc.textContent = "Più richieste e risposte più lunghe. Priorità più alta.";
+      if(isYearly){
+        planPrice.textContent = "€143,90";
+        planPer.textContent = "all'anno";
+      } else {
+        planPrice.textContent = "€14,99";
+        planPer.textContent = "al mese";
+      }
     }
+  }
 
-    const chosen = PLANS[plan] || PLANS.pro;
-    const isYearly = billing === 'yearly';
+  setSummary();
 
-    document.getElementById('planName').textContent = chosen.name;
-    document.getElementById('planPrice').textContent = fmtEuro(isYearly ? chosen.yearly : chosen.monthly);
-    document.getElementById('planPeriod').textContent = isYearly ? "all'anno" : 'al mese';
-
-    document.getElementById('planFeatures').innerHTML = chosen.features
-      .map(f => `<div class="flex gap-2"><i class="ri-check-line text-indigo-600"></i><span>${f}</span></div>`)
-      .join('');
-
-    // Fake payment flow
-    const form = document.getElementById('checkoutForm');
-    const payBtn = document.getElementById('payBtn');
-    const payBtnText = document.getElementById('payBtnText');
-    const successBox = document.getElementById('successBox');
-
-    function setBusy(busy) {
-      payBtn.disabled = busy;
-      payBtnText.textContent = busy ? 'Pagamento in corso…' : 'Paga';
-    }
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (!form.checkValidity()) return;
-
-      setBusy(true);
-      successBox.classList.add('hidden');
-
-      // simulate a request
-      setTimeout(() => {
-        setBusy(false);
-        successBox.classList.remove('hidden');
-        successBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 900);
-    });
-  </script>
+  payBtn.addEventListener("click", () => {
+    success.style.display = "block";
+    payBtn.disabled = true;
+    payBtn.textContent = "Confermato ✅";
+  });
+</script>
 </body>
 </html>
