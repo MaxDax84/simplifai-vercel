@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Come funziona – SimplifAI Clone</title>
+  <title>Come funziona – Simplif-AI</title>
   <link rel="stylesheet" href="/theme.css">
 
   <style>
@@ -148,11 +148,6 @@
       opacity: 1;
       transform: translateY(0);
     }
-
-    /* Pricing reveal anchor */
-    .pricing-anchor{
-      margin-top: 18px;
-    }
   </style>
 </head>
 
@@ -162,7 +157,7 @@
       <div class="brand">
         <div class="logo"></div>
         <div>
-          <h1>SimplifAI Clone</h1>
+          <h1>Simplif-AI</h1>
           <span>Risposte su misura, con “Continua” quando serve</span>
         </div>
       </div>
@@ -179,7 +174,7 @@
       <div class="card-inner how-hero reveal">
         <span class="pilltag">🧭 COME FUNZIONA</span>
         <div class="h1">Step-by-step, super semplice</div>
-        <p class="sub">Segui i passaggi 1 → 4. Le sezioni entrano in transizione mentre scorri. Sotto trovi anche i prezzi.</p>
+        <p class="sub">Segui i passaggi 1 → 4. Le sezioni entrano in transizione mentre scorri. Qui sotto trovi i passaggi principali.</p>
         <div style="height:12px;"></div>
         <a class="btn btn-primary" href="#step-1">Inizia dai passaggi</a>
       </div>
@@ -196,7 +191,6 @@
               <a href="#step-2" data-step="2"><span class="mini-dot">2</span> Scegli il target</a>
               <a href="#step-3" data-step="3"><span class="mini-dot">3</span> Genera la risposta</a>
               <a href="#step-4" data-step="4"><span class="mini-dot">4</span> Continua & Copia</a>
-              <a href="#pricing" data-step="pricing"><span class="mini-dot">€</span> Prezzi</a>
             </div>
           </div>
         </div>
@@ -273,82 +267,7 @@
             <li><span class="icon">⧉</span><span>“Copia” prende tutto il testo generato.</span></li>
             <li><span class="icon">🧹</span><span>Si può migliorare la continuità evitando ripetizioni (anti-duplicate).</span></li>
           </ul>
-        </div>
-
-        <!-- Pricing section that appears with transition -->
-        <div class="pricing-anchor reveal" id="pricing">
-          <div class="card">
-            <div class="card-inner" style="text-align:center; padding:24px 18px;">
-              <span class="pilltag">💳 PIANI & PREZZI</span>
-              <div class="h1">Scegli il piano giusto per te</div>
-              <p class="sub">Stesso look della home. Prezzi mock (puoi collegare Stripe quando vuoi).</p>
-              <div style="height:12px;"></div>
-              <a class="btn btn-primary" href="/prezzi.html">Apri pagina Prezzi</a>
-            </div>
-          </div>
-
-          <div style="height:14px;"></div>
-
-          <!-- Embedded pricing preview (dark) -->
-          <div class="grid-3">
-            <div class="card plan">
-              <div class="name">
-                <h3>FREE</h3>
-                <span class="pilltag">Per provare</span>
-              </div>
-              <div class="price">€0</div>
-              <div class="per">Perfetto per iniziare</div>
-              <ul>
-                <li><span class="icon">✓</span><span>Generazioni limitate (free tier)</span></li>
-                <li><span class="icon">✓</span><span>Target (Bambino → Scienziato)</span></li>
-                <li><span class="icon">⚠</span><span>Possibili attese (rate limit)</span></li>
-              </ul>
-              <div class="cta">
-                <a class="btn" href="/index.html">Torna alla home</a>
-              </div>
-            </div>
-
-            <div class="card plan featured">
-              <div class="name">
-                <h3>PRO</h3>
-                <span class="pilltag">Per uso serio</span>
-              </div>
-              <div class="price">€14,99</div>
-              <div class="per">al mese</div>
-              <ul>
-                <li><span class="icon">⚡</span><span>Molte più richieste al giorno</span></li>
-                <li><span class="icon">🧠</span><span>Risposte più lunghe</span></li>
-                <li><span class="icon">🔔</span><span>Priorità più alta</span></li>
-              </ul>
-              <div class="cta">
-                <a class="btn btn-primary" href="/checkout.html?plan=pro&billing=monthly">Upgrade (mock)</a>
-                <a class="btn" href="/prezzi.html">Dettagli</a>
-              </div>
-            </div>
-
-            <div class="card plan">
-              <div class="name">
-                <h3>BUSINESS</h3>
-                <span class="pilltag">Per team</span>
-              </div>
-              <div class="price">€79,99</div>
-              <div class="per">al mese</div>
-              <ul>
-                <li><span class="icon">🏢</span><span>Richieste elevate (team)</span></li>
-                <li><span class="icon">📄</span><span>Risposte più lunghe</span></li>
-                <li><span class="icon">🛟</span><span>Supporto prioritario</span></li>
-              </ul>
-              <div class="cta">
-                <a class="btn btn-primary" href="/checkout.html?plan=business&billing=monthly">Upgrade (mock)</a>
-                <a class="btn" href="/prezzi.html">Dettagli</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
+        </div>  </div>
 
   <script>
     // Navbar active
@@ -374,8 +293,7 @@
 
     // Mini-nav active on scroll
     const miniLinks = Array.from(document.querySelectorAll("#miniNav a"));
-    const stepSections = ["step-1","step-2","step-3","step-4","pricing"].map(id => document.getElementById(id));
-
+    const stepSections = ["step-1","step-2","step-3","step-4"].map(id => document.getElementById(id));
     const io2 = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if(!e.isIntersecting) return;
