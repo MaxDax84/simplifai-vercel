@@ -1,198 +1,159 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Come funziona – SimplifAI</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Inter', sans-serif; background: #f8fafc; }
-    .ai-gradient { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
-    .chip { border: 1px solid rgba(99,102,241,.25); }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Come funziona – SimplifAI Clone</title>
+  <link rel="stylesheet" href="/theme.css">
 </head>
-
-<body class="pb-16">
-  <nav class="w-full h-16 flex items-center justify-between px-6 md:px-10 border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
-    <a href="/" class="flex items-center gap-2">
-      <div class="ai-gradient w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-sm">
-        <i class="ri-flashlight-fill"></i>
-      </div>
-      <span class="text-xl font-extrabold tracking-tight text-gray-900">SimplifAI <span class="text-indigo-600">Clone</span></span>
-    </a>
-    <div class="hidden md:flex gap-6 text-sm font-medium text-gray-500">
-      <a href="/" class="hover:text-indigo-600">Home</a>
-      <a href="/come-funziona.html" class="text-indigo-600">Come funziona</a>
-      <a href="/prezzi.html" class="hover:text-indigo-600">Prezzi</a>
-    </div>
-
-    <button id="menuBtn" class="md:hidden w-10 h-10 rounded-xl border bg-white flex items-center justify-center" aria-label="Apri menu">
-      <i class="ri-menu-line text-xl"></i>
-    </button>
-  </nav>
-
-  <!-- Mobile menu -->
-  <div id="mobileMenu" class="md:hidden hidden border-b bg-white">
-    <div class="max-w-5xl mx-auto px-6 py-4 flex flex-col gap-3 text-sm font-semibold text-gray-700">
-      <a href="/" class="hover:text-indigo-600">Home</a>
-      <a href="/come-funziona.html" class="text-indigo-600">Come funziona</a>
-      <a href="/prezzi.html" class="hover:text-indigo-600">Prezzi</a>
-    </div>
-  </div>
-
-  <main class="max-w-5xl mx-auto px-4 pt-14">
-    <div class="text-center mb-10">
-      <span class="inline-block py-1 px-3 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-3">
-        Guida rapida
-      </span>
-      <h1 class="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
-        Come funziona SimplifAI
-      </h1>
-      <p class="text-gray-500 mt-3">
-        In 2 minuti capisci tutto: cosa fa, cosa non fa e come ottenere risposte migliori.
-      </p>
-    </div>
-
-    <!-- Quick overview -->
-    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-7 md:p-8 mb-8">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo"></div>
         <div>
-          <h2 class="text-xl md:text-2xl font-extrabold text-gray-900">Il concetto</h2>
-          <p class="text-gray-600 mt-2">
-            Tu scrivi una domanda, scegli il <b>target</b> (da Bambino a Scienziato) e ottieni la stessa idea spiegata
-            con <b>linguaggio</b>, <b>struttura</b> e <b>profondità</b> diverse.
-          </p>
+          <h1>SimplifAI Clone</h1>
+          <span>Risposte su misura, con “Continua” quando serve</span>
         </div>
-        <div class="flex flex-wrap gap-2">
-          <span class="text-xs font-extrabold text-indigo-700 bg-indigo-50 chip px-3 py-1 rounded-full">Streaming</span>
-          <span class="text-xs font-extrabold text-indigo-700 bg-indigo-50 chip px-3 py-1 rounded-full">Continua</span>
-          <span class="text-xs font-extrabold text-indigo-700 bg-indigo-50 chip px-3 py-1 rounded-full">Copia</span>
-          <span class="text-xs font-extrabold text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">Rate limit (free tier)</span>
+      </div>
+
+      <nav>
+        <a href="/index.html">Home</a>
+        <a href="/come-funziona.html" style="color:var(--text); background:rgba(255,255,255,.03); border:1px solid var(--border);">Come funziona</a>
+        <a href="/prezzi.html">Prezzi</a>
+      </nav>
+    </header>
+
+    <!-- HERO -->
+    <div class="card">
+      <div class="card-inner" style="text-align:center; padding:24px 18px;">
+        <span class="pilltag">🧭 COME FUNZIONA</span>
+        <div class="h1">Dalla domanda alla risposta, in pochi secondi</div>
+        <p class="sub">Scrivi una domanda, scegli un target e ottieni una spiegazione calibrata. Se la risposta è lunga, premi <b>Continua</b>.</p>
+      </div>
+    </div>
+
+    <div style="height:16px;"></div>
+
+    <!-- 3 cards: cosa fa -->
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-inner">
+          <div style="font-weight:900; font-size:16px; margin-bottom:6px;">✍️ 1) Inserisci la domanda</div>
+          <p class="sub">Una frase o più righe: anche domande complesse vanno bene. Più contesto dai, meglio è.</p>
+          <div style="height:10px;"></div>
+          <span class="pilltag">Tip: aggiungi un esempio</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-inner">
+          <div style="font-weight:900; font-size:16px; margin-bottom:6px;">🎯 2) Scegli il target</div>
+          <p class="sub">Bambino → Scienziato: cambia stile, rigore e profondità. È come cambiare “livello di spiegazione”.</p>
+          <div style="height:10px;"></div>
+          <span class="pilltag">Stesso concetto, tono diverso</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-inner">
+          <div style="font-weight:900; font-size:16px; margin-bottom:6px;">⚡ 3) Streaming + Continua</div>
+          <p class="sub">La risposta arriva a pezzi (streaming). Se si interrompe per limite, premi Continua e prosegue.</p>
+          <div style="height:10px;"></div>
+          <span class="pilltag">Esperienza “ChatGPT-style”</span>
         </div>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-7">
-        <div class="flex items-center gap-3">
-          <div class="ai-gradient w-10 h-10 rounded-2xl flex items-center justify-center text-white font-extrabold">1</div>
-          <h2 class="text-xl font-extrabold text-gray-900">Scrivi la domanda</h2>
-        </div>
-        <p class="text-gray-600 mt-3">
-          Inserisci cosa vuoi capire (es. “Cos’è il DNA?”, “Spiegami l’inflazione”).
-        </p>
-        <p class="text-xs text-gray-400 mt-3">
-          Tip: più la domanda è specifica, migliore sarà la risposta.
-        </p>
-      </div>
+    <div style="height:16px;"></div>
 
-      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-7">
-        <div class="flex items-center gap-3">
-          <div class="ai-gradient w-10 h-10 rounded-2xl flex items-center justify-center text-white font-extrabold">2</div>
-          <h2 class="text-xl font-extrabold text-gray-900">Scegli il target</h2>
+    <!-- Cosa cambia per target -->
+    <div class="card">
+      <div class="card-inner">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+          <div style="font-weight:900; font-size:16px;">🧠 Cosa cambia tra i target</div>
+          <span class="pilltag">Esempi rapidi</span>
         </div>
-        <p class="text-gray-600 mt-3">
-          Bambino, Ragazzino, Universitario, Adulto, Esperto, Scienziato.
-          Cambia lo stile e la profondità della spiegazione.
-        </p>
-        <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
-          <div class="rounded-2xl bg-gray-50 border p-3 text-gray-700"><b>Più semplice</b> → frasi corte, esempi</div>
-          <div class="rounded-2xl bg-gray-50 border p-3 text-gray-700"><b>Più tecnico</b> → rigore, dettagli</div>
-        </div>
-      </div>
 
-      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-7">
-        <div class="flex items-center gap-3">
-          <div class="ai-gradient w-10 h-10 rounded-2xl flex items-center justify-center text-white font-extrabold">3</div>
-          <h2 class="text-xl font-extrabold text-gray-900">Genera la risposta</h2>
-        </div>
-        <p class="text-gray-600 mt-3">
-          Clicca <b>Genera</b>. Vedrai un indicatore mentre il testo arriva.
-        </p>
-        <p class="text-xs text-gray-400 mt-3">
-          Nota: con il piano gratuito possono esserci attese (“retry in Xs”).
-        </p>
-      </div>
+        <div style="height:10px;"></div>
 
-      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-7">
-        <div class="flex items-center gap-3">
-          <div class="ai-gradient w-10 h-10 rounded-2xl flex items-center justify-center text-white font-extrabold">4</div>
-          <h2 class="text-xl font-extrabold text-gray-900">Continua e copia</h2>
-        </div>
-        <p class="text-gray-600 mt-3">
-          Se la risposta è lunga, appare <b>Continua</b> al centro in basso.
-          Puoi anche copiare tutto con <b>Copia</b>.
-        </p>
-        <p class="text-xs text-gray-400 mt-3">
-          Suggerimento: se stai leggendo da mobile, scorri fino in fondo e premi <b>Continua</b>.
-        </p>
-      </div>
-    </div>
-
-    <!-- Targets explained -->
-    <section class="mt-10">
-      <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-7 md:p-8">
-        <h3 class="text-xl font-extrabold text-gray-900">Cosa cambia tra i target?</h3>
-        <p class="text-gray-600 mt-2">Stesso tema, diverso modo di spiegarlo:</p>
-
-        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-          <div class="rounded-3xl border bg-gray-50 p-5">
-            <div class="font-extrabold text-gray-900 flex items-center gap-2"><i class="ri-bear-smile-line text-indigo-600"></i>Bambino</div>
-            <div class="text-gray-600 mt-2">Parole semplici, esempi quotidiani, frasi corte.</div>
+        <div class="grid-3">
+          <div class="card" style="box-shadow:none;">
+            <div class="card-inner">
+              <div style="font-weight:800; margin-bottom:6px;">Bambino</div>
+              <p class="sub">Parole semplici, esempi concreti, frasi brevi.</p>
+              <div style="height:8px;"></div>
+              <p class="sub"><b>Stile:</b> “come lo spiegheresti a 8 anni”.</p>
+            </div>
           </div>
-          <div class="rounded-3xl border bg-gray-50 p-5">
-            <div class="font-extrabold text-gray-900 flex items-center gap-2"><i class="ri-graduation-cap-line text-indigo-600"></i>Universitario</div>
-            <div class="text-gray-600 mt-2">Struttura chiara, concetti corretti, termini tecnici spiegati.</div>
+
+          <div class="card" style="box-shadow:none;">
+            <div class="card-inner">
+              <div style="font-weight:800; margin-bottom:6px;">Universitario</div>
+              <p class="sub">Struttura, definizioni, passaggi logici, qualche formula se utile.</p>
+              <div style="height:8px;"></div>
+              <p class="sub"><b>Stile:</b> “chiaro e corretto”.</p>
+            </div>
           </div>
-          <div class="rounded-3xl border bg-gray-50 p-5">
-            <div class="font-extrabold text-gray-900 flex items-center gap-2"><i class="ri-flask-line text-indigo-600"></i>Scienziato</div>
-            <div class="text-gray-600 mt-2">Rigore, dettaglio, assunzioni esplicite, notazione se utile.</div>
+
+          <div class="card" style="box-shadow:none;">
+            <div class="card-inner">
+              <div style="font-weight:800; margin-bottom:6px;">Scienziato</div>
+              <p class="sub">Rigore, assunzioni, limiti, caveat, linguaggio tecnico.</p>
+              <div style="height:8px;"></div>
+              <p class="sub"><b>Stile:</b> “paper / lab notes”.</p>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
 
-    <div class="mt-10 bg-white rounded-3xl shadow-xl border border-gray-100 p-7 md:p-8">
-      <h3 class="text-xl font-extrabold text-gray-900">Domande frequenti</h3>
-      <div class="mt-5 space-y-5 text-gray-600">
-        <div>
-          <div class="font-extrabold text-gray-900">Perché a volte non genera?</div>
-          <div>Se vedi “retry in Xs”, hai raggiunto un limite temporaneo del free tier: aspetta e riprova.</div>
+      </div>
+    </div>
+
+    <div style="height:16px;"></div>
+
+    <!-- Rate limit -->
+    <div class="card">
+      <div class="card-inner">
+        <div style="font-weight:900; font-size:16px; margin-bottom:6px;">⛔ Rate limit (quota) – cosa succede</div>
+        <p class="sub">
+          Se usi il free tier e finisci le richieste, vedrai un box pulito con countdown e CTA verso <b>Prezzi</b> / <b>Upgrade</b>.
+          Niente panico: è normale con le quote gratuite.
+        </p>
+        <div style="height:12px;"></div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="btn" href="/index.html">Torna alla home</a>
+          <a class="btn btn-primary" href="/prezzi.html">Vedi i piani</a>
         </div>
-        <div>
-          <div class="font-extrabold text-gray-900">Posso avere risposte più lunghe?</div>
-          <div>Sì: con piani PRO/BUSINESS (pagina Prezzi) aumenti limiti e priorità (mock).</div>
-        </div>
-        <div>
-          <div class="font-extrabold text-gray-900">Salvate le mie domande?</div>
-          <div>Nella versione attuale no: la demo è stateless. (Cronologia è “in arrivo”).</div>
-        </div>
-        <div>
-          <div class="font-extrabold text-gray-900">Cosa posso fare per ottenere risposte migliori?</div>
+      </div>
+    </div>
+
+    <div style="height:16px;"></div>
+
+    <!-- FAQ -->
+    <div class="card">
+      <div class="card-inner">
+        <div style="font-weight:900; font-size:16px; margin-bottom:8px;">❓ FAQ (mock)</div>
+
+        <div style="display:flex; flex-direction:column; gap:10px;">
           <div>
-            Aggiungi contesto: <i>obiettivo</i>, <i>livello</i>, <i>vincoli</i> (es. “in 5 punti”, “con esempio”, “senza formule”).
+            <div style="font-weight:800; margin-bottom:4px;">Le risposte vengono salvate?</div>
+            <p class="sub">In questa demo no. Puoi aggiungere cronologia con un database (in arrivo nei piani mock).</p>
+          </div>
+
+          <div>
+            <div style="font-weight:800; margin-bottom:4px;">Perché “Continua” a volte ripete?</div>
+            <p class="sub">Dipende dal modello e dai limiti token. Si può mitigare tagliando la “coda” del testo e guidando meglio il prompt.</p>
+          </div>
+
+          <div>
+            <div style="font-weight:800; margin-bottom:4px;">Si può cambiare stile e lunghezza per target?</div>
+            <p class="sub">Sì: ogni target ha un prompt + limiti token/char diversi. “Continua” resta come fallback.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="text-center mt-10">
-      <a href="/" class="inline-block px-6 py-3 rounded-2xl ai-gradient text-white font-semibold shadow-lg hover:scale-[1.01] transition">
-        Vai all’app
-      </a>
-    </div>
-  </main>
-
-  <script>
-    // Mobile menu
-    const menuBtn = document.getElementById('menuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    if (menuBtn && mobileMenu) {
-      menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-    }
-  </script>
+  </div>
 </body>
 </html>
