@@ -7,12 +7,35 @@
   <link rel="stylesheet" href="/theme.css">
 
   <style>
-    /* Wizard layout */
+    /* ===== Wizard layout ===== */
     .wiz{
       display:flex;
       flex-direction:column;
       gap: 14px;
     }
+
+    .topline{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap:wrap;
+      margin-bottom: 4px;
+    }
+
+    .credit-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size: 12px;
+      user-select:none;
+    }
+    .credit-pill b{ color: var(--text); }
 
     .progress{
       height: 10px;
@@ -40,11 +63,14 @@
       transition: transform .45s cubic-bezier(.2,.8,.2,1);
       will-change: transform;
     }
+
     .panel{
       width: 100%;
       flex: 0 0 100%;
       padding: 18px;
-      min-height: 420px;
+      display:flex;
+      flex-direction:column;
+      min-height: 520px;
     }
 
     .panel-title{
@@ -72,7 +98,7 @@
 
     textarea{
       width:100%;
-      min-height: 180px;
+      min-height: 220px;
       resize: vertical;
       background: rgba(0,0,0,.22);
       border: 1px solid var(--border);
@@ -88,14 +114,28 @@
       box-shadow: 0 0 0 4px rgba(124,92,255,.15);
     }
 
+    /* Sticky action bar */
     .wizard-actions{
+      margin-top: auto;
+      position: sticky;
+      bottom: 0;
+      padding-top: 12px;
+      padding-bottom: 8px;
+      background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(11,16,32,.75) 35%,
+        rgba(11,16,32,.92)
+      );
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(233,237,255,.08);
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap: 10px;
-      margin-top: 14px;
       flex-wrap: wrap;
     }
+
     .wizard-actions .left,
     .wizard-actions .right{
       display:flex;
@@ -104,7 +144,12 @@
       flex-wrap: wrap;
     }
 
-    /* Target grid */
+    @media (max-width: 600px){
+      textarea{ min-height: 200px; }
+      .wizard-actions{ padding-bottom: 12px; }
+    }
+
+    /* ===== Targets grid ===== */
     .targets-grid{
       display:grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -124,7 +169,7 @@
       display:flex;
       gap: 12px;
       align-items:flex-start;
-      min-height: 84px;
+      min-height: 86px;
     }
     .target-card:hover{
       background: rgba(255,255,255,.05);
@@ -135,8 +180,8 @@
       background: rgba(124,92,255,.14);
     }
     .ticon{
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       border-radius: 12px;
       display:flex;
       align-items:center;
@@ -149,13 +194,27 @@
     .tname{ font-weight: 900; margin:0; }
     .tdesc{ margin: 4px 0 0; color: var(--muted); font-size: 13px; line-height:1.35; }
 
-    /* Response area */
+    /* ===== Response area ===== */
+    .target-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .target-chip b{ color: var(--text); }
+
     .response-card{
       background: rgba(0,0,0,.18);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 14px;
-      min-height: 240px;
+      min-height: 260px;
       display:flex;
       flex-direction: column;
       gap: 12px;
@@ -195,7 +254,7 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Premium quota box (dark glass to match theme) */
+    /* ===== Premium quota box (dark glass) ===== */
     .quota-premium-card{
       border-radius: 18px;
       border: 1px solid rgba(124,92,255,.35);
@@ -309,6 +368,11 @@
     </header>
 
     <div class="wiz">
+      <div class="topline">
+        <div class="pilltag">🧙 Wizard</div>
+        <div class="credit-pill" id="creditsPill">⚡ Crediti disponibili: <b id="creditsValue">—</b></div>
+      </div>
+
       <div class="progress"><div class="bar" id="bar"></div></div>
 
       <div class="card steps-wrap">
@@ -319,11 +383,11 @@
             <div class="panel-title"><span class="sym">✦</span>Step 1 — Scrivi la domanda</div>
             <p class="panel-sub">Inserisci la tua domanda. Poi vai avanti per scegliere il livello di spiegazione.</p>
 
-            <textarea id="query" placeholder="Esempio: Spiegami cos’è l’entropia e perché è importante."></textarea>
+            <textarea id="query" placeholder="Esempio: Spiegami cos’è il DNA e a cosa serve."></textarea>
 
             <div class="wizard-actions">
               <div class="left">
-                <span class="pilltag">Suggerimento: aggiungi “con esempi”</span>
+                <span class="pilltag">💡 Suggerimento: aggiungi “con esempi”</span>
               </div>
               <div class="right">
                 <button class="btn btn-primary" id="toStep2">Avanti →</button>
@@ -334,7 +398,7 @@
           <!-- STEP 2 -->
           <div class="panel">
             <div class="panel-title"><span class="sym">🎯</span>Step 2 — Scegli il target</div>
-            <p class="panel-sub">Seleziona il target. Puoi cambiare più volte finché non trovi lo stile giusto.</p>
+            <p class="panel-sub">Seleziona un target: appena lo scegli, ti porto automaticamente allo step 3.</p>
 
             <div class="targets-grid" id="targets"></div>
 
@@ -352,6 +416,10 @@
           <div class="panel">
             <div class="panel-title"><span class="sym">💬</span>Step 3 — Risposta</div>
             <p class="panel-sub">Premi “Genera” per ricevere la risposta in streaming. Se si interrompe, usa “Continua”.</p>
+
+            <div class="target-chip" id="targetChip" style="display:none;">
+              🎯 Target selezionato: <b id="targetChipLabel"></b>
+            </div>
 
             <div class="response-card" id="responseCard">
               <div class="response-text" id="response"></div>
@@ -382,7 +450,6 @@
 
         </div>
       </div>
-
     </div>
   </div>
 
@@ -412,7 +479,17 @@
   // ===== Wizard state =====
   let step = 1; // 1..3
   let selectedIndex = -1;
+  let accumulatedText = "";
+  let isGenerating = false;
 
+  // Credits indicator
+  const creditsValueEl = document.getElementById("creditsValue");
+  function setCredits(val){
+    creditsValueEl.textContent = (val === null || val === undefined || val === "") ? "—" : String(val);
+  }
+  setCredits("—");
+
+  // DOM refs
   const track = document.getElementById("track");
   const bar = document.getElementById("bar");
 
@@ -433,13 +510,21 @@
   const continueBtn = document.getElementById("continueBtn");
   const copyBtn = document.getElementById("copyBtn");
 
-  let accumulatedText = "";
-  let isGenerating = false;
+  const targetChip = document.getElementById("targetChip");
+  const targetChipLabel = document.getElementById("targetChipLabel");
 
   function setStep(n){
     step = n;
     track.style.transform = `translateX(${-(step-1) * 100}%)`;
     bar.style.width = (step * 33.3333) + "%";
+
+    // When arriving at step 3 show selected target pill
+    if (step === 3 && selectedIndex >= 0) {
+      targetChip.style.display = "inline-flex";
+      targetChipLabel.textContent = TARGETS[selectedIndex].label;
+    } else if (step !== 3) {
+      targetChip.style.display = "none";
+    }
   }
 
   function setStatus(text, loading=false){
@@ -494,6 +579,14 @@
         selectedIndex = i;
         renderTargets();
         toStep3.disabled = false;
+
+        // Auto-advance to step 3
+        setStep(3);
+        targetChip.style.display = "inline-flex";
+        targetChipLabel.textContent = TARGETS[selectedIndex].label;
+
+        // focus on Generate for "app feel"
+        setTimeout(() => generateBtn.focus(), 60);
       });
       targetsEl.appendChild(el);
     });
@@ -511,6 +604,13 @@
   back1.addEventListener("click", ()=> setStep(1));
   toStep3.addEventListener("click", ()=> setStep(3));
   back2.addEventListener("click", ()=> setStep(2));
+
+  // Ctrl/Cmd+Enter => step 2
+  q.addEventListener("keydown", (e)=>{
+    if((e.ctrlKey || e.metaKey) && e.key === "Enter"){
+      toStep2.click();
+    }
+  });
 
   // ===== Quota box (dark) =====
   function showQuotaBox(message){
@@ -575,6 +675,28 @@
     });
   }
 
+  // ===== Credits header parsing =====
+  function updateCreditsFromHeaders(headers){
+    // Try common names (case-insensitive)
+    const keys = [
+      "x-credits-remaining",
+      "x-ratelimit-remaining",
+      "ratelimit-remaining",
+      "x-remaining-requests",
+      "x-rate-limit-remaining"
+    ];
+
+    for (const k of keys) {
+      const v = headers.get(k);
+      if (v !== null && v !== undefined && String(v).trim() !== "") {
+        setCredits(String(v).trim());
+        return;
+      }
+    }
+    // keep previous if already set; otherwise show —
+    if (!creditsValueEl.textContent || creditsValueEl.textContent === "") setCredits("—");
+  }
+
   // ===== SSE streaming =====
   async function streamGemini(payload, onTextChunk){
     const res = await fetch("/api/gemini", {
@@ -582,6 +704,9 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
+
+    // Update credits (if backend provides headers)
+    updateCreditsFromHeaders(res.headers);
 
     if (!res.ok) {
       let msg = `Errore HTTP ${res.status}`;
@@ -664,6 +789,10 @@
 
     if (!q.value.trim()) { setStep(1); q.focus(); return; }
     if (selectedIndex < 0) { setStep(2); return; }
+
+    // ensure target pill visible on step 3
+    targetChip.style.display = "inline-flex";
+    targetChipLabel.textContent = TARGETS[selectedIndex].label;
 
     if (mode === "generate") {
       accumulatedText = "";
