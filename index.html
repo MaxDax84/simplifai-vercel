@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SimplifAI Clone</title>
+  <title>Simplif-AI</title>
   <link rel="stylesheet" href="/theme.css">
 
   <style>
@@ -180,7 +180,7 @@
     <div class="brand">
       <div class="logo"></div>
       <div>
-        <h1>SimplifAI Clone</h1>
+        <h1>Simplif-AI</h1>
         <span>Risposte su misura, con “Continua” quando serve</span>
       </div>
     </div>
@@ -251,8 +251,7 @@
 
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
             <button class="btn" id="copyBtn" disabled>⧉ Copia</button>
-            <button class="btn btn-primary" id="generateBtn">▶ Genera</button>
-          </div>
+</div>
         </div>
 
         <div id="quotaMount"></div>
@@ -307,7 +306,6 @@
   const spinner = document.getElementById("spinner");
   const statusEl = document.getElementById("status");
   const copyBtn = document.getElementById("copyBtn");
-  const generateBtn = document.getElementById("generateBtn");
   const quotaMount = document.getElementById("quotaMount");
 
   const creditsValueEl = document.getElementById("creditsValue");
@@ -367,7 +365,6 @@
   }
 
   function updateButtons(){
-    generateBtn.disabled = isGenerating;
     copyBtn.disabled = isGenerating || !responseEl.textContent.trim();
   }
 
@@ -624,10 +621,6 @@
     scrollTo(sec3, card3);
   });
   backToTargets.addEventListener("click", () => scrollTo(sec2, card2));
-
-  // Manual generate (fallback)
-  generateBtn.addEventListener("click", () => {
-    preflightGenerateUX();
     run("start");
   });
 
