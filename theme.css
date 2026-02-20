@@ -95,10 +95,10 @@ nav a:hover{
 }
 
 .card{
-  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-  border: 1px solid var(--border);
+  background: rgba(255,255,255,.04);   /* uniforme */
+  border: none;                        /* rimuove linea netta */
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  box-shadow: none;                    /* niente ombra che crea stacco */
 }
 
 .card-inner{ padding:18px; }
