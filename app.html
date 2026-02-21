@@ -3,45 +3,36 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Simplif-AI</title>
+  <title>Simplif-AI – App</title>
   <link rel="stylesheet" href="/theme.css">
 
-  <!-- KaTeX (equazioni) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
-
-  <!-- Markdown + Sanitizzazione -->
-  <script defer src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+  <!-- Marked + DOMPurify (render markdown sicuro) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.11/dist/purify.min.js"></script>
 
   <style>
-    html, body { background: var(--bg) !important; }
-
-    .wrap{width:min(1100px,92vw);margin:0 auto;}
-    .section{margin-top:22px;}
-    .card{padding:22px;border-radius:18px;}
+    .section{ margin-top:22px; }
+    .badge{ font-size:12px; color:var(--muted); margin-bottom:8px; }
+    .title{ font-weight:900; font-size:20px; margin:0 0 6px; }
+    .subt{ color:var(--muted); font-size:14px; margin:0 0 14px; line-height:1.45; }
 
     .hero-row{
-      display:flex;align-items:center;justify-content:space-between;
-      gap:12px;flex-wrap:wrap;margin-top:8px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; flex-wrap:wrap; margin-top:8px;
     }
     .credit-pill{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:8px 12px;border-radius:999px;
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px; border-radius:999px;
       border:1px solid var(--border);
       background:rgba(255,255,255,.03);
-      color:var(--muted);font-size:12px;user-select:none;
+      color:var(--muted); font-size:12px; user-select:none;
     }
-    .credit-pill b{color:var(--text);}
-    .badge{font-size:12px;color:var(--muted);margin-bottom:8px;}
-    .title{font-weight:900;font-size:20px;margin:0 0 6px;}
-    .sub{color:var(--muted);font-size:14px;margin:0 0 14px;line-height:1.45;}
+    .credit-pill b{ color:var(--text); }
 
     textarea{
       width:100%;
       min-height:180px;
-      background:rgba(0,0,0,.22);
+      background:rgba(0,0,0,.18);
       border:1px solid var(--border);
       border-radius:14px;
       padding:12px;
@@ -57,182 +48,175 @@
     }
 
     .actions{
-      display:flex;justify-content:space-between;
-      margin-top:14px;flex-wrap:wrap;gap:10px;align-items:center;
+      display:flex; justify-content:space-between;
+      margin-top:14px; flex-wrap:wrap; gap:10px; align-items:center;
     }
     .hint{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:8px 10px;border-radius:999px;
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px; border-radius:999px;
       border:1px solid var(--border);
       background:rgba(255,255,255,.02);
-      color:var(--muted);font-size:12px;
+      color:var(--muted); font-size:12px;
     }
 
+    /* Targets */
     .targets-grid{
       display:grid;
       grid-template-columns:repeat(3, minmax(0,1fr));
       gap:12px;
     }
-    .len-grid{
-      display:grid;
-      grid-template-columns:repeat(3, minmax(0,1fr));
-      gap:12px;
-    }
-    @media(max-width:900px){
-      .targets-grid{grid-template-columns:1fr;}
-      .len-grid{grid-template-columns:1fr;}
-    }
+    @media(max-width:900px){ .targets-grid{ grid-template-columns:1fr; } }
 
     .target-card{
       border:1px solid var(--border);
       background:rgba(255,255,255,.03);
       border-radius:16px;
       padding:14px;
-      display:flex;gap:12px;
+      display:flex; gap:12px;
       cursor:pointer;
       transition:.15s ease;
       min-height:84px;
       align-items:flex-start;
     }
-    .target-card:hover{background:rgba(255,255,255,.05);transform:translateY(-1px);}
+    .target-card:hover{ background:rgba(255,255,255,.05); transform:translateY(-1px); }
     .target-card.active{
       border-color:rgba(124,92,255,.55);
       background:rgba(124,92,255,.14);
     }
     .ticon{
-      width:38px;height:38px;
-      display:flex;align-items:center;justify-content:center;
+      width:38px; height:38px;
+      display:flex; align-items:center; justify-content:center;
       background:rgba(255,255,255,.06);
       border:1px solid var(--border);
       border-radius:12px;
       font-size:18px;
       flex:0 0 auto;
     }
-    .tname{margin:0;font-weight:900;}
-    .tdesc{margin:4px 0 0;color:var(--muted);font-size:13px;line-height:1.35;}
+    .tname{ margin:0; font-weight:900; }
+    .tdesc{ margin:4px 0 0; color:var(--muted); font-size:13px; line-height:1.35; }
+
+    /* Length */
+    .len-grid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:12px;
+    }
+    @media(max-width:900px){ .len-grid{ grid-template-columns:1fr; } }
 
     .len-card{
       border:1px solid var(--border);
       background:rgba(255,255,255,.03);
       border-radius:16px;
       padding:14px;
-      display:flex;gap:12px;
       cursor:pointer;
       transition:.15s ease;
-      min-height:78px;
-      align-items:flex-start;
+      min-height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
     }
-    .len-card:hover{background:rgba(255,255,255,.05);transform:translateY(-1px);}
+    .len-card:hover{ background:rgba(255,255,255,.05); transform:translateY(-1px); }
     .len-card.active{
       border-color:rgba(124,92,255,.55);
       background:rgba(124,92,255,.14);
     }
-
-    .target-chip{
-      display:inline-flex;align-items:center;gap:10px;
-      padding:10px 12px;border-radius:14px;
+    .len-left{ display:flex; flex-direction:column; gap:4px; }
+    .len-name{ font-weight:900; }
+    .len-desc{ color:var(--muted); font-size:13px; }
+    .len-pill{
+      padding:6px 10px;
+      border-radius:999px;
       border:1px solid var(--border);
       background:rgba(255,255,255,.03);
-      color:var(--muted);font-size:13px;
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+
+    /* Response */
+    .chip{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 12px; border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      color:var(--muted); font-size:13px;
       margin-bottom:10px;
       flex-wrap:wrap;
     }
-    .target-chip b{color:var(--text);}
+    .chip b{ color:var(--text); }
 
-    /* Risposta: niente fascia netta */
-    .response-card{
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      border-radius: 16px;
-      padding: 0;
-      min-height: 260px;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
+    .response-shell{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:16px;
+      min-height:260px;
+      display:flex; flex-direction:column; gap:12px;
     }
-    .response-inner{
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 16px;
-      padding: 16px;
-    }
-
-    /* Markdown */
-    .response-text{
-      color: rgba(233,237,255,.92);
-      font-size:14px;
-      line-height:1.65;
-    }
-    .response-text h1, .response-text h2, .response-text h3{
-      margin: 14px 0 10px;
-      line-height: 1.25;
-    }
-    .response-text h1{ font-size: 20px; }
-    .response-text h2{ font-size: 18px; }
-    .response-text h3{ font-size: 16px; }
-    .response-text p{ margin: 8px 0; }
-    .response-text ul, .response-text ol{ margin: 8px 0 8px 20px; }
-    .response-text li{ margin: 4px 0; }
-    .response-text hr{
-      border: none;
-      height: 1px;
-      background: rgba(255,255,255,.10);
-      margin: 14px 0;
-    }
-    .response-text code{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 0.95em;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.10);
-      padding: 2px 6px;
-      border-radius: 8px;
-    }
-    .response-text pre{
-      background: rgba(0,0,0,.22);
-      border: 1px solid rgba(255,255,255,.10);
-      padding: 12px;
-      border-radius: 14px;
-      overflow:auto;
-      margin: 10px 0;
-    }
-    .response-text pre code{
-      background: transparent;
-      border: none;
-      padding: 0;
-      border-radius: 0;
-    }
-    .response-text blockquote{
-      margin: 10px 0;
-      padding: 10px 12px;
-      border-left: 3px solid rgba(124,92,255,.55);
-      background: rgba(124,92,255,.10);
-      border-radius: 10px;
-      color: rgba(233,237,255,.90);
-    }
-
-    /* KaTeX */
-    .katex { font-size: 1.05em; }
-    .katex-display { margin: 12px 0; }
 
     .status{
-      font-size:12px;color:var(--muted);
-      display:flex;align-items:center;gap:10px;
+      font-size:12px; color:var(--muted);
+      display:flex; align-items:center; gap:10px;
     }
     .spinner{
-      width:14px;height:14px;
+      width:14px; height:14px;
       border:2px solid rgba(255,255,255,.25);
       border-top-color:rgba(255,255,255,.9);
       border-radius:50%;
       animation:spin .8s linear infinite;
     }
-    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes spin{ to{ transform:rotate(360deg); } }
 
     .flash{
       outline:1px solid rgba(124,92,255,.45);
       box-shadow:0 0 0 6px rgba(124,92,255,.12);
       transition:.35s ease;
     }
+
+    /* Markdown styling */
+    .md{
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.7;
+      color: rgba(233,237,255,.92);
+      font-size:14px;
+    }
+    .md h1,.md h2,.md h3{ margin: 14px 0 8px; }
+    .md h1{ font-size: 20px; }
+    .md h2{ font-size: 18px; }
+    .md h3{ font-size: 16px; }
+    .md p{ margin: 10px 0; }
+    .md ul,.md ol{ margin: 10px 0 10px 22px; }
+    .md li{ margin: 6px 0; }
+    .md code{
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.08);
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+    .md pre{
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.08);
+      padding: 12px;
+      border-radius: 14px;
+      overflow:auto;
+    }
+    .md blockquote{
+      margin: 10px 0;
+      padding: 10px 12px;
+      border-left: 3px solid rgba(124,92,255,.55);
+      background: rgba(124,92,255,.10);
+      border-radius: 12px;
+      color: rgba(233,237,255,.88);
+    }
+    .md hr{
+      border:none;
+      border-top:1px solid rgba(255,255,255,.10);
+      margin: 14px 0;
+    }
+    .md a{ color: rgba(38,198,255,.95); }
 
     .quota-card{
       margin-top:12px;
@@ -241,676 +225,674 @@
       background:rgba(124,92,255,.10);
       padding:16px;
     }
-    .qhead{font-weight:900;margin-bottom:6px;display:flex;gap:10px;align-items:center;}
-    .qsub{color:var(--muted);font-size:13px;line-height:1.45;}
+    .qhead{ font-weight:900; margin-bottom:6px; display:flex; gap:10px; align-items:center; }
+    .qsub{ color:var(--muted); font-size:13px; line-height:1.45; }
     .qgrid{
       display:grid;
       grid-template-columns: repeat(2, minmax(0,1fr));
       gap:10px;
       margin-top:12px;
     }
-    @media(max-width:520px){ .qgrid{grid-template-columns:1fr;} }
+    @media(max-width:520px){ .qgrid{ grid-template-columns:1fr; } }
     .qbtn{
-      min-height:44px;border-radius:14px;
+      min-height:44px;
+      border-radius:14px;
       border:1px solid var(--border);
       background:rgba(0,0,0,.18);
       color:var(--text);
       font-weight:800;
       cursor:pointer;
-      display:flex;align-items:center;justify-content:center;
+      display:flex; align-items:center; justify-content:center;
       text-decoration:none;
       transition:.15s ease;
     }
-    .qbtn:hover{background:rgba(255,255,255,.06);transform:translateY(-1px);}
+    .qbtn:hover{ background:rgba(255,255,255,.06); transform:translateY(-1px); }
     .qbtn.primary{
       background:linear-gradient(135deg, rgba(124,92,255,.95), rgba(38,198,255,.85));
       border-color:rgba(124,92,255,.45);
       color:#0b1020;
     }
-
-    /* Colori sezioni */
-    #card1, #card2, #cardLen{ background: rgba(255,255,255,.06) !important; }
-    #card3{ background: rgba(255,255,255,.03) !important; }
   </style>
 </head>
 
-<script>
-  const toggle = document.getElementById("navToggle");
-  const mobileNav = document.getElementById("mobileNav");
-
-  if(toggle){
-    toggle.addEventListener("click", () => {
-      document.body.classList.toggle("nav-open");
-    });
-  }
-
-  mobileNav?.querySelectorAll("a").forEach(link=>{
-    link.addEventListener("click",()=>{
-      document.body.classList.remove("nav-open");
-    });
-  });
-</script>
-  
 <body>
-<div class="wrap">
+  <div class="wrap">
 
-  <header>
-    <div class="brand">
-      <div class="logo"></div>
-      <div>
-        <h1>Simplif-AI</h1>
-        <span>Concetti complessi spiegati in modo semplice. Scegli tu quanto.</span>
+    <header>
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>Simplif-AI</h1>
+          <span>Concetti complessi spiegati in modo semplice. Scegli tu quanto.</span>
+        </div>
       </div>
-    </div>
 
-    <nav id="mainNav">
-      <a href="/index.html" data-nav="home">Home</a>
-      <a href="/app.html">App</a>
-      <a href="/come-funziona.html" data-nav="how">Come funziona</a>
-      <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
-    </nav>
-    <button class="nav-toggle" id="navToggle">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </header>
+      <nav id="mainNav">
+        <a href="/index.html" data-nav="home">Home</a>
+        <a href="/app.html" data-nav="app">Prova</a>
+        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
+        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
+      </nav>
+
+      <!-- mobile hamburger -->
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+        <span></span><span></span><span></span>
+      </button>
+    </header>
+
+    <!-- Mobile overlay menu -->
     <div class="mobile-nav" id="mobileNav">
       <a href="/index.html">Home</a>
       <a href="/app.html">Prova</a>
       <a href="/come-funziona.html">Come funziona</a>
       <a href="/prezzi.html">Prezzi</a>
     </div>
-  
-  <div class="hero-row">
-    <div class="pilltag">✨ Flow</div>
-    <div class="credit-pill">⚡ Crediti disponibili: <b id="creditsValue">—</b></div>
-  </div>
 
-  <!-- 1) DOMANDA -->
-  <section class="section" id="sec1">
-    <div class="card" id="card1">
-      <div class="badge">1) Domanda</div>
-      <h2 class="title">✦ Scrivi la domanda</h2>
-      <p class="sub">Inserisci la domanda e poi clicca “Scegli target”. Scorriamo alla sezione successiva.</p>
-
-      <textarea id="query" placeholder="Esempio: Cos'è l'entropia? Spiega con esempi e una formula."></textarea>
-
-      <div class="actions">
-        <span class="hint">💡 Suggerimento: aggiungi “con esempi”</span>
-        <button class="btn btn-primary" id="goTargets">Scegli target ↓</button>
-      </div>
+    <div class="hero-row">
+      <div class="pilltag">✨ Flow</div>
+      <div class="credit-pill">⚡ Crediti disponibili: <b id="creditsValue">—</b></div>
     </div>
-  </section>
 
-  <!-- 2) TARGET -->
-  <section class="section" id="sec2">
-    <div class="card" id="card2">
-      <div class="badge">2) Target</div>
-      <h2 class="title">🎯 Seleziona il target</h2>
-      <p class="sub">Scegli il target: poi passiamo alla lunghezza della risposta.</p>
+    <!-- 1) DOMANDA -->
+    <section class="section" id="sec1">
+      <div class="card" id="card1">
+        <div class="card-inner">
+          <div class="badge">1) Domanda</div>
+          <h2 class="title">✦ Scrivi la domanda</h2>
+          <p class="subt">Inserisci la domanda e poi clicca “Scegli target”.</p>
 
-      <div class="targets-grid" id="targets"></div>
+          <textarea id="query" placeholder="Esempio: Cos'è il DNA e a cosa serve?"></textarea>
 
-      <div class="actions">
-        <button class="btn" id="backToQ">↑ Torna alla domanda</button>
-        <button class="btn btn-primary" id="goLen" disabled>Scelta lunghezza ↓</button>
+          <div class="actions">
+            <span class="hint">💡 Suggerimento: aggiungi “con esempi”</span>
+            <button class="btn btn-primary" id="goTargets" type="button">Scegli target ↓</button>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- 2.5) LUNGHEZZA -->
-  <section class="section" id="secLen">
-    <div class="card" id="cardLen">
-      <div class="badge">2.5) Lunghezza</div>
-      <h2 class="title">📏 Quanto lunga vuoi la risposta?</h2>
-      <p class="sub">Scegli una lunghezza: scorro alla risposta e parte la generazione automaticamente.</p>
+    <!-- 2) TARGET -->
+    <section class="section" id="sec2">
+      <div class="card" id="card2">
+        <div class="card-inner">
+          <div class="badge">2) Target</div>
+          <h2 class="title">🎯 Seleziona il target</h2>
+          <p class="subt">Clicca un target: poi scegli la lunghezza.</p>
 
-      <div class="len-grid" id="lengths"></div>
+          <div class="targets-grid" id="targets"></div>
 
-      <div class="actions">
-        <button class="btn" id="backToTargets">↑ Cambia target</button>
-        <button class="btn btn-primary" id="goAnswer" disabled>Vai alla risposta ↓</button>
+          <div class="actions">
+            <button class="btn" id="backToQ" type="button">↑ Torna alla domanda</button>
+            <button class="btn btn-primary" id="goLength" type="button" disabled>Vai alla lunghezza ↓</button>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- 3) RISPOSTA -->
-  <section class="section" id="sec3">
-    <div class="card" id="card3">
-      <div class="badge">3) Risposta</div>
-      <h2 class="title">💬 Risposta</h2>
-      <p class="sub">Se serve, continuerò automaticamente fino a completare la risposta (con limite di sicurezza).</p>
+    <!-- 3) LUNGHEZZA -->
+    <section class="section" id="secLen">
+      <div class="card" id="cardLen">
+        <div class="card-inner">
+          <div class="badge">3) Lunghezza</div>
+          <h2 class="title">🧾 Quanto lunga la vuoi?</h2>
+          <p class="subt">Scegli: parte la generazione automaticamente.</p>
 
-      <div class="target-chip" id="targetChip" style="display:none;">
-        🎯 Target: <b id="targetChipLabel"></b>
-        <span style="opacity:.6;">•</span>
-        📏 Lunghezza: <b id="lenChipLabel"></b>
+          <div class="len-grid" id="lengths"></div>
+
+          <div class="actions">
+            <button class="btn" id="backToTargets" type="button">↑ Cambia target</button>
+            <button class="btn btn-primary" id="goAnswer" type="button" disabled>Vai alla risposta ↓</button>
+          </div>
+        </div>
       </div>
+    </section>
 
-      <div class="response-card" id="responseCard">
-        <div class="response-inner">
-          <div class="response-text" id="response"></div>
+    <!-- 4) RISPOSTA -->
+    <section class="section" id="sec3">
+      <div class="card card-dark" id="card3">
+        <div class="card-inner">
+          <div class="badge">4) Risposta</div>
+          <h2 class="title">💬 Risposta</h2>
+          <p class="subt">Streaming + auto-continue: se serve, continuo automaticamente (con limite di sicurezza).</p>
 
-          <div class="actions" style="margin-top:0;">
-            <div class="status">
-              <span id="spinner" class="spinner" style="display:none"></span>
-              <span id="status">Pronto.</span>
-            </div>
-
-            <div style="display:flex;gap:10px;flex-wrap:wrap;">
-              <button class="btn" id="copyBtn" disabled>⧉ Copia</button>
-            </div>
+          <div class="chip" id="chips" style="display:none;">
+            🎯 Target: <b id="chipTarget"></b>
+            <span style="opacity:.5">•</span>
+            🧾 Lunghezza: <b id="chipLen"></b>
           </div>
 
-          <div id="quotaMount"></div>
+          <div class="response-shell" id="responseShell">
+            <div id="response" class="md"></div>
+
+            <div class="actions" style="margin-top:0;">
+              <div class="status">
+                <span id="spinner" class="spinner" style="display:none"></span>
+                <span id="status">Pronto.</span>
+              </div>
+
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <button class="btn" id="copyBtn" type="button" disabled>⧉ Copia</button>
+              </div>
+            </div>
+
+            <div id="quotaMount"></div>
+          </div>
+
+          <div class="actions">
+            <button class="btn" id="backToLen" type="button">↑ Cambia lunghezza</button>
+            <a class="btn" href="/prezzi.html">Vedi Prezzi</a>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div class="actions">
-        <button class="btn" id="backToLen">↑ Cambia lunghezza</button>
-        <a class="btn" href="/prezzi.html">Vedi Prezzi</a>
-      </div>
-    </div>
-  </section>
+    <div style="height:26px;"></div>
+  </div>
 
-  <div style="height:26px;"></div>
-</div>
+  <script>
+    /* -------------------------
+       Mobile nav toggle
+    ------------------------- */
+    (function(){
+      const toggle = document.getElementById("navToggle");
+      const mobileNav = document.getElementById("mobileNav");
+      if(!toggle || !mobileNav) return;
 
-<script>
-window.addEventListener("DOMContentLoaded", () => {
-  // Navbar active
-  (function(){
-    const path = location.pathname.toLowerCase();
-    let key = "home";
-    if (path.includes("come-funziona")) key = "how";
-    else if (path.includes("prezzi")) key = "pricing";
-    else if (path.includes("checkout")) key = "pricing";
-    document.querySelectorAll('#mainNav a').forEach(a=>{
-      if(a.dataset.nav === key) a.classList.add('nav-active');
-    });
-  })();
+      toggle.addEventListener("click", () => {
+        document.body.classList.toggle("nav-open");
+      });
+      mobileNav.querySelectorAll("a").forEach(a => {
+        a.addEventListener("click", () => document.body.classList.remove("nav-open"));
+      });
+    })();
 
-  // marked config
-  const hasMarked = typeof window.marked?.parse === "function";
-  const hasPurify = typeof window.DOMPurify?.sanitize === "function";
+    /* -------------------------
+       Navbar active
+    ------------------------- */
+    (function(){
+      const path = location.pathname.toLowerCase();
+      let key = "home";
+      if (path.includes("/app")) key = "app";
+      else if (path.includes("come-funziona")) key = "how";
+      else if (path.includes("prezzi")) key = "pricing";
+      else if (path.includes("checkout")) key = "pricing";
+      document.querySelectorAll('#mainNav a').forEach(a=>{
+        if(a.dataset.nav === key) a.classList.add('nav-active');
+      });
+    })();
 
-  if (hasMarked) {
-    window.marked.setOptions({
-      gfm: true,
-      breaks: true,
-      mangle: false,
-      headerIds: false
-    });
-  }
+    /* -------------------------
+       Targets & Lengths
+    ------------------------- */
+    const TARGETS = [
+      { label:"Bebè", icon:"👶", desc:"Pochissime parole, super semplice.", prompt:"Spiega come a un bebè: frasi molto brevi, parole semplicissime, niente dettagli tecnici.", baseTokens:1800, baseChars:4500 },
+      { label:"Bambino", icon:"🧒", desc:"Semplice, analogie, frasi brevi.", prompt:"Spiega come a un bambino: usa parole semplici, esempi concreti, frasi brevi.", baseTokens:2500, baseChars:6000 },
+      { label:"Ragazzo", icon:"👨", desc:"Chiaro e un po’ più dettagliato.", prompt:"Spiega come a un ragazzo: chiaro, un po’ più dettagliato, esempi e analogie.", baseTokens:2500, baseChars:7000 },
+      { label:"Universitario", icon:"🎓", desc:"Struttura e concetti corretti.", prompt:"Spiega come a uno studente universitario: struttura chiara, concetti corretti.", baseTokens:2500, baseChars:9000 },
+      { label:"Esperto", icon:"🧠", desc:"Dettagli tecnici e caveat.", prompt:"Spiega come a un esperto: dettagli tecnici, assunzioni esplicite, caveat.", baseTokens:3500, baseChars:12000 },
+      { label:"Scienziato", icon:"🧪", desc:"Rigore, limiti, definizioni.", prompt:"Spiega come a uno scienziato: rigore, definizioni, limiti, struttura.", baseTokens:3500, baseChars:14000 }
+    ];
 
-  const TARGETS = [
-    { label:"Bambino", icon:"🧒", desc:"Semplice, analogie, frasi brevi.", prompt:"Spiega come a un bambino: usa parole semplici, esempi concreti, frasi brevi.", maxTokens:2500, maxChars:6000 },
-    { label:"Ragazzo", icon:"👨", desc:"Chiaro e un po’ più dettagliato.", prompt:"Spiega come a un ragazzo: semplice ma più dettagliato, esempi e analogie.", maxTokens:2500, maxChars:7000 },
-    { label:"Universitario", icon:"🎓", desc:"Struttura e concetti corretti.", prompt:"Spiega come a uno studente universitario: struttura chiara, concetti corretti.", maxTokens:2500, maxChars:9000 },
-    { label:"Adulto", icon:"🧑", desc:"Pratico e diretto.", prompt:"Spiega come a un adulto: diretto, pratico, con esempi.", maxTokens:2500, maxChars:8000 },
-    { label:"Esperto", icon:"🧠", desc:"Dettagli tecnici e caveat.", prompt:"Spiega come a un esperto: dettagli tecnici, assunzioni esplicite, caveat.", maxTokens:3500, maxChars:12000 },
-    { label:"Scienziato", icon:"🧪", desc:"Rigore, limiti, definizioni.", prompt:"Spiega come a uno scienziato: rigore, definizioni, limiti, struttura.", maxTokens:3500, maxChars:14000 }
-  ];
+    const LENGTHS = [
+      { key:"breve", label:"Breve", desc:"Risposta rapida, essenziale.", pill:"~1 min", multiplier:0.45, instruction:"Rispondi in modo BREVE (essenziale), senza divagare." },
+      { key:"medio", label:"Medio", desc:"Equilibrata, con esempi.", pill:"~2–3 min", multiplier:0.75, instruction:"Rispondi in modo MEDIO: chiaro, con qualche esempio, senza diventare troppo lungo." },
+      { key:"lungo", label:"Lungo", desc:"Completa, ben strutturata.", pill:"~4–6 min", multiplier:1.00, instruction:"Rispondi in modo LUNGO: completo, ben strutturato, con esempi dove utile." }
+    ];
 
-  const LENGTHS = [
-    { key:"breve", label:"Breve", icon:"⚡", desc:"Sintetica e diretta.", tokensMul:0.55, charsMul:0.55, extra:"Rispondi in modo breve e diretto (max ~8 frasi)."},
-    { key:"medio", label:"Medio", icon:"📝", desc:"Completa ma non prolissa.", tokensMul:1.00, charsMul:1.00, extra:"Rispondi in modo completo ma non prolisso, con esempi essenziali."},
-    { key:"lungo", label:"Lungo", icon:"📚", desc:"Molto dettagliata.", tokensMul:1.45, charsMul:1.45, extra:"Rispondi in modo molto dettagliato, con sezioni, esempi e approfondimenti."}
-  ];
+    /* -------------------------
+       Auto-continue
+    ------------------------- */
+    const AUTO_CONTINUE_MAX_HOPS = 6;
+    let autoHopCount = 0;
 
-  const AUTO_CONTINUE_MAX_HOPS = 6;
-  let autoHopCount = 0;
+    /* -------------------------
+       State
+    ------------------------- */
+    let selectedTargetIndex = -1;
+    let selectedLenKey = "";
+    let accumulatedText = "";    // markdown
+    let isGenerating = false;
 
-  let selectedIndex = -1;
-  let selectedLen = ""; // "breve"|"medio"|"lungo"
+    /* -------------------------
+       DOM
+    ------------------------- */
+    const q = document.getElementById("query");
 
-  let isGenerating = false;
-  let rawText = "";
-  let cleanText = "";
+    const targetsEl = document.getElementById("targets");
+    const lengthsEl = document.getElementById("lengths");
 
-  // DOM
-  const q = document.getElementById("query");
-  const targetsEl = document.getElementById("targets");
-  const lengthsEl = document.getElementById("lengths");
-  const responseEl = document.getElementById("response");
-  const spinner = document.getElementById("spinner");
-  const statusEl = document.getElementById("status");
-  const copyBtn = document.getElementById("copyBtn");
-  const quotaMount = document.getElementById("quotaMount");
-  const creditsValueEl = document.getElementById("creditsValue");
+    const goTargets = document.getElementById("goTargets");
+    const backToQ = document.getElementById("backToQ");
+    const goLength = document.getElementById("goLength");
+    const backToTargets = document.getElementById("backToTargets");
+    const goAnswer = document.getElementById("goAnswer");
+    const backToLen = document.getElementById("backToLen");
 
-  const targetChip = document.getElementById("targetChip");
-  const targetChipLabel = document.getElementById("targetChipLabel");
-  const lenChipLabel = document.getElementById("lenChipLabel");
+    const sec1 = document.getElementById("sec1");
+    const sec2 = document.getElementById("sec2");
+    const secLen = document.getElementById("secLen");
+    const sec3 = document.getElementById("sec3");
 
-  const sec1 = document.getElementById("sec1");
-  const sec2 = document.getElementById("sec2");
-  const secLen = document.getElementById("secLen");
-  const sec3 = document.getElementById("sec3");
+    const card1 = document.getElementById("card1");
+    const card2 = document.getElementById("card2");
+    const cardLen = document.getElementById("cardLen");
+    const card3 = document.getElementById("card3");
 
-  const card1 = document.getElementById("card1");
-  const card2 = document.getElementById("card2");
-  const cardLen = document.getElementById("cardLen");
-  const card3 = document.getElementById("card3");
+    const responseEl = document.getElementById("response");
+    const spinner = document.getElementById("spinner");
+    const statusEl = document.getElementById("status");
+    const copyBtn = document.getElementById("copyBtn");
+    const quotaMount = document.getElementById("quotaMount");
 
-  const goTargets = document.getElementById("goTargets");
-  const backToQ = document.getElementById("backToQ");
-  const goLen = document.getElementById("goLen");
-  const backToTargets = document.getElementById("backToTargets");
-  const goAnswer = document.getElementById("goAnswer");
-  const backToLen = document.getElementById("backToLen");
+    const chips = document.getElementById("chips");
+    const chipTarget = document.getElementById("chipTarget");
+    const chipLen = document.getElementById("chipLen");
 
-  function setCredits(v){ creditsValueEl.textContent = v ?? "—"; }
+    const creditsValueEl = document.getElementById("creditsValue");
+    function setCredits(v){ creditsValueEl.textContent = v ?? "—"; }
 
-  function flash(card){
-    card.classList.add("flash");
-    setTimeout(()=>card.classList.remove("flash"), 420);
-  }
-  function scrollTo(sec, card){
-    sec.scrollIntoView({ behavior:"smooth", block:"start" });
-    flash(card);
-  }
-
-  function setStatus(text, loading=false){
-    statusEl.textContent = text;
-    spinner.style.display = loading ? "inline-block" : "none";
-  }
-
-  function escapeHtml(str){
-    return String(str)
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
-
-  function clearQuotaBox(){ quotaMount.innerHTML = ""; }
-
-  function showQuotaBox(message){
-    quotaMount.innerHTML = `
-      <div class="quota-card">
-        <div class="qhead">⚠️ Limite / crediti</div>
-        <div class="qsub">${escapeHtml(message || "Limite temporaneo. Riprova oppure fai upgrade.")}</div>
-        <div class="qgrid">
-          <a class="qbtn" href="/prezzi.html">Vedi i piani</a>
-          <a class="qbtn primary" href="/checkout.html">Upgrade</a>
-        </div>
-      </div>
-    `;
-  }
-
-  function updateButtons(){
-    copyBtn.disabled = isGenerating || !(responseEl.textContent || "").trim();
-    goLen.disabled = selectedIndex < 0;
-    goAnswer.disabled = !selectedLen;
-  }
-
-  function endsWithContinueMarker(txt){
-    return /\.\.\.\(continua\)\s*$/i.test((txt||"").trim());
-  }
-  function stripContinueMarker(txt){
-    return (txt || "").replace(/\.\.\.\(continua\)\s*$/i, "").trimEnd();
-  }
-  function nearLimitHeuristic(txt){
-    if (selectedIndex < 0) return false;
-    const t = TARGETS[selectedIndex];
-    const l = LENGTHS.find(x=>x.key===selectedLen) || LENGTHS[1];
-    const maxChars = Math.round(t.maxChars * l.charsMul);
-    const s = (txt || "").trim();
-    if (!s) return false;
-    return s.length >= Math.floor(maxChars * 0.92);
-  }
-  function looksTruncated(txt){
-    const s = (txt || "").trim();
-    if (!s) return false;
-    if (/[,:;–—-]$/.test(s)) return true;
-    if (/\.\.\.$/.test(s)) return true;
-    if (s.length > 220 && !/[.!?…)"'\]]$/.test(s)) return true;
-    return false;
-  }
-
-  // Markdown -> HTML safe
-  function mdToHtml(md){
-    const safeText = String(md || "");
-    if (!hasMarked || !hasPurify) {
-      return escapeHtml(safeText).replaceAll("\n","<br>");
+    /* -------------------------
+       Helpers
+    ------------------------- */
+    function flash(card){
+      card.classList.add("flash");
+      setTimeout(()=>card.classList.remove("flash"), 420);
     }
-    const html = window.marked.parse(safeText);
-    return window.DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
-  }
-
-  // Render pipeline (debounced): Markdown -> HTML -> KaTeX
-  let renderTimer = null;
-  function scheduleRender(final=false){
-    clearTimeout(renderTimer);
-    renderTimer = setTimeout(() => renderNow(final), final ? 0 : 120);
-  }
-
-  function renderNow(final=false){
-    const src = final ? cleanText : rawText;
-    responseEl.innerHTML = mdToHtml(src);
-
-    if (window.renderMathInElement) {
-      try{
-        window.renderMathInElement(responseEl, {
-          delimiters: [
-            {left: "$$", right: "$$", display: true},
-            {left: "$", right: "$", display: false}
-          ],
-          throwOnError: false
-        });
-      } catch {}
+    function scrollTo(sec, card){
+      sec.scrollIntoView({ behavior:"smooth", block:"start" });
+      flash(card);
     }
-    updateButtons();
-  }
 
-  function resetAnswerUI(){
-    clearQuotaBox();
-    rawText = "";
-    cleanText = "";
-    responseEl.innerHTML = "";
-    autoHopCount = 0;
-  }
-
-  function preflightGenerateUX(){
-    resetAnswerUI();
-    isGenerating = true;
-    updateButtons();
-    setStatus("Ok! Sto generando…", true);
-  }
-
-  function setChips(){
-    if (selectedIndex < 0 || !selectedLen) {
-      targetChip.style.display = "none";
-      return;
+    function setStatus(text, loading=false){
+      statusEl.textContent = text;
+      spinner.style.display = loading ? "inline-block" : "none";
     }
-    const t = TARGETS[selectedIndex];
-    const l = LENGTHS.find(x=>x.key===selectedLen);
-    targetChip.style.display = "inline-flex";
-    targetChipLabel.textContent = t.label;
-    lenChipLabel.textContent = l ? l.label : selectedLen;
-  }
 
-  function maybeRestartGeneration(reason){
-    // se l'utente modifica target o lunghezza dopo aver già scelto entrambi -> riparti
-    if (selectedIndex >= 0 && selectedLen) {
-      scrollTo(sec3, card3);
-      preflightGenerateUX();
-      setTimeout(() => run("start"), 240);
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
     }
-  }
 
-  function renderTargets(){
-    targetsEl.innerHTML = "";
-    TARGETS.forEach((t, i) => {
-      const el = document.createElement("div");
-      el.className = "target-card" + (i === selectedIndex ? " active" : "");
-      el.innerHTML = `
-        <div class="ticon">${t.icon}</div>
-        <div>
-          <p class="tname">${t.label}</p>
-          <p class="tdesc">${t.desc}</p>
+    function clearQuotaBox(){ quotaMount.innerHTML = ""; }
+
+    function showQuotaBox(message){
+      quotaMount.innerHTML = `
+        <div class="quota-card">
+          <div class="qhead">⚠️ Limite / crediti</div>
+          <div class="qsub">${escapeHtml(message || "Limite temporaneo. Riprova oppure fai upgrade.")}</div>
+          <div class="qgrid">
+            <a class="qbtn" href="/prezzi.html">Vedi i piani</a>
+            <a class="qbtn primary" href="/checkout.html">Upgrade</a>
+          </div>
         </div>
       `;
-      el.addEventListener("click", () => {
-        const changed = selectedIndex !== i;
-        selectedIndex = i;
-        renderTargets();
+    }
 
-        // Se cambi target, resetto scelta lunghezza per forzare selezione consapevole
-        // (se preferisci mantenerla, dimmelo)
-        if (changed) selectedLen = "";
+    function updateButtons(){
+      copyBtn.disabled = isGenerating || !accumulatedText.trim();
+      goLength.disabled = selectedTargetIndex < 0;
+      goAnswer.disabled = !selectedLenKey;
+    }
 
-        renderLengths();
-        setChips();
-        updateButtons();
+    /* Markdown render (throttled) */
+    let renderTimer = null;
+    function renderNow(){
+      // marked.parse -> DOMPurify.sanitize
+      const html = marked.parse(accumulatedText || "");
+      responseEl.innerHTML = DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
+    }
+    function scheduleRender(){
+      if(renderTimer) return;
+      renderTimer = setTimeout(() => {
+        renderTimer = null;
+        renderNow();
+      }, 120);
+    }
 
-        // dopo target -> vai alla sezione lunghezza
-        scrollTo(secLen, cardLen);
+    function stripContinueMarker(txt){
+      return txt.replace(/\.\.\.\(continua\)\s*$/i, "").trimEnd();
+    }
+    function endsWithContinueMarker(txt){
+      return /\.\.\.\(continua\)\s*$/i.test((txt||"").trim());
+    }
 
-        // se c'era già una lunghezza (caso: non reset), riparti
-        if (!changed && selectedLen) maybeRestartGeneration("target");
+    function getLenObj(){
+      return LENGTHS.find(x => x.key === selectedLenKey) || null;
+    }
+
+    function calcLimits(){
+      const t = TARGETS[selectedTargetIndex];
+      const l = getLenObj() || LENGTHS[1];
+      const maxTokens = Math.max(600, Math.floor(t.baseTokens * l.multiplier));
+      const maxChars  = Math.max(1800, Math.floor(t.baseChars  * l.multiplier));
+      return { maxTokens, maxChars };
+    }
+
+    function nearLimitHeuristic(text){
+      if (selectedTargetIndex < 0 || !selectedLenKey) return false;
+      const { maxChars } = calcLimits();
+      const trimmed = (text || "").trim();
+      if (!trimmed) return false;
+      return trimmed.length >= Math.floor(maxChars * 0.92);
+    }
+
+    /* -------------------------
+       Credits header parsing
+    ------------------------- */
+    function updateCreditsFromHeaders(headers){
+      const rem = headers.get("x-credits-remaining");
+      const lim = headers.get("x-credits-limit");
+      if (rem && String(rem).trim() !== "") {
+        const r = String(rem).trim();
+        const l = lim && String(lim).trim() !== "" ? String(lim).trim() : "";
+        setCredits(l ? `${r}/${l}` : r);
+      }
+    }
+
+    /* -------------------------
+       SSE streaming (robusto)
+    ------------------------- */
+    async function streamGemini(payload, onTextChunk){
+      const res = await fetch("/api/gemini", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
       });
-      targetsEl.appendChild(el);
-    });
-  }
 
-  function renderLengths(){
-    lengthsEl.innerHTML = "";
-    LENGTHS.forEach((l) => {
-      const el = document.createElement("div");
-      el.className = "len-card" + (l.key === selectedLen ? " active" : "");
-      el.innerHTML = `
-        <div class="ticon">${l.icon}</div>
-        <div>
-          <p class="tname">${l.label}</p>
-          <p class="tdesc">${l.desc}</p>
-        </div>
-      `;
-      el.addEventListener("click", () => {
-        const changed = selectedLen !== l.key;
-        selectedLen = l.key;
-        renderLengths();
-        setChips();
-        updateButtons();
+      updateCreditsFromHeaders(res.headers);
 
-        // scelto tutto -> scroll risposta + start
-        scrollTo(sec3, card3);
-        preflightGenerateUX();
-        setTimeout(() => run("start"), 260);
-      });
-      lengthsEl.appendChild(el);
-    });
-  }
-
-  renderTargets();
-  renderLengths();
-  updateButtons();
-  setStatus("Pronto.", false);
-
-  function updateCreditsFromHeaders(headers){
-    const rem = headers.get("x-credits-remaining");
-    const lim = headers.get("x-credits-limit");
-    if (rem && String(rem).trim() !== "") {
-      const r = String(rem).trim();
-      const l = lim && String(lim).trim() !== "" ? String(lim).trim() : "";
-      setCredits(l ? `${r}/${l}` : r);
-    }
-  }
-
-  async function streamGemini(payload, onTextChunk){
-    const res = await fetch("/api/gemini", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-
-    updateCreditsFromHeaders(res.headers);
-
-    if (!res.ok) {
-      let msg = `Errore HTTP ${res.status}`;
-      const ct = (res.headers.get("content-type") || "").toLowerCase();
-      try {
-        if (ct.includes("application/json")) {
-          const j = await res.json();
-          msg = j?.error || j?.message || msg;
-        } else {
-          const t = await res.text();
-          if (t && t.trim()) msg = t.trim().slice(0, 900);
-        }
-      } catch {}
-      const err = new Error(msg);
-      err.status = res.status;
-      throw err;
-    }
-
-    const contentType = (res.headers.get("content-type") || "").toLowerCase();
-    if (!contentType.includes("text/event-stream")) {
-      const txt = await res.text();
-      if (txt) onTextChunk(txt);
-      return;
-    }
-
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder("utf-8");
-
-    let buffer = "";
-    let uiBuffer = "";
-    const FLUSH_EVERY = 30;
-
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop() || "";
-
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed.startsWith("data:")) continue;
-
-        const data = trimmed.slice(5).trim();
-        if (!data || data === "[DONE]") continue;
-
+      if (!res.ok) {
+        let msg = `Errore HTTP ${res.status}`;
+        const ct = (res.headers.get("content-type") || "").toLowerCase();
         try {
-          const obj = JSON.parse(data);
-          const parts = obj?.candidates?.[0]?.content?.parts || [];
-          for (const p of parts) {
-            if (typeof p?.text === "string" && p.text.length) {
-              uiBuffer += p.text;
-              if (uiBuffer.length >= FLUSH_EVERY) {
-                onTextChunk(uiBuffer);
-                uiBuffer = "";
+          if (ct.includes("application/json")) {
+            const j = await res.json();
+            msg = j?.error || j?.message || msg;
+          } else {
+            const t = await res.text();
+            if (t && t.trim()) msg = t.trim().slice(0, 900);
+          }
+        } catch {}
+        const err = new Error(msg);
+        err.status = res.status;
+        throw err;
+      }
+
+      const contentType = (res.headers.get("content-type") || "").toLowerCase();
+      if (!contentType.includes("text/event-stream")) {
+        const txt = await res.text();
+        if (txt) onTextChunk(txt);
+        return;
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+
+      let buffer = "";
+      let uiBuffer = "";
+      const FLUSH_EVERY = 30;
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith("data:")) continue;
+
+          const data = trimmed.slice(5).trim();
+          if (!data || data === "[DONE]") continue;
+
+          try {
+            const obj = JSON.parse(data);
+            const parts = obj?.candidates?.[0]?.content?.parts || [];
+            for (const p of parts) {
+              if (typeof p?.text === "string" && p.text.length) {
+                uiBuffer += p.text;
+                if (uiBuffer.length >= FLUSH_EVERY) {
+                  onTextChunk(uiBuffer);
+                  uiBuffer = "";
+                }
               }
             }
+          } catch {
+            // ignore chunk
           }
-        } catch {
-          // ignore chunk
+        }
+      }
+
+      if (uiBuffer) onTextChunk(uiBuffer);
+    }
+
+    function buildPayload(mode){
+      const t = TARGETS[selectedTargetIndex];
+      const l = getLenObj();
+      const { maxTokens, maxChars } = calcLimits();
+
+      const lengthInstruction = l ? l.instruction : "";
+      const targetPrompt = `${t.prompt}\n\n${lengthInstruction}`;
+
+      return {
+        query: q.value.trim(),
+        targetPrompt,
+        maxTokens,
+        maxChars,
+        mode: mode === "continue" ? "continue" : "start",
+        previousText: mode === "continue" ? accumulatedText : ""
+      };
+    }
+
+    function preflightGenerateUX(){
+      clearQuotaBox();
+      accumulatedText = "";
+      responseEl.innerHTML = "";
+      autoHopCount = 0;
+
+      isGenerating = true;
+      updateButtons();
+      setStatus("Ok! Sto generando…", true);
+    }
+
+    async function run(mode){
+      clearQuotaBox();
+
+      if (!q.value.trim()) {
+        isGenerating = false;
+        updateButtons();
+        setStatus("Scrivi prima una domanda.", false);
+        scrollTo(sec1, card1);
+        q.focus();
+        return;
+      }
+      if (selectedTargetIndex < 0) {
+        isGenerating = false;
+        updateButtons();
+        setStatus("Scegli un target.", false);
+        scrollTo(sec2, card2);
+        return;
+      }
+      if (!selectedLenKey) {
+        isGenerating = false;
+        updateButtons();
+        setStatus("Scegli la lunghezza.", false);
+        scrollTo(secLen, cardLen);
+        return;
+      }
+
+      // UI chips
+      chips.style.display = "inline-flex";
+      chipTarget.textContent = TARGETS[selectedTargetIndex].label;
+      chipLen.textContent = getLenObj()?.label || selectedLenKey;
+
+      // Status
+      if (mode === "continue") {
+        isGenerating = true;
+        updateButtons();
+        setStatus(`Sto continuando… (${autoHopCount + 1})`, true);
+      } else {
+        isGenerating = true;
+        updateButtons();
+        setStatus("Sto generando…", true);
+      }
+
+      try {
+        let rawEndText = "";
+        await streamGemini(buildPayload(mode), (chunk) => {
+          accumulatedText += chunk;
+          rawEndText = accumulatedText;
+          scheduleRender();
+        });
+
+        // decide continuation BEFORE stripping (importante!)
+        const needAuto = endsWithContinueMarker(rawEndText) || nearLimitHeuristic(rawEndText);
+
+        // strip marker for display + for next continue
+        accumulatedText = stripContinueMarker(accumulatedText);
+        renderNow();
+
+        isGenerating = false;
+        updateButtons();
+        setStatus("Fatto.", false);
+
+        if (needAuto && autoHopCount < AUTO_CONTINUE_MAX_HOPS) {
+          autoHopCount++;
+          isGenerating = true;
+          updateButtons();
+          setStatus(`Sto continuando automaticamente… (${autoHopCount})`, true);
+          await new Promise(r => setTimeout(r, 200));
+          return run("continue");
+        }
+
+        autoHopCount = 0;
+
+      } catch (err) {
+        isGenerating = false;
+        updateButtons();
+
+        const msg = err?.message || "Errore.";
+        setStatus("Errore.", false);
+
+        if (err?.status === 429 || /quota|exceeded|retry in|credit/i.test(msg)) {
+          showQuotaBox(msg);
+        } else {
+          showQuotaBox(msg);
         }
       }
     }
 
-    if (uiBuffer) onTextChunk(uiBuffer);
-  }
+    /* -------------------------
+       Render targets / lengths
+    ------------------------- */
+    function renderTargets(){
+      targetsEl.innerHTML = "";
+      TARGETS.forEach((t, i) => {
+        const el = document.createElement("div");
+        el.className = "target-card" + (i === selectedTargetIndex ? " active" : "");
+        el.innerHTML = `
+          <div class="ticon">${t.icon}</div>
+          <div>
+            <p class="tname">${t.label}</p>
+            <p class="tdesc">${t.desc}</p>
+          </div>
+        `;
+        el.addEventListener("click", () => {
+          selectedTargetIndex = i;
+          renderTargets();
+          updateButtons();
 
-  function buildPayload(mode){
-    const t = TARGETS[selectedIndex];
-    const l = LENGTHS.find(x=>x.key===selectedLen) || LENGTHS[1];
+          // vai alla lunghezza
+          scrollTo(secLen, cardLen);
 
-    const maxTokens = Math.max(256, Math.round(t.maxTokens * l.tokensMul));
-    const maxChars  = Math.max(1200, Math.round(t.maxChars  * l.charsMul));
-
-    return {
-      query: q.value.trim(),
-      targetPrompt: t.prompt + "\n\n" + l.extra,
-      maxTokens,
-      maxChars,
-      mode: mode === "continue" ? "continue" : "start",
-      previousText: mode === "continue" ? cleanText : ""
-    };
-  }
-
-  async function run(mode){
-    clearQuotaBox();
-
-    if (!q.value.trim()) {
-      isGenerating = false;
-      updateButtons();
-      setStatus("Scrivi prima una domanda.", false);
-      scrollTo(sec1, card1);
-      q.focus();
-      return;
-    }
-    if (selectedIndex < 0) {
-      isGenerating = false;
-      updateButtons();
-      setStatus("Scegli un target.", false);
-      scrollTo(sec2, card2);
-      return;
-    }
-    if (!selectedLen) {
-      isGenerating = false;
-      updateButtons();
-      setStatus("Scegli la lunghezza.", false);
-      scrollTo(secLen, cardLen);
-      return;
-    }
-
-    isGenerating = true;
-    updateButtons();
-    setStatus(mode === "continue" ? `Sto continuando… (${autoHopCount + 1})` : "Sto generando…", true);
-
-    try {
-      await streamGemini(buildPayload(mode), (chunk) => {
-        rawText += chunk;
-        scheduleRender(false);
+          // se avevo già scelto la lunghezza, rigenera automaticamente
+          if (selectedLenKey) {
+            scrollTo(sec3, card3);
+            preflightGenerateUX();
+            setTimeout(() => run("start"), 220);
+          }
+        });
+        targetsEl.appendChild(el);
       });
+    }
 
-      const hadMarker = endsWithContinueMarker(rawText);
-      cleanText = stripContinueMarker(rawText);
-      scheduleRender(true);
+    function renderLengths(){
+      lengthsEl.innerHTML = "";
+      LENGTHS.forEach((l) => {
+        const el = document.createElement("div");
+        el.className = "len-card" + (l.key === selectedLenKey ? " active" : "");
+        el.innerHTML = `
+          <div class="len-left">
+            <div class="len-name">${l.label}</div>
+            <div class="len-desc">${l.desc}</div>
+          </div>
+          <div class="len-pill">${l.pill}</div>
+        `;
+        el.addEventListener("click", () => {
+          selectedLenKey = l.key;
+          renderLengths();
+          updateButtons();
 
-      isGenerating = false;
-      updateButtons();
-      setStatus("Fatto.", false);
+          // scroll + auto start
+          scrollTo(sec3, card3);
+          preflightGenerateUX();
+          setTimeout(() => run("start"), 240);
+        });
+        lengthsEl.appendChild(el);
+      });
+    }
 
-      const needContinue = hadMarker || nearLimitHeuristic(cleanText) || looksTruncated(cleanText);
+    renderTargets();
+    renderLengths();
+    updateButtons();
 
-      if (needContinue && autoHopCount < AUTO_CONTINUE_MAX_HOPS) {
-        autoHopCount++;
-        isGenerating = true;
-        updateButtons();
-        setStatus(`Sto continuando automaticamente… (${autoHopCount})`, true);
-        await new Promise(r => setTimeout(r, 220));
-        rawText = cleanText;
-        return run("continue");
+    /* -------------------------
+       Buttons navigation
+    ------------------------- */
+    goTargets.addEventListener("click", () => {
+      if (!q.value.trim()) { q.focus(); return; }
+      scrollTo(sec2, card2);
+    });
+
+    backToQ.addEventListener("click", () => scrollTo(sec1, card1));
+
+    goLength.addEventListener("click", () => {
+      if (selectedTargetIndex < 0) return;
+      scrollTo(secLen, cardLen);
+    });
+
+    backToTargets.addEventListener("click", () => scrollTo(sec2, card2));
+
+    goAnswer.addEventListener("click", () => {
+      if (!selectedLenKey) return;
+      scrollTo(sec3, card3);
+    });
+
+    backToLen.addEventListener("click", () => scrollTo(secLen, cardLen));
+
+    /* -------------------------
+       Copy
+    ------------------------- */
+    copyBtn.addEventListener("click", async () => {
+      const text = (accumulatedText || "").trim();
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+        setStatus("Copiato ✅", false);
+        setTimeout(() => setStatus("Pronto.", false), 900);
+      } catch {
+        setStatus("Non riesco a copiare (permessi).", false);
       }
+    });
 
-      autoHopCount = 0;
-
-    } catch (err) {
-      isGenerating = false;
-      updateButtons();
-      setStatus("Errore.", false);
-      showQuotaBox(err?.message || "Errore.");
-    }
-  }
-
-  // Nav buttons
-  goTargets.addEventListener("click", () => {
-    if (!q.value.trim()) { q.focus(); return; }
-    scrollTo(sec2, card2);
-  });
-
-  backToQ.addEventListener("click", () => scrollTo(sec1, card1));
-
-  goLen.addEventListener("click", () => scrollTo(secLen, cardLen));
-  goAnswer.addEventListener("click", () => scrollTo(sec3, card3));
-
-  backToTargets.addEventListener("click", () => scrollTo(sec2, card2));
-  backToLen.addEventListener("click", () => scrollTo(secLen, cardLen));
-
-  // Copy markdown pulito
-  copyBtn.addEventListener("click", async () => {
-    const text = (cleanText || rawText || "").trim();
-    if (!text) return;
-    try {
-      await navigator.clipboard.writeText(text);
-      setStatus("Copiato ✅", false);
-      setTimeout(() => setStatus("Pronto.", false), 900);
-    } catch {
-      setStatus("Non riesco a copiare (permessi).", false);
-    }
-  });
-});
-</script>
+    /* Init */
+    setStatus("Pronto.", false);
+  </script>
 </body>
 </html>
-
-
-
-
-
