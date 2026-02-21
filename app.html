@@ -376,6 +376,10 @@
 
           <div class="actions">
             <button class="btn" id="backToLen" type="button">↑ Cambia lunghezza</button>
+          
+            <!-- NUOVO BOTTONE -->
+            <button class="btn" id="backToTargetFromAnswer" type="button">↑ Cambia target</button>
+          
             <a class="btn" href="/prezzi.html">Ottieni Simplif-AI PRO</a>
           </div>
         </div>
@@ -463,6 +467,7 @@
     const backToTargets = document.getElementById("backToTargets");
     const goAnswer = document.getElementById("goAnswer");
     const backToLen = document.getElementById("backToLen");
+    const backToTargetFromAnswer = document.getElementById("backToTargetFromAnswer");
 
     const sec1 = document.getElementById("sec1");
     const sec2 = document.getElementById("sec2");
@@ -871,6 +876,7 @@
     });
 
     backToLen.addEventListener("click", () => scrollTo(secLen, cardLen));
+    backToTargetFromAnswer.addEventListener("click", () => scrollTo(sec2, card2));
 
     /* -------------------------
        Copy
@@ -892,6 +898,7 @@
   </script>
 </body>
 </html>
+
 
 
 
