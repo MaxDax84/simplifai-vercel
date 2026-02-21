@@ -151,6 +151,9 @@
       font-size: 13px;
       line-height: 1.5;
     }
+
+    /* Piccolo polish: più aria tra toggle e kicker */
+    .kicker{ margin-top: 8px; }
   </style>
 </head>
 
@@ -194,6 +197,18 @@
         <p class="sub">Puoi provare gratis ogni giorno. Se ti serve di più, fai upgrade (mock).</p>
         <div style="height:12px;"></div>
         <a class="btn btn-primary" href="/app.html">🚀 Prova l’app</a>
+
+        <!-- Toggle billing -->
+        <div class="toggle" style="margin-top:14px;">
+          <span>Mensile</span>
+          <div class="switch" id="billingSwitch" role="switch" aria-checked="false" tabindex="0">
+            <div class="knob"></div>
+          </div>
+          <span>Annuale</span>
+          <span class="pilltag" style="margin-left:6px;">-20% (mock)</span>
+        </div>
+
+        <div class="kicker" id="billingHint">Prezzi mensili (mock).</div>
       </div>
     </div>
 
@@ -238,8 +253,9 @@
             <span class="tag">⭐ Consigliato</span>
           </div>
 
-          <div class="price">€14,99</div>
-          <div class="per">al mese</div>
+          <!-- questi due vengono aggiornati dal toggle -->
+          <div class="price" id="proPrice">€14,99</div>
+          <div class="per" id="proPer">al mese</div>
 
           <ul class="ul">
             <li><span class="i">🚀</span><span>Più richieste / giorno (mock)</span></li>
@@ -249,7 +265,8 @@
           </ul>
 
           <div class="plan-actions">
-            <a class="btn btn-primary" href="/checkout.html">Upgrade (mock)</a>
+            <!-- CTA unica (questa deve cambiare con il toggle) -->
+            <a class="btn btn-primary" id="proCta" href="/checkout.html?plan=pro&billing=monthly">Upgrade (mock)</a>
             <a class="btn" href="/app.html">Prima prova</a>
           </div>
         </div>
@@ -348,6 +365,52 @@
       document.querySelectorAll('#mainNav a').forEach(a=>{
         if(a.dataset.nav === key) a.classList.add('nav-active');
       });
+    })();
+  </script>
+
+  <script>
+    // Billing toggle (mensile/annuale)
+    (function(){
+      const sw = document.getElementById("billingSwitch");
+      const hint = document.getElementById("billingHint");
+      const proPrice = document.getElementById("proPrice");
+      const proPer = document.getElementById("proPer");
+      const proCta = document.getElementById("proCta");
+
+      if(!sw || !hint || !proPrice || !proPer || !proCta) return;
+
+      let yearly = false;
+
+      function apply(){
+        if(yearly){
+          sw.classList.add("on");
+          sw.setAttribute("aria-checked","true");
+
+          hint.textContent = "Prezzi annuali (mock) con -20%.";
+          proPrice.textContent = "€143,90";
+          proPer.textContent = "all'anno";
+          proCta.href = "/checkout.html?plan=pro&billing=yearly";
+        } else {
+          sw.classList.remove("on");
+          sw.setAttribute("aria-checked","false");
+
+          hint.textContent = "Prezzi mensili (mock).";
+          proPrice.textContent = "€14,99";
+          proPer.textContent = "al mese";
+          proCta.href = "/checkout.html?plan=pro&billing=monthly";
+        }
+      }
+
+      sw.addEventListener("click", () => { yearly = !yearly; apply(); });
+      sw.addEventListener("keydown", (e) => {
+        if(e.key === "Enter" || e.key === " "){
+          e.preventDefault();
+          yearly = !yearly;
+          apply();
+        }
+      });
+
+      apply();
     })();
   </script>
 </body>
