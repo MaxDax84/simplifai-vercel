@@ -6,6 +6,24 @@
   <title>Prezzi – Simplif-AI</title>
   <link rel="stylesheet" href="/theme.css">
 </head>
+
+<script>
+  const toggle = document.getElementById("navToggle");
+  const mobileNav = document.getElementById("mobileNav");
+
+  if(toggle){
+    toggle.addEventListener("click", () => {
+      document.body.classList.toggle("nav-open");
+    });
+  }
+
+  mobileNav?.querySelectorAll("a").forEach(link=>{
+    link.addEventListener("click",()=>{
+      document.body.classList.remove("nav-open");
+    });
+  });
+</script>
+  
 <body>
   <div class="wrap">
     <header>
