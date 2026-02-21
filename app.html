@@ -55,6 +55,35 @@
       display:flex; justify-content:space-between;
       margin-top:14px; flex-wrap:wrap; gap:10px; align-items:center;
     }
+    .actions-split{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    
+    .actions-left{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    
+    .actions-right{
+      display:flex;
+      justify-content:flex-end;
+    }
+    
+    /* Su mobile: PRO va sotto e diventa full width */
+    @media(max-width:520px){
+      .actions-split{
+        flex-direction:column;
+        align-items:stretch;
+      }
+      .actions-right .btn{
+        width:100%;
+      }
+    }
     .hint{
       display:inline-flex; align-items:center; gap:8px;
       padding:8px 10px; border-radius:999px;
@@ -374,13 +403,15 @@
             <div id="quotaMount"></div>
           </div>
 
-          <div class="actions">
-            <button class="btn" id="backToLen" type="button">↑ Cambia lunghezza</button>
+          <div class="actions actions-split">
+            <div class="actions-left">
+              <button class="btn" id="backToLen" type="button">↑ Cambia lunghezza</button>
+              <button class="btn" id="backToTargetFromAnswer" type="button">↑ Cambia target</button>
+            </div>
           
-            <!-- NUOVO BOTTONE -->
-            <button class="btn" id="backToTargetFromAnswer" type="button">↑ Cambia target</button>
-          
-            <a class="btn" href="/prezzi.html">Ottieni Simplif-AI PRO</a>
+            <div class="actions-right">
+              <a class="btn" href="/prezzi.html">Ottieni Simplif-AI PRO</a>
+            </div>
           </div>
         </div>
       </div>
@@ -898,6 +929,7 @@
   </script>
 </body>
 </html>
+
 
 
 
