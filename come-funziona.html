@@ -7,27 +7,13 @@
   <link rel="stylesheet" href="/theme.css">
 
   <style>
-    /* Mantieni lo stesso “container” della Home */
-    .wrap{width:min(1100px,92vw);margin:0 auto;}
-
-    /* ✅ CARD LOOK = HOME
-       Nella Home: card 1–2 sono più chiare, la risposta è più scura.
-       In "Come funziona" vogliamo la stessa resa delle card “chiare”. */
-    .card{
-      background: rgba(255,255,255,.06) !important;
-      border: 1px solid var(--border) !important;
-      box-shadow: var(--shadow) !important;
-      border-radius: 18px;
-    }
-    /* Se in theme.css esiste .card-inner con un overlay, lo neutralizziamo */
-    .card-inner{ background: transparent !important; }
-
-    /* Stepper layout */
+    /* Hero */
     .how-hero{
       text-align:center;
       padding: 26px 18px;
     }
 
+    /* Two columns layout */
     .how-shell{
       display:grid;
       grid-template-columns: 320px 1fr;
@@ -39,14 +25,10 @@
       .how-shell{ grid-template-columns: 1fr; }
     }
 
-    .sticky{
-      position: sticky;
-      top: 18px;
-    }
-    @media (max-width: 980px){
-      .sticky{ position: static; }
-    }
+    .sticky{ position: sticky; top: 18px; }
+    @media (max-width: 980px){ .sticky{ position: static; } }
 
+    /* Mini-nav cards (same vibe as home) */
     .mini-nav{
       display:flex;
       flex-direction: column;
@@ -67,6 +49,7 @@
     .mini-nav a:hover{
       background: rgba(255,255,255,.05);
       color: var(--text);
+      transform: translateY(-1px);
     }
     .mini-nav a.active{
       border-color: rgba(124,92,255,.55);
@@ -87,7 +70,7 @@
       flex: 0 0 auto;
     }
 
-    /* Steps column */
+    /* Steps */
     .steps{
       display:flex;
       flex-direction: column;
@@ -97,12 +80,14 @@
     .step-card{
       padding: 18px;
     }
+
     .step-top{
       display:flex;
       align-items:flex-start;
       gap: 12px;
       margin-bottom: 8px;
     }
+
     .step-num{
       width: 34px;
       height: 34px;
@@ -166,23 +151,6 @@
   </style>
 </head>
 
-<script>
-  const toggle = document.getElementById("navToggle");
-  const mobileNav = document.getElementById("mobileNav");
-
-  if(toggle){
-    toggle.addEventListener("click", () => {
-      document.body.classList.toggle("nav-open");
-    });
-  }
-
-  mobileNav?.querySelectorAll("a").forEach(link=>{
-    link.addEventListener("click",()=>{
-      document.body.classList.remove("nav-open");
-    });
-  });
-</script>
-  
 <body>
   <div class="wrap">
     <header>
@@ -196,24 +164,24 @@
 
       <nav id="mainNav">
         <a href="/index.html" data-nav="home">Home</a>
-        <a href="/app.html">App</a>
+        <a href="/app.html" data-nav="app">App</a>
         <a href="/come-funziona.html" data-nav="how">Come funziona</a>
         <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
       </nav>
-    <button class="nav-toggle" id="navToggle">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
 
+      <!-- mobile hamburger -->
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+        <span></span><span></span><span></span>
+      </button>
     </header>
-      <div class="mobile-nav" id="mobileNav">
-        <a href="/index.html">Home</a>
-        <a href="/app.html">Prova</a>
-        <a href="/come-funziona.html">Come funziona</a>
-        <a href="/prezzi.html">Prezzi</a>
-      </div>
-    
+
+    <!-- Mobile overlay menu -->
+    <div class="mobile-nav" id="mobileNav">
+      <a href="/index.html">Home</a>
+      <a href="/app.html">App</a>
+      <a href="/come-funziona.html">Come funziona</a>
+      <a href="/prezzi.html">Prezzi</a>
+    </div>
 
     <!-- HERO -->
     <div class="card">
@@ -227,7 +195,7 @@
     </div>
 
     <div class="how-shell">
-      <!-- LEFT sticky mini-nav -->
+      <!-- LEFT sticky -->
       <div class="sticky">
         <div class="card">
           <div class="card-inner">
@@ -235,8 +203,8 @@
             <div class="mini-nav" id="miniNav">
               <a href="#step-1" data-step="1"><span class="mini-dot">1</span> Scrivi la domanda</a>
               <a href="#step-2" data-step="2"><span class="mini-dot">2</span> Scegli il target</a>
-              <a href="#step-3" data-step="3"><span class="mini-dot">3</span> Genera la risposta</a>
-              <a href="#step-4" data-step="4"><span class="mini-dot">4</span> Continua & Copia</a>
+              <a href="#step-3" data-step="3"><span class="mini-dot">3</span> Scegli la lunghezza</a>
+              <a href="#step-4" data-step="4"><span class="mini-dot">4</span> Streaming, Continua & Copia</a>
             </div>
           </div>
         </div>
@@ -265,8 +233,8 @@
           </div>
           <ul class="step-points">
             <li><span class="icon">✍️</span><span>Puoi scrivere anche multi-riga.</span></li>
-            <li><span class="icon">🎯</span><span>Aggiungi un obiettivo: “spiegalo”, “con esempi”, “in 10 righe”.</span></li>
-            <li><span class="icon">🧩</span><span>Per temi tecnici, aggiungi il contesto (esame, lavoro, curiosità).</span></li>
+            <li><span class="icon">🎯</span><span>Aggiungi un obiettivo: “con esempi”, “in 10 righe”, “passo passo”.</span></li>
+            <li><span class="icon">🧩</span><span>Per temi tecnici, aggiungi contesto (esame, lavoro, curiosità).</span></li>
           </ul>
         </div>
 
@@ -275,11 +243,11 @@
             <div class="step-num">2</div>
             <div>
               <p class="step-title">Scegli il target</p>
-              <p class="step-sub">Il target cambia tono, profondità e lessico: dallo stile “bambino” fino a “scienziato”.</p>
+              <p class="step-sub">Il target cambia tono, profondità e lessico: da “bebè” fino a “scienziato”.</p>
             </div>
           </div>
           <ul class="step-points">
-            <li><span class="icon">🧒</span><span><b>Bambino</b>: semplice, analogie, frasi brevi.</span></li>
+            <li><span class="icon">👶</span><span><b>Bebè</b>: pochissime parole, super semplice.</span></li>
             <li><span class="icon">🎓</span><span><b>Universitario</b>: struttura, definizioni, passaggi logici.</span></li>
             <li><span class="icon">🧪</span><span><b>Scienziato</b>: rigore, limiti, assunzioni, caveat.</span></li>
           </ul>
@@ -289,14 +257,14 @@
           <div class="step-top">
             <div class="step-num">3</div>
             <div>
-              <p class="step-title">Genera la risposta (con streaming)</p>
-              <p class="step-sub">La risposta arriva “a pezzi” in tempo reale. È più reattivo e piacevole da leggere.</p>
+              <p class="step-title">Scegli la lunghezza</p>
+              <p class="step-sub">Breve → Medio → Lungo. Dopo la scelta, la generazione parte automaticamente.</p>
             </div>
           </div>
           <ul class="step-points">
-            <li><span class="icon">⚡</span><span>Vedi subito i primi paragrafi.</span></li>
-            <li><span class="icon">🧭</span><span>Se è lunga, non “si blocca”: ti propone <b>Continua</b>.</span></li>
-            <li><span class="icon">🛡️</span><span>Se scatta il limite quota, compare un box pulito con CTA.</span></li>
+            <li><span class="icon">🧾</span><span><b>Breve</b>: essenziale e rapido.</span></li>
+            <li><span class="icon">⚖️</span><span><b>Medio</b>: equilibrio, con esempi.</span></li>
+            <li><span class="icon">📚</span><span><b>Lungo</b>: completo e ben strutturato.</span></li>
           </ul>
         </div>
 
@@ -304,28 +272,41 @@
           <div class="step-top">
             <div class="step-num">4</div>
             <div>
-              <p class="step-title">Continua & Copia</p>
-              <p class="step-sub">Se la risposta è stata troncata dal limite, premi <b>Continua</b>. Se ti serve fuori, usa <b>Copia</b>.</p>
+              <p class="step-title">Streaming, Continua & Copia</p>
+              <p class="step-sub">La risposta arriva in tempo reale. Se serve, continua automaticamente (con limite di sicurezza). “Copia” prende tutto.</p>
             </div>
           </div>
           <ul class="step-points">
-            <li><span class="icon">⋯</span><span>“Continua” riparte dal punto in cui si era interrotta.</span></li>
-            <li><span class="icon">⧉</span><span>“Copia” prende tutto il testo generato.</span></li>
-            <li><span class="icon">🧹</span><span>Possiamo migliorare la continuità evitando ripetizioni (anti-duplicate).</span></li>
+            <li><span class="icon">⚡</span><span>Streaming: vedi subito i primi paragrafi.</span></li>
+            <li><span class="icon">⋯</span><span>Auto-continue: riparte dove si era interrotta.</span></li>
+            <li><span class="icon">⧉</span><span>“Copia” salva tutto il testo generato.</span></li>
           </ul>
         </div>
       </div>
     </div>
-
-    <div style="height:26px;"></div>
   </div>
 
   <script>
+    // Mobile nav toggle
+    (function(){
+      const toggle = document.getElementById("navToggle");
+      const mobileNav = document.getElementById("mobileNav");
+      if(!toggle || !mobileNav) return;
+
+      toggle.addEventListener("click", () => {
+        document.body.classList.toggle("nav-open");
+      });
+      mobileNav.querySelectorAll("a").forEach(a => {
+        a.addEventListener("click", () => document.body.classList.remove("nav-open"));
+      });
+    })();
+
     // Navbar active
     (function(){
       const path = location.pathname.toLowerCase();
       let key = "home";
-      if (path.includes("come-funziona")) key = "how";
+      if (path.includes("/app")) key = "app";
+      else if (path.includes("come-funziona")) key = "how";
       else if (path.includes("prezzi")) key = "pricing";
       else if (path.includes("checkout")) key = "pricing";
       document.querySelectorAll('#mainNav a').forEach(a=>{
@@ -335,11 +316,8 @@
 
     // Reveal on scroll
     const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if(e.isIntersecting) e.target.classList.add("in");
-      });
+      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add("in"); });
     }, { threshold: 0.15 });
-
     document.querySelectorAll(".reveal").forEach(el => io.observe(el));
 
     // Mini-nav active on scroll
@@ -352,7 +330,6 @@
         miniLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === ("#" + id)));
       });
     }, { threshold: 0.6 });
-
     stepSections.forEach(s => io2.observe(s));
   </script>
 </body>
