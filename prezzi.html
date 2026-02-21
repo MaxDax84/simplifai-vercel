@@ -5,25 +5,155 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Prezzi – Simplif-AI</title>
   <link rel="stylesheet" href="/theme.css">
+
+  <style>
+    .pricing-hero{
+      text-align:center;
+      padding: 26px 18px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+      align-items:stretch;
+    }
+    @media(max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .plan{
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+    }
+
+    .plan-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .plan-name{
+      font-weight: 950;
+      font-size: 18px;
+      letter-spacing: -.2px;
+      margin:0;
+    }
+    .plan-sub{
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      margin: 6px 0 0;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .price{
+      font-size: 46px;
+      font-weight: 950;
+      letter-spacing: -1px;
+      line-height: 1;
+      margin-top: 6px;
+    }
+    .per{
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .ul{
+      list-style:none;
+      padding: 0;
+      margin: 8px 0 0;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .ul li{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .ul .i{
+      width: 18px;
+      display:inline-flex;
+      justify-content:center;
+      flex: 0 0 auto;
+      opacity:.92;
+      margin-top: 1px;
+    }
+
+    .plan-actions{
+      margin-top:auto;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .plan-actions .btn{
+      flex: 1 1 180px;
+    }
+
+    /* Highlight PRO */
+    .pro{
+      border: 1px solid rgba(124,92,255,.35);
+      background: rgba(124,92,255,.10);
+    }
+    .pro .tag{
+      border-color: rgba(124,92,255,.35);
+      background: rgba(124,92,255,.12);
+      color: rgba(233,237,255,.92);
+    }
+
+    .fineprint{
+      margin-top: 14px;
+      color: var(--muted2);
+      font-size: 12px;
+      line-height: 1.45;
+      text-align:center;
+    }
+
+    .faq{
+      margin-top: 16px;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 14px;
+    }
+    @media(max-width: 980px){
+      .faq{ grid-template-columns: 1fr; }
+    }
+
+    .q{
+      font-weight: 900;
+      margin: 0 0 6px;
+      font-size: 14px;
+    }
+    .a{
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+  </style>
 </head>
 
-<script>
-  const toggle = document.getElementById("navToggle");
-  const mobileNav = document.getElementById("mobileNav");
-
-  if(toggle){
-    toggle.addEventListener("click", () => {
-      document.body.classList.toggle("nav-open");
-    });
-  }
-
-  mobileNav?.querySelectorAll("a").forEach(link=>{
-    link.addEventListener("click",()=>{
-      document.body.classList.remove("nav-open");
-    });
-  });
-</script>
-  
 <body>
   <div class="wrap">
     <header>
@@ -35,170 +165,190 @@
         </div>
       </div>
 
-      <nav>
-        <a href="/index.html">Home</a>
-        <a href="/app.html">App</a>
-        <a href="/come-funziona.html">Come funziona</a>
-        <a href="/prezzi.html" style="color:var(--text); background:rgba(255,255,255,.03); border:1px solid var(--border);">Prezzi</a>
+      <nav id="mainNav">
+        <a href="/index.html" data-nav="home">Home</a>
+        <a href="/app.html" data-nav="app">App</a>
+        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
+        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
       </nav>
-    <button class="nav-toggle" id="navToggle">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
 
+      <!-- mobile hamburger -->
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+        <span></span><span></span><span></span>
+      </button>
     </header>
-      <div class="mobile-nav" id="mobileNav">
-        <a href="/index.html">Home</a>
-        <a href="/app.html">Prova</a>
-        <a href="/come-funziona.html">Come funziona</a>
-        <a href="/prezzi.html">Prezzi</a>
-      </div>
-  
-    <div class="card">
-      <div class="card-inner" style="text-align:center; padding:24px 18px;">
-        <span class="pilltag">💳 PIANI & PREZZI</span>
-        <div class="h1">Scegli il piano giusto per te</div>
-        <p class="sub">Inizia gratis. Se vuoi più richieste e risposte più lunghe, fai upgrade quando ti serve.</p>
 
-        <div class="toggle">
-          <span>Mensile</span>
-          <div class="switch" id="billingSwitch" role="switch" aria-checked="false" tabindex="0">
-            <div class="knob"></div>
-          </div>
-          <span>Annuale</span>
-          <span class="badge">-20% (mock)</span>
-        </div>
-        <div class="kicker" id="billingHint">Prezzi mensili (mock).</div>
+    <!-- Mobile overlay menu -->
+    <div class="mobile-nav" id="mobileNav">
+      <a href="/index.html">Home</a>
+      <a href="/app.html">App</a>
+      <a href="/come-funziona.html">Come funziona</a>
+      <a href="/prezzi.html">Prezzi</a>
+    </div>
+
+    <!-- HERO -->
+    <div class="card">
+      <div class="card-inner pricing-hero">
+        <span class="pilltag">💎 PREZZI</span>
+        <div class="h1">Scegli il piano</div>
+        <p class="sub">Puoi provare gratis ogni giorno. Se ti serve di più, fai upgrade (mock).</p>
+        <div style="height:12px;"></div>
+        <a class="btn btn-primary" href="/app.html">🚀 Prova l’app</a>
       </div>
     </div>
 
-    <div style="height:16px;"></div>
-
-    <div class="grid-3">
+    <!-- PLANS -->
+    <div class="grid">
       <!-- FREE -->
-      <div class="card plan">
-        <div class="name">
-          <h3>FREE</h3>
-          <span class="pilltag">Per provare</span>
-        </div>
+      <div class="card">
+        <div class="card-inner plan">
+          <div class="plan-top">
+            <div>
+              <p class="plan-name">FREE</p>
+              <p class="plan-sub">Per provare e usarlo ogni tanto.</p>
+            </div>
+            <span class="tag">⚡ 5 crediti/giorno</span>
+          </div>
 
-        <div class="price">€0</div>
-        <div class="per">Perfetto per iniziare</div>
+          <div class="price">€0</div>
+          <div class="per">sempre</div>
 
-        <ul>
-          <li><span class="icon">✓</span><span>Generazioni limitate (free tier)</span></li>
-          <li><span class="icon">✓</span><span>Target (Bambino → Scienziato)</span></li>
-          <li><span class="icon">✓</span><span>Continua + Copia</span></li>
-          <li><span class="icon">⚠</span><span>Possibili attese (rate limit)</span></li>
-        </ul>
+          <ul class="ul">
+            <li><span class="i">✅</span><span>5 richieste al giorno (reset UTC)</span></li>
+            <li><span class="i">✅</span><span>Streaming in tempo reale</span></li>
+            <li><span class="i">✅</span><span>Auto-continue (non consuma crediti)</span></li>
+            <li><span class="i">✅</span><span>Target + lunghezza risposta</span></li>
+          </ul>
 
-        <div class="cta">
-          <a class="btn" href="/index.html">Torna alla home</a>
-        </div>
-      </div>
-
-      <!-- PRO -->
-      <div class="card plan featured">
-        <div class="name">
-          <h3>PRO</h3>
-          <span class="pilltag">Per uso serio</span>
-        </div>
-
-        <div class="price" id="proPrice">€14,99</div>
-        <div class="per" id="proPer">al mese</div>
-
-        <ul>
-          <li><span class="icon">🔔</span><span>Molte più richieste al giorno</span></li>
-          <li><span class="icon">🧠</span><span>Risposte più lunghe</span></li>
-          <li><span class="icon">⚡</span><span>Priorità più alta</span></li>
-          <li><span class="icon">🕒</span><span>Cronologia (in arrivo)</span></li>
-        </ul>
-
-        <div class="cta">
-          <a class="btn btn-primary" id="proCta" href="/checkout.html?plan=pro&billing=monthly">Upgrade (mock)</a>
-          <a class="btn" href="/come-funziona.html">Dettagli</a>
+          <div class="plan-actions">
+            <a class="btn btn-primary" href="/app.html">Inizia gratis</a>
+            <a class="btn" href="/come-funziona.html">Come funziona</a>
+          </div>
         </div>
       </div>
 
-      <!-- BUSINESS -->
-      <div class="card plan">
-        <div class="name">
-          <h3>BUSINESS</h3>
-          <span class="pilltag">Per team</span>
+      <!-- PRO (highlight) -->
+      <div class="card pro">
+        <div class="card-inner plan">
+          <div class="plan-top">
+            <div>
+              <p class="plan-name">PRO</p>
+              <p class="plan-sub">Per chi lo usa spesso e vuole risposte più lunghe.</p>
+            </div>
+            <span class="tag">⭐ Consigliato</span>
+          </div>
+
+          <div class="price">€14,99</div>
+          <div class="per">al mese</div>
+
+          <ul class="ul">
+            <li><span class="i">🚀</span><span>Più richieste / giorno (mock)</span></li>
+            <li><span class="i">📚</span><span>Risposte più lunghe e complete</span></li>
+            <li><span class="i">🏎️</span><span>Priorità più alta</span></li>
+            <li><span class="i">🧠</span><span>Profili avanzati (mock)</span></li>
+          </ul>
+
+          <div class="plan-actions">
+            <a class="btn btn-primary" href="/checkout.html">Upgrade (mock)</a>
+            <a class="btn" href="/app.html">Prima prova</a>
+          </div>
         </div>
+      </div>
 
-        <div class="price" id="bizPrice">€79,99</div>
-        <div class="per" id="bizPer">al mese</div>
+      <!-- TEAM / EDU -->
+      <div class="card">
+        <div class="card-inner plan">
+          <div class="plan-top">
+            <div>
+              <p class="plan-name">EDU / TEAM</p>
+              <p class="plan-sub">Per studenti, classi o piccoli team.</p>
+            </div>
+            <span class="tag">🎓 Su richiesta</span>
+          </div>
 
-        <ul>
-          <li><span class="icon">🏢</span><span>Richieste elevate (team)</span></li>
-          <li><span class="icon">📄</span><span>Risposte più lunghe</span></li>
-          <li><span class="icon">🛟</span><span>Supporto prioritario</span></li>
-          <li><span class="icon">🎨</span><span>Branding / personalizzazioni</span></li>
-        </ul>
+          <div class="price">—</div>
+          <div class="per">contattaci</div>
 
-        <div class="cta">
-          <a class="btn btn-primary" id="bizCta" href="/checkout.html?plan=business&billing=monthly">Upgrade (mock)</a>
-          <a class="btn" href="/come-funziona.html">Dettagli</a>
+          <ul class="ul">
+            <li><span class="i">👥</span><span>Più utenti / accessi</span></li>
+            <li><span class="i">📊</span><span>Analytics & report (mock)</span></li>
+            <li><span class="i">🔒</span><span>Gestione account (futura)</span></li>
+            <li><span class="i">🧩</span><span>Personalizzazioni</span></li>
+          </ul>
+
+          <div class="plan-actions">
+            <a class="btn btn-primary" href="/app.html">Prova ora</a>
+            <a class="btn" href="/come-funziona.html#step-4">Dettagli</a>
+          </div>
         </div>
       </div>
     </div>
 
-    <div style="height:18px;"></div>
+    <p class="fineprint">
+      Nota: al momento l’upgrade è una simulazione UI (mock). In produzione integreresti Stripe e limiti reali.
+    </p>
 
-    <div class="card">
-      <div class="card-inner">
-        <div style="font-weight:800; font-size:16px; margin-bottom:8px;">FAQ (mock)</div>
-        <p class="sub" style="margin:0;">
-          I piani sono dimostrativi. In produzione, collega un provider (Stripe) e calcola limiti reali per richieste/utente.
-        </p>
+    <!-- FAQ -->
+    <div class="faq">
+      <div class="card">
+        <div class="card-inner">
+          <p class="q">I crediti si resettano ogni giorno?</p>
+          <p class="a">Sì: i crediti FREE si resettano giornalmente (UTC). “Continua” non consuma crediti.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-inner">
+          <p class="q">Se cambio target o lunghezza, rigenera?</p>
+          <p class="a">Sì: quando cambi impostazioni, la generazione riparte automaticamente con i nuovi parametri.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-inner">
+          <p class="q">Come funziona “Continua”?</p>
+          <p class="a">Se la risposta è lunga o vicina al limite, l’app continua automaticamente fino a completare (con limite di sicurezza).</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-inner">
+          <p class="q">Posso usarlo da mobile?</p>
+          <p class="a">Sì: l’interfaccia è responsive. Inoltre c’è un menu mobile con hamburger per navigare tra le pagine.</p>
+        </div>
       </div>
     </div>
+
+    <div style="height:26px;"></div>
   </div>
 
-<script>
-  const sw = document.getElementById("billingSwitch");
-  const hint = document.getElementById("billingHint");
+  <script>
+    // Mobile nav toggle
+    (function(){
+      const toggle = document.getElementById("navToggle");
+      const mobileNav = document.getElementById("mobileNav");
+      if(!toggle || !mobileNav) return;
 
-  const proPrice = document.getElementById("proPrice");
-  const bizPrice = document.getElementById("bizPrice");
-  const proPer = document.getElementById("proPer");
-  const bizPer = document.getElementById("bizPer");
-  const proCta = document.getElementById("proCta");
-  const bizCta = document.getElementById("bizCta");
+      toggle.addEventListener("click", () => {
+        document.body.classList.toggle("nav-open");
+      });
+      mobileNav.querySelectorAll("a").forEach(a => {
+        a.addEventListener("click", () => document.body.classList.remove("nav-open"));
+      });
+    })();
 
-  let yearly = false;
-
-  function apply(){
-    if(yearly){
-      sw.classList.add("on");
-      sw.setAttribute("aria-checked","true");
-      hint.textContent = "Prezzi annuali (mock) con -20%.";
-      proPrice.textContent = "€143,90";
-      bizPrice.textContent = "€767,90";
-      proPer.textContent = "all'anno";
-      bizPer.textContent = "all'anno";
-      proCta.href = "/checkout.html?plan=pro&billing=yearly";
-      bizCta.href = "/checkout.html?plan=business&billing=yearly";
-    } else {
-      sw.classList.remove("on");
-      sw.setAttribute("aria-checked","false");
-      hint.textContent = "Prezzi mensili (mock).";
-      proPrice.textContent = "€14,99";
-      bizPrice.textContent = "€79,99";
-      proPer.textContent = "al mese";
-      bizPer.textContent = "al mese";
-      proCta.href = "/checkout.html?plan=pro&billing=monthly";
-      bizCta.href = "/checkout.html?plan=business&billing=monthly";
-    }
-  }
-
-  sw.addEventListener("click", () => { yearly = !yearly; apply(); });
-  sw.addEventListener("keydown", (e) => {
-    if(e.key === "Enter" || e.key === " "){ e.preventDefault(); yearly = !yearly; apply(); }
-  });
-  apply();
-</script>
+    // Navbar active
+    (function(){
+      const path = location.pathname.toLowerCase();
+      let key = "home";
+      if (path.includes("/app")) key = "app";
+      else if (path.includes("come-funziona")) key = "how";
+      else if (path.includes("prezzi")) key = "pricing";
+      else if (path.includes("checkout")) key = "pricing";
+      document.querySelectorAll('#mainNav a').forEach(a=>{
+        if(a.dataset.nav === key) a.classList.add('nav-active');
+      });
+    })();
+  </script>
 </body>
 </html>
