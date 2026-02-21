@@ -7,84 +7,69 @@
   <link rel="stylesheet" href="/theme.css">
 
   <style>
+    /* Layout identico allo screenshot: hero centrato, pulito */
     .landing{
-      min-height: 86vh;
+      min-height: 80vh;
       display:flex;
       align-items:center;
       justify-content:center;
-      padding: 18px 0 40px;
+      text-align:center;
+      padding: 28px 0 40px;
     }
 
     .hero{
       width:min(980px, 92vw);
-      text-align:center;
-      padding: 28px 18px;
+      margin: 0 auto;
     }
 
     .big{
-      font-size: clamp(48px, 7.6vw, 92px);
-      line-height: 1;
+      font-size: clamp(56px, 8.2vw, 110px);
+      line-height: 0.98;
       font-weight: 950;
       letter-spacing: -1.2px;
-      margin: 8px 0 10px;
+      margin: 0 0 14px;
     }
 
     .tag{
-      font-size: clamp(16px, 2.4vw, 22px);
+      font-size: clamp(18px, 2.2vw, 26px);
       color: var(--muted);
       line-height: 1.55;
       margin: 0 auto;
-      max-width: 760px;
+      max-width: 780px;
+    }
+
+    .tag strong{
+      color: var(--text);
+      font-weight: 900;
     }
 
     .cta{
-      margin-top: 22px;
+      margin-top: 26px;
       display:flex;
       justify-content:center;
       gap:10px;
       flex-wrap:wrap;
     }
 
+    /* bottone “pill” grande come nello screenshot */
     .cta .btn{
       border-radius: 999px;
-      padding: 14px 20px;
-      font-size: 14px;
-      min-height: 46px;
+      padding: 16px 26px;
+      font-size: 15px;
+      min-height: 52px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.22);
     }
 
-    .micro{
-      margin-top: 14px;
-      color: var(--muted2);
-      font-size: 12px;
+    /* allinea header come nella tua immagine */
+    header{
+      align-items:flex-start;
     }
 
-    .glow{
-      width: 120px;
-      height: 120px;
-      margin: 0 auto 6px;
-      border-radius: 26px;
-      background: linear-gradient(135deg, rgba(124,92,255,1), rgba(38,198,255,1));
-      box-shadow: 0 18px 70px rgba(124,92,255,.22);
+    /* su mobile: un pelo più aria */
+    @media (max-width: 520px){
+      .landing{ min-height: 76vh; }
+      .cta .btn{ width: 100%; max-width: 360px; }
     }
-
-    .features{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap: 12px;
-      margin-top: 18px;
-      text-align:left;
-    }
-    @media(max-width: 900px){
-      .features{ grid-template-columns: 1fr; }
-    }
-    .feat{
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      border-radius: 18px;
-      padding: 14px;
-    }
-    .feat b{ display:block; margin-bottom:6px; }
-    .feat span{ color:var(--muted); font-size:13px; line-height:1.45; }
   </style>
 </head>
 
@@ -95,13 +80,12 @@
         <div class="logo"></div>
         <div>
           <h1>Simplif-AI</h1>
-          <span>Concetti complessi spiegati in modo semplice. Scegli tu quanto.</span>
         </div>
       </div>
 
       <nav id="mainNav">
         <a href="/index.html" data-nav="home">Home</a>
-        <a href="/app.html" data-nav="app">Prova</a>
+        <a href="/app.html" data-nav="app">App</a>
         <a href="/come-funziona.html" data-nav="how">Come funziona</a>
         <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
       </nav>
@@ -115,44 +99,21 @@
     <!-- Mobile overlay menu -->
     <div class="mobile-nav" id="mobileNav">
       <a href="/index.html">Home</a>
-      <a href="/app.html">Prova</a>
+      <a href="/app.html">App</a>
       <a href="/come-funziona.html">Come funziona</a>
       <a href="/prezzi.html">Prezzi</a>
     </div>
 
     <section class="landing">
-      <div class="card hero">
-        <div class="card-inner">
-          <div class="glow"></div>
-          <span class="pilltag">✨ Simplif-AI</span>
+      <div class="hero">
+        <div class="big">Simplif-AI</div>
+        <p class="tag">
+          Concetti complessi spiegati in modo semplice.<br>
+          <strong>Scegli tu quanto.</strong>
+        </p>
 
-          <div class="big">Concetti complessi,<br>spiegati semplice.</div>
-          <p class="tag">
-            Scegli il target (bebè → scienziato) e la lunghezza (breve → lungo).
-            Risposte in streaming con “continua” automatico quando serve.
-          </p>
-
-          <div class="cta">
-            <a class="btn btn-primary" href="/app.html">🚀 Vuoi provare? Clicca qua!</a>
-            <a class="btn" href="/come-funziona.html">🧭 Come funziona</a>
-          </div>
-
-          <div class="micro">Nessun account • 5 richieste gratuite/giorno • Upgrade quando vuoi</div>
-
-          <div class="features">
-            <div class="feat">
-              <b>⚡ Streaming reale</b>
-              <span>Leggi subito i primi paragrafi mentre la risposta si compone.</span>
-            </div>
-            <div class="feat">
-              <b>🎯 Target + Lunghezza</b>
-              <span>Adatti tono e profondità con due click, senza wizard.</span>
-            </div>
-            <div class="feat">
-              <b>🧾 Crediti intelligenti</b>
-              <span>5 al giorno. “Continua” non consuma crediti.</span>
-            </div>
-          </div>
+        <div class="cta">
+          <a class="btn btn-primary" href="/app.html">🚀 Vuoi provare? Clicca qua!</a>
         </div>
       </div>
     </section>
