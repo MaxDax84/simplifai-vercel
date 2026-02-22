@@ -13,11 +13,11 @@
     .section{ margin-top:22px; }
     .badge{ font-size:12px; color:var(--muted); margin-bottom:8px; }
     
-    /* TITOLO UNIFORMATO */
+    /* TITOLO CON PIÙ SPAZIO SOTTO */
     .title{ 
       font-weight:900; 
       font-size:20px; 
-      margin: 10px 0 15px; 
+      margin: 10px 0 25px; /* Aumentato lo spazio sotto a 25px come richiesto */
       display: block;
     }
     
@@ -36,7 +36,6 @@
     }
     .credit-pill b{ color:var(--text); }
 
-    /* TEXTAREA CON SPAZIATURA CORRETTA */
     textarea{
       width:100%;
       min-height:180px;
@@ -49,7 +48,6 @@
       line-height:1.45;
       outline:none;
       resize:vertical;
-      margin-top: 5px;
       margin-bottom: 24px;
     }
     textarea:focus{
@@ -69,12 +67,10 @@
       color:var(--muted); font-size:12px;
     }
 
-    /* Targets con spaziatura */
     .targets-grid{
       display:grid;
       grid-template-columns:repeat(3, minmax(0,1fr));
       gap:12px;
-      margin-top: 5px;
       margin-bottom: 24px;
     }
     @media(max-width:900px){ .targets-grid{ grid-template-columns:1fr; } }
@@ -107,12 +103,10 @@
     .tname{ margin:0; font-weight:900; }
     .tdesc{ margin:4px 0 0; color:var(--muted); font-size:13px; line-height:1.35; }
 
-    /* Length con spaziatura */
     .len-grid{
       display:grid;
       grid-template-columns:repeat(3, minmax(0,1fr));
       gap:12px;
-      margin-top: 5px;
       margin-bottom: 24px;
     }
     @media(max-width:900px){ .len-grid{ grid-template-columns:1fr; } }
@@ -148,7 +142,6 @@
       white-space:nowrap;
     }
 
-    /* Response con spaziatura */
     .chip{
       display:inline-flex; align-items:center; gap:10px;
       padding:10px 12px; border-radius:14px;
@@ -167,7 +160,6 @@
       padding:16px;
       min-height:260px;
       display:flex; flex-direction:column; gap:12px;
-      margin-top: 5px;
       margin-bottom: 24px;
     }
 
@@ -371,7 +363,7 @@
           </div>
 
           <div class="actions">
-            <button class="btn" id="backToLen" type="button">↑ Cambia lunghezza</button>
+            <button class="btn" id="backToTargetsFinal" type="button">↑ Cambia target</button>
             <a class="btn" href="/prezzi.html">Vedi Prezzi</a>
           </div>
         </div>
@@ -382,40 +374,26 @@
   </div>
 
   <script>
-    /* -------------------------
-       Mobile nav toggle
-    ------------------------- */
+    /* Mobile nav */
     (function(){
       const toggle = document.getElementById("navToggle");
       const mobileNav = document.getElementById("mobileNav");
       if(!toggle || !mobileNav) return;
-
-      toggle.addEventListener("click", () => {
-        document.body.classList.toggle("nav-open");
-      });
-      mobileNav.querySelectorAll("a").forEach(a => {
-        a.addEventListener("click", () => document.body.classList.remove("nav-open"));
-      });
+      toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
+      mobileNav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => document.body.classList.remove("nav-open")));
     })();
 
-    /* -------------------------
-       Navbar active
-    ------------------------- */
+    /* Navbar active */
     (function(){
       const path = location.pathname.toLowerCase();
       let key = "home";
       if (path.includes("/app")) key = "app";
       else if (path.includes("come-funziona")) key = "how";
       else if (path.includes("prezzi")) key = "pricing";
-      else if (path.includes("checkout")) key = "pricing";
-      document.querySelectorAll('#mainNav a').forEach(a=>{
-        if(a.dataset.nav === key) a.classList.add('nav-active');
-      });
+      document.querySelectorAll('#mainNav a').forEach(a=>{ if(a.dataset.nav === key) a.classList.add('nav-active'); });
     })();
 
-    /* -------------------------
-       Targets & Lengths
-    ------------------------- */
+    /* Configuration */
     const TARGETS = [
       { label:"Bebè", icon:"👶", desc:"Pochissime parole, super semplice.", prompt:"Spiega come a un bebè: frasi molto brevi, parole semplicissime, niente dettagli tecnici.", baseTokens:1800, baseChars:4500 },
       { label:"Bambino", icon:"🧒", desc:"Semplice, analogie, frasi brevi.", prompt:"Spiega come a un bambino: usa parole semplici, esempi concreti, frasi brevi.", baseTokens:2500, baseChars:6000 },
@@ -431,356 +409,74 @@
       { key:"lungo", label:"Lungo", desc:"Completa, ben strutturata.", pill:"~4–6 min", multiplier:1.00, instruction:"Rispondi in modo LUNGO: completo, ben strutturato, con esempi dove utile." }
     ];
 
-    /* -------------------------
-       Auto-continue
-    ------------------------- */
+    let selectedTargetIndex = -1, selectedLenKey = "", accumulatedText = "", isGenerating = false, autoHopCount = 0;
     const AUTO_CONTINUE_MAX_HOPS = 6;
-    let autoHopCount = 0;
 
-    /* -------------------------
-       State
-    ------------------------- */
-    let selectedTargetIndex = -1;
-    let selectedLenKey = "";
-    let accumulatedText = "";    // markdown
-    let isGenerating = false;
+    /* DOM */
+    const q = document.getElementById("query"), targetsEl = document.getElementById("targets"), lengthsEl = document.getElementById("lengths");
+    const goTargets = document.getElementById("goTargets"), backToQ = document.getElementById("backToQ"), goLength = document.getElementById("goLength");
+    const backToTargets = document.getElementById("backToTargets"), goAnswer = document.getElementById("goAnswer");
+    const backToTargetsFinal = document.getElementById("backToTargetsFinal"); // Nuovo pulsante
+    const sec1 = document.getElementById("sec1"), sec2 = document.getElementById("sec2"), secLen = document.getElementById("secLen"), sec3 = document.getElementById("sec3");
+    const card1 = document.getElementById("card1"), card2 = document.getElementById("card2"), cardLen = document.getElementById("cardLen"), card3 = document.getElementById("card3");
+    const responseEl = document.getElementById("response"), spinner = document.getElementById("spinner"), statusEl = document.getElementById("status"), copyBtn = document.getElementById("copyBtn");
+    const chips = document.getElementById("chips"), chipTarget = document.getElementById("chipTarget"), chipLen = document.getElementById("chipLen"), creditsValueEl = document.getElementById("creditsValue");
 
-    /* -------------------------
-       DOM
-    ------------------------- */
-    const q = document.getElementById("query");
+    function flash(card){ card.classList.add("flash"); setTimeout(()=>card.classList.remove("flash"), 420); }
+    function scrollTo(sec, card){ sec.scrollIntoView({ behavior:"smooth", block:"start" }); flash(card); }
+    function setStatus(text, loading=false){ statusEl.textContent = text; spinner.style.display = loading ? "inline-block" : "none"; }
+    function updateButtons(){ copyBtn.disabled = isGenerating || !accumulatedText.trim(); goLength.disabled = selectedTargetIndex < 0; goAnswer.disabled = !selectedLenKey; }
 
-    const targetsEl = document.getElementById("targets");
-    const lengthsEl = document.getElementById("lengths");
-
-    const goTargets = document.getElementById("goTargets");
-    const backToQ = document.getElementById("backToQ");
-    const goLength = document.getElementById("goLength");
-    const backToTargets = document.getElementById("backToTargets");
-    const goAnswer = document.getElementById("goAnswer");
-    const backToLen = document.getElementById("backToLen");
-
-    const sec1 = document.getElementById("sec1");
-    const sec2 = document.getElementById("sec2");
-    const secLen = document.getElementById("secLen");
-    const sec3 = document.getElementById("sec3");
-
-    const card1 = document.getElementById("card1");
-    const card2 = document.getElementById("card2");
-    const cardLen = document.getElementById("cardLen");
-    const card3 = document.getElementById("card3");
-
-    const responseEl = document.getElementById("response");
-    const spinner = document.getElementById("spinner");
-    const statusEl = document.getElementById("status");
-    const copyBtn = document.getElementById("copyBtn");
-    const quotaMount = document.getElementById("quotaMount");
-
-    const chips = document.getElementById("chips");
-    const chipTarget = document.getElementById("chipTarget");
-    const chipLen = document.getElementById("chipLen");
-
-    const creditsValueEl = document.getElementById("creditsValue");
-    function setCredits(v){ creditsValueEl.textContent = v ?? "—"; }
-
-    /* -------------------------
-       Helpers
-    ------------------------- */
-    function flash(card){
-      card.classList.add("flash");
-      setTimeout(()=>card.classList.remove("flash"), 420);
-    }
-    function scrollTo(sec, card){
-      sec.scrollIntoView({ behavior:"smooth", block:"start" });
-      flash(card);
-    }
-
-    function setStatus(text, loading=false){
-      statusEl.textContent = text;
-      spinner.style.display = loading ? "inline-block" : "none";
-    }
-
-    function escapeHtml(str){
-      return String(str)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
-    function clearQuotaBox(){ quotaMount.innerHTML = ""; }
-
-    function showQuotaBox(message){
-      quotaMount.innerHTML = `
-        <div class="quota-card">
-          <div class="qhead">⚠️ Limite / crediti</div>
-          <div class="qsub">${escapeHtml(message || "Limite temporaneo. Riprova oppure fai upgrade.")}</div>
-          <div class="qgrid">
-            <a class="qbtn" href="/prezzi.html">Vedi i piani</a>
-            <a class="qbtn primary" href="/checkout.html">Upgrade</a>
-          </div>
-        </div>
-      `;
-    }
-
-    function updateButtons(){
-      copyBtn.disabled = isGenerating || !accumulatedText.trim();
-      goLength.disabled = selectedTargetIndex < 0;
-      goAnswer.disabled = !selectedLenKey;
-    }
-
-    /* Markdown render (throttled) */
-    let renderTimer = null;
-    function renderNow(){
-      const html = marked.parse(accumulatedText || "");
-      responseEl.innerHTML = DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
-    }
-    function scheduleRender(){
-      if(renderTimer) return;
-      renderTimer = setTimeout(() => {
-        renderTimer = null;
-        renderNow();
-      }, 120);
-    }
-
-    function stripContinueMarker(txt){
-      return txt.replace(/\.\.\.\(continua\)\s*$/i, "").trimEnd();
-    }
-    function endsWithContinueMarker(txt){
-      return /\.\.\.\(continua\)\s*$/i.test((txt||"").trim());
-    }
-
-    function getLenObj(){
-      return LENGTHS.find(x => x.key === selectedLenKey) || null;
-    }
-
-    function calcLimits(){
-      const t = TARGETS[selectedTargetIndex];
-      const l = getLenObj() || LENGTHS[1];
-      const maxTokens = Math.max(600, Math.floor(t.baseTokens * l.multiplier));
-      const maxChars  = Math.max(1800, Math.floor(t.baseChars  * l.multiplier));
-      return { maxTokens, maxChars };
-    }
-
-    function nearLimitHeuristic(text){
-      if (selectedTargetIndex < 0 || !selectedLenKey) return false;
-      const { maxChars } = calcLimits();
-      const trimmed = (text || "").trim();
-      if (!trimmed) return false;
-      return trimmed.length >= Math.floor(maxChars * 0.92);
-    }
-
-    function updateCreditsFromHeaders(headers){
-      const rem = headers.get("x-credits-remaining");
-      const lim = headers.get("x-credits-limit");
-      if (rem && String(rem).trim() !== "") {
-        const r = String(rem).trim();
-        const l = lim && String(lim).trim() !== "" ? String(lim).trim() : "";
-        setCredits(l ? `${r}/${l}` : r);
-      }
-    }
-
+    /* AI Logic */
     async function streamGemini(payload, onTextChunk){
-      const res = await fetch("/api/gemini", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-
-      updateCreditsFromHeaders(res.headers);
-
-      if (!res.ok) {
-        let msg = `Errore HTTP ${res.status}`;
-        const ct = (res.headers.get("content-type") || "").toLowerCase();
-        try {
-          if (ct.includes("application/json")) {
-            const j = await res.json();
-            msg = j?.error || j?.message || msg;
-          } else {
-            const t = await res.text();
-            if (t && t.trim()) msg = t.trim().slice(0, 900);
-          }
-        } catch {}
-        const err = new Error(msg);
-        err.status = res.status;
-        throw err;
-      }
-
-      const contentType = (res.headers.get("content-type") || "").toLowerCase();
-      if (!contentType.includes("text/event-stream")) {
-        const txt = await res.text();
-        if (txt) onTextChunk(txt);
-        return;
-      }
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder("utf-8");
-
+      const res = await fetch("/api/gemini", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) });
+      const rem = res.headers.get("x-credits-remaining"), lim = res.headers.get("x-credits-limit");
+      if(rem) creditsValueEl.textContent = lim ? `${rem}/${lim}` : rem;
+      if(!res.ok) throw new Error("Errore durante la generazione.");
+      const reader = res.body.getReader(), decoder = new TextDecoder();
       let buffer = "";
-      let uiBuffer = "";
-      const FLUSH_EVERY = 30;
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() || "";
-
-        for (const line of lines) {
-          const trimmed = line.trim();
-          if (!trimmed.startsWith("data:")) continue;
-
-          const data = trimmed.slice(5).trim();
-          if (!data || data === "[DONE]") continue;
-
+      while(true){
+        const {value, done} = await reader.read(); if(done) break;
+        buffer += decoder.decode(value, {stream:true});
+        const lines = buffer.split("\n"); buffer = lines.pop();
+        for(const line of lines){
+          const d = line.trim().slice(5).trim();
+          if(!d || d === "[DONE]") continue;
           try {
-            const obj = JSON.parse(data);
-            const parts = obj?.candidates?.[0]?.content?.parts || [];
-            for (const p of parts) {
-              if (typeof p?.text === "string" && p.text.length) {
-                uiBuffer += p.text;
-                if (uiBuffer.length >= FLUSH_EVERY) {
-                  onTextChunk(uiBuffer);
-                  uiBuffer = "";
-                }
-              }
-            }
-          } catch { }
+            const p = JSON.parse(d).candidates[0].content.parts[0].text;
+            if(p) onTextChunk(p);
+          } catch(e){}
         }
       }
-      if (uiBuffer) onTextChunk(uiBuffer);
-    }
-
-    function buildPayload(mode){
-      const t = TARGETS[selectedTargetIndex];
-      const l = getLenObj();
-      const { maxTokens, maxChars } = calcLimits();
-
-      const lengthInstruction = l ? l.instruction : "";
-      const targetPrompt = `${t.prompt}\n\n${lengthInstruction}`;
-
-      return {
-        query: q.value.trim(),
-        targetPrompt,
-        maxTokens,
-        maxChars,
-        mode: mode === "continue" ? "continue" : "start",
-        previousText: mode === "continue" ? accumulatedText : ""
-      };
-    }
-
-    function preflightGenerateUX(){
-      clearQuotaBox();
-      accumulatedText = "";
-      responseEl.innerHTML = "";
-      autoHopCount = 0;
-
-      isGenerating = true;
-      updateButtons();
-      setStatus("Ok! Sto generando…", true);
     }
 
     async function run(mode){
-      clearQuotaBox();
-
-      if (!q.value.trim()) {
-        isGenerating = false;
-        updateButtons();
-        setStatus("Scrivi prima una domanda.", false);
-        scrollTo(sec1, card1);
-        q.focus();
-        return;
-      }
-      if (selectedTargetIndex < 0) {
-        isGenerating = false;
-        updateButtons();
-        setStatus("Scegli un target.", false);
-        scrollTo(sec2, card2);
-        return;
-      }
-      if (!selectedLenKey) {
-        isGenerating = false;
-        updateButtons();
-        setStatus("Scegli la lunghezza.", false);
-        scrollTo(secLen, cardLen);
-        return;
-      }
-
-      chips.style.display = "inline-flex";
-      chipTarget.textContent = TARGETS[selectedTargetIndex].label;
-      chipLen.textContent = getLenObj()?.label || selectedLenKey;
-
-      if (mode === "continue") {
-        isGenerating = true;
-        updateButtons();
-        setStatus(`Sto continuando… (${autoHopCount + 1})`, true);
-      } else {
-        isGenerating = true;
-        updateButtons();
-        setStatus("Sto generando…", true);
-      }
-
+      if(!q.value.trim() || selectedTargetIndex < 0 || !selectedLenKey) return;
+      isGenerating = true; updateButtons();
+      chips.style.display = "inline-flex"; chipTarget.textContent = TARGETS[selectedTargetIndex].label; chipLen.textContent = LENGTHS.find(x=>x.key===selectedLenKey).label;
+      setStatus(mode==="continue" ? "Sto continuando..." : "Sto generando...", true);
       try {
-        let rawEndText = "";
-        await streamGemini(buildPayload(mode), (chunk) => {
+        const t = TARGETS[selectedTargetIndex], l = LENGTHS.find(x=>x.key===selectedLenKey);
+        const payload = { query:q.value.trim(), targetPrompt: t.prompt + "\n" + l.instruction, mode: mode==="continue"?"continue":"start", previousText: mode==="continue"?accumulatedText:"" };
+        if(mode !== "continue") { accumulatedText = ""; responseEl.innerHTML = ""; }
+        await streamGemini(payload, (chunk) => {
           accumulatedText += chunk;
-          rawEndText = accumulatedText;
-          scheduleRender();
+          responseEl.innerHTML = DOMPurify.sanitize(marked.parse(accumulatedText.replace(/\.\.\.\(continua\)\s*$/i, "")));
         });
-
-        const needAuto = endsWithContinueMarker(rawEndText) || nearLimitHeuristic(rawEndText);
-        accumulatedText = stripContinueMarker(accumulatedText);
-        renderNow();
-
-        isGenerating = false;
-        updateButtons();
-        setStatus("Fatto.", false);
-
-        if (needAuto && autoHopCount < AUTO_CONTINUE_MAX_HOPS) {
-          autoHopCount++;
-          isGenerating = true;
-          updateButtons();
-          setStatus(`Sto continuando automaticamente… (${autoHopCount})`, true);
-          await new Promise(r => setTimeout(r, 200));
-          return run("continue");
-        }
-        autoHopCount = 0;
-
-      } catch (err) {
-        isGenerating = false;
-        updateButtons();
-        const msg = err?.message || "Errore.";
-        setStatus("Errore.", false);
-        showQuotaBox(msg);
-      }
+        const needsMore = /\.\.\.\(continua\)\s*$/i.test(accumulatedText);
+        accumulatedText = accumulatedText.replace(/\.\.\.\(continua\)\s*$/i, "");
+        if(needsMore && autoHopCount < AUTO_CONTINUE_MAX_HOPS){ autoHopCount++; return run("continue"); }
+        setStatus("Fatto.", false); isGenerating = false; updateButtons(); autoHopCount = 0;
+      } catch(e){ setStatus("Errore.", false); isGenerating = false; updateButtons(); }
     }
 
+    /* Renders */
     function renderTargets(){
       targetsEl.innerHTML = "";
       TARGETS.forEach((t, i) => {
-        const el = document.createElement("div");
-        el.className = "target-card" + (i === selectedTargetIndex ? " active" : "");
-        el.innerHTML = `
-          <div class="ticon">${t.icon}</div>
-          <div>
-            <p class="tname">${t.label}</p>
-            <p class="tdesc">${t.desc}</p>
-          </div>
-        `;
-        el.addEventListener("click", () => {
-          selectedTargetIndex = i;
-          renderTargets();
-          updateButtons();
-          scrollTo(secLen, cardLen);
-          if (selectedLenKey) {
-            scrollTo(sec3, card3);
-            preflightGenerateUX();
-            setTimeout(() => run("start"), 220);
-          }
-        });
+        const el = document.createElement("div"); el.className = "target-card" + (i === selectedTargetIndex ? " active" : "");
+        el.innerHTML = `<div class="ticon">${t.icon}</div><div><p class="tname">${t.label}</p><p class="tdesc">${t.desc}</p></div>`;
+        el.addEventListener("click", () => { selectedTargetIndex = i; renderTargets(); updateButtons(); scrollTo(secLen, cardLen); if(selectedLenKey) { scrollTo(sec3, card3); run("start"); } });
         targetsEl.appendChild(el);
       });
     }
@@ -788,61 +484,22 @@
     function renderLengths(){
       lengthsEl.innerHTML = "";
       LENGTHS.forEach((l) => {
-        const el = document.createElement("div");
-        el.className = "len-card" + (l.key === selectedLenKey ? " active" : "");
-        el.innerHTML = `
-          <div class="len-left">
-            <div class="len-name">${l.label}</div>
-            <div class="len-desc">${l.desc}</div>
-          </div>
-          <div class="len-pill">${l.pill}</div>
-        `;
-        el.addEventListener("click", () => {
-          selectedLenKey = l.key;
-          renderLengths();
-          updateButtons();
-          scrollTo(sec3, card3);
-          preflightGenerateUX();
-          setTimeout(() => run("start"), 240);
-        });
+        const el = document.createElement("div"); el.className = "len-card" + (l.key === selectedLenKey ? " active" : "");
+        el.innerHTML = `<div class="len-left"><div class="len-name">${l.label}</div><div class="len-desc">${l.desc}</div></div><div class="len-pill">${l.pill}</div>`;
+        el.addEventListener("click", () => { selectedLenKey = l.key; renderLengths(); updateButtons(); scrollTo(sec3, card3); run("start"); });
         lengthsEl.appendChild(el);
       });
     }
 
-    renderTargets();
-    renderLengths();
-    updateButtons();
-
-    goTargets.addEventListener("click", () => {
-      if (!q.value.trim()) { q.focus(); return; }
-      scrollTo(sec2, card2);
-    });
-
+    /* Events */
+    goTargets.addEventListener("click", () => q.value.trim() ? scrollTo(sec2, card2) : q.focus());
     backToQ.addEventListener("click", () => scrollTo(sec1, card1));
-    goLength.addEventListener("click", () => {
-      if (selectedTargetIndex < 0) return;
-      scrollTo(secLen, cardLen);
-    });
+    goLength.addEventListener("click", () => scrollTo(secLen, cardLen));
     backToTargets.addEventListener("click", () => scrollTo(sec2, card2));
-    goAnswer.addEventListener("click", () => {
-      if (!selectedLenKey) return;
-      scrollTo(sec3, card3);
-    });
-    backToLen.addEventListener("click", () => scrollTo(secLen, cardLen));
+    backToTargetsFinal.addEventListener("click", () => scrollTo(sec2, card2)); // Torna direttamente ai target
+    copyBtn.addEventListener("click", () => { navigator.clipboard.writeText(accumulatedText); setStatus("Copiato!", false); setTimeout(()=>setStatus("Fatto.", false), 1000); });
 
-    copyBtn.addEventListener("click", async () => {
-      const text = (accumulatedText || "").trim();
-      if (!text) return;
-      try {
-        await navigator.clipboard.writeText(text);
-        setStatus("Copiato ✅", false);
-        setTimeout(() => setStatus("Pronto.", false), 900);
-      } catch {
-        setStatus("Non riesco a copiare (permessi).", false);
-      }
-    });
-
-    setStatus("Pronto.", false);
+    renderTargets(); renderLengths(); updateButtons(); setStatus("Pronto.", false);
   </script>
 </body>
 </html>
