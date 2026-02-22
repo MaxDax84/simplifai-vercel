@@ -479,11 +479,26 @@
 
     /* Streaming SSE robusto */
     async function streamGemini(payload, onTextChunk){
+
       const res = await fetch("/api/gemini", {
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify(payload)
       });
+    
+      // 👇 SOLO DOPO che la fetch è chiusa
+      const ct = (res.headers.get("content-type") || "").toLowerCase();
+    
+      if(!ct.includes("text/event-stream")){
+        let preview = "";
+        try{
+          preview = await res.text();
+        }catch(_){}
+        preview = (preview || "").slice(0, 220).replace(/\s+/g, " ");
+        throw new Error(`Risposta non-SSE da /api/gemini. Content-Type=${ct || "n/a"} | Preview: ${preview}`);
+      }
+    
+      // da qui in poi continua il codice dello stream
     
       const rem = res.headers.get("x-credits-remaining"),
             lim = res.headers.get("x-credits-limit");
@@ -735,6 +750,7 @@
   </script>
 </body>
 </html>
+
 
 
 
