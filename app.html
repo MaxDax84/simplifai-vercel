@@ -486,7 +486,6 @@
         body:JSON.stringify(payload)
       });
     
-      // 👇 SOLO DOPO che la fetch è chiusa
       const ct = (res.headers.get("content-type") || "").toLowerCase();
     
       if(!ct.includes("text/event-stream")){
@@ -750,6 +749,7 @@
   </script>
 </body>
 </html>
+
 
 
 
