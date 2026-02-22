@@ -479,25 +479,11 @@
 
     /* Streaming SSE robusto */
     async function streamGemini(payload, onTextChunk){
-
       const res = await fetch("/api/gemini", {
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify(payload)
       });
-    
-      const ct = (res.headers.get("content-type") || "").toLowerCase();
-    
-      if(!ct.includes("text/event-stream")){
-        let preview = "";
-        try{
-          preview = await res.text();
-        }catch(_){}
-        preview = (preview || "").slice(0, 220).replace(/\s+/g, " ");
-        throw new Error(`Risposta non-SSE da /api/gemini. Content-Type=${ct || "n/a"} | Preview: ${preview}`);
-      }
-    
-      // da qui in poi continua il codice dello stream
     
       const rem = res.headers.get("x-credits-remaining"),
             lim = res.headers.get("x-credits-limit");
@@ -517,38 +503,28 @@
       const decoder = new TextDecoder("utf-8");
       let buffer = "";
     
-      // Helper: processa un singolo "evento" SSE (blocco separato da riga vuota)
       function processEventBlock(block){
-        // raccoglie TUTTE le righe data: e le unisce (Gemini può splittare JSON su più righe)
         const dataLines = block
-          .split(/\n/)
-          .map(l => l.replace(/\r/g, ""))
+          .split(/\r?\n/)
           .filter(l => l.startsWith("data:"))
           .map(l => l.slice(5).trim());
     
         if(!dataLines.length) return;
     
-        const data = dataLines.join("\n"); // JSON completo o [DONE]
+        // SSE spec: più righe data: vanno concatenate con "\n"
+        const data = dataLines.join("\n");
         if(!data || data === "[DONE]") return;
     
         try{
           const json = JSON.parse(data);
-    
-          // Gemini stream tipicamente: candidates[0].content.parts[].text
           const parts = json?.candidates?.[0]?.content?.parts;
           if(Array.isArray(parts)){
             for(const part of parts){
               if(part?.text) onTextChunk(part.text);
             }
-            return;
           }
-    
-          // fallback extra (alcune varianti possono usare text diretto)
-          const t = json?.candidates?.[0]?.content?.text || json?.text;
-          if(typeof t === "string" && t) onTextChunk(t);
-    
         }catch(_){
-          // se anche qui fallisce, ignoriamo (ma ora dovrebbe quasi mai succedere)
+          // se fallisce, ignoriamo
         }
       }
     
@@ -558,8 +534,8 @@
     
         buffer += decoder.decode(value, {stream:true});
     
-        // gli eventi SSE sono separati da una riga vuota -> "\n\n" (o "\r\n\r\n")
-        const blocks = buffer.split(/\n\n/);
+        // ✅ separatore evento SSE: riga vuota (LF o CRLF)
+        const blocks = buffer.split(/\r?\n\r?\n/);
         buffer = blocks.pop() || "";
     
         for(const block of blocks){
@@ -567,7 +543,6 @@
         }
       }
     
-      // processa eventuale ultimo blocco rimasto
       if(buffer.trim()) processEventBlock(buffer);
     }
 
@@ -749,6 +724,7 @@
   </script>
 </body>
 </html>
+
 
 
 
