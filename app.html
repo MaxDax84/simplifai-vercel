@@ -550,6 +550,38 @@
 
     renderTargets(); renderLengths(); updateButtons(); setStatus("Pronto.", false);
   </script>
+  <script src="https://unpkg.com/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+    <script>
+      (async function(){
+        const clerk = new window.Clerk("<<<INCOLLA_LA_TUA_PK_TEST>>>");
+    
+        try{
+          await clerk.load({
+            afterSignInUrl: "/app.html",
+            afterSignUpUrl: "/app.html",
+            signInUrl: "/sign-in.html",
+            signUpUrl: "/sign-up.html"
+          });
+    
+          // Se NON è loggato → manda al login
+          if(!clerk.user){
+            // salvo dove voleva andare (torna qui dopo)
+            const backTo = encodeURIComponent(window.location.pathname + window.location.search);
+            window.location.href = "/sign-in.html?redirect_url=" + backTo;
+            return;
+          }
+    
+          // Se vuoi, qui puoi mostrare un bottone utente (facoltativo)
+          // Esempio: crea <div id="userBtn"></div> nel tuo header e monta:
+          // clerk.mountUserButton(document.getElementById("userBtn"));
+    
+        }catch(err){
+          console.error(err);
+          alert("Errore autenticazione. Riprova tra poco.");
+        }
+      })();
+    </script>
 </body>
 </html>
+
 
