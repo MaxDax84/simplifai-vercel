@@ -7,19 +7,46 @@
   <link rel="stylesheet" href="/theme.css" />
 
   <style>
-    .auth-wrap{
-      min-height: calc(100vh - 140px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 16px;
-    }
-  
-    #clerk-signup{
-      width: 100%;
-      max-width: 420px;
-    }
-  </style>
+      .auth-wrap{
+        padding: 60px 16px 80px;
+      }
+    
+      .auth-card{
+        max-width: 720px;
+        margin: 0 auto;
+      }
+    
+      #clerk-signup{
+        margin-top: 20px;
+      }
+    
+      .cl-card {
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+    
+      .cl-headerTitle,
+      .cl-headerSubtitle {
+        display: none !important;
+      }
+    
+      .cl-formFieldInput {
+        background: rgba(255,255,255,0.08) !important;
+        border: 1px solid rgba(255,255,255,0.15) !important;
+        color: #fff !important;
+      }
+    
+      .cl-formButtonPrimary {
+        background: linear-gradient(135deg, #5b8cff, #7f5bff) !important;
+        border: none !important;
+      }
+    
+      .cl-socialButtonsBlockButton {
+        background: rgba(255,255,255,0.08) !important;
+        border: 1px solid rgba(255,255,255,0.15) !important;
+        color: #fff !important;
+      }
+    </style>
 
   <script
     async
