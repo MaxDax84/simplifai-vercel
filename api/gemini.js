@@ -1,3 +1,4 @@
+// gemini.js — Vercel Edge Function
 export const config = { runtime: "edge" };
 
 function corsHeaders(extra = {}) {
@@ -26,10 +27,60 @@ function clamp(n, min, max, fallback) {
   return Math.min(Math.max(x, min), max);
 }
 
-export default async function handler(req) {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { status: 200, headers: corsHeaders({ "X-SimplifAI-API": "gemini-proxy" }) });
+function buildPrompt({ query, targetPrompt, mode, previousText, maxChars }) {
+  const safeMode = mode === "continue" ? "continue" : "start";
+  const prev = String(previousText || "").slice(0, 20000);
+
+  // “Budget” caratteri: diamo un vincolo forte, e chiediamo di chiudere con ...(continua)
+  // così il FE può auto-continuare.
+  const budget = Math.max(800, Math.floor(maxChars * 0.85));
+
+  if (safeMode === "continue") {
+    return `
+Stiamo continuando una spiegazione iniziata in precedenza.
+
+DOMANDA/CONCETTO: "${query}"
+
+TARGET/STILE:
+${targetPrompt}
+
+TESTO GIÀ DATO (non ripeterlo):
+"""
+${prev}
+"""
+
+ISTRUZIONI:
+- Continua dal punto esatto in cui si è interrotta.
+- Non ripetere introduzioni o sezioni già fatte.
+- Mantieni lo stesso tono e livello del target.
+- Stai entro ~${budget} caratteri (massimo ${maxChars}).
+- Se non basta spazio, termina con una frase completa e aggiungi ESATTAMENTE: ...(continua)
+`.trim();
   }
+
+  return `
+Spiega il seguente concetto: "${query}"
+
+TARGET/STILE:
+${targetPrompt}
+
+ISTRUZIONI:
+- Rispondi in modo chiaro e ben strutturato.
+- Usa titoli e liste quando utile.
+- Stai entro ~${budget} caratteri (massimo ${maxChars}).
+- Se non basta spazio, NON iniziare una sezione nuova: chiudi con una frase completa e termina con ESATTAMENTE: ...(continua)
+`.trim();
+}
+
+export default async function handler(req) {
+  // CORS preflight
+  if (req.method === "OPTIONS") {
+    return new Response(null, {
+      status: 200,
+      headers: corsHeaders({ "X-SimplifAI-API": "gemini-proxy" }),
+    });
+  }
+
   if (req.method !== "POST") {
     return jsonError("Metodo non consentito. Usa POST.", 405);
   }
@@ -45,51 +96,22 @@ export default async function handler(req) {
       return jsonError("Body JSON non valido.", 400);
     }
 
-    const { query, targetPrompt, maxTokens, maxChars, mode, previousText } = body || {};
+    const query = (body?.query || "").toString().trim();
+    const targetPrompt = (body?.targetPrompt || "").toString().trim();
+    const mode = body?.mode;
+    const previousText = body?.previousText || "";
+
     if (!query || !targetPrompt) {
-      return jsonError("Parametri mancanti (query/targetPrompt).", 400);
+      return jsonError("Parametri mancanti: query/targetPrompt.", 400);
     }
 
-    const tokens = clamp(maxTokens, 256, 8000, 1200);
-    const charsLimit = clamp(maxChars, 500, 50000, 4000);
+    // Limiti (arrivano dal FE, li clampo)
+    const maxTokens = clamp(body?.maxTokens, 256, 8000, 1200);
+    const maxChars = clamp(body?.maxChars, 500, 50000, 4000);
 
-    const safeMode = mode === "continue" ? "continue" : "start";
-    const prev = String(previousText || "").slice(0, 20000);
+    const prompt = buildPrompt({ query, targetPrompt, mode, previousText, maxChars });
 
-    let prompt = "";
-    if (safeMode === "start") {
-      prompt = `
-Spiega il seguente concetto: "${query}".
-
-Target: ${targetPrompt}.
-Stile: chiaro, ben strutturato, con esempi adatti al target.
-
-VINCOLI:
-- Resta ENTRO circa ${Math.floor(charsLimit * 0.85)} caratteri (massimo ${charsLimit}).
-- Se non basta spazio, NON iniziare una sezione nuova: chiudi con una frase completa e termina con la scritta esatta: ...(continua)
-
-Formatta con titoli e liste quando utile.
-`.trim();
-    } else {
-      prompt = `
-Stiamo continuando una spiegazione iniziata in precedenza.
-
-Concetto: "${query}"
-Target: ${targetPrompt}
-
-TESTO GIÀ DATO (non ripeterlo, continua da dove eri rimasto):
-"""
-${prev}
-"""
-
-Ora continua dal punto esatto in cui si è interrotta.
-- NON ripetere introduzioni o titoli già dati (a meno che serva un sottotitolo nuovo)
-- Mantieni lo stesso tono e livello del target
-- Se anche questa parte rischia di essere troppo lunga, termina di nuovo con: ...(continua)
-`.trim();
-    }
-
-    // Google SSE endpoint
+    // Endpoint SSE Google
     const url =
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent` +
       `?alt=sse&key=${apiKey}`;
@@ -99,14 +121,15 @@ Ora continua dal punto esatto in cui si è interrotta.
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.6, maxOutputTokens: tokens },
+        generationConfig: {
+          temperature: 0.6,
+          maxOutputTokens: maxTokens,
+        },
       }),
     });
 
     if (!upstream.ok) {
-      // Google spesso ritorna JSON errore (non stream). Leggiamo text per sicurezza.
       const errText = await upstream.text().catch(() => "");
-      // prova a estrarre message se è JSON
       let msg = `Errore upstream (${upstream.status})`;
       try {
         const j = JSON.parse(errText);
@@ -121,8 +144,7 @@ Ora continua dal punto esatto in cui si è interrotta.
       return jsonError("Upstream body nullo (stream non disponibile).", 500);
     }
 
-    // === Trasforma SSE Google -> SSE “pulito” ===
-    // Obiettivo: assicurare che ogni evento sia un JSON valido e che in caso di blocco ci sia comunque testo.
+    // ====== Trasformazione: SSE Google -> SSE pulito per il client ======
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
 
@@ -133,20 +155,34 @@ Ora continua dal punto esatto in cui si è interrotta.
     let sentAnyText = false;
     let sawDone = false;
 
+    // Tail per capire se finiamo “a metà frase”
+    let lastTextTail = "";
+
     const emitSSE = async (obj) => {
       const data = JSON.stringify(obj);
       await writer.write(encoder.encode(`data: ${data}\n\n`));
     };
 
     const emitTextAsCandidate = async (text) => {
+      const t = String(text || "");
+      if (!t) return;
+
       sentAnyText = true;
+      lastTextTail = (lastTextTail + t).slice(-240);
+
       await emitSSE({
-        candidates: [
-          {
-            content: { parts: [{ text }] },
-          },
-        ],
+        candidates: [{ content: { parts: [{ text: t }] } }],
       });
+    };
+
+    const updateTailFromJson = (json) => {
+      try {
+        const parts = json?.candidates?.[0]?.content?.parts;
+        if (!Array.isArray(parts)) return;
+        const chunk = parts.map((p) => (p?.text ? String(p.text) : "")).join("");
+        if (!chunk) return;
+        lastTextTail = (lastTextTail + chunk).slice(-240);
+      } catch (_) {}
     };
 
     // Parsing SSE: blocchi separati da riga vuota
@@ -170,32 +206,46 @@ Ora continua dal punto esatto in cui si è interrotta.
       try {
         json = JSON.parse(data);
       } catch {
-        // se Google manda roba non parseabile, ignoriamo (ma non blocchiamo lo stream)
+        // Se arriva qualcosa di non parseabile, ignoriamo
         return;
       }
 
-      // Caso: blocco/safety → spesso candidates vuoto + promptFeedback con blockReason
+      // Safety / block
+      const blockReason = json?.promptFeedback?.blockReason;
       const candidates = json?.candidates;
       const parts = candidates?.[0]?.content?.parts;
-      const hasText = Array.isArray(parts) && parts.some((p) => typeof p?.text === "string" && p.text.length);
 
-      const blockReason = json?.promptFeedback?.blockReason;
+      const hasText =
+        Array.isArray(parts) && parts.some((p) => typeof p?.text === "string" && p.text.length);
+
       if (!hasText && blockReason) {
         await emitTextAsCandidate(`⚠️ Contenuto bloccato (${blockReason}). Prova a riformulare la domanda.`);
         sawDone = true;
         return;
       }
 
-      // Caso: nessun testo ma c’è qualche info → non facciamo nulla
-      // Caso: ha testo → inoltra evento “compatibile” al client
       if (hasText) {
         sentAnyText = true;
-        // inoltra l’evento così com’è (il tuo client legge candidates[0].content.parts[].text)
+        updateTailFromJson(json);
         await emitSSE(json);
       }
     };
 
-    // Pump: legge upstream e scrive nel TransformStream
+    const shouldForceContinue = () => {
+      const tail = (lastTextTail || "").trim();
+      if (!tail) return false;
+
+      // Se già c'è ...(continua) non aggiungere nulla
+      if (/\.\.\.\(continua\)\s*$/i.test(tail)) return false;
+
+      // euristica: se non finisce con punteggiatura o chiusura, e termina con lettera/numero
+      const endsWell = /[.!?…]\s*$/.test(tail) || tail.endsWith(")") || tail.endsWith("]") || tail.endsWith('"');
+      const looksCut = !endsWell && /[A-Za-zÀ-ÖØ-öø-ÿ0-9]$/.test(tail);
+
+      return looksCut;
+    };
+
+    // Pump
     (async () => {
       const reader = upstream.body.getReader();
       try {
@@ -219,14 +269,19 @@ Ora continua dal punto esatto in cui si è interrotta.
           await processBlock(buffer);
         }
 
-        // Se per qualche motivo non è arrivato nulla, invia un messaggio utile
+        // Se upstream non ha inviato testo, manda un messaggio utile
         if (!sentAnyText) {
           await emitTextAsCandidate(
             "⚠️ Nessun testo ricevuto dallo stream. Verifica GEMINI_API_KEY su Vercel (Preview/Production) e riprova."
           );
         }
 
-        // Chiudi lo stream con DONE (così lato client finisce sempre)
+        // Guardia: se sembra tronco e manca ...(continua), aggiungilo noi
+        if (sentAnyText && shouldForceContinue()) {
+          await emitTextAsCandidate("\n\n...(continua)");
+        }
+
+        // chiusura stream per il client
         await writer.write(encoder.encode("data: [DONE]\n\n"));
       } catch (e) {
         await emitTextAsCandidate(`⚠️ Errore stream: ${e?.message || "sconosciuto"}`);
