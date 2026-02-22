@@ -33,10 +33,52 @@
 <body>
   <div class="wrap">
     <!-- (se hai un header comune, puoi copiarlo qui uguale alle altre pagine) -->
-
-    <div class="auth-wrap">
-      <div class="card auth-card">
-        <div class="card-inner">
+    
+        <div class="auth-wrap">
+          <style>
+      .auth-wrap{
+        padding: 60px 16px 80px;
+      }
+    
+      .auth-card{
+        max-width: 720px;
+        margin: 0 auto;
+      }
+    
+      #clerk-signin{
+        margin-top: 20px;
+      }
+    
+      /* Rimuove lo sfondo bianco standard Clerk */
+      .cl-card {
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+    
+      .cl-headerTitle,
+      .cl-headerSubtitle {
+        display: none !important;
+      }
+    
+      /* Input stile Simplif */
+      .cl-formFieldInput {
+        background: rgba(255,255,255,0.08) !important;
+        border: 1px solid rgba(255,255,255,0.15) !important;
+        color: #fff !important;
+      }
+    
+      .cl-formButtonPrimary {
+        background: linear-gradient(135deg, #5b8cff, #7f5bff) !important;
+        border: none !important;
+      }
+    
+      .cl-socialButtonsBlockButton {
+        background: rgba(255,255,255,0.08) !important;
+        border: 1px solid rgba(255,255,255,0.15) !important;
+        color: #fff !important;
+      }
+    
+    </style>
           <span class="pilltag">🔒 ACCESSO</span>
           <div class="h1">Accedi per continuare</div>
           <p class="sub">Email o Google.</p>
