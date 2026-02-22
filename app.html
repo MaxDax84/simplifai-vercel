@@ -13,11 +13,11 @@
     .section{ margin-top:22px; }
     .badge{ font-size:12px; color:var(--muted); margin-bottom:8px; }
     
-    /* TITOLO CON PIÙ SPAZIO SOTTO */
+    /* TITOLO CON SPAZIATURA AMPIA SOTTO */
     .title{ 
       font-weight:900; 
       font-size:20px; 
-      margin: 10px 0 25px; /* Aumentato lo spazio sotto a 25px come richiesto */
+      margin: 10px 0 25px; 
       display: block;
     }
     
@@ -364,6 +364,7 @@
 
           <div class="actions">
             <button class="btn" id="backToTargetsFinal" type="button">↑ Cambia target</button>
+            <button class="btn" id="backToLen" type="button">↑ Cambia lunghezza</button>
             <a class="btn" href="/prezzi.html">Vedi Prezzi</a>
           </div>
         </div>
@@ -416,7 +417,7 @@
     const q = document.getElementById("query"), targetsEl = document.getElementById("targets"), lengthsEl = document.getElementById("lengths");
     const goTargets = document.getElementById("goTargets"), backToQ = document.getElementById("backToQ"), goLength = document.getElementById("goLength");
     const backToTargets = document.getElementById("backToTargets"), goAnswer = document.getElementById("goAnswer");
-    const backToTargetsFinal = document.getElementById("backToTargetsFinal"); // Nuovo pulsante
+    const backToTargetsFinal = document.getElementById("backToTargetsFinal"), backToLen = document.getElementById("backToLen"); 
     const sec1 = document.getElementById("sec1"), sec2 = document.getElementById("sec2"), secLen = document.getElementById("secLen"), sec3 = document.getElementById("sec3");
     const card1 = document.getElementById("card1"), card2 = document.getElementById("card2"), cardLen = document.getElementById("cardLen"), card3 = document.getElementById("card3");
     const responseEl = document.getElementById("response"), spinner = document.getElementById("spinner"), statusEl = document.getElementById("status"), copyBtn = document.getElementById("copyBtn");
@@ -432,7 +433,7 @@
       const res = await fetch("/api/gemini", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) });
       const rem = res.headers.get("x-credits-remaining"), lim = res.headers.get("x-credits-limit");
       if(rem) creditsValueEl.textContent = lim ? `${rem}/${lim}` : rem;
-      if(!res.ok) throw new Error("Errore durante la generazione.");
+      if(!res.ok) throw new Error("Errore.");
       const reader = res.body.getReader(), decoder = new TextDecoder();
       let buffer = "";
       while(true){
@@ -496,7 +497,8 @@
     backToQ.addEventListener("click", () => scrollTo(sec1, card1));
     goLength.addEventListener("click", () => scrollTo(secLen, cardLen));
     backToTargets.addEventListener("click", () => scrollTo(sec2, card2));
-    backToTargetsFinal.addEventListener("click", () => scrollTo(sec2, card2)); // Torna direttamente ai target
+    backToTargetsFinal.addEventListener("click", () => scrollTo(sec2, card2)); // Torna a Target
+    backToLen.addEventListener("click", () => scrollTo(secLen, cardLen)); // Torna a Lunghezza
     copyBtn.addEventListener("click", () => { navigator.clipboard.writeText(accumulatedText); setStatus("Copiato!", false); setTimeout(()=>setStatus("Fatto.", false), 1000); });
 
     renderTargets(); renderLengths(); updateButtons(); setStatus("Pronto.", false);
