@@ -1,5 +1,27 @@
 <!doctype html>
 <html lang="it">
+    <script
+    async
+    crossorigin="anonymous"
+    data-clerk-publishable-key="PK_TEST_INCOLLA_QUI"
+    src="https://noble-boxer-23.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js">
+  </script>
+  
+  <script>
+    (function () {
+      async function boot(){
+        if (!window.Clerk) return setTimeout(boot, 50);
+        await window.Clerk.load();
+  
+        // Se NON loggato → vai al sign-in e torna qui dopo login
+        if (!window.Clerk.user) {
+          const redirect = encodeURIComponent("/app.html");
+          location.replace("/sign-in.html?redirect_url=" + redirect);
+        }
+      }
+      boot();
+    })();
+  </script>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -583,6 +605,7 @@
     </script>
 </body>
 </html>
+
 
 
 
