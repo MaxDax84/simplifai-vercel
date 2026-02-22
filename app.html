@@ -1,42 +1,5 @@
 <!doctype html>
 <html lang="it">
-    <script
-    async
-    crossorigin="anonymous"
-    data-clerk-publishable-key="PK_TEST_INCOLLA_QUI"
-    src="https://noble-boxer-23.clerk.accounts.dev/npm/@clerk/clerk-js@5/dist/clerk.browser.js">
-  </script>
-  
-  <script>
-    (function () {
-      async function boot(){
-        if (!window.Clerk) return setTimeout(boot, 50);
-        await window.Clerk.load();
-
-        <script>
-          window.addEventListener("load", async () => {
-            await Clerk.load();
-        
-            const logoutBtn = document.getElementById("logoutBtn");
-        
-            if (logoutBtn) {
-              logoutBtn.addEventListener("click", async () => {
-                await Clerk.signOut();
-                window.location.href = "/"; // Torna alla home
-              });
-            }
-          });
-        </script>
-          
-        // Se NON loggato → vai al sign-in e torna qui dopo login
-        if (!window.Clerk.user) {
-          const redirect = encodeURIComponent("/app.html");
-          location.replace("/sign-in.html?redirect_url=" + redirect);
-        }
-      }
-      boot();
-    })();
-  </script>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -92,7 +55,6 @@
       box-shadow: 0 0 0 4px rgba(124,92,255,.15);
     }
 
-    /* CONTENITORE PULSANTI AGGIORNATO */
     .actions{
       display:flex; 
       justify-content:space-between;
@@ -225,7 +187,6 @@
       transition:.35s ease;
     }
 
-    /* Markdown styling */
     .md{
       white-space: normal;
       word-break: break-word;
@@ -233,82 +194,12 @@
       color: rgba(233,237,255,.92);
       font-size:14px;
     }
-    .md h1,.md h2,.md h3{ margin: 14px 0 8px; }
-    .md h1{ font-size: 20px; }
-    .md h2{ font-size: 18px; }
-    .md h3{ font-size: 16px; }
     .md p{ margin: 10px 0; }
-    .md ul,.md ol{ margin: 10px 0 10px 22px; }
-    .md li{ margin: 6px 0; }
-    .md code{
-      background: rgba(0,0,0,.22);
-      border:1px solid rgba(255,255,255,.08);
-      padding: 2px 6px;
-      border-radius: 8px;
-      font-size: 13px;
-    }
-    .md pre{
-      background: rgba(0,0,0,.22);
-      border:1px solid rgba(255,255,255,.08);
-      padding: 12px;
-      border-radius: 14px;
-      overflow:auto;
-    }
-    .md blockquote{
-      margin: 10px 0;
-      padding: 10px 12px;
-      border-left: 3px solid rgba(124,92,255,.55);
-      background: rgba(124,92,255,.10);
-      border-radius: 12px;
-      color: rgba(233,237,255,.88);
-    }
-    .md hr{
-      border:none;
-      border-top:1px solid rgba(255,255,255,.10);
-      margin: 14px 0;
-    }
-    .md a{ color: rgba(38,198,255,.95); }
-
-    .quota-card{
-      margin-top:12px;
-      border-radius:18px;
-      border:1px solid rgba(124,92,255,.35);
-      background:rgba(124,92,255,.10);
-      padding:16px;
-    }
-    .qhead{ font-weight:900; margin-bottom:6px; display:flex; gap:10px; align-items:center; }
-    .qsub{ color:var(--muted); font-size:13px; line-height:1.45; }
-    .qgrid{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap:10px;
-      margin-top:12px;
-    }
-    @media(max-width:520px){ .qgrid{ grid-template-columns:1fr; } }
-    .qbtn{
-      min-height:44px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background:rgba(0,0,0,.18);
-      color:var(--text);
-      font-weight:800;
-      cursor:pointer;
-      display:flex; align-items:center; justify-content:center;
-      text-decoration:none;
-      transition:.15s ease;
-    }
-    .qbtn:hover{ background:rgba(255,255,255,.06); transform:translateY(-1px); }
-    .qbtn.primary{
-      background:linear-gradient(135deg, rgba(124,92,255,.95), rgba(38,198,255,.85));
-      border-color:rgba(124,92,255,.45);
-      color:#0b1020;
-    }
   </style>
 </head>
 
 <body>
   <div class="wrap">
-
     <header>
       <div class="brand">
         <div class="logo"></div>
@@ -317,15 +208,12 @@
           <span>Concetti complessi spiegati in modo semplice. Scegli tu quanto.</span>
         </div>
       </div>
-
       <nav id="mainNav">
         <a href="/index.html" data-nav="home">Home</a>
         <a href="/app.html" data-nav="app">App</a>
         <a href="/come-funziona.html" data-nav="how">Come funziona</a>
         <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
       </nav>
-
-      <button id="logoutBtn" class="btn-ghost">Logout</button>
       <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
         <span></span><span></span><span></span>
       </button>
@@ -333,7 +221,7 @@
 
     <div class="mobile-nav" id="mobileNav">
       <a href="/index.html">Home</a>
-      <a href="/app.html">Prova</a>
+      <a href="/app.html">App</a>
       <a href="/come-funziona.html">Come funziona</a>
       <a href="/prezzi.html">Prezzi</a>
     </div>
@@ -403,7 +291,6 @@
                 <button class="btn" id="copyBtn" type="button" disabled>⧉ Copia</button>
               </div>
             </div>
-            <div id="quotaMount"></div>
           </div>
 
           <div class="actions">
@@ -411,7 +298,6 @@
               <button class="btn" id="backToLen" type="button">↑ Cambia lunghezza</button>
               <button class="btn" id="backToTargetsFinal" type="button">↑ Cambia target</button>
             </div>
-            
             <a class="btn" href="/prezzi.html" style="margin-left:auto;">Vedi Prezzi</a>
           </div>
         </div>
@@ -431,74 +317,25 @@
       mobileNav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => document.body.classList.remove("nav-open")));
     })();
 
-    /* Navbar active */
-    (function(){
-      const path = location.pathname.toLowerCase();
-      let key = "home";
-      if (path.includes("/app")) key = "app";
-      else if (path.includes("come-funziona")) key = "how";
-      else if (path.includes("prezzi")) key = "pricing";
-      document.querySelectorAll('#mainNav a').forEach(a=>{ if(a.dataset.nav === key) a.classList.add('nav-active'); });
-    })();
-
-    /* Configurazione Targets & Lengths */
-
-    /* Configurazione Targets Aggiornata: BAMBINO, RAGAZZO, UNIVERSITARIO, ADULTO, ESPERTO, SCIENZIATO */
+    /* Targets AGGIORNATI */
     const TARGETS = [
-      { 
-        label:"Bambino", 
-        icon:"🧒", 
-        desc:"Semplice, analogie e frasi brevi.", 
-        prompt:"Spiega come a un bambino di 8 anni: usa un linguaggio molto semplice, fai paragoni con oggetti quotidiani (es. il DNA è come un libro di ricette) e mantieni le frasi brevi.", 
-        baseTokens:2500, baseChars:6000 
-      },
-      { 
-        label:"Ragazzo", 
-        icon:"👨", 
-        desc:"Chiaro, moderno e con esempi pratici.", 
-        prompt:"Spiega come a un adolescente: usa un tono colloquiale ma corretto, evita termini troppo infantili, usa esempi tratti dalla tecnologia o dalla vita quotidiana dei giovani.", 
-        baseTokens:2500, baseChars:7000 
-      },
-      { 
-        label:"Universitario", 
-        icon:"🎓", 
-        desc:"Struttura accademica e concetti chiave.", 
-        prompt:"Spiega come a uno studente universitario: usa un linguaggio formale, organizza la spiegazione per punti logici, approfondisci i concetti fondamentali senza dare nulla per scontato.", 
-        baseTokens:2500, baseChars:9000 
-      },
-      { 
-        label:"Adulto", 
-        icon:"👤", 
-        desc:"Diretto, concreto e senza fronzoli.", 
-        prompt:"Spiega come a un adulto: vai dritto al punto, usa un tono serio e pragmatico, spiega l'utilità pratica del concetto e non perdere tempo in spiegazioni superflue.", 
-        baseTokens:2800, baseChars:10000 
-      },
-      { 
-        label:"Esperto", 
-        icon:"🧠", 
-        desc:"Dettagli tecnici e approfondimenti.", 
-        prompt:"Spiega come a un professionista del settore: dai per scontate le basi, approfondisci i meccanismi tecnici, usa la terminologia corretta e spiega i 'perché' dietro ai fenomeni.", 
-        baseTokens:3500, baseChars:12000 
-      },
-      { 
-        label:"Scienziato", 
-        icon:"🧪", 
-        desc:"Rigore, limiti e definizioni precise.", 
-        prompt:"Spiega come a un ricercatore/scienziato: usa il massimo rigore scientifico, cita limiti delle attuali conoscenze, usa terminologia specialistica e mantieni una struttura logica rigorosa.", 
-        baseTokens:3500, baseChars:14000 
-      }
+      { label:"Bambino", icon:"🧒", desc:"Semplice, analogie e frasi brevi.", prompt:"Spiega come a un bambino di 8 anni: usa parole semplici e paragoni quotidiani.", baseTokens:400, baseChars:2000 },
+      { label:"Ragazzo", icon:"👨", desc:"Chiaro, moderno e pratico.", prompt:"Spiega come a un adolescente: usa un tono colloquiale ma corretto.", baseTokens:600, baseChars:4000 },
+      { label:"Universitario", icon:"🎓", desc:"Struttura accademica e concetti chiave.", prompt:"Spiega come a uno studente: usa un linguaggio formale e organizza per punti.", baseTokens:800, baseChars:6000 },
+      { label:"Adulto", icon:"👤", desc:"Diretto, concreto e senza fronzoli.", prompt:"Spiega come a un adulto: vai dritto al punto, tono pragmatico.", baseTokens:700, baseChars:5000 },
+      { label:"Esperto", icon:"🧠", desc:"Dettagli tecnici e approfondimenti.", prompt:"Spiega come a un professionista: approfondisci i meccanismi tecnici.", baseTokens:1000, baseChars:8000 },
+      { label:"Scienziato", icon:"🧪", desc:"Rigore, limiti e definizioni precise.", prompt:"Spiega come a un ricercatore: massimo rigore e terminologia specialistica.", baseTokens:1200, baseChars:10000 }
     ];
-        
+
     const LENGTHS = [
-      { key:"breve", label:"Breve", desc:"Risposta rapida, essenziale.", pill:"~1 min", multiplier:0.45, instruction:"Rispondi in modo BREVE (essenziale), senza divagare." },
-      { key:"medio", label:"Medio", desc:"Equilibrata, con esempi.", pill:"~2–3 min", multiplier:0.75, instruction:"Rispondi in modo MEDIO: chiaro, con qualche esempio, senza diventare troppo lungo." },
-      { key:"lungo", label:"Lungo", desc:"Completa, ben strutturata.", pill:"~4–6 min", multiplier:1.00, instruction:"Rispondi in modo LUNGO: completo, ben strutturato, con esempi dove utile." }
+      { key:"breve", label:"Breve", desc:"Essenziale.", pill:"~1 min", multiplier:0.45, instruction:"Rispondi in modo BREVE." },
+      { key:"medio", label:"Medio", desc:"Equilibrata.", pill:"~2–3 min", multiplier:0.75, instruction:"Rispondi in modo MEDIO." },
+      { key:"lungo", label:"Lungo", desc:"Completa.", pill:"~4–6 min", multiplier:1.00, instruction:"Rispondi in modo LUNGO." }
     ];
 
     let selectedTargetIndex = -1, selectedLenKey = "", accumulatedText = "", isGenerating = false, autoHopCount = 0;
     const AUTO_CONTINUE_MAX_HOPS = 6;
 
-    /* DOM Elements */
     const q = document.getElementById("query"), targetsEl = document.getElementById("targets"), lengthsEl = document.getElementById("lengths");
     const goTargets = document.getElementById("goTargets"), backToQ = document.getElementById("backToQ"), goLength = document.getElementById("goLength");
     const backToTargets = document.getElementById("backToTargets"), goAnswer = document.getElementById("goAnswer");
@@ -513,11 +350,10 @@
     function setStatus(text, loading=false){ statusEl.textContent = text; spinner.style.display = loading ? "inline-block" : "none"; }
     function updateButtons(){ copyBtn.disabled = isGenerating || !accumulatedText.trim(); goLength.disabled = selectedTargetIndex < 0; goAnswer.disabled = !selectedLenKey; }
 
-    /* AI Streaming Logic */
     async function streamGemini(payload, onTextChunk){
       const res = await fetch("/api/gemini", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) });
-      const rem = res.headers.get("x-credits-remaining"), lim = res.headers.get("x-credits-limit");
-      if(rem) creditsValueEl.textContent = lim ? `${rem}/${lim}` : rem;
+      const rem = res.headers.get("x-credits-remaining");
+      if(rem) creditsValueEl.textContent = rem;
       if(!res.ok) throw new Error("Errore API.");
       const reader = res.body.getReader(), decoder = new TextDecoder();
       let buffer = "";
@@ -539,24 +375,33 @@
     async function run(mode){
       if(!q.value.trim() || selectedTargetIndex < 0 || !selectedLenKey) return;
       isGenerating = true; updateButtons();
-      chips.style.display = "inline-flex"; chipTarget.textContent = TARGETS[selectedTargetIndex].label; chipLen.textContent = LENGTHS.find(x=>x.key===selectedLenKey).label;
+      const t = TARGETS[selectedTargetIndex], l = LENGTHS.find(x=>x.key===selectedLenKey);
       setStatus(mode==="continue" ? "Sto continuando..." : "Sto generando...", true);
+      
       try {
-        const t = TARGETS[selectedTargetIndex], l = LENGTHS.find(x=>x.key===selectedLenKey);
-        const payload = { query:q.value.trim(), targetPrompt: t.prompt + "\n" + l.instruction, mode: mode==="continue"?"continue":"start", previousText: mode==="continue"?accumulatedText:"" };
-        if(mode !== "continue") { accumulatedText = ""; responseEl.innerHTML = ""; }
+        const payload = { 
+          query:q.value.trim(), 
+          targetPrompt: t.prompt + "\n" + l.instruction, 
+          mode: mode==="continue"?"continue":"start", 
+          previousText: mode==="continue"?accumulatedText:"",
+          maxTokens: Math.floor(t.baseTokens * l.multiplier)
+        };
+        if(mode !== "continue") { accumulatedText = ""; responseEl.innerHTML = ""; chips.style.display = "inline-flex"; chipTarget.textContent = t.label; chipLen.textContent = l.label; }
+        
         await streamGemini(payload, (chunk) => {
           accumulatedText += chunk;
-          responseEl.innerHTML = DOMPurify.sanitize(marked.parse(accumulatedText.replace(/\.\.\.\(continua\)\s*$/i, "")));
+          const cleanDisplay = accumulatedText.replace(/\.\.\.\(continua\)\s*$/i, "");
+          responseEl.innerHTML = DOMPurify.sanitize(marked.parse(cleanDisplay));
         });
+
         const needsMore = /\.\.\.\(continua\)\s*$/i.test(accumulatedText);
-        accumulatedText = accumulatedText.replace(/\.\.\.\(continua\)\s*$/i, "");
         if(needsMore && autoHopCount < AUTO_CONTINUE_MAX_HOPS){ autoHopCount++; return run("continue"); }
+        
+        accumulatedText = accumulatedText.replace(/\.\.\.\(continua\)\s*$/i, "");
         setStatus("Fatto.", false); isGenerating = false; updateButtons(); autoHopCount = 0;
-      } catch(e){ setStatus("Errore di generazione.", false); isGenerating = false; updateButtons(); }
+      } catch(e){ setStatus("Errore.", false); isGenerating = false; updateButtons(); }
     }
 
-    /* Rendering Interfaccia */
     function renderTargets(){
       targetsEl.innerHTML = "";
       TARGETS.forEach((t, i) => {
@@ -577,52 +422,15 @@
       });
     }
 
-    /* Event Listeners */
     goTargets.addEventListener("click", () => q.value.trim() ? scrollTo(sec2, card2) : q.focus());
     backToQ.addEventListener("click", () => scrollTo(sec1, card1));
     goLength.addEventListener("click", () => scrollTo(secLen, cardLen));
     backToTargets.addEventListener("click", () => scrollTo(sec2, card2));
     backToTargetsFinal.addEventListener("click", () => scrollTo(sec2, card2)); 
     backToLen.addEventListener("click", () => scrollTo(secLen, cardLen)); 
-    copyBtn.addEventListener("click", () => { navigator.clipboard.writeText(accumulatedText); setStatus("Copiato!", false); setTimeout(()=>setStatus("Fatto.", false), 1000); });
+    copyBtn.addEventListener("click", () => { navigator.clipboard.writeText(accumulatedText.trim()); setStatus("Copiato!", false); setTimeout(()=>setStatus("Fatto.", false), 1000); });
 
-    renderTargets(); renderLengths(); updateButtons(); setStatus("Pronto.", false);
+    renderTargets(); renderLengths(); updateButtons();
   </script>
-  <script src="https://unpkg.com/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
-    <script>
-      (async function(){
-        const clerk = new window.Clerk("pk_test_bm9ibGUtYm94ZXItMjMuY2xlcmsuYWNjb3VudHMuZGV2JA");
-    
-        try{
-          await clerk.load({
-            afterSignInUrl: "/app.html",
-            afterSignUpUrl: "/app.html",
-            signInUrl: "/sign-in.html",
-            signUpUrl: "/sign-up.html"
-          });
-    
-          // Se NON è loggato → manda al login
-          if(!clerk.user){
-            // salvo dove voleva andare (torna qui dopo)
-            const backTo = encodeURIComponent(window.location.pathname + window.location.search);
-            window.location.href = "/sign-in.html?redirect_url=" + backTo;
-            return;
-          }
-    
-          // Se vuoi, qui puoi mostrare un bottone utente (facoltativo)
-          // Esempio: crea <div id="userBtn"></div> nel tuo header e monta:
-          // clerk.mountUserButton(document.getElementById("userBtn"));
-    
-        }catch(err){
-          console.error(err);
-          alert("Errore autenticazione. Riprova tra poco.");
-        }
-      })();
-    </script>
 </body>
 </html>
-
-
-
-
-
