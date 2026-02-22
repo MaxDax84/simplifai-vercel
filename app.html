@@ -450,6 +450,28 @@
     function setStatus(text, loading=false){ statusEl.textContent = text; spinner.style.display = loading ? "inline-block" : "none"; }
     function updateButtons(){ copyBtn.disabled = isGenerating || !accumulatedText.trim(); goLength.disabled = selectedTargetIndex < 0; goAnswer.disabled = !selectedLenKey; }
 
+    function updateChips(){
+      const t = (selectedTargetIndex >= 0) ? TARGETS[selectedTargetIndex] : null;
+      const l = selectedLenKey ? LENGTHS.find(x=>x.key===selectedLenKey) : null;
+    
+      chipTarget.textContent = t ? t.label : "—";
+      chipLen.textContent = l ? l.label : "—";
+    }
+    
+    function computeLimits(){
+      const t = TARGETS[selectedTargetIndex];
+      const l = LENGTHS.find(x=>x.key===selectedLenKey);
+      if(!t || !l) return { maxTokens: 1200, maxChars: 4000 };
+    
+      const maxTokens = Math.round(t.baseTokens * l.multiplier);
+      const maxChars  = Math.round(t.baseChars  * l.multiplier);
+    
+      return {
+        maxTokens: Math.max(256, Math.min(maxTokens, 8000)),
+        maxChars:  Math.max(500, Math.min(maxChars, 50000))
+      };
+    }
+    
     function renderMarkdownSafe(text){
       const cleaned = text.replace(/\.\.\.\(continua\)\s*$/i, "");
       responseEl.innerHTML = DOMPurify.sanitize(marked.parse(cleaned));
@@ -660,4 +682,5 @@
   </script>
 </body>
 </html>
+
 
