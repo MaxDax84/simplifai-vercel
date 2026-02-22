@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Accedi – Simplif-AI</title>
+  <link rel="stylesheet" href="/theme.css" />
+  <style>
+    .auth-wrap{ max-width: 980px; margin: 0 auto; padding: 22px 16px; }
+    .auth-card{ padding: 18px; }
+    #clerk-signin{ min-height: 520px; display:flex; align-items:center; justify-content:center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>Simplif-AI</h1>
+          <span>Concetti complessi spiegati in modo semplice. Scegli tu quanto.</span>
+        </div>
+      </div>
+
+      <nav id="mainNav">
+        <a href="/index.html">Home</a>
+        <a href="/app.html">App</a>
+        <a href="/come-funziona.html">Come funziona</a>
+        <a href="/prezzi.html">Prezzi</a>
+      </nav>
+
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+        <span></span><span></span><span></span>
+      </button>
+    </header>
+
+    <div class="mobile-nav" id="mobileNav">
+      <a href="/index.html">Home</a>
+      <a href="/app.html">App</a>
+      <a href="/come-funziona.html">Come funziona</a>
+      <a href="/prezzi.html">Prezzi</a>
+    </div>
+
+    <div class="auth-wrap">
+      <div class="card">
+        <div class="card-inner auth-card">
+          <span class="pilltag">🔐 ACCESSO</span>
+          <div class="h1" style="margin-top:10px;">Accedi per continuare</div>
+          <p class="sub">Email o Google (mock → reale con Clerk).</p>
+          <div style="height:14px;"></div>
+
+          <div id="clerk-signin"></div>
+
+          <div style="height:10px;"></div>
+          <p class="fineprint" style="text-align:center; margin:0;">
+            Non hai un account? <a href="/sign-up.html">Registrati</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ClerkJS (browser bundle) -->
+  <script src="https://unpkg.com/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+
+  <script>
+    // 1) Inizializza Clerk con la tua Publishable Key
+    const clerk = new window.Clerk("pk_test_bm9ibGUtYm94ZXItMjMuY2xlcmsuYWNjb3VudHMuZGV2JA");
+
+    // 2) Carica Clerk e monta la UI di Sign In
+    clerk.load({
+      // dopo login / registrazione torniamo all'app
+      afterSignInUrl: "/app.html",
+      afterSignUpUrl: "/app.html",
+      // dove sono le pagine
+      signInUrl: "/sign-in.html",
+      signUpUrl: "/sign-up.html"
+    }).then(() => {
+      // Se l'utente è già loggato, vai direttamente in app
+      if (clerk.user) {
+        window.location.href = "/app.html";
+        return;
+      }
+      clerk.mountSignIn(document.getElementById("clerk-signin"));
+    }).catch((err) => {
+      console.error(err);
+      alert("Errore nel caricamento login. Controlla la publishable key e riprova.");
+    });
+
+    // Mobile nav toggle (stesso pattern delle tue pagine)
+    (function(){
+      const toggle = document.getElementById("navToggle");
+      const mobileNav = document.getElementById("mobileNav");
+      if(!toggle || !mobileNav) return;
+      toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
+      mobileNav.querySelectorAll("a").forEach(a => {
+        a.addEventListener("click", () => document.body.classList.remove("nav-open"));
+      });
+    })();
+  </script>
+</body>
+</html>
