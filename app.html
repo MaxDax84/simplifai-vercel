@@ -16,7 +16,7 @@
       font-weight:900;
       font-size:20px;
       margin: 10px 0 25px;
-      display: block;
+      display:block;
     }
     .subt{ color:var(--muted); font-size:14px; margin:0 0 14px; line-height:1.45; }
 
@@ -152,6 +152,7 @@
       color:var(--muted); font-size:13px;
       margin-bottom:10px;
       flex-wrap:wrap;
+      opacity:.95;
     }
     .chip b{ color:var(--text); }
 
@@ -226,41 +227,6 @@
       margin: 14px 0;
     }
     .md a{ color: rgba(38,198,255,.95); }
-
-    .quota-card{
-      margin-top:12px;
-      border-radius:18px;
-      border:1px solid rgba(124,92,255,.35);
-      background:rgba(124,92,255,.10);
-      padding:16px;
-    }
-    .qhead{ font-weight:900; margin-bottom:6px; display:flex; gap:10px; align-items:center; }
-    .qsub{ color:var(--muted); font-size:13px; line-height:1.45; }
-    .qgrid{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap:10px;
-      margin-top:12px;
-    }
-    @media(max-width:520px){ .qgrid{ grid-template-columns:1fr; } }
-    .qbtn{
-      min-height:44px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background:rgba(0,0,0,.18);
-      color:var(--text);
-      font-weight:800;
-      cursor:pointer;
-      display:flex; align-items:center; justify-content:center;
-      text-decoration:none;
-      transition:.15s ease;
-    }
-    .qbtn:hover{ background:rgba(255,255,255,.06); transform:translateY(-1px); }
-    .qbtn.primary{
-      background:linear-gradient(135deg, rgba(124,92,255,.95), rgba(38,198,255,.85));
-      border-color:rgba(124,92,255,.45);
-      color:#0b1020;
-    }
   </style>
 </head>
 
@@ -343,24 +309,27 @@
       <div class="card card-dark" id="card3">
         <div class="card-inner">
           <h2 class="title">💬 Risposta</h2>
-          <div class="chip" id="chips" style="display:flex; opacity:.95;">
-            🎯 Target: <b id="chipTarget"></b>
+
+          <!-- Chip sempre visibile: non sparisce mai -->
+          <div class="chip" id="chips">
+            🎯 Target: <b id="chipTarget">—</b>
             <span style="opacity:.5">•</span>
-            🧾 Lunghezza: <b id="chipLen"></b>
+            🧾 Lunghezza: <b id="chipLen">—</b>
           </div>
 
           <div class="response-shell" id="responseShell">
             <div id="response" class="md"></div>
+
             <div class="actions" style="margin-top:0;">
               <div class="status">
                 <span id="spinner" class="spinner" style="display:none"></span>
-                <span id="status">Pronto.</span>
+                <span id="status">Scrivi una domanda, scegli target e lunghezza.</span>
               </div>
+
               <div style="display:flex;gap:10px;flex-wrap:wrap;">
                 <button class="btn" id="copyBtn" type="button" disabled>⧉ Copia</button>
               </div>
             </div>
-            <div id="quotaMount"></div>
           </div>
 
           <div class="actions">
@@ -432,65 +401,105 @@
       { key:"lungo", label:"Lungo", desc:"Completa, ben strutturata.", pill:"~4–6 min", multiplier:1.00, instruction:"Rispondi in modo LUNGO: completo, ben strutturato, con esempi dove utile." }
     ];
 
-    let selectedTargetIndex = -1, selectedLenKey = "", accumulatedText = "", isGenerating = false, autoHopCount = 0;
+    let selectedTargetIndex = -1;
+    let selectedLenKey = "";
+    let accumulatedText = "";
+    let isGenerating = false;
+    let autoHopCount = 0;
     const AUTO_CONTINUE_MAX_HOPS = 6;
 
     /* DOM */
-    const q = document.getElementById("query"), targetsEl = document.getElementById("targets"), lengthsEl = document.getElementById("lengths");
-    const goTargets = document.getElementById("goTargets"), backToQ = document.getElementById("backToQ"), goLength = document.getElementById("goLength");
-    const backToTargets = document.getElementById("backToTargets"), goAnswer = document.getElementById("goAnswer");
-    const backToTargetsFinal = document.getElementById("backToTargetsFinal"), backToLen = document.getElementById("backToLen");
-    const sec1 = document.getElementById("sec1"), sec2 = document.getElementById("sec2"), secLen = document.getElementById("secLen"), sec3 = document.getElementById("sec3");
-    const card1 = document.getElementById("card1"), card2 = document.getElementById("card2"), cardLen = document.getElementById("cardLen"), card3 = document.getElementById("card3");
-    const responseEl = document.getElementById("response"), spinner = document.getElementById("spinner"), statusEl = document.getElementById("status"), copyBtn = document.getElementById("copyBtn");
-    const chips = document.getElementById("chips"), chipTarget = document.getElementById("chipTarget"), chipLen = document.getElementById("chipLen"), creditsValueEl = document.getElementById("creditsValue");
+    const q = document.getElementById("query");
+    const targetsEl = document.getElementById("targets");
+    const lengthsEl = document.getElementById("lengths");
 
-    function flash(card){ card.classList.add("flash"); setTimeout(()=>card.classList.remove("flash"), 420); }
-    function scrollTo(sec, card){ sec.scrollIntoView({ behavior:"smooth", block:"start" }); flash(card); }
-    function setStatus(text, loading=false){ statusEl.textContent = text; spinner.style.display = loading ? "inline-block" : "none"; }
-    function updateButtons(){ copyBtn.disabled = isGenerating || !accumulatedText.trim(); goLength.disabled = selectedTargetIndex < 0; goAnswer.disabled = !selectedLenKey; }
+    const goTargets = document.getElementById("goTargets");
+    const backToQ = document.getElementById("backToQ");
+    const goLength = document.getElementById("goLength");
+    const backToTargets = document.getElementById("backToTargets");
+    const goAnswer = document.getElementById("goAnswer");
+
+    const backToTargetsFinal = document.getElementById("backToTargetsFinal");
+    const backToLen = document.getElementById("backToLen");
+
+    const sec1 = document.getElementById("sec1");
+    const sec2 = document.getElementById("sec2");
+    const secLen = document.getElementById("secLen");
+    const sec3 = document.getElementById("sec3");
+
+    const card1 = document.getElementById("card1");
+    const card2 = document.getElementById("card2");
+    const cardLen = document.getElementById("cardLen");
+    const card3 = document.getElementById("card3");
+
+    const responseEl = document.getElementById("response");
+    const spinner = document.getElementById("spinner");
+    const statusEl = document.getElementById("status");
+    const copyBtn = document.getElementById("copyBtn");
+
+    const chipTarget = document.getElementById("chipTarget");
+    const chipLen = document.getElementById("chipLen");
+    const creditsValueEl = document.getElementById("creditsValue");
+
+    function flash(card){
+      card.classList.add("flash");
+      setTimeout(()=>card.classList.remove("flash"), 420);
+    }
+    function scrollTo(sec, card){
+      sec.scrollIntoView({ behavior:"smooth", block:"start" });
+      flash(card);
+    }
+    function setStatus(text, loading=false){
+      statusEl.textContent = text;
+      spinner.style.display = loading ? "inline-block" : "none";
+    }
+
+    function updateButtons(){
+      copyBtn.disabled = isGenerating || !accumulatedText.trim();
+      goLength.disabled = selectedTargetIndex < 0;
+      goAnswer.disabled = !selectedLenKey;
+    }
 
     function updateChips(){
       const t = (selectedTargetIndex >= 0) ? TARGETS[selectedTargetIndex] : null;
       const l = selectedLenKey ? LENGTHS.find(x=>x.key===selectedLenKey) : null;
-    
       chipTarget.textContent = t ? t.label : "—";
       chipLen.textContent = l ? l.label : "—";
     }
-    
+
     function computeLimits(){
       const t = TARGETS[selectedTargetIndex];
       const l = LENGTHS.find(x=>x.key===selectedLenKey);
       if(!t || !l) return { maxTokens: 1200, maxChars: 4000 };
-    
+
       const maxTokens = Math.round(t.baseTokens * l.multiplier);
       const maxChars  = Math.round(t.baseChars  * l.multiplier);
-    
+
       return {
         maxTokens: Math.max(256, Math.min(maxTokens, 8000)),
         maxChars:  Math.max(500, Math.min(maxChars, 50000))
       };
     }
-    
+
     function renderMarkdownSafe(text){
       const cleaned = text.replace(/\.\.\.\(continua\)\s*$/i, "");
       responseEl.innerHTML = DOMPurify.sanitize(marked.parse(cleaned));
     }
 
-    /* Streaming SSE robusto */
+    // SSE robusto: eventi separati da riga vuota, multi data:, CRLF ok
     async function streamGemini(payload, onTextChunk){
       const res = await fetch("/api/gemini", {
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body:JSON.stringify(payload)
+        body: JSON.stringify(payload)
       });
-    
+
       const rem = res.headers.get("x-credits-remaining"),
             lim = res.headers.get("x-credits-limit");
       if(rem) creditsValueEl.textContent = lim ? `${rem}/${lim}` : rem;
-    
+
       if(!res.ok){
-        let msg = "Errore API.";
+        let msg = `Errore API (HTTP ${res.status})`;
         try{
           const j = await res.json();
           if(j?.error) msg = j.error;
@@ -498,123 +507,83 @@
         throw new Error(msg);
       }
       if(!res.body) throw new Error("Stream non disponibile (res.body nullo).");
-    
+
       const reader = res.body.getReader();
       const decoder = new TextDecoder("utf-8");
       let buffer = "";
-    
+      let receivedAny = false;
+
       function processEventBlock(block){
         const dataLines = block
           .split(/\r?\n/)
           .filter(l => l.startsWith("data:"))
           .map(l => l.slice(5).trim());
-    
+
         if(!dataLines.length) return;
-    
-        // SSE spec: più righe data: vanno concatenate con "\n"
+
         const data = dataLines.join("\n");
         if(!data || data === "[DONE]") return;
-    
-        // DEBUG: mostra il primo evento che arriva (una sola volta)
-if(!window.__SSE_DEBUG_SHOWN){
-  window.__SSE_DEBUG_SHOWN = true;
-  console.log("[SSE first data raw]", data.slice(0, 1000));
-}
 
-try{
-  const json = JSON.parse(data);
-
-          // DEBUG: mostra la struttura del primo JSON
-          if(!window.__SSE_DEBUG_JSON_SHOWN){
-            window.__SSE_DEBUG_JSON_SHOWN = true;
-            console.log("[SSE first JSON parsed]", json);
-          }
-        
-          // Estrattore super-robusto (copre varianti)
-          let textOut = "";
-        
+        try{
+          const json = JSON.parse(data);
           const parts = json?.candidates?.[0]?.content?.parts;
           if(Array.isArray(parts)){
-            textOut = parts.map(p => p?.text || "").join("");
+            for(const p of parts){
+              if(p?.text){
+                receivedAny = true;
+                onTextChunk(p.text);
+              }
+            }
           }
-        
-          // fallback: alcune varianti mettono testo altrove
-          if(!textOut && typeof json?.candidates?.[0]?.content?.text === "string"){
-            textOut = json.candidates[0].content.text;
-          }
-          if(!textOut && typeof json?.text === "string"){
-            textOut = json.text;
-          }
-        
-          if(textOut){
-            onTextChunk(textOut);
-            return;
-          }
-        
-          // DEBUG: se parsato ma nessun testo, logga chiavi candidate
-          if(!window.__SSE_DEBUG_NO_TEXT){
-            window.__SSE_DEBUG_NO_TEXT = true;
-            console.log("[SSE parsed but no text] keys:", Object.keys(json || {}), json);
-          }
-        
-        }catch(e){
-          // DEBUG: se JSON.parse fallisce, logga preview e FERMATI con errore chiaro
-          if(!window.__SSE_DEBUG_PARSE_ERR){
-            window.__SSE_DEBUG_PARSE_ERR = true;
-            console.log("[SSE JSON.parse error] preview:", data.slice(0, 300));
-            throw new Error("Impossibile fare JSON.parse su SSE. Guarda Console (F12) per preview.");
-          }
-        }
+        }catch(_){}
       }
-    
+
       while(true){
-        const {value, done} = await reader.read();
+        const { value, done } = await reader.read();
         if(done) break;
-    
-        buffer += decoder.decode(value, {stream:true});
-    
-        // ✅ separatore evento SSE: riga vuota (LF o CRLF)
+
+        buffer += decoder.decode(value, { stream:true });
+
         const blocks = buffer.split(/\r?\n\r?\n/);
         buffer = blocks.pop() || "";
-    
-        for(const block of blocks){
-          if(block.trim()) processEventBlock(block);
+
+        for(const b of blocks){
+          if(b.trim()) processEventBlock(b);
         }
       }
-    
+
       if(buffer.trim()) processEventBlock(buffer);
-    }
 
-    function computeLimits(){
-      const t = TARGETS[selectedTargetIndex];
-      const l = LENGTHS.find(x=>x.key===selectedLenKey);
-      if(!t || !l) return { maxTokens: 1200, maxChars: 4000 };
-
-      const maxTokens = Math.round(t.baseTokens * l.multiplier);
-      const maxChars  = Math.round(t.baseChars  * l.multiplier);
-
-      // i server-side clamp comunque, ma qui evitiamo valori strani
-      return {
-        maxTokens: Math.max(256, Math.min(maxTokens, 8000)),
-        maxChars:  Math.max(500, Math.min(maxChars, 50000))
-      };
+      if(!receivedAny){
+        throw new Error("Nessun testo ricevuto dallo stream (parser o upstream).");
+      }
     }
 
     async function run(mode){
-      if(!q.value.trim() || selectedTargetIndex < 0 || !selectedLenKey) return;
       if(isGenerating) return;
+
+      // controlli soft (messaggi chiari)
+      if(!q.value.trim()){
+        setStatus("Scrivi una domanda per generare.", false);
+        return;
+      }
+      if(selectedTargetIndex < 0){
+        setStatus("Seleziona un target.", false);
+        return;
+      }
+      if(!selectedLenKey){
+        setStatus("Seleziona una lunghezza.", false);
+        return;
+      }
 
       if(mode !== "continue") autoHopCount = 0;
 
       isGenerating = true;
       updateButtons();
+      updateChips();
 
       const t = TARGETS[selectedTargetIndex];
       const l = LENGTHS.find(x=>x.key===selectedLenKey);
-
-      chips.style.display = "inline-flex";
-      chipTarget.textContent = t.label;
-      chipLen.textContent = l.label;
 
       setStatus(mode==="continue" ? "Sto continuando..." : "Sto generando...", true);
 
@@ -635,17 +604,10 @@ try{
           responseEl.innerHTML = "";
         }
 
-        let receivedAny = false;
-
         await streamGemini(payload, (chunk) => {
-          receivedAny = true;
           accumulatedText += chunk;
           renderMarkdownSafe(accumulatedText);
         });
-
-        if(!receivedAny && !accumulatedText.trim()){
-          throw new Error("Nessun testo ricevuto dallo stream (parser o upstream).");
-        }
 
         const needsMore = /\.\.\.\(continua\)\s*$/i.test(accumulatedText);
         accumulatedText = accumulatedText.replace(/\.\.\.\(continua\)\s*$/i, "");
@@ -660,8 +622,8 @@ try{
 
         setStatus("Fatto.", false);
         isGenerating = false;
-        updateButtons();
         autoHopCount = 0;
+        updateButtons();
 
       }catch(e){
         setStatus(e?.message ? `Errore: ${e.message}` : "Errore di generazione.", false);
@@ -683,7 +645,8 @@ try{
           updateChips();
           updateButtons();
           scrollTo(secLen, cardLen);
-          // se la lunghezza era già scelta, rigenera subito
+
+          // se lunghezza già scelta, rigenera
           if(selectedLenKey){
             scrollTo(sec3, card3);
             run("start");
@@ -705,23 +668,13 @@ try{
           updateChips();
           updateButtons();
           scrollTo(sec3, card3);
-        
-          if(!q.value.trim()){
-            setStatus("Scrivi una domanda per generare.", false);
-            return;
-          }
-          if(selectedTargetIndex < 0){
-            setStatus("Seleziona un target.", false);
-            return;
-          }
-        
           run("start");
         });
         lengthsEl.appendChild(el);
       });
     }
 
-    /* Event listeners */
+    /* Event Listeners */
     goTargets.addEventListener("click", () => q.value.trim() ? scrollTo(sec2, card2) : q.focus());
     backToQ.addEventListener("click", () => scrollTo(sec1, card1));
     goLength.addEventListener("click", () => scrollTo(secLen, cardLen));
@@ -729,44 +682,23 @@ try{
     backToTargetsFinal.addEventListener("click", () => scrollTo(sec2, card2));
     backToLen.addEventListener("click", () => scrollTo(secLen, cardLen));
 
+    // ✅ questo è quello che spesso manca: bottone "Vai alla risposta"
     goAnswer.addEventListener("click", () => {
       scrollTo(sec3, card3);
-    
-      if(!q.value.trim()){
-        setStatus("Scrivi una domanda per generare.", false);
-        return;
-      }
-      if(selectedTargetIndex < 0){
-        setStatus("Seleziona un target.", false);
-        return;
-      }
-      if(!selectedLenKey){
-        setStatus("Seleziona una lunghezza.", false);
-        return;
-      }
-    
       run("start");
     });
 
-    
     copyBtn.addEventListener("click", () => {
       navigator.clipboard.writeText(accumulatedText);
       setStatus("Copiato!", false);
       setTimeout(()=>setStatus("Fatto.", false), 1000);
     });
 
+    // init
     renderTargets();
     renderLengths();
     updateChips();
     updateButtons();
-    setStatus("Scrivi una domanda, scegli target e lunghezza.", false);
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
