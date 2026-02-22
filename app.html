@@ -13,7 +13,7 @@
     .section{ margin-top:22px; }
     .badge{ font-size:12px; color:var(--muted); margin-bottom:8px; }
     
-    /* TITOLO CON SPAZIATURA AMPIA SOTTO */
+    /* TITOLO CON SPAZIATURA AMPIA SOTTO (25px) */
     .title{ 
       font-weight:900; 
       font-size:20px; 
@@ -55,10 +55,16 @@
       box-shadow: 0 0 0 4px rgba(124,92,255,.15);
     }
 
+    /* CONTENITORE PULSANTI AGGIORNATO */
     .actions{
-      display:flex; justify-content:space-between;
-      margin-top:14px; flex-wrap:wrap; gap:10px; align-items:center;
+      display:flex; 
+      justify-content:space-between;
+      margin-top:14px; 
+      flex-wrap:wrap; 
+      gap:10px; 
+      align-items:center;
     }
+
     .hint{
       display:inline-flex; align-items:center; gap:8px;
       padding:8px 10px; border-radius:999px;
@@ -363,9 +369,12 @@
           </div>
 
           <div class="actions">
-            <button class="btn" id="backToTargetsFinal" type="button">↑ Cambia target</button>
-            <button class="btn" id="backToLen" type="button">↑ Cambia lunghezza</button>
-            <a class="btn" href="/prezzi.html">Vedi Prezzi</a>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn" id="backToLen" type="button">↑ Cambia lunghezza</button>
+              <button class="btn" id="backToTargetsFinal" type="button">↑ Cambia target</button>
+            </div>
+            
+            <a class="btn" href="/prezzi.html" style="margin-left:auto;">Vedi Prezzi</a>
           </div>
         </div>
       </div>
@@ -394,7 +403,7 @@
       document.querySelectorAll('#mainNav a').forEach(a=>{ if(a.dataset.nav === key) a.classList.add('nav-active'); });
     })();
 
-    /* Configuration */
+    /* Configurazione Targets & Lengths */
     const TARGETS = [
       { label:"Bebè", icon:"👶", desc:"Pochissime parole, super semplice.", prompt:"Spiega come a un bebè: frasi molto brevi, parole semplicissime, niente dettagli tecnici.", baseTokens:1800, baseChars:4500 },
       { label:"Bambino", icon:"🧒", desc:"Semplice, analogie, frasi brevi.", prompt:"Spiega come a un bambino: usa parole semplici, esempi concreti, frasi brevi.", baseTokens:2500, baseChars:6000 },
@@ -413,7 +422,7 @@
     let selectedTargetIndex = -1, selectedLenKey = "", accumulatedText = "", isGenerating = false, autoHopCount = 0;
     const AUTO_CONTINUE_MAX_HOPS = 6;
 
-    /* DOM */
+    /* DOM Elements */
     const q = document.getElementById("query"), targetsEl = document.getElementById("targets"), lengthsEl = document.getElementById("lengths");
     const goTargets = document.getElementById("goTargets"), backToQ = document.getElementById("backToQ"), goLength = document.getElementById("goLength");
     const backToTargets = document.getElementById("backToTargets"), goAnswer = document.getElementById("goAnswer");
@@ -428,12 +437,12 @@
     function setStatus(text, loading=false){ statusEl.textContent = text; spinner.style.display = loading ? "inline-block" : "none"; }
     function updateButtons(){ copyBtn.disabled = isGenerating || !accumulatedText.trim(); goLength.disabled = selectedTargetIndex < 0; goAnswer.disabled = !selectedLenKey; }
 
-    /* AI Logic */
+    /* AI Streaming Logic */
     async function streamGemini(payload, onTextChunk){
       const res = await fetch("/api/gemini", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) });
       const rem = res.headers.get("x-credits-remaining"), lim = res.headers.get("x-credits-limit");
       if(rem) creditsValueEl.textContent = lim ? `${rem}/${lim}` : rem;
-      if(!res.ok) throw new Error("Errore.");
+      if(!res.ok) throw new Error("Errore API.");
       const reader = res.body.getReader(), decoder = new TextDecoder();
       let buffer = "";
       while(true){
@@ -468,10 +477,10 @@
         accumulatedText = accumulatedText.replace(/\.\.\.\(continua\)\s*$/i, "");
         if(needsMore && autoHopCount < AUTO_CONTINUE_MAX_HOPS){ autoHopCount++; return run("continue"); }
         setStatus("Fatto.", false); isGenerating = false; updateButtons(); autoHopCount = 0;
-      } catch(e){ setStatus("Errore.", false); isGenerating = false; updateButtons(); }
+      } catch(e){ setStatus("Errore di generazione.", false); isGenerating = false; updateButtons(); }
     }
 
-    /* Renders */
+    /* Rendering Interfaccia */
     function renderTargets(){
       targetsEl.innerHTML = "";
       TARGETS.forEach((t, i) => {
@@ -492,13 +501,13 @@
       });
     }
 
-    /* Events */
+    /* Event Listeners */
     goTargets.addEventListener("click", () => q.value.trim() ? scrollTo(sec2, card2) : q.focus());
     backToQ.addEventListener("click", () => scrollTo(sec1, card1));
     goLength.addEventListener("click", () => scrollTo(secLen, cardLen));
     backToTargets.addEventListener("click", () => scrollTo(sec2, card2));
-    backToTargetsFinal.addEventListener("click", () => scrollTo(sec2, card2)); // Torna a Target
-    backToLen.addEventListener("click", () => scrollTo(secLen, cardLen)); // Torna a Lunghezza
+    backToTargetsFinal.addEventListener("click", () => scrollTo(sec2, card2)); 
+    backToLen.addEventListener("click", () => scrollTo(secLen, cardLen)); 
     copyBtn.addEventListener("click", () => { navigator.clipboard.writeText(accumulatedText); setStatus("Copiato!", false); setTimeout(()=>setStatus("Fatto.", false), 1000); });
 
     renderTargets(); renderLengths(); updateButtons(); setStatus("Pronto.", false);
