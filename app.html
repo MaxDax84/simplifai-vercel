@@ -515,16 +515,55 @@
         const data = dataLines.join("\n");
         if(!data || data === "[DONE]") return;
     
-        try{
-          const json = JSON.parse(data);
+        // DEBUG: mostra il primo evento che arriva (una sola volta)
+if(!window.__SSE_DEBUG_SHOWN){
+  window.__SSE_DEBUG_SHOWN = true;
+  console.log("[SSE first data raw]", data.slice(0, 1000));
+}
+
+try{
+  const json = JSON.parse(data);
+
+          // DEBUG: mostra la struttura del primo JSON
+          if(!window.__SSE_DEBUG_JSON_SHOWN){
+            window.__SSE_DEBUG_JSON_SHOWN = true;
+            console.log("[SSE first JSON parsed]", json);
+          }
+        
+          // Estrattore super-robusto (copre varianti)
+          let textOut = "";
+        
           const parts = json?.candidates?.[0]?.content?.parts;
           if(Array.isArray(parts)){
-            for(const part of parts){
-              if(part?.text) onTextChunk(part.text);
-            }
+            textOut = parts.map(p => p?.text || "").join("");
           }
-        }catch(_){
-          // se fallisce, ignoriamo
+        
+          // fallback: alcune varianti mettono testo altrove
+          if(!textOut && typeof json?.candidates?.[0]?.content?.text === "string"){
+            textOut = json.candidates[0].content.text;
+          }
+          if(!textOut && typeof json?.text === "string"){
+            textOut = json.text;
+          }
+        
+          if(textOut){
+            onTextChunk(textOut);
+            return;
+          }
+        
+          // DEBUG: se parsato ma nessun testo, logga chiavi candidate
+          if(!window.__SSE_DEBUG_NO_TEXT){
+            window.__SSE_DEBUG_NO_TEXT = true;
+            console.log("[SSE parsed but no text] keys:", Object.keys(json || {}), json);
+          }
+        
+        }catch(e){
+          // DEBUG: se JSON.parse fallisce, logga preview e FERMATI con errore chiaro
+          if(!window.__SSE_DEBUG_PARSE_ERR){
+            window.__SSE_DEBUG_PARSE_ERR = true;
+            console.log("[SSE JSON.parse error] preview:", data.slice(0, 300));
+            throw new Error("Impossibile fare JSON.parse su SSE. Guarda Console (F12) per preview.");
+          }
         }
       }
     
@@ -724,6 +763,7 @@
   </script>
 </body>
 </html>
+
 
 
 
