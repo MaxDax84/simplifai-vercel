@@ -12,15 +12,12 @@
   <style>
     .section{ margin-top:22px; }
     .badge{ font-size:12px; color:var(--muted); margin-bottom:8px; }
-    
-    /* TITOLO CON SPAZIATURA AMPIA SOTTO (25px) */
-    .title{ 
-      font-weight:900; 
-      font-size:20px; 
-      margin: 10px 0 25px; 
+    .title{
+      font-weight:900;
+      font-size:20px;
+      margin: 10px 0 25px;
       display: block;
     }
-    
     .subt{ color:var(--muted); font-size:14px; margin:0 0 14px; line-height:1.45; }
 
     .hero-row{
@@ -55,13 +52,12 @@
       box-shadow: 0 0 0 4px rgba(124,92,255,.15);
     }
 
-    /* CONTENITORE PULSANTI AGGIORNATO */
     .actions{
-      display:flex; 
+      display:flex;
       justify-content:space-between;
-      margin-top:14px; 
-      flex-wrap:wrap; 
-      gap:10px; 
+      margin-top:14px;
+      flex-wrap:wrap;
+      gap:10px;
       align-items:center;
     }
 
@@ -188,7 +184,6 @@
       transition:.35s ease;
     }
 
-    /* Markdown styling */
     .md{
       white-space: normal;
       word-break: break-word;
@@ -373,7 +368,7 @@
               <button class="btn" id="backToLen" type="button">↑ Cambia lunghezza</button>
               <button class="btn" id="backToTargetsFinal" type="button">↑ Cambia target</button>
             </div>
-            
+
             <a class="btn" href="/prezzi.html" style="margin-left:auto;">Vedi Prezzi</a>
           </div>
         </div>
@@ -403,54 +398,34 @@
       document.querySelectorAll('#mainNav a').forEach(a=>{ if(a.dataset.nav === key) a.classList.add('nav-active'); });
     })();
 
-    /* Configurazione Targets & Lengths */
-
-    /* Configurazione Targets Aggiornata: BAMBINO, RAGAZZO, UNIVERSITARIO, ADULTO, ESPERTO, SCIENZIATO */
+    /* Targets & Lengths */
     const TARGETS = [
-      { 
-        label:"Bambino", 
-        icon:"🧒", 
-        desc:"Semplice, analogie e frasi brevi.", 
-        prompt:"Spiega come a un bambino di 8 anni: usa un linguaggio molto semplice, fai paragoni con oggetti quotidiani (es. il DNA è come un libro di ricette) e mantieni le frasi brevi.", 
-        baseTokens:2500, baseChars:6000 
+      { label:"Bambino", icon:"🧒", desc:"Semplice, analogie e frasi brevi.",
+        prompt:"Spiega come a un bambino di 8 anni: usa un linguaggio molto semplice, fai paragoni con oggetti quotidiani (es. il DNA è come un libro di ricette) e mantieni le frasi brevi.",
+        baseTokens:2500, baseChars:6000
       },
-      { 
-        label:"Ragazzo", 
-        icon:"👨", 
-        desc:"Chiaro, moderno e con esempi pratici.", 
-        prompt:"Spiega come a un adolescente: usa un tono colloquiale ma corretto, evita termini troppo infantili, usa esempi tratti dalla tecnologia o dalla vita quotidiana dei giovani.", 
-        baseTokens:2500, baseChars:7000 
+      { label:"Ragazzo", icon:"👨", desc:"Chiaro, moderno e con esempi pratici.",
+        prompt:"Spiega come a un adolescente: usa un tono colloquiale ma corretto, evita termini troppo infantili, usa esempi tratti dalla tecnologia o dalla vita quotidiana dei giovani.",
+        baseTokens:2500, baseChars:7000
       },
-      { 
-        label:"Universitario", 
-        icon:"🎓", 
-        desc:"Struttura accademica e concetti chiave.", 
-        prompt:"Spiega come a uno studente universitario: usa un linguaggio formale, organizza la spiegazione per punti logici, approfondisci i concetti fondamentali senza dare nulla per scontato.", 
-        baseTokens:2500, baseChars:9000 
+      { label:"Universitario", icon:"🎓", desc:"Struttura accademica e concetti chiave.",
+        prompt:"Spiega come a uno studente universitario: usa un linguaggio formale, organizza la spiegazione per punti logici, approfondisci i concetti fondamentali senza dare nulla per scontato.",
+        baseTokens:2500, baseChars:9000
       },
-      { 
-        label:"Adulto", 
-        icon:"👤", 
-        desc:"Diretto, concreto e senza fronzoli.", 
-        prompt:"Spiega come a un adulto: vai dritto al punto, usa un tono serio e pragmatico, spiega l'utilità pratica del concetto e non perdere tempo in spiegazioni superflue.", 
-        baseTokens:2800, baseChars:10000 
+      { label:"Adulto", icon:"👤", desc:"Diretto, concreto e senza fronzoli.",
+        prompt:"Spiega come a un adulto: vai dritto al punto, usa un tono serio e pragmatico, spiega l'utilità pratica del concetto e non perdere tempo in spiegazioni superflue.",
+        baseTokens:2800, baseChars:10000
       },
-      { 
-        label:"Esperto", 
-        icon:"🧠", 
-        desc:"Dettagli tecnici e approfondimenti.", 
-        prompt:"Spiega come a un professionista del settore: dai per scontate le basi, approfondisci i meccanismi tecnici, usa la terminologia corretta e spiega i 'perché' dietro ai fenomeni.", 
-        baseTokens:3500, baseChars:12000 
+      { label:"Esperto", icon:"🧠", desc:"Dettagli tecnici e approfondimenti.",
+        prompt:"Spiega come a un professionista del settore: dai per scontate le basi, approfondisci i meccanismi tecnici, usa la terminologia corretta e spiega i 'perché' dietro ai fenomeni.",
+        baseTokens:3500, baseChars:12000
       },
-      { 
-        label:"Scienziato", 
-        icon:"🧪", 
-        desc:"Rigore, limiti e definizioni precise.", 
-        prompt:"Spiega come a un ricercatore/scienziato: usa il massimo rigore scientifico, cita limiti delle attuali conoscenze, usa terminologia specialistica e mantieni una struttura logica rigorosa.", 
-        baseTokens:3500, baseChars:14000 
+      { label:"Scienziato", icon:"🧪", desc:"Rigore, limiti e definizioni precise.",
+        prompt:"Spiega come a un ricercatore/scienziato: usa il massimo rigore scientifico, cita limiti delle attuali conoscenze, usa terminologia specialistica e mantieni una struttura logica rigorosa.",
+        baseTokens:3500, baseChars:14000
       }
     ];
-        
+
     const LENGTHS = [
       { key:"breve", label:"Breve", desc:"Risposta rapida, essenziale.", pill:"~1 min", multiplier:0.45, instruction:"Rispondi in modo BREVE (essenziale), senza divagare." },
       { key:"medio", label:"Medio", desc:"Equilibrata, con esempi.", pill:"~2–3 min", multiplier:0.75, instruction:"Rispondi in modo MEDIO: chiaro, con qualche esempio, senza diventare troppo lungo." },
@@ -460,11 +435,11 @@
     let selectedTargetIndex = -1, selectedLenKey = "", accumulatedText = "", isGenerating = false, autoHopCount = 0;
     const AUTO_CONTINUE_MAX_HOPS = 6;
 
-    /* DOM Elements */
+    /* DOM */
     const q = document.getElementById("query"), targetsEl = document.getElementById("targets"), lengthsEl = document.getElementById("lengths");
     const goTargets = document.getElementById("goTargets"), backToQ = document.getElementById("backToQ"), goLength = document.getElementById("goLength");
     const backToTargets = document.getElementById("backToTargets"), goAnswer = document.getElementById("goAnswer");
-    const backToTargetsFinal = document.getElementById("backToTargetsFinal"), backToLen = document.getElementById("backToLen"); 
+    const backToTargetsFinal = document.getElementById("backToTargetsFinal"), backToLen = document.getElementById("backToLen");
     const sec1 = document.getElementById("sec1"), sec2 = document.getElementById("sec2"), secLen = document.getElementById("secLen"), sec3 = document.getElementById("sec3");
     const card1 = document.getElementById("card1"), card2 = document.getElementById("card2"), cardLen = document.getElementById("cardLen"), card3 = document.getElementById("card3");
     const responseEl = document.getElementById("response"), spinner = document.getElementById("spinner"), statusEl = document.getElementById("status"), copyBtn = document.getElementById("copyBtn");
@@ -475,56 +450,174 @@
     function setStatus(text, loading=false){ statusEl.textContent = text; spinner.style.display = loading ? "inline-block" : "none"; }
     function updateButtons(){ copyBtn.disabled = isGenerating || !accumulatedText.trim(); goLength.disabled = selectedTargetIndex < 0; goAnswer.disabled = !selectedLenKey; }
 
-    /* AI Streaming Logic */
+    function renderMarkdownSafe(text){
+      const cleaned = text.replace(/\.\.\.\(continua\)\s*$/i, "");
+      responseEl.innerHTML = DOMPurify.sanitize(marked.parse(cleaned));
+    }
+
+    /* Streaming SSE robusto */
     async function streamGemini(payload, onTextChunk){
-      const res = await fetch("/api/gemini", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) });
+      const res = await fetch("/api/gemini", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(payload)
+      });
+
       const rem = res.headers.get("x-credits-remaining"), lim = res.headers.get("x-credits-limit");
       if(rem) creditsValueEl.textContent = lim ? `${rem}/${lim}` : rem;
-      if(!res.ok) throw new Error("Errore API.");
-      const reader = res.body.getReader(), decoder = new TextDecoder();
+
+      if(!res.ok){
+        // prova a leggere errore JSON (se l'API lo manda)
+        let msg = "Errore API.";
+        try{
+          const j = await res.json();
+          if(j?.error) msg = j.error;
+        }catch(_){}
+        throw new Error(msg);
+      }
+      if(!res.body) throw new Error("Stream non disponibile (res.body nullo).");
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder("utf-8");
       let buffer = "";
+
       while(true){
-        const {value, done} = await reader.read(); if(done) break;
+        const {value, done} = await reader.read();
+        if(done) break;
+
         buffer += decoder.decode(value, {stream:true});
-        const lines = buffer.split("\n"); buffer = lines.pop();
-        for(const line of lines){
-          const d = line.trim().slice(5).trim();
-          if(!d || d === "[DONE]") continue;
-          try {
-            const p = JSON.parse(d).candidates[0].content.parts[0].text;
-            if(p) onTextChunk(p);
-          } catch(e){}
+        // SSE usa \n\n come separatore eventi, ma può arrivare \r\n
+        const lines = buffer.split(/\n/);
+        buffer = lines.pop() || "";
+
+        for(let raw of lines){
+          const line = raw.replace(/\r/g, "");
+          if(!line) continue;
+
+          // accetta solo "data:"
+          if(!line.startsWith("data:")) continue;
+
+          const data = line.slice(5).trim();
+          if(!data || data === "[DONE]") continue;
+
+          try{
+            const json = JSON.parse(data);
+            const parts = json?.candidates?.[0]?.content?.parts;
+            if(Array.isArray(parts)){
+              for(const part of parts){
+                if(part?.text) onTextChunk(part.text);
+              }
+            }
+          }catch(_){
+            // ignora chunk non JSON
+          }
         }
       }
     }
 
-    async function run(mode){
-      if(!q.value.trim() || selectedTargetIndex < 0 || !selectedLenKey) return;
-      isGenerating = true; updateButtons();
-      chips.style.display = "inline-flex"; chipTarget.textContent = TARGETS[selectedTargetIndex].label; chipLen.textContent = LENGTHS.find(x=>x.key===selectedLenKey).label;
-      setStatus(mode==="continue" ? "Sto continuando..." : "Sto generando...", true);
-      try {
-        const t = TARGETS[selectedTargetIndex], l = LENGTHS.find(x=>x.key===selectedLenKey);
-        const payload = { query:q.value.trim(), targetPrompt: t.prompt + "\n" + l.instruction, mode: mode==="continue"?"continue":"start", previousText: mode==="continue"?accumulatedText:"" };
-        if(mode !== "continue") { accumulatedText = ""; responseEl.innerHTML = ""; }
-        await streamGemini(payload, (chunk) => {
-          accumulatedText += chunk;
-          responseEl.innerHTML = DOMPurify.sanitize(marked.parse(accumulatedText.replace(/\.\.\.\(continua\)\s*$/i, "")));
-        });
-        const needsMore = /\.\.\.\(continua\)\s*$/i.test(accumulatedText);
-        accumulatedText = accumulatedText.replace(/\.\.\.\(continua\)\s*$/i, "");
-        if(needsMore && autoHopCount < AUTO_CONTINUE_MAX_HOPS){ autoHopCount++; return run("continue"); }
-        setStatus("Fatto.", false); isGenerating = false; updateButtons(); autoHopCount = 0;
-      } catch(e){ setStatus("Errore di generazione.", false); isGenerating = false; updateButtons(); }
+    function computeLimits(){
+      const t = TARGETS[selectedTargetIndex];
+      const l = LENGTHS.find(x=>x.key===selectedLenKey);
+      if(!t || !l) return { maxTokens: 1200, maxChars: 4000 };
+
+      const maxTokens = Math.round(t.baseTokens * l.multiplier);
+      const maxChars  = Math.round(t.baseChars  * l.multiplier);
+
+      // i server-side clamp comunque, ma qui evitiamo valori strani
+      return {
+        maxTokens: Math.max(256, Math.min(maxTokens, 8000)),
+        maxChars:  Math.max(500, Math.min(maxChars, 50000))
+      };
     }
 
-    /* Rendering Interfaccia */
+    async function run(mode){
+      if(!q.value.trim() || selectedTargetIndex < 0 || !selectedLenKey) return;
+      if(isGenerating) return;
+
+      if(mode !== "continue") autoHopCount = 0;
+
+      isGenerating = true;
+      updateButtons();
+
+      const t = TARGETS[selectedTargetIndex];
+      const l = LENGTHS.find(x=>x.key===selectedLenKey);
+
+      chips.style.display = "inline-flex";
+      chipTarget.textContent = t.label;
+      chipLen.textContent = l.label;
+
+      setStatus(mode==="continue" ? "Sto continuando..." : "Sto generando...", true);
+
+      try{
+        const { maxTokens, maxChars } = computeLimits();
+
+        const payload = {
+          query: q.value.trim(),
+          targetPrompt: t.prompt + "\n" + l.instruction,
+          mode: mode==="continue" ? "continue" : "start",
+          previousText: mode==="continue" ? accumulatedText : "",
+          maxTokens,
+          maxChars
+        };
+
+        if(mode !== "continue"){
+          accumulatedText = "";
+          responseEl.innerHTML = "";
+        }
+
+        let receivedAny = false;
+
+        await streamGemini(payload, (chunk) => {
+          receivedAny = true;
+          accumulatedText += chunk;
+          renderMarkdownSafe(accumulatedText);
+        });
+
+        if(!receivedAny && !accumulatedText.trim()){
+          throw new Error("Nessun testo ricevuto dallo stream (parser o upstream).");
+        }
+
+        const needsMore = /\.\.\.\(continua\)\s*$/i.test(accumulatedText);
+        accumulatedText = accumulatedText.replace(/\.\.\.\(continua\)\s*$/i, "");
+        renderMarkdownSafe(accumulatedText);
+
+        if(needsMore && autoHopCount < AUTO_CONTINUE_MAX_HOPS){
+          autoHopCount++;
+          isGenerating = false;
+          updateButtons();
+          return run("continue");
+        }
+
+        setStatus("Fatto.", false);
+        isGenerating = false;
+        updateButtons();
+        autoHopCount = 0;
+
+      }catch(e){
+        setStatus(e?.message ? `Errore: ${e.message}` : "Errore di generazione.", false);
+        isGenerating = false;
+        updateButtons();
+      }
+    }
+
+    /* Rendering UI */
     function renderTargets(){
       targetsEl.innerHTML = "";
       TARGETS.forEach((t, i) => {
-        const el = document.createElement("div"); el.className = "target-card" + (i === selectedTargetIndex ? " active" : "");
+        const el = document.createElement("div");
+        el.className = "target-card" + (i === selectedTargetIndex ? " active" : "");
         el.innerHTML = `<div class="ticon">${t.icon}</div><div><p class="tname">${t.label}</p><p class="tdesc">${t.desc}</p></div>`;
-        el.addEventListener("click", () => { selectedTargetIndex = i; renderTargets(); updateButtons(); scrollTo(secLen, cardLen); if(selectedLenKey) { scrollTo(sec3, card3); run("start"); } });
+        el.addEventListener("click", () => {
+          selectedTargetIndex = i;
+          renderTargets();
+          updateButtons();
+          scrollTo(secLen, cardLen);
+          // se la lunghezza era già scelta, rigenera subito
+          if(selectedLenKey){
+            scrollTo(sec3, card3);
+            run("start");
+          }
+        });
         targetsEl.appendChild(el);
       });
     }
@@ -532,24 +625,38 @@
     function renderLengths(){
       lengthsEl.innerHTML = "";
       LENGTHS.forEach((l) => {
-        const el = document.createElement("div"); el.className = "len-card" + (l.key === selectedLenKey ? " active" : "");
+        const el = document.createElement("div");
+        el.className = "len-card" + (l.key === selectedLenKey ? " active" : "");
         el.innerHTML = `<div class="len-left"><div class="len-name">${l.label}</div><div class="len-desc">${l.desc}</div></div><div class="len-pill">${l.pill}</div>`;
-        el.addEventListener("click", () => { selectedLenKey = l.key; renderLengths(); updateButtons(); scrollTo(sec3, card3); run("start"); });
+        el.addEventListener("click", () => {
+          selectedLenKey = l.key;
+          renderLengths();
+          updateButtons();
+          scrollTo(sec3, card3);
+          run("start");
+        });
         lengthsEl.appendChild(el);
       });
     }
 
-    /* Event Listeners */
+    /* Event listeners */
     goTargets.addEventListener("click", () => q.value.trim() ? scrollTo(sec2, card2) : q.focus());
     backToQ.addEventListener("click", () => scrollTo(sec1, card1));
     goLength.addEventListener("click", () => scrollTo(secLen, cardLen));
     backToTargets.addEventListener("click", () => scrollTo(sec2, card2));
-    backToTargetsFinal.addEventListener("click", () => scrollTo(sec2, card2)); 
-    backToLen.addEventListener("click", () => scrollTo(secLen, cardLen)); 
-    copyBtn.addEventListener("click", () => { navigator.clipboard.writeText(accumulatedText); setStatus("Copiato!", false); setTimeout(()=>setStatus("Fatto.", false), 1000); });
+    backToTargetsFinal.addEventListener("click", () => scrollTo(sec2, card2));
+    backToLen.addEventListener("click", () => scrollTo(secLen, cardLen));
 
-    renderTargets(); renderLengths(); updateButtons(); setStatus("Pronto.", false);
+    copyBtn.addEventListener("click", () => {
+      navigator.clipboard.writeText(accumulatedText);
+      setStatus("Copiato!", false);
+      setTimeout(()=>setStatus("Fatto.", false), 1000);
+    });
+
+    renderTargets();
+    renderLengths();
+    updateButtons();
+    setStatus("Pronto.", false);
   </script>
 </body>
 </html>
-
