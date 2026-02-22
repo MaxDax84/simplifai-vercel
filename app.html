@@ -6,14 +6,21 @@
   <title>Simplif-AI – App</title>
   <link rel="stylesheet" href="/theme.css">
 
-  <!-- Marked + DOMPurify (render markdown sicuro) -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.11/dist/purify.min.js"></script>
 
   <style>
     .section{ margin-top:22px; }
     .badge{ font-size:12px; color:var(--muted); margin-bottom:8px; }
-    .title{ font-weight:900; font-size:20px; margin:0 0 6px; }
+    
+    /* TITOLO UNIFORMATO */
+    .title{ 
+      font-weight:900; 
+      font-size:20px; 
+      margin: 10px 0 15px; 
+      display: block;
+    }
+    
     .subt{ color:var(--muted); font-size:14px; margin:0 0 14px; line-height:1.45; }
 
     .hero-row{
@@ -29,6 +36,7 @@
     }
     .credit-pill b{ color:var(--text); }
 
+    /* TEXTAREA CON SPAZIATURA CORRETTA */
     textarea{
       width:100%;
       min-height:180px;
@@ -41,8 +49,8 @@
       line-height:1.45;
       outline:none;
       resize:vertical;
+      margin-top: 5px;
       margin-bottom: 24px;
-      margin-top: 10px;
     }
     textarea:focus{
       border-color: rgba(124,92,255,.50);
@@ -61,13 +69,13 @@
       color:var(--muted); font-size:12px;
     }
 
-    /* Targets */
+    /* Targets con spaziatura */
     .targets-grid{
       display:grid;
       grid-template-columns:repeat(3, minmax(0,1fr));
       gap:12px;
+      margin-top: 5px;
       margin-bottom: 24px;
-      margin-top: 10px;
     }
     @media(max-width:900px){ .targets-grid{ grid-template-columns:1fr; } }
 
@@ -99,13 +107,13 @@
     .tname{ margin:0; font-weight:900; }
     .tdesc{ margin:4px 0 0; color:var(--muted); font-size:13px; line-height:1.35; }
 
-    /* Length */
+    /* Length con spaziatura */
     .len-grid{
       display:grid;
       grid-template-columns:repeat(3, minmax(0,1fr));
       gap:12px;
+      margin-top: 5px;
       margin-bottom: 24px;
-      margin-top: 10px;
     }
     @media(max-width:900px){ .len-grid{ grid-template-columns:1fr; } }
 
@@ -140,7 +148,7 @@
       white-space:nowrap;
     }
 
-    /* Response */
+    /* Response con spaziatura */
     .chip{
       display:inline-flex; align-items:center; gap:10px;
       padding:10px 12px; border-radius:14px;
@@ -159,8 +167,8 @@
       padding:16px;
       min-height:260px;
       display:flex; flex-direction:column; gap:12px;
+      margin-top: 5px;
       margin-bottom: 24px;
-      margin-top: 10px;
     }
 
     .status{
@@ -282,13 +290,11 @@
         <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
       </nav>
 
-      <!-- mobile hamburger -->
       <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
         <span></span><span></span><span></span>
       </button>
     </header>
 
-    <!-- Mobile overlay menu -->
     <div class="mobile-nav" id="mobileNav">
       <a href="/index.html">Home</a>
       <a href="/app.html">Prova</a>
@@ -301,14 +307,11 @@
       <div class="credit-pill">⚡ Crediti disponibili: <b id="creditsValue">—</b></div>
     </div>
 
-    <!-- 1) DOMANDA -->
     <section class="section" id="sec1">
       <div class="card" id="card1">
         <div class="card-inner">
           <h2 class="title">✦ Scrivi la domanda</h2>
-
           <textarea id="query" placeholder="Esempio: Cos'è il DNA e a cosa serve?"></textarea>
-
           <div class="actions">
             <span class="hint">💡 Suggerimento: aggiungi “con esempi”</span>
             <button class="btn btn-primary" id="goTargets" type="button">Scegli target ↓</button>
@@ -317,14 +320,11 @@
       </div>
     </section>
 
-    <!-- 2) TARGET -->
     <section class="section" id="sec2">
       <div class="card" id="card2">
         <div class="card-inner">
           <h2 class="title">🎯 Seleziona il target</h2>
-
           <div class="targets-grid" id="targets"></div>
-
           <div class="actions">
             <button class="btn" id="backToQ" type="button">↑ Torna alla domanda</button>
             <button class="btn btn-primary" id="goLength" type="button" disabled>Vai alla lunghezza ↓</button>
@@ -333,14 +333,11 @@
       </div>
     </section>
 
-    <!-- 3) LUNGHEZZA -->
     <section class="section" id="secLen">
       <div class="card" id="cardLen">
         <div class="card-inner">
           <h2 class="title">🧾 Quanto vuoi lunga la risposta?</h2>
-
           <div class="len-grid" id="lengths"></div>
-
           <div class="actions">
             <button class="btn" id="backToTargets" type="button">↑ Cambia target</button>
             <button class="btn btn-primary" id="goAnswer" type="button" disabled>Vai alla risposta ↓</button>
@@ -349,12 +346,10 @@
       </div>
     </section>
 
-    <!-- 4) RISPOSTA -->
     <section class="section" id="sec3">
       <div class="card card-dark" id="card3">
         <div class="card-inner">
           <h2 class="title">💬 Risposta</h2>
-
           <div class="chip" id="chips" style="display:none;">
             🎯 Target: <b id="chipTarget"></b>
             <span style="opacity:.5">•</span>
@@ -363,18 +358,15 @@
 
           <div class="response-shell" id="responseShell">
             <div id="response" class="md"></div>
-
             <div class="actions" style="margin-top:0;">
               <div class="status">
                 <span id="spinner" class="spinner" style="display:none"></span>
                 <span id="status">Pronto.</span>
               </div>
-
               <div style="display:flex;gap:10px;flex-wrap:wrap;">
                 <button class="btn" id="copyBtn" type="button" disabled>⧉ Copia</button>
               </div>
             </div>
-
             <div id="quotaMount"></div>
           </div>
 
@@ -541,7 +533,6 @@
     /* Markdown render (throttled) */
     let renderTimer = null;
     function renderNow(){
-      // marked.parse -> DOMPurify.sanitize
       const html = marked.parse(accumulatedText || "");
       responseEl.innerHTML = DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
     }
@@ -580,9 +571,6 @@
       return trimmed.length >= Math.floor(maxChars * 0.92);
     }
 
-    /* -------------------------
-       Credits header parsing
-    ------------------------- */
     function updateCreditsFromHeaders(headers){
       const rem = headers.get("x-credits-remaining");
       const lim = headers.get("x-credits-limit");
@@ -593,9 +581,6 @@
       }
     }
 
-    /* -------------------------
-       SSE streaming (robusto)
-    ------------------------- */
     async function streamGemini(payload, onTextChunk){
       const res = await fetch("/api/gemini", {
         method: "POST",
@@ -663,12 +648,9 @@
                 }
               }
             }
-          } catch {
-            // ignore chunk
-          }
+          } catch { }
         }
       }
-
       if (uiBuffer) onTextChunk(uiBuffer);
     }
 
@@ -727,12 +709,10 @@
         return;
       }
 
-      // UI chips
       chips.style.display = "inline-flex";
       chipTarget.textContent = TARGETS[selectedTargetIndex].label;
       chipLen.textContent = getLenObj()?.label || selectedLenKey;
 
-      // Status
       if (mode === "continue") {
         isGenerating = true;
         updateButtons();
@@ -751,10 +731,7 @@
           scheduleRender();
         });
 
-        // decide continuation BEFORE stripping (importante!)
         const needAuto = endsWithContinueMarker(rawEndText) || nearLimitHeuristic(rawEndText);
-
-        // strip marker for display + for next continue
         accumulatedText = stripContinueMarker(accumulatedText);
         renderNow();
 
@@ -770,27 +747,17 @@
           await new Promise(r => setTimeout(r, 200));
           return run("continue");
         }
-
         autoHopCount = 0;
 
       } catch (err) {
         isGenerating = false;
         updateButtons();
-
         const msg = err?.message || "Errore.";
         setStatus("Errore.", false);
-
-        if (err?.status === 429 || /quota|exceeded|retry in|credit/i.test(msg)) {
-          showQuotaBox(msg);
-        } else {
-          showQuotaBox(msg);
-        }
+        showQuotaBox(msg);
       }
     }
 
-    /* -------------------------
-       Render targets / lengths
-    ------------------------- */
     function renderTargets(){
       targetsEl.innerHTML = "";
       TARGETS.forEach((t, i) => {
@@ -807,11 +774,7 @@
           selectedTargetIndex = i;
           renderTargets();
           updateButtons();
-
-          // vai alla lunghezza
           scrollTo(secLen, cardLen);
-
-          // se avevo già scelto la lunghezza, rigenera automaticamente
           if (selectedLenKey) {
             scrollTo(sec3, card3);
             preflightGenerateUX();
@@ -838,8 +801,6 @@
           selectedLenKey = l.key;
           renderLengths();
           updateButtons();
-
-          // scroll + auto start
           scrollTo(sec3, card3);
           preflightGenerateUX();
           setTimeout(() => run("start"), 240);
@@ -852,33 +813,23 @@
     renderLengths();
     updateButtons();
 
-    /* -------------------------
-       Buttons navigation
-    ------------------------- */
     goTargets.addEventListener("click", () => {
       if (!q.value.trim()) { q.focus(); return; }
       scrollTo(sec2, card2);
     });
 
     backToQ.addEventListener("click", () => scrollTo(sec1, card1));
-
     goLength.addEventListener("click", () => {
       if (selectedTargetIndex < 0) return;
       scrollTo(secLen, cardLen);
     });
-
     backToTargets.addEventListener("click", () => scrollTo(sec2, card2));
-
     goAnswer.addEventListener("click", () => {
       if (!selectedLenKey) return;
       scrollTo(sec3, card3);
     });
-
     backToLen.addEventListener("click", () => scrollTo(secLen, cardLen));
 
-    /* -------------------------
-       Copy
-    ------------------------- */
     copyBtn.addEventListener("click", async () => {
       const text = (accumulatedText || "").trim();
       if (!text) return;
@@ -891,11 +842,7 @@
       }
     });
 
-    /* Init */
     setStatus("Pronto.", false);
   </script>
 </body>
 </html>
-
-
-
