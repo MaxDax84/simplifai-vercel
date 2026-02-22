@@ -12,42 +12,25 @@
 
   <style>
     .section{ margin-top:22px; }
-    .badge{ font-size:12px; color:var(--muted); margin-bottom:8px; }
-    .title{
-      font-weight:900;
-      font-size:20px;
-      margin:0 0 18px; /* aumentato spazio sotto il titolo */
-    } 
+    .badge{ font-weight:900; font-size:12px; color:var(--muted); margin-bottom:8px; }
+    .title{ font-weight:900; font-size:20px; margin:0 0 18px; }
     .subt{ color:var(--muted); font-size:14px; margin:0 0 14px; line-height:1.45; }
-
-    .hero-row{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px; flex-wrap:wrap; margin-top:8px;
-    }
-    .credit-pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 12px; border-radius:999px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.03);
-      color:var(--muted); font-size:12px; user-select:none;
-    }
-    .credit-pill b{ color:var(--text); }
 
     textarea{
       width:100%;
-      min-height:180px;
-      background:rgba(0,0,0,.18);
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:12px;
-      color:var(--text);
-      font-size:14px;
-      line-height:1.45;
-      outline:none;
+      min-height:110px;
       resize:vertical;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 12px 12px;
+      outline:none;
+      font: inherit;
+      line-height: 1.45;
     }
     textarea:focus{
-      border-color: rgba(124,92,255,.50);
+      border-color: rgba(124,92,255,.55);
       box-shadow: 0 0 0 4px rgba(124,92,255,.15);
     }
 
@@ -55,6 +38,7 @@
       display:flex; justify-content:space-between;
       margin-top:14px; flex-wrap:wrap; gap:10px; align-items:center;
     }
+
     .actions-split{
       display:flex;
       justify-content:space-between;
@@ -62,235 +46,208 @@
       flex-wrap:wrap;
       gap:10px;
     }
-    
+
     .actions-left{
       display:flex;
       gap:10px;
       flex-wrap:wrap;
     }
-    
+
     .actions-right{
       display:flex;
       justify-content:flex-end;
     }
-    
-    /* Su mobile: PRO va sotto e diventa full width */
+
     @media(max-width:520px){
-      .actions-split{
-        flex-direction:column;
-        align-items:stretch;
-      }
-      .actions-right .btn{
-        width:100%;
-      }
-    }
-    .hint{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 10px; border-radius:999px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.02);
-      color:var(--muted); font-size:12px;
+      .actions-split{ flex-direction:column; align-items:stretch; }
+      .actions-right .btn{ width:100%; }
     }
 
-    /* Targets */
-    .targets-grid{
+    .hint{ color: var(--muted); font-size: 12px; display:flex; gap:8px; align-items:center; }
+
+    .gridTargets{
       display:grid;
-      grid-template-columns:repeat(3, minmax(0,1fr));
-      gap:12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 10px;
     }
-    @media(max-width:900px){ .targets-grid{ grid-template-columns:1fr; } }
+    @media(max-width: 680px){
+      .gridTargets{ grid-template-columns: 1fr; }
+    }
 
-    .target-card{
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:14px;
-      display:flex; gap:12px;
+    .tbtn{
+      text-align:left;
+      border-radius: 16px;
+      padding: 14px 14px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
       cursor:pointer;
-      transition:.15s ease;
-      min-height:84px;
-      align-items:flex-start;
+      display:flex;
+      gap: 12px;
+      align-items:center;
+      transition: transform .08s ease, border-color .12s ease, background .12s ease;
+      color: var(--text);
+      user-select:none;
     }
-    .target-card:hover{ background:rgba(255,255,255,.05); transform:translateY(-1px); }
-    .target-card.active{
-      border-color:rgba(124,92,255,.55);
-      background:rgba(124,92,255,.14);
+    .tbtn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.18); }
+    .tbtn:active{ transform: translateY(0); }
+    .tbtn.selected{
+      border-color: rgba(124,92,255,.55);
+      background: rgba(124,92,255,.10);
+      box-shadow: 0 0 0 4px rgba(124,92,255,.15);
     }
     .ticon{
-      width:38px; height:38px;
+      width: 44px; height: 44px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
       display:flex; align-items:center; justify-content:center;
-      background:rgba(255,255,255,.06);
-      border:1px solid var(--border);
-      border-radius:12px;
-      font-size:18px;
-      flex:0 0 auto;
+      font-size: 22px;
+      flex: 0 0 auto;
     }
-    .tname{ margin:0; font-weight:900; }
-    .tdesc{ margin:4px 0 0; color:var(--muted); font-size:13px; line-height:1.35; }
+    .tmeta{ display:flex; flex-direction:column; gap:3px; }
+    .tlabel{ font-weight: 900; letter-spacing: -.2px; }
+    .tdesc{ color: var(--muted); font-size: 13px; line-height: 1.35; }
 
-    /* Length */
-    .len-grid{
+    .lenRow{
       display:grid;
-      grid-template-columns:repeat(3, minmax(0,1fr));
-      gap:12px;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 12px;
+      margin-top: 8px;
     }
-    @media(max-width:900px){ .len-grid{ grid-template-columns:1fr; } }
+    @media(max-width: 980px){
+      .lenRow{ grid-template-columns: 1fr; }
+    }
 
-    .len-card{
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:14px;
+    .lbtn{
+      text-align:left;
+      border-radius: 16px;
+      padding: 14px 14px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
       cursor:pointer;
-      transition:.15s ease;
-      min-height:72px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      transition: transform .08s ease, border-color .12s ease, background .12s ease;
+      color: var(--text);
+      user-select:none;
+      min-height: 82px;
+    }
+    .lbtn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.18); }
+    .lbtn.selected{
+      border-color: rgba(124,92,255,.55);
+      background: rgba(124,92,255,.10);
+      box-shadow: 0 0 0 4px rgba(124,92,255,.15);
+    }
+    .ltitle{ font-weight: 950; }
+    .ldesc{ color: var(--muted); font-size: 13px; margin-top: 6px; line-height: 1.35; }
+    .ltag{
+      color: rgba(233,237,255,.9);
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      white-space:nowrap;
+      margin-top: 2px;
+    }
+
+    .answerTop{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:12px;
+      gap: 10px;
+      flex-wrap:wrap;
+      margin-bottom: 12px;
     }
-    .len-card:hover{ background:rgba(255,255,255,.05); transform:translateY(-1px); }
-    .len-card.active{
-      border-color:rgba(124,92,255,.55);
-      background:rgba(124,92,255,.14);
-    }
-    .len-left{ display:flex; flex-direction:column; gap:4px; }
-    .len-name{ font-weight:900; }
-    .len-desc{ color:var(--muted); font-size:13px; }
-    .len-pill{
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.03);
-      color:var(--muted);
-      font-size:12px;
-      white-space:nowrap;
-    }
-
-    /* Response */
-    .chip{
-      display:inline-flex; align-items:center; gap:10px;
-      padding:10px 12px; border-radius:14px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.03);
-      color:var(--muted); font-size:13px;
-      margin-bottom:10px;
+    .chips{
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
       flex-wrap:wrap;
     }
-    .chip b{ color:var(--text); }
-
-    .response-shell{
-      border:1px solid var(--border);
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
       background: rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:16px;
-      min-height:260px;
-      display:flex; flex-direction:column; gap:12px;
+      color: var(--muted);
+      font-size: 12px;
+      white-space:nowrap;
+    }
+    .chip b{ color: rgba(233,237,255,.92); font-weight: 900; }
+
+    .answerBox{
+      background: rgba(255,255,255,.02);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      min-height: 220px;
+      line-height: 1.55;
+      color: rgba(233,237,255,.92);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .answerActions{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .copyBtn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
     }
 
     .status{
-      font-size:12px; color:var(--muted);
-      display:flex; align-items:center; gap:10px;
-    }
-    .spinner{
-      width:14px; height:14px;
-      border:2px solid rgba(255,255,255,.25);
-      border-top-color:rgba(255,255,255,.9);
-      border-radius:50%;
-      animation:spin .8s linear infinite;
-    }
-    @keyframes spin{ to{ transform:rotate(360deg); } }
-
-    .flash{
-      outline:1px solid rgba(124,92,255,.45);
-      box-shadow:0 0 0 6px rgba(124,92,255,.12);
-      transition:.35s ease;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 10px;
     }
 
-    /* Markdown styling */
-    .md{
-      white-space: normal;
-      word-break: break-word;
-      line-height: 1.7;
-      color: rgba(233,237,255,.92);
-      font-size:14px;
-    }
-    .md h1,.md h2,.md h3{ margin: 14px 0 8px; }
-    .md h1{ font-size: 20px; }
-    .md h2{ font-size: 18px; }
-    .md h3{ font-size: 16px; }
-    .md p{ margin: 10px 0; }
-    .md ul,.md ol{ margin: 10px 0 10px 22px; }
-    .md li{ margin: 6px 0; }
-    .md code{
-      background: rgba(0,0,0,.22);
-      border:1px solid rgba(255,255,255,.08);
-      padding: 2px 6px;
-      border-radius: 8px;
-      font-size: 13px;
-    }
-    .md pre{
-      background: rgba(0,0,0,.22);
-      border:1px solid rgba(255,255,255,.08);
-      padding: 12px;
+    .quotaBox{
+      margin-top: 12px;
+      border: 1px solid rgba(255,90,90,.35);
+      background: rgba(255,90,90,.08);
+      padding: 12px 12px;
       border-radius: 14px;
-      overflow:auto;
+      color: rgba(255,220,220,.92);
+      font-size: 13px;
+      line-height: 1.45;
+      display:none;
     }
-    .md blockquote{
-      margin: 10px 0;
-      padding: 10px 12px;
-      border-left: 3px solid rgba(124,92,255,.55);
-      background: rgba(124,92,255,.10);
-      border-radius: 12px;
-      color: rgba(233,237,255,.88);
-    }
-    .md hr{
-      border:none;
-      border-top:1px solid rgba(255,255,255,.10);
-      margin: 14px 0;
-    }
-    .md a{ color: rgba(38,198,255,.95); }
 
-    .quota-card{
-      margin-top:12px;
-      border-radius:18px;
-      border:1px solid rgba(124,92,255,.35);
-      background:rgba(124,92,255,.10);
-      padding:16px;
+    .pillCredits{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size: 12px;
+      white-space:nowrap;
     }
-    .qhead{ font-weight:900; margin-bottom:6px; display:flex; gap:10px; align-items:center; }
-    .qsub{ color:var(--muted); font-size:13px; line-height:1.45; }
-    .qgrid{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap:10px;
-      margin-top:12px;
-    }
-    @media(max-width:520px){ .qgrid{ grid-template-columns:1fr; } }
-    .qbtn{
-      min-height:44px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background:rgba(0,0,0,.18);
-      color:var(--text);
-      font-weight:800;
-      cursor:pointer;
-      display:flex; align-items:center; justify-content:center;
-      text-decoration:none;
-      transition:.15s ease;
-    }
-    .qbtn:hover{ background:rgba(255,255,255,.06); transform:translateY(-1px); }
-    .qbtn.primary{
-      background:linear-gradient(135deg, rgba(124,92,255,.95), rgba(38,198,255,.85));
-      border-color:rgba(124,92,255,.45);
-      color:#0b1020;
-    }
+    .pillCredits b{ color: rgba(233,237,255,.92); font-weight:900; }
+
+    /* piccolo separatore */
+    .divider{ height: 1px; background: rgba(255,255,255,.06); margin: 12px 0; }
+
   </style>
 </head>
 
 <body>
   <div class="wrap">
-
     <header>
       <div class="brand">
         <div class="logo"></div>
@@ -302,10 +259,15 @@
 
       <nav id="mainNav">
         <a href="/index.html" data-nav="home">Home</a>
-        <a href="/app.html" data-nav="app">Prova</a>
+        <a href="/app.html" data-nav="app">App</a>
         <a href="/come-funziona.html" data-nav="how">Come funziona</a>
         <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
       </nav>
+
+      <!-- credits pill -->
+      <div class="pillCredits" id="creditsPill" style="margin-left:auto;">
+        ⚡ Crediti: <b id="creditsText">—</b>
+      </div>
 
       <!-- mobile hamburger -->
       <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
@@ -316,22 +278,19 @@
     <!-- Mobile overlay menu -->
     <div class="mobile-nav" id="mobileNav">
       <a href="/index.html">Home</a>
-      <a href="/app.html">Prova</a>
+      <a href="/app.html">App</a>
       <a href="/come-funziona.html">Come funziona</a>
       <a href="/prezzi.html">Prezzi</a>
-    </div>
-
-    <div class="hero-row">
-      <div class="pilltag">✨ Flow</div>
-      <div class="credit-pill">⚡ Crediti disponibili: <b id="creditsValue">—</b></div>
     </div>
 
     <!-- 1) DOMANDA -->
     <section class="section" id="sec1">
       <div class="card" id="card1">
         <div class="card-inner">
-          <h2 class="title">✦ Scrivi cosa vuoi sapere</h2>
-          
+          <div class="badge">1/4</div>
+          <h2 class="title">✦ Scrivi la domanda</h2>
+          <p class="subt">Cosa vuoi sapere?</p>
+
           <textarea id="query" placeholder="Esempio: 'DNA' oppure 'Cos'è il DNA e a cosa serve?'"></textarea>
 
           <div class="actions">
@@ -346,13 +305,15 @@
     <section class="section" id="sec2">
       <div class="card" id="card2">
         <div class="card-inner">
+          <div class="badge">2/4</div>
           <h2 class="title">🎯 A chi vuoi spiegarlo?</h2>
+          <p class="subt">Scegli il livello: più semplice o più approfondito.</p>
 
-          <div class="targets-grid" id="targets"></div>
+          <div class="gridTargets" id="targetsGrid"></div>
 
           <div class="actions">
-            <button class="btn" id="backToQ" type="button">↑ Torna alla domanda</button>
-            <button class="btn btn-primary" id="goLength" type="button" disabled>Vai alla lunghezza ↓</button>
+            <button class="btn" id="backToQ" type="button">↑ Cambia domanda</button>
+            <button class="btn btn-primary" id="goLength" type="button">Scegli lunghezza ↓</button>
           </div>
         </div>
       </div>
@@ -362,13 +323,15 @@
     <section class="section" id="secLen">
       <div class="card" id="cardLen">
         <div class="card-inner">
-          <h2 class="title">🧾 Quanto vuoi lunga la spiegazione?</h2>
+          <div class="badge">3/4</div>
+          <h2 class="title">📏 Quanto lunga?</h2>
+          <p class="subt">La generazione parte quando scegli la lunghezza.</p>
 
-          <div class="len-grid" id="lengths"></div>
+          <div class="lenRow" id="lenRow"></div>
 
           <div class="actions">
             <button class="btn" id="backToTargets" type="button">↑ Cambia target</button>
-            <button class="btn btn-primary" id="goAnswer" type="button" disabled>Vai alla risposta ↓</button>
+            <button class="btn btn-primary" id="goAnswer" type="button">Vai alla risposta ↓</button>
           </div>
         </div>
       </div>
@@ -376,39 +339,34 @@
 
     <!-- 4) RISPOSTA -->
     <section class="section" id="sec3">
-      <div class="card card-dark" id="card3">
+      <div class="card" id="card3">
         <div class="card-inner">
+          <div class="badge">4/4</div>
           <h2 class="title">💬 Risposta</h2>
 
-          <div class="chip" id="chips" style="display:none;">
-            🎯 Target: <b id="chipTarget"></b>
-            <span style="opacity:.5">•</span>
-            🧾 Lunghezza: <b id="chipLen"></b>
-          </div>
-
-          <div class="response-shell" id="responseShell">
-            <div id="response" class="md"></div>
-
-            <div class="actions" style="margin-top:0;">
-              <div class="status">
-                <span id="spinner" class="spinner" style="display:none"></span>
-                <span id="status">Pronto.</span>
-              </div>
-
-              <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                <button class="btn" id="copyBtn" type="button" disabled>⧉ Copia</button>
-              </div>
+          <div class="answerTop">
+            <div class="chips" id="chips" style="display:none;">
+              <span class="chip">🎯 Target: <b id="chipTarget">—</b></span>
+              <span class="chip">📄 Lunghezza: <b id="chipLen">—</b></span>
             </div>
 
-            <div id="quotaMount"></div>
+            <div class="answerActions">
+              <button class="btn copyBtn" id="copyBtn" type="button" disabled>⧉ Copia</button>
+            </div>
           </div>
+
+          <div class="answerBox" id="answerBox">
+            <div id="answerMount">Pronto.</div>
+            <div class="status" id="statusMount"></div>
+          </div>
+
+          <div id="quotaMount" class="quotaBox"></div>
 
           <div class="actions actions-split">
             <div class="actions-left">
               <button class="btn" id="backToLen" type="button">↑ Cambia lunghezza</button>
               <button class="btn" id="backToTargetFromAnswer" type="button">↑ Cambia target</button>
             </div>
-          
             <div class="actions-right">
               <a class="btn" href="/prezzi.html">Ottieni Simplif-AI PRO</a>
             </div>
@@ -453,44 +411,21 @@
     })();
 
     /* -------------------------
-       Targets & Lengths
+       Utils scroll
     ------------------------- */
-    const TARGETS = [
-      { label:"Bebè", icon:"👶", desc:"Pochissime parole, super semplice.", prompt:"Spiega come a un bebè: frasi molto brevi, parole semplicissime, niente dettagli tecnici.", baseTokens:1800, baseChars:4500 },
-      { label:"Bambino", icon:"🧒", desc:"Semplice, analogie, frasi brevi.", prompt:"Spiega come a un bambino: usa parole semplici, esempi concreti, frasi brevi.", baseTokens:2500, baseChars:6000 },
-      { label:"Ragazzo", icon:"👨", desc:"Chiaro e un po’ più dettagliato.", prompt:"Spiega come a un ragazzo: chiaro, un po’ più dettagliato, esempi e analogie.", baseTokens:2500, baseChars:7000 },
-      { label:"Universitario", icon:"🎓", desc:"Struttura e concetti corretti.", prompt:"Spiega come a uno studente universitario: struttura chiara, concetti corretti.", baseTokens:2500, baseChars:9000 },
-      { label:"Esperto", icon:"🧠", desc:"Dettagli tecnici e caveat.", prompt:"Spiega come a un esperto: dettagli tecnici, assunzioni esplicite, caveat.", baseTokens:3500, baseChars:12000 },
-      { label:"Scienziato", icon:"🧪", desc:"Rigore, limiti, definizioni.", prompt:"Spiega come a uno scienziato: rigore, definizioni, limiti, struttura.", baseTokens:3500, baseChars:14000 }
-    ];
-
-    const LENGTHS = [
-      { key:"breve", label:"Breve", desc:"Risposta rapida, essenziale.", pill:"~1 min", multiplier:0.45, instruction:"Rispondi in modo BREVE (essenziale), senza divagare." },
-      { key:"medio", label:"Medio", desc:"Equilibrata, con esempi.", pill:"~2–3 min", multiplier:0.75, instruction:"Rispondi in modo MEDIO: chiaro, con qualche esempio, senza diventare troppo lungo." },
-      { key:"lungo", label:"Lungo", desc:"Completa, ben strutturata.", pill:"~4–6 min", multiplier:1.00, instruction:"Rispondi in modo LUNGO: completo, ben strutturato, con esempi dove utile." }
-    ];
+    function scrollTo(section, card){
+      const y = section.getBoundingClientRect().top + window.scrollY - 18;
+      window.scrollTo({ top: y, behavior: "smooth" });
+      if(card){
+        card.style.boxShadow = "0 0 0 4px rgba(124,92,255,.15)";
+        setTimeout(()=> card.style.boxShadow = "", 800);
+      }
+    }
 
     /* -------------------------
-       Auto-continue
-    ------------------------- */
-    const AUTO_CONTINUE_MAX_HOPS = 6;
-    let autoHopCount = 0;
-
-    /* -------------------------
-       State
-    ------------------------- */
-    let selectedTargetIndex = -1;
-    let selectedLenKey = "";
-    let accumulatedText = "";    // markdown
-    let isGenerating = false;
-
-    /* -------------------------
-       DOM
+       DOM refs
     ------------------------- */
     const q = document.getElementById("query");
-
-    const targetsEl = document.getElementById("targets");
-    const lengthsEl = document.getElementById("lengths");
 
     const goTargets = document.getElementById("goTargets");
     const backToQ = document.getElementById("backToQ");
@@ -510,119 +445,227 @@
     const cardLen = document.getElementById("cardLen");
     const card3 = document.getElementById("card3");
 
-    const responseEl = document.getElementById("response");
-    const spinner = document.getElementById("spinner");
-    const statusEl = document.getElementById("status");
-    const copyBtn = document.getElementById("copyBtn");
+    const targetsGrid = document.getElementById("targetsGrid");
+    const lenRow = document.getElementById("lenRow");
+
+    const answerMount = document.getElementById("answerMount");
+    const statusMount = document.getElementById("statusMount");
     const quotaMount = document.getElementById("quotaMount");
 
     const chips = document.getElementById("chips");
     const chipTarget = document.getElementById("chipTarget");
     const chipLen = document.getElementById("chipLen");
 
-    const creditsValueEl = document.getElementById("creditsValue");
-    function setCredits(v){ creditsValueEl.textContent = v ?? "—"; }
+    const copyBtn = document.getElementById("copyBtn");
+
+    const creditsPill = document.getElementById("creditsPill");
+    const creditsText = document.getElementById("creditsText");
 
     /* -------------------------
-       Helpers
+       Models
     ------------------------- */
-    function flash(card){
-      card.classList.add("flash");
-      setTimeout(()=>card.classList.remove("flash"), 420);
-    }
-    function scrollTo(sec, card){
-      sec.scrollIntoView({ behavior:"smooth", block:"start" });
-      flash(card);
-    }
+    const TARGETS = [
+      { label:"Bebè", icon:"👶", desc:"Pochissime parole, super semplice.", prompt:"Spiega come a un bebè (molto semplice).", maxTokens: 700, maxChars: 900 },
+      { label:"Bambino", icon:"🧒", desc:"Semplice, con esempi facili.", prompt:"Spiega come a un bambino (semplice, con esempi).", maxTokens: 1200, maxChars: 1600 },
+      { label:"Ragazzo", icon:"🧑‍🎓", desc:"Chiaro ma più completo.", prompt:"Spiega come a un ragazzo (chiaro, un po’ più completo).", maxTokens: 1600, maxChars: 2200 },
+      { label:"Universitario", icon:"🎓", desc:"Strutturato e preciso.", prompt:"Spiega come a un universitario (strutturato, preciso).", maxTokens: 2200, maxChars: 3000 },
+      { label:"Adulto", icon:"🧑", desc:"Equilibrato e pratico.", prompt:"Spiega come a un adulto (equilibrato, pratico).", maxTokens: 2500, maxChars: 3400 },
+      { label:"Esperto", icon:"🧠", desc:"Dettagliato e tecnico.", prompt:"Spiega come a un esperto (dettagliato, tecnico).", maxTokens: 3500, maxChars: 4800 },
+      { label:"Scienziato", icon:"🧪", desc:"Massima profondità.", prompt:"Spiega come a uno scienziato (molto approfondito).", maxTokens: 3500, maxChars: 5200 }
+    ];
 
-    function setStatus(text, loading=false){
-      statusEl.textContent = text;
-      spinner.style.display = loading ? "inline-block" : "none";
-    }
-
-    function escapeHtml(str){
-      return String(str)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
-    function clearQuotaBox(){ quotaMount.innerHTML = ""; }
-
-    function showQuotaBox(message){
-      quotaMount.innerHTML = `
-        <div class="quota-card">
-          <div class="qhead">⚠️ Limite / crediti</div>
-          <div class="qsub">${escapeHtml(message || "Limite temporaneo. Riprova oppure fai upgrade.")}</div>
-          <div class="qgrid">
-            <a class="qbtn" href="/prezzi.html">Vedi i piani</a>
-            <a class="qbtn primary" href="/checkout.html">Upgrade</a>
-          </div>
-        </div>
-      `;
-    }
-
-    function updateButtons(){
-      copyBtn.disabled = isGenerating || !accumulatedText.trim();
-      goLength.disabled = selectedTargetIndex < 0;
-      goAnswer.disabled = !selectedLenKey;
-    }
-
-    /* Markdown render (throttled) */
-    let renderTimer = null;
-    function renderNow(){
-      // marked.parse -> DOMPurify.sanitize
-      const html = marked.parse(accumulatedText || "");
-      responseEl.innerHTML = DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
-    }
-    function scheduleRender(){
-      if(renderTimer) return;
-      renderTimer = setTimeout(() => {
-        renderTimer = null;
-        renderNow();
-      }, 120);
-    }
-
-    function stripContinueMarker(txt){
-      return txt.replace(/\.\.\.\(continua\)\s*$/i, "").trimEnd();
-    }
-    function endsWithContinueMarker(txt){
-      return /\.\.\.\(continua\)\s*$/i.test((txt||"").trim());
-    }
-
-    function getLenObj(){
-      return LENGTHS.find(x => x.key === selectedLenKey) || null;
-    }
-
-    function calcLimits(){
-      const t = TARGETS[selectedTargetIndex];
-      const l = getLenObj() || LENGTHS[1];
-      const maxTokens = Math.max(600, Math.floor(t.baseTokens * l.multiplier));
-      const maxChars  = Math.max(1800, Math.floor(t.baseChars  * l.multiplier));
-      return { maxTokens, maxChars };
-    }
-
-    function nearLimitHeuristic(text){
-      if (selectedTargetIndex < 0 || !selectedLenKey) return false;
-      const { maxChars } = calcLimits();
-      const trimmed = (text || "").trim();
-      if (!trimmed) return false;
-      return trimmed.length >= Math.floor(maxChars * 0.92);
-    }
+    const LENGTHS = [
+      { key:"short", label:"Breve", desc:"Risposta rapida, essenziale.", tag:"~1 min", factor: 0.60 },
+      { key:"medium", label:"Medio", desc:"Equilibrata, con esempi.", tag:"~2–3 min", factor: 0.85 },
+      { key:"long", label:"Lungo", desc:"Completa, ben strutturata.", tag:"~4–6 min", factor: 1.00 }
+    ];
 
     /* -------------------------
-       Credits header parsing
+       State
+    ------------------------- */
+    let selectedTargetIndex = -1;
+    let selectedLenKey = "";
+    let accumulatedText = "";
+    let isGenerating = false;
+    let renderRAF = 0;
+
+    const AUTO_CONTINUE_MAX_HOPS = 6;
+    let autoHopCount = 0;
+
+    /* -------------------------
+       Render targets & lengths
+    ------------------------- */
+    function renderTargets(){
+      targetsGrid.innerHTML = "";
+      TARGETS.forEach((t, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "tbtn" + (idx === selectedTargetIndex ? " selected" : "");
+        btn.type = "button";
+        btn.innerHTML = `
+          <div class="ticon">${t.icon}</div>
+          <div class="tmeta">
+            <div class="tlabel">${t.label}</div>
+            <div class="tdesc">${t.desc}</div>
+          </div>
+        `;
+        btn.addEventListener("click", () => {
+          selectedTargetIndex = idx;
+          renderTargets();
+          // se già scelta lunghezza, rigenera
+          if (selectedLenKey) restartFromConfigChange();
+          // auto scroll verso lunghezza se domanda presente
+          scrollTo(secLen, cardLen);
+        });
+        targetsGrid.appendChild(btn);
+      });
+    }
+
+    function renderLengths(){
+      lenRow.innerHTML = "";
+      LENGTHS.forEach((l) => {
+        const btn = document.createElement("button");
+        btn.className = "lbtn" + (l.key === selectedLenKey ? " selected" : "");
+        btn.type = "button";
+        btn.innerHTML = `
+          <div>
+            <div class="ltitle">${l.label}</div>
+            <div class="ldesc">${l.desc}</div>
+          </div>
+          <div class="ltag">${l.tag}</div>
+        `;
+        btn.addEventListener("click", () => {
+          selectedLenKey = l.key;
+          renderLengths();
+          // parte la generazione automaticamente
+          scrollTo(sec3, card3);
+          restartFromConfigChange();
+        });
+        lenRow.appendChild(btn);
+      });
+    }
+
+    renderTargets();
+    renderLengths();
+
+    /* -------------------------
+       Credits UI
     ------------------------- */
     function updateCreditsFromHeaders(headers){
-      const rem = headers.get("x-credits-remaining");
-      const lim = headers.get("x-credits-limit");
-      if (rem && String(rem).trim() !== "") {
-        const r = String(rem).trim();
-        const l = lim && String(lim).trim() !== "" ? String(lim).trim() : "";
-        setCredits(l ? `${r}/${l}` : r);
+      const remain = headers.get("x-credits-remaining");
+      const limit = headers.get("x-credits-limit");
+      if(!remain || !limit) return;
+      creditsText.textContent = `${remain}/${limit}`;
+    }
+
+    /* -------------------------
+       Quota box
+    ------------------------- */
+    function clearQuotaBox(){
+      quotaMount.style.display = "none";
+      quotaMount.textContent = "";
+    }
+    function showQuotaBoxIfNeeded(msg){
+      const m = (msg || "").toLowerCase();
+      if(m.includes("quota") || m.includes("credit") || m.includes("429") || m.includes("exceed")){
+        quotaMount.style.display = "block";
+        quotaMount.textContent = msg;
       }
+    }
+
+    /* -------------------------
+       Markdown render
+    ------------------------- */
+    function scheduleRender(force=false){
+      if(renderRAF && !force) return;
+      cancelAnimationFrame(renderRAF);
+      renderRAF = requestAnimationFrame(() => {
+        renderRAF = 0;
+        const md = accumulatedText || "";
+        const html = DOMPurify.sanitize(marked.parse(md));
+        answerMount.innerHTML = html;
+        copyBtn.disabled = !(md && md.trim());
+      });
+    }
+
+    function setStatus(text, spinning){
+      statusMount.textContent = text || "";
+      if(spinning){
+        statusMount.textContent = text;
+      }
+    }
+
+    /* -------------------------
+       Helpers: length object
+    ------------------------- */
+    function getLenObj(){
+      return LENGTHS.find(l => l.key === selectedLenKey) || null;
+    }
+
+    function getMaxTokens(){
+      const t = TARGETS[selectedTargetIndex] || null;
+      const l = getLenObj();
+      if(!t || !l) return 1200;
+      return Math.round(t.maxTokens * l.factor);
+    }
+    function getMaxChars(){
+      const t = TARGETS[selectedTargetIndex] || null;
+      const l = getLenObj();
+      if(!t || !l) return 2000;
+      return Math.round(t.maxChars * l.factor);
+    }
+
+    /* -------------------------
+       Continue markers
+    ------------------------- */
+    function endsWithContinueMarker(s){
+      return /\.\.\.\s*\(continua\)\s*$/i.test((s||"").trim());
+    }
+    function stripContinueMarker(s){
+      return (s || "").replace(/\.\.\.\s*\(continua\)\s*$/i, "").trimEnd();
+    }
+    function nearLimitHeuristic(s){
+      const max = getMaxChars();
+      const n = (s || "").length;
+      if(!max) return false;
+      return n >= Math.floor(max * 0.92);
+    }
+
+    /* -------------------------
+       Build payload
+    ------------------------- */
+    function buildPayload(mode){
+      const t = TARGETS[selectedTargetIndex];
+      const maxTokens = getMaxTokens();
+
+      const qText = q.value.trim();
+      const base = `Se non hai spazio sufficiente, termina con "...(continua)". Non troncarmi mai a metà frase: se serve, usa il marker.`;
+
+      let userPrompt = "";
+      if(mode === "continue"){
+        userPrompt =
+`Continua la risposta senza ripetere. Riparti dall'ultima frase e completala se era rimasta a metà.
+Mantieni lo stesso stile/target e la stessa lunghezza.
+
+TESTO FINORA:
+${accumulatedText.trim()}`;
+      } else {
+        userPrompt =
+`${base}
+
+DOMANDA:
+${qText}
+
+TARGET:
+${t.label}
+
+ISTRUZIONI:
+${t.prompt}`;
+      }
+
+      return {
+        maxOutputTokens: maxTokens,
+        prompt: userPrompt
+      };
     }
 
     /* -------------------------
@@ -649,20 +692,14 @@
             if (t && t.trim()) msg = t.trim().slice(0, 900);
           }
         } catch {}
-        const err = new Error(msg);
-        err.status = res.status;
-        throw err;
-      }
-
-      const contentType = (res.headers.get("content-type") || "").toLowerCase();
-      if (!contentType.includes("text/event-stream")) {
-        const txt = await res.text();
-        if (txt) onTextChunk(txt);
-        return;
+        throw new Error(msg);
       }
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder("utf-8");
+
+      // finishReason può arrivare in qualunque chunk
+      let lastFinishReason = "";
 
       let buffer = "";
       let uiBuffer = "";
@@ -673,66 +710,51 @@
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() || "";
 
-        for (const line of lines) {
-          const trimmed = line.trim();
-          if (!trimmed.startsWith("data:")) continue;
+        // SSE: eventi separati da doppio newline
+        const events = buffer.split("\n\n");
+        buffer = events.pop() || "";
 
-          const data = trimmed.slice(5).trim();
-          if (!data || data === "[DONE]") continue;
+        for (const evt of events) {
+          const lines = evt.split("\n");
+          for (const line of lines) {
+            if (!line.startsWith("data:")) continue;
 
-          try {
-            const obj = JSON.parse(data);
-            const parts = obj?.candidates?.[0]?.content?.parts || [];
-            for (const p of parts) {
-              if (typeof p?.text === "string" && p.text.length) {
-                uiBuffer += p.text;
-                if (uiBuffer.length >= FLUSH_EVERY) {
-                  onTextChunk(uiBuffer);
-                  uiBuffer = "";
+            const data = line.slice(5).trim();
+            if (!data || data === "[DONE]") continue;
+
+            try {
+              const obj = JSON.parse(data);
+
+              const fr = obj?.candidates?.[0]?.finishReason;
+              if (typeof fr === "string" && fr) lastFinishReason = fr;
+
+              const parts = obj?.candidates?.[0]?.content?.parts || [];
+              for (const p of parts) {
+                const t = p?.text || "";
+                if (t) {
+                  uiBuffer += t;
+                  if (uiBuffer.length >= FLUSH_EVERY) {
+                    onTextChunk(uiBuffer);
+                    uiBuffer = "";
+                  }
                 }
               }
+            } catch {
+              // ignore chunk
             }
-          } catch {
-            // ignore chunk
           }
         }
       }
 
       if (uiBuffer) onTextChunk(uiBuffer);
+
+      return lastFinishReason;
     }
 
-    function buildPayload(mode){
-      const t = TARGETS[selectedTargetIndex];
-      const l = getLenObj();
-      const { maxTokens, maxChars } = calcLimits();
-
-      const lengthInstruction = l ? l.instruction : "";
-      const targetPrompt = `${t.prompt}\n\n${lengthInstruction}`;
-
-      return {
-        query: q.value.trim(),
-        targetPrompt,
-        maxTokens,
-        maxChars,
-        mode: mode === "continue" ? "continue" : "start",
-        previousText: mode === "continue" ? accumulatedText : ""
-      };
-    }
-
-    function preflightGenerateUX(){
-      clearQuotaBox();
-      accumulatedText = "";
-      responseEl.innerHTML = "";
-      autoHopCount = 0;
-
-      isGenerating = true;
-      updateButtons();
-      setStatus("Ok! Sto generando…", true);
-    }
-
+    /* -------------------------
+       Run (generate/continue)
+    ------------------------- */
     async function run(mode){
       clearQuotaBox();
 
@@ -777,111 +799,82 @@
 
       try {
         let rawEndText = "";
-        await streamGemini(buildPayload(mode), (chunk) => {
+        const finishReason = await streamGemini(buildPayload(mode), (chunk) => {
           accumulatedText += chunk;
           rawEndText = accumulatedText;
           scheduleRender();
         });
 
+        const hitTokenLimit =
+          typeof finishReason === "string" &&
+          (finishReason === "MAX_TOKENS" || finishReason === "MAX_OUTPUT_TOKENS");
+
+        // fallback: se non termina con punteggiatura "finale", è probabilmente troncata
+        const trimmed = (rawEndText || "").trim();
+        const endsClean =
+          /[.!?…]["'”’)]?\s*$/.test(trimmed);
+
         // decide continuation BEFORE stripping (importante!)
-        const needAuto = endsWithContinueMarker(rawEndText) || nearLimitHeuristic(rawEndText);
+        const needAuto =
+          hitTokenLimit ||
+          !endsClean ||
+          endsWithContinueMarker(rawEndText) ||
+          nearLimitHeuristic(rawEndText);
 
         // strip marker for display + for next continue
         accumulatedText = stripContinueMarker(accumulatedText);
-        renderNow();
+        rawEndText = stripContinueMarker(rawEndText);
+        scheduleRender(true);
 
+        // done streaming
         isGenerating = false;
         updateButtons();
         setStatus("Fatto.", false);
 
-        if (needAuto && autoHopCount < AUTO_CONTINUE_MAX_HOPS) {
-          autoHopCount++;
-          isGenerating = true;
-          updateButtons();
-          setStatus(`Sto continuando automaticamente… (${autoHopCount})`, true);
-          await new Promise(r => setTimeout(r, 200));
-          return run("continue");
+        // auto-continue
+        if (needAuto) {
+          if (autoHopCount < AUTO_CONTINUE_MAX_HOPS) {
+            autoHopCount++;
+            // continue does NOT consume credits
+            await run("continue");
+          } else {
+            setStatus("Ho raggiunto il limite di continue automatici.", false);
+          }
         }
 
-        autoHopCount = 0;
-
-      } catch (err) {
+      } catch (e) {
         isGenerating = false;
         updateButtons();
-
-        const msg = err?.message || "Errore.";
-        setStatus("Errore.", false);
-
-        if (err?.status === 429 || /quota|exceeded|retry in|credit/i.test(msg)) {
-          showQuotaBox(msg);
-        } else {
-          showQuotaBox(msg);
-        }
+        setStatus(e?.message || "Errore durante la generazione.", false);
+        showQuotaBoxIfNeeded(e?.message || "");
       }
     }
 
     /* -------------------------
-       Render targets / lengths
+       Restart on config change
     ------------------------- */
-    function renderTargets(){
-      targetsEl.innerHTML = "";
-      TARGETS.forEach((t, i) => {
-        const el = document.createElement("div");
-        el.className = "target-card" + (i === selectedTargetIndex ? " active" : "");
-        el.innerHTML = `
-          <div class="ticon">${t.icon}</div>
-          <div>
-            <p class="tname">${t.label}</p>
-            <p class="tdesc">${t.desc}</p>
-          </div>
-        `;
-        el.addEventListener("click", () => {
-          selectedTargetIndex = i;
-          renderTargets();
-          updateButtons();
-
-          // vai alla lunghezza
-          scrollTo(secLen, cardLen);
-
-          // se avevo già scelto la lunghezza, rigenera automaticamente
-          if (selectedLenKey) {
-            scrollTo(sec3, card3);
-            preflightGenerateUX();
-            setTimeout(() => run("start"), 220);
-          }
-        });
-        targetsEl.appendChild(el);
-      });
+    function restartFromConfigChange(){
+      if(isGenerating) return; // evita doppie chiamate
+      autoHopCount = 0;
+      accumulatedText = "";
+      scheduleRender(true);
+      run("generate");
     }
 
-    function renderLengths(){
-      lengthsEl.innerHTML = "";
-      LENGTHS.forEach((l) => {
-        const el = document.createElement("div");
-        el.className = "len-card" + (l.key === selectedLenKey ? " active" : "");
-        el.innerHTML = `
-          <div class="len-left">
-            <div class="len-name">${l.label}</div>
-            <div class="len-desc">${l.desc}</div>
-          </div>
-          <div class="len-pill">${l.pill}</div>
-        `;
-        el.addEventListener("click", () => {
-          selectedLenKey = l.key;
-          renderLengths();
-          updateButtons();
-
-          // scroll + auto start
-          scrollTo(sec3, card3);
-          preflightGenerateUX();
-          setTimeout(() => run("start"), 240);
-        });
-        lengthsEl.appendChild(el);
-      });
+    /* -------------------------
+       Buttons state
+    ------------------------- */
+    function updateButtons(){
+      goTargets.disabled = isGenerating;
+      goLength.disabled = isGenerating || selectedTargetIndex < 0;
+      goAnswer.disabled = isGenerating || !selectedLenKey;
+      backToQ.disabled = isGenerating;
+      backToTargets.disabled = isGenerating;
+      backToLen.disabled = isGenerating;
+      if(backToTargetFromAnswer) backToTargetFromAnswer.disabled = isGenerating;
+      copyBtn.disabled = isGenerating || !(accumulatedText && accumulatedText.trim());
     }
 
-    renderTargets();
-    renderLengths();
     updateButtons();
 
     /* -------------------------
@@ -907,7 +900,7 @@
     });
 
     backToLen.addEventListener("click", () => scrollTo(secLen, cardLen));
-    backToTargetFromAnswer.addEventListener("click", () => scrollTo(sec2, card2));
+    backToTargetFromAnswer?.addEventListener("click", () => scrollTo(sec2, card2));
 
     /* -------------------------
        Copy
@@ -915,23 +908,27 @@
     copyBtn.addEventListener("click", async () => {
       const text = (accumulatedText || "").trim();
       if (!text) return;
-      try {
+      try{
         await navigator.clipboard.writeText(text);
         setStatus("Copiato ✅", false);
-        setTimeout(() => setStatus("Pronto.", false), 900);
+        setTimeout(()=> setStatus("", false), 1000);
       } catch {
-        setStatus("Non riesco a copiare (permessi).", false);
+        setStatus("Impossibile copiare (permessi browser).", false);
       }
     });
 
-    /* Init */
-    setStatus("Pronto.", false);
+    /* -------------------------
+       Trigger rigenerazione se cambi domanda dopo aver scelto len
+    ------------------------- */
+    let qTimer = 0;
+    q.addEventListener("input", () => {
+      clearTimeout(qTimer);
+      qTimer = setTimeout(() => {
+        if(selectedLenKey && selectedTargetIndex >= 0){
+          restartFromConfigChange();
+        }
+      }, 450);
+    });
   </script>
 </body>
 </html>
-
-
-
-
-
-
