@@ -503,33 +503,58 @@
       const decoder = new TextDecoder("utf-8");
       let buffer = "";
     
+      // Helper: processa un singolo "evento" SSE (blocco separato da riga vuota)
+      function processEventBlock(block){
+        // raccoglie TUTTE le righe data: e le unisce (Gemini può splittare JSON su più righe)
+        const dataLines = block
+          .split(/\n/)
+          .map(l => l.replace(/\r/g, ""))
+          .filter(l => l.startsWith("data:"))
+          .map(l => l.slice(5).trim());
+    
+        if(!dataLines.length) return;
+    
+        const data = dataLines.join("\n"); // JSON completo o [DONE]
+        if(!data || data === "[DONE]") return;
+    
+        try{
+          const json = JSON.parse(data);
+    
+          // Gemini stream tipicamente: candidates[0].content.parts[].text
+          const parts = json?.candidates?.[0]?.content?.parts;
+          if(Array.isArray(parts)){
+            for(const part of parts){
+              if(part?.text) onTextChunk(part.text);
+            }
+            return;
+          }
+    
+          // fallback extra (alcune varianti possono usare text diretto)
+          const t = json?.candidates?.[0]?.content?.text || json?.text;
+          if(typeof t === "string" && t) onTextChunk(t);
+    
+        }catch(_){
+          // se anche qui fallisce, ignoriamo (ma ora dovrebbe quasi mai succedere)
+        }
+      }
+    
       while(true){
         const {value, done} = await reader.read();
         if(done) break;
     
         buffer += decoder.decode(value, {stream:true});
-        const lines = buffer.split(/\n/);
-        buffer = lines.pop() || "";
     
-        for(let raw of lines){
-          const line = raw.replace(/\r/g, "");
-          if(!line) continue;
-          if(!line.startsWith("data:")) continue;
+        // gli eventi SSE sono separati da una riga vuota -> "\n\n" (o "\r\n\r\n")
+        const blocks = buffer.split(/\n\n/);
+        buffer = blocks.pop() || "";
     
-          const data = line.slice(5).trim();
-          if(!data || data === "[DONE]") continue;
-    
-          try{
-            const json = JSON.parse(data);
-            const parts = json?.candidates?.[0]?.content?.parts;
-            if(Array.isArray(parts)){
-              for(const part of parts){
-                if(part?.text) onTextChunk(part.text);
-              }
-            }
-          }catch(_){}
+        for(const block of blocks){
+          if(block.trim()) processEventBlock(block);
         }
       }
+    
+      // processa eventuale ultimo blocco rimasto
+      if(buffer.trim()) processEventBlock(buffer);
     }
 
     function computeLimits(){
@@ -710,6 +735,7 @@
   </script>
 </body>
 </html>
+
 
 
 
