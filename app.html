@@ -10,427 +10,232 @@
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.11/dist/purify.min.js"></script>
 
   <style>
+    /* Reset e stili base */
     .section{ margin-top:22px; }
-    .badge{ font-size:12px; color:var(--muted); margin-bottom:8px; }
+    .title{ font-weight:900; font-size:20px; margin: 10px 0 25px; display: block; }
+    textarea{ width:100%; min-height:180px; background:rgba(0,0,0,.18); border:1px solid var(--border); border-radius:14px; padding:12px; color:var(--text); margin-bottom: 24px; outline:none; }
     
-    /* TITOLO CON SPAZIATURA AMPIA SOTTO (25px) */
-    .title{ 
-      font-weight:900; 
-      font-size:20px; 
-      margin: 10px 0 25px; 
-      display: block;
-    }
+    /* Layout pulsanti e grid */
+    .actions{ display:flex; justify-content:space-between; margin-top:14px; flex-wrap:wrap; gap:10px; align-items:center; }
+    .targets-grid, .len-grid{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; margin-bottom: 24px; }
+    @media(max-width:900px){ .targets-grid, .len-grid{ grid-template-columns:1fr; } }
+
+    .target-card, .len-card{ border:1px solid var(--border); background:rgba(255,255,255,.03); border-radius:16px; padding:14px; cursor:pointer; transition:.15s ease; }
+    .target-card.active, .len-card.active{ border-color:rgba(124,92,255,.55); background:rgba(124,92,255,.14); }
     
-    .subt{ color:var(--muted); font-size:14px; margin:0 0 14px; line-height:1.45; }
-
-    .hero-row{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px; flex-wrap:wrap; margin-top:8px;
-    }
-    .credit-pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 12px; border-radius:999px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.03);
-      color:var(--muted); font-size:12px; user-select:none;
-    }
-    .credit-pill b{ color:var(--text); }
-
-    textarea{
-      width:100%;
-      min-height:180px;
-      background:rgba(0,0,0,.18);
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:12px;
-      color:var(--text);
-      font-size:14px;
-      line-height:1.45;
-      outline:none;
-      resize:vertical;
-      margin-bottom: 24px;
-    }
-    textarea:focus{
-      border-color: rgba(124,92,255,.50);
-      box-shadow: 0 0 0 4px rgba(124,92,255,.15);
-    }
-
-    .actions{
-      display:flex; 
-      justify-content:space-between;
-      margin-top:14px; 
-      flex-wrap:wrap; 
-      gap:10px; 
-      align-items:center;
-    }
-
-    .hint{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 10px; border-radius:999px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.02);
-      color:var(--muted); font-size:12px;
-    }
-
-    .targets-grid{
-      display:grid;
-      grid-template-columns:repeat(3, minmax(0,1fr));
-      gap:12px;
-      margin-bottom: 24px;
-    }
-    @media(max-width:900px){ .targets-grid{ grid-template-columns:1fr; } }
-
-    .target-card{
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:14px;
-      display:flex; gap:12px;
-      cursor:pointer;
-      transition:.15s ease;
-      min-height:84px;
-      align-items:flex-start;
-    }
-    .target-card:hover{ background:rgba(255,255,255,.05); transform:translateY(-1px); }
-    .target-card.active{
-      border-color:rgba(124,92,255,.55);
-      background:rgba(124,92,255,.14);
-    }
-    .ticon{
-      width:38px; height:38px;
-      display:flex; align-items:center; justify-content:center;
-      background:rgba(255,255,255,.06);
-      border:1px solid var(--border);
-      border-radius:12px;
-      font-size:18px;
-      flex:0 0 auto;
-    }
-    .tname{ margin:0; font-weight:900; }
-    .tdesc{ margin:4px 0 0; color:var(--muted); font-size:13px; line-height:1.35; }
-
-    .len-grid{
-      display:grid;
-      grid-template-columns:repeat(3, minmax(0,1fr));
-      gap:12px;
-      margin-bottom: 24px;
-    }
-    @media(max-width:900px){ .len-grid{ grid-template-columns:1fr; } }
-
-    .len-card{
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:14px;
-      cursor:pointer;
-      transition:.15s ease;
-      min-height:72px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
-    .len-card:hover{ background:rgba(255,255,255,.05); transform:translateY(-1px); }
-    .len-card.active{
-      border-color:rgba(124,92,255,.55);
-      background:rgba(124,92,255,.14);
-    }
-    .len-left{ display:flex; flex-direction:column; gap:4px; }
-    .len-name{ font-weight:900; }
-    .len-desc{ color:var(--muted); font-size:13px; }
-    .len-pill{
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.03);
-      color:var(--muted);
-      font-size:12px;
-      white-space:nowrap;
-    }
-
-    .chip{
-      display:inline-flex; align-items:center; gap:10px;
-      padding:10px 12px; border-radius:14px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.03);
-      color:var(--muted); font-size:13px;
-      margin-bottom:10px;
-      flex-wrap:wrap;
-    }
-    .chip b{ color:var(--text); }
-
-    .response-shell{
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:16px;
-      min-height:260px;
-      display:flex; flex-direction:column; gap:12px;
-      margin-bottom: 24px;
-    }
-
-    .status{
-      font-size:12px; color:var(--muted);
-      display:flex; align-items:center; gap:10px;
-    }
-    .spinner{
-      width:14px; height:14px;
-      border:2px solid rgba(255,255,255,.25);
-      border-top-color:rgba(255,255,255,.9);
-      border-radius:50%;
-      animation:spin .8s linear infinite;
-    }
+    .response-shell{ border:1px solid var(--border); background: rgba(255,255,255,.03); border-radius:16px; padding:16px; min-height:260px; margin-bottom: 24px; }
+    .status{ font-size:12px; color:var(--muted); display:flex; align-items:center; gap:10px; }
+    .spinner{ width:14px; height:14px; border:2px solid rgba(255,255,255,.25); border-top-color:#fff; border-radius:50%; animation:spin .8s linear infinite; }
     @keyframes spin{ to{ transform:rotate(360deg); } }
-
-    .flash{
-      outline:1px solid rgba(124,92,255,.45);
-      box-shadow:0 0 0 6px rgba(124,92,255,.12);
-      transition:.35s ease;
-    }
-
-    .md{
-      white-space: normal;
-      word-break: break-word;
-      line-height: 1.7;
-      color: rgba(233,237,255,.92);
-      font-size:14px;
-    }
-    .md p{ margin: 10px 0; }
+    .md p{ margin: 10px 0; line-height: 1.6; }
   </style>
 </head>
 
 <body>
   <div class="wrap">
     <header>
-      <div class="brand">
-        <div class="logo"></div>
-        <div>
-          <h1>Simplif-AI</h1>
-          <span>Concetti complessi spiegati in modo semplice. Scegli tu quanto.</span>
-        </div>
-      </div>
-      <nav id="mainNav">
-        <a href="/index.html" data-nav="home">Home</a>
-        <a href="/app.html" data-nav="app">App</a>
-        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
-        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
-      </nav>
-      <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
-        <span></span><span></span><span></span>
-      </button>
+      <div class="brand"><div class="logo"></div><div><h1>Simplif-AI</h1></div></div>
+      <div class="credit-pill">⚡ Crediti: <b id="creditsValue">—</b></div>
     </header>
-
-    <div class="mobile-nav" id="mobileNav">
-      <a href="/index.html">Home</a>
-      <a href="/app.html">App</a>
-      <a href="/come-funziona.html">Come funziona</a>
-      <a href="/prezzi.html">Prezzi</a>
-    </div>
-
-    <div class="hero-row">
-      <div class="pilltag">✨ Flow</div>
-      <div class="credit-pill">⚡ Crediti disponibili: <b id="creditsValue">—</b></div>
-    </div>
 
     <section class="section" id="sec1">
       <div class="card" id="card1">
-        <div class="card-inner">
-          <h2 class="title">✦ Scrivi la domanda</h2>
-          <textarea id="query" placeholder="Esempio: Cos'è il DNA e a cosa serve?"></textarea>
-          <div class="actions">
-            <span class="hint">💡 Suggerimento: aggiungi “con esempi”</span>
-            <button class="btn btn-primary" id="goTargets" type="button">Scegli target ↓</button>
-          </div>
+        <h2 class="title">✦ Scrivi la domanda</h2>
+        <textarea id="query" placeholder="Esempio: Spiegami i buchi neri..."></textarea>
+        <div class="actions">
+          <button class="btn btn-primary" id="goTargets">Scegli target ↓</button>
         </div>
       </div>
     </section>
 
     <section class="section" id="sec2">
       <div class="card" id="card2">
-        <div class="card-inner">
-          <h2 class="title">🎯 Seleziona il target</h2>
-          <div class="targets-grid" id="targets"></div>
-          <div class="actions">
-            <button class="btn" id="backToQ" type="button">↑ Torna alla domanda</button>
-            <button class="btn btn-primary" id="goLength" type="button" disabled>Vai alla lunghezza ↓</button>
-          </div>
+        <h2 class="title">🎯 Seleziona il target</h2>
+        <div class="targets-grid" id="targets"></div>
+        <div class="actions">
+          <button class="btn" id="backToQ">↑ Indietro</button>
+          <button class="btn btn-primary" id="goLength" disabled>Scegli lunghezza ↓</button>
         </div>
       </div>
     </section>
 
     <section class="section" id="secLen">
       <div class="card" id="cardLen">
-        <div class="card-inner">
-          <h2 class="title">🧾 Quanto vuoi lunga la risposta?</h2>
-          <div class="len-grid" id="lengths"></div>
-          <div class="actions">
-            <button class="btn" id="backToTargets" type="button">↑ Cambia target</button>
-            <button class="btn btn-primary" id="goAnswer" type="button" disabled>Vai alla risposta ↓</button>
-          </div>
+        <h2 class="title">🧾 Lunghezza</h2>
+        <div class="len-grid" id="lengths"></div>
+        <div class="actions">
+          <button class="btn" id="backToTargets">↑ Cambia target</button>
         </div>
       </div>
     </section>
 
     <section class="section" id="sec3">
-      <div class="card card-dark" id="card3">
-        <div class="card-inner">
-          <h2 class="title">💬 Risposta</h2>
-          <div class="chip" id="chips" style="display:none;">
-            🎯 Target: <b id="chipTarget"></b>
-            <span style="opacity:.5">•</span>
-            🧾 Lunghezza: <b id="chipLen"></b>
+      <div class="card" id="card3">
+        <h2 class="title">💬 Risposta</h2>
+        <div class="response-shell">
+          <div id="response" class="md"></div>
+          <div class="status">
+            <span id="spinner" class="spinner" style="display:none"></span>
+            <span id="status">Pronto.</span>
           </div>
-
-          <div class="response-shell" id="responseShell">
-            <div id="response" class="md"></div>
-            <div class="actions" style="margin-top:0;">
-              <div class="status">
-                <span id="spinner" class="spinner" style="display:none"></span>
-                <span id="status">Pronto.</span>
-              </div>
-              <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                <button class="btn" id="copyBtn" type="button" disabled>⧉ Copia</button>
-              </div>
-            </div>
+        </div>
+        <div class="actions">
+          <div style="display:flex; gap:10px;">
+            <button class="btn" id="backToLen">↑ Lunghezza</button>
+            <button class="btn" id="backToTargetsFinal">↑ Target</button>
           </div>
-
-          <div class="actions">
-            <div style="display:flex; gap:10px; flex-wrap:wrap;">
-              <button class="btn" id="backToLen" type="button">↑ Cambia lunghezza</button>
-              <button class="btn" id="backToTargetsFinal" type="button">↑ Cambia target</button>
-            </div>
-            <a class="btn" href="/prezzi.html" style="margin-left:auto;">Vedi Prezzi</a>
-          </div>
+          <button class="btn" id="copyBtn" disabled>Copia</button>
         </div>
       </div>
     </section>
-
-    <div style="height:26px;"></div>
   </div>
 
   <script>
-    /* Mobile nav */
-    (function(){
-      const toggle = document.getElementById("navToggle");
-      const mobileNav = document.getElementById("mobileNav");
-      if(!toggle || !mobileNav) return;
-      toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
-      mobileNav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => document.body.classList.remove("nav-open")));
-    })();
-
-    /* Targets AGGIORNATI */
+    // --- CONFIGURAZIONE ---
     const TARGETS = [
-      { label:"Bambino", icon:"🧒", desc:"Semplice, analogie e frasi brevi.", prompt:"Spiega come a un bambino di 8 anni: usa parole semplici e paragoni quotidiani.", baseTokens:400, baseChars:2000 },
-      { label:"Ragazzo", icon:"👨", desc:"Chiaro, moderno e pratico.", prompt:"Spiega come a un adolescente: usa un tono colloquiale ma corretto.", baseTokens:600, baseChars:4000 },
-      { label:"Universitario", icon:"🎓", desc:"Struttura accademica e concetti chiave.", prompt:"Spiega come a uno studente: usa un linguaggio formale e organizza per punti.", baseTokens:800, baseChars:6000 },
-      { label:"Adulto", icon:"👤", desc:"Diretto, concreto e senza fronzoli.", prompt:"Spiega come a un adulto: vai dritto al punto, tono pragmatico.", baseTokens:700, baseChars:5000 },
-      { label:"Esperto", icon:"🧠", desc:"Dettagli tecnici e approfondimenti.", prompt:"Spiega come a un professionista: approfondisci i meccanismi tecnici.", baseTokens:1000, baseChars:8000 },
-      { label:"Scienziato", icon:"🧪", desc:"Rigore, limiti e definizioni precise.", prompt:"Spiega come a un ricercatore: massimo rigore e terminologia specialistica.", baseTokens:1200, baseChars:10000 }
+      { label:"Bambino", icon:"🧒", desc:"Semplice.", prompt:"Spiega come a un bambino di 8 anni.", baseTokens:400 },
+      { label:"Ragazzo", icon:"👨", desc:"Chiaro.", prompt:"Spiega come a un adolescente.", baseTokens:600 },
+      { label:"Universitario", icon:"🎓", desc:"Accademico.", prompt:"Spiega come a uno studente universitario.", baseTokens:800 },
+      { label:"Adulto", icon:"👤", desc:"Pratico.", prompt:"Spiega come a un adulto occupato.", baseTokens:700 },
+      { label:"Esperto", icon:"🧠", desc:"Tecnico.", prompt:"Spiega come a un professionista del settore.", baseTokens:1000 },
+      { label:"Scienziato", icon:"🧪", desc:"Rigoroso.", prompt:"Spiega come a un ricercatore scientifico.", baseTokens:1200 }
     ];
 
     const LENGTHS = [
-      { key:"breve", label:"Breve", desc:"Essenziale.", pill:"~1 min", multiplier:0.45, instruction:"Rispondi in modo BREVE." },
-      { key:"medio", label:"Medio", desc:"Equilibrata.", pill:"~2–3 min", multiplier:0.75, instruction:"Rispondi in modo MEDIO." },
-      { key:"lungo", label:"Lungo", desc:"Completa.", pill:"~4–6 min", multiplier:1.00, instruction:"Rispondi in modo LUNGO." }
+      { key:"breve", label:"Breve", multiplier:0.5, instruction:"Rispondi in max 3 paragrafi." },
+      { key:"medio", label:"Medio", multiplier:1.0, instruction:"Rispondi in modo equilibrato." },
+      { key:"lungo", label:"Lungo", multiplier:2.0, instruction:"Rispondi in modo molto dettagliato." }
     ];
 
-    let selectedTargetIndex = -1, selectedLenKey = "", accumulatedText = "", isGenerating = false, autoHopCount = 0;
-    const AUTO_CONTINUE_MAX_HOPS = 6;
+    let selectedTargetIndex = -1;
+    let selectedLenKey = "";
+    let accumulatedText = "";
+    let isGenerating = false;
 
-    const q = document.getElementById("query"), targetsEl = document.getElementById("targets"), lengthsEl = document.getElementById("lengths");
-    const goTargets = document.getElementById("goTargets"), backToQ = document.getElementById("backToQ"), goLength = document.getElementById("goLength");
-    const backToTargets = document.getElementById("backToTargets"), goAnswer = document.getElementById("goAnswer");
-    const backToTargetsFinal = document.getElementById("backToTargetsFinal"), backToLen = document.getElementById("backToLen"); 
-    const sec1 = document.getElementById("sec1"), sec2 = document.getElementById("sec2"), secLen = document.getElementById("secLen"), sec3 = document.getElementById("sec3");
-    const card1 = document.getElementById("card1"), card2 = document.getElementById("card2"), cardLen = document.getElementById("cardLen"), card3 = document.getElementById("card3");
-    const responseEl = document.getElementById("response"), spinner = document.getElementById("spinner"), statusEl = document.getElementById("status"), copyBtn = document.getElementById("copyBtn");
-    const chips = document.getElementById("chips"), chipTarget = document.getElementById("chipTarget"), chipLen = document.getElementById("chipLen"), creditsValueEl = document.getElementById("creditsValue");
+    // --- ELEMENTI DOM ---
+    const q = document.getElementById("query");
+    const responseEl = document.getElementById("response");
+    const statusEl = document.getElementById("status");
+    const spinner = document.getElementById("spinner");
 
-    function flash(card){ card.classList.add("flash"); setTimeout(()=>card.classList.remove("flash"), 420); }
-    function scrollTo(sec, card){ sec.scrollIntoView({ behavior:"smooth", block:"start" }); flash(card); }
-    function setStatus(text, loading=false){ statusEl.textContent = text; spinner.style.display = loading ? "inline-block" : "none"; }
-    function updateButtons(){ copyBtn.disabled = isGenerating || !accumulatedText.trim(); goLength.disabled = selectedTargetIndex < 0; goAnswer.disabled = !selectedLenKey; }
+    // --- FUNZIONI NAVIGAZIONE ---
+    function scrollTo(id) {
+      document.getElementById(id).scrollIntoView({ behavior:"smooth", block:"start" });
+    }
 
-    async function streamGemini(payload, onTextChunk){
-      const res = await fetch("/api/gemini", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) });
-      const rem = res.headers.get("x-credits-remaining");
-      if(rem) creditsValueEl.textContent = rem;
-      if(!res.ok) throw new Error("Errore API.");
-      const reader = res.body.getReader(), decoder = new TextDecoder();
-      let buffer = "";
-      while(true){
-        const {value, done} = await reader.read(); if(done) break;
-        buffer += decoder.decode(value, {stream:true});
-        const lines = buffer.split("\n"); buffer = lines.pop();
-        for(const line of lines){
-          const d = line.trim().slice(5).trim();
-          if(!d || d === "[DONE]") continue;
-          try {
-            const p = JSON.parse(d).candidates[0].content.parts[0].text;
-            if(p) onTextChunk(p);
-          } catch(e){}
+    function setStatus(text, loading=false) {
+      statusEl.textContent = text;
+      spinner.style.display = loading ? "inline-block" : "none";
+    }
+
+    // --- LOGICA API ---
+    async function run() {
+      if (isGenerating || !q.value.trim() || selectedTargetIndex < -1 || !selectedLenKey) return;
+      
+      console.log("Inizio generazione...");
+      isGenerating = true;
+      accumulatedText = "";
+      responseEl.innerHTML = "";
+      setStatus("Sto scrivendo...", true);
+
+      const t = TARGETS[selectedTargetIndex];
+      const l = LENGTHS.find(x => x.key === selectedLenKey);
+
+      try {
+        const res = await fetch("/api/gemini", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            query: q.value.trim(),
+            targetPrompt: t.prompt + " " + l.instruction,
+            mode: "start",
+            maxTokens: Math.floor(t.baseTokens * l.multiplier)
+          })
+        });
+
+        if (!res.ok) throw new Error("Errore Server");
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value);
+          
+          // Parsing semplice dello stream SSE
+          const lines = chunk.split("\n");
+          for (let line of lines) {
+            if (line.startsWith("data: ")) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                const text = data.candidates[0].content.parts[0].text;
+                accumulatedText += text;
+                responseEl.innerHTML = DOMPurify.sanitize(marked.parse(accumulatedText));
+              } catch(e) {}
+            }
+          }
         }
+        setStatus("Fatto.");
+      } catch (e) {
+        console.error(e);
+        setStatus("Errore durante la generazione.");
+      } finally {
+        isGenerating = false;
+        document.getElementById("copyBtn").disabled = false;
       }
     }
 
-    async function run(mode){
-      if(!q.value.trim() || selectedTargetIndex < 0 || !selectedLenKey) return;
-      isGenerating = true; updateButtons();
-      const t = TARGETS[selectedTargetIndex], l = LENGTHS.find(x=>x.key===selectedLenKey);
-      setStatus(mode==="continue" ? "Sto continuando..." : "Sto generando...", true);
-      
-      try {
-        const payload = { 
-          query:q.value.trim(), 
-          targetPrompt: t.prompt + "\n" + l.instruction, 
-          mode: mode==="continue"?"continue":"start", 
-          previousText: mode==="continue"?accumulatedText:"",
-          maxTokens: Math.floor(t.baseTokens * l.multiplier)
-        };
-        if(mode !== "continue") { accumulatedText = ""; responseEl.innerHTML = ""; chips.style.display = "inline-flex"; chipTarget.textContent = t.label; chipLen.textContent = l.label; }
-        
-        await streamGemini(payload, (chunk) => {
-          accumulatedText += chunk;
-          const cleanDisplay = accumulatedText.replace(/\.\.\.\(continua\)\s*$/i, "");
-          responseEl.innerHTML = DOMPurify.sanitize(marked.parse(cleanDisplay));
-        });
-
-        const needsMore = /\.\.\.\(continua\)\s*$/i.test(accumulatedText);
-        if(needsMore && autoHopCount < AUTO_CONTINUE_MAX_HOPS){ autoHopCount++; return run("continue"); }
-        
-        accumulatedText = accumulatedText.replace(/\.\.\.\(continua\)\s*$/i, "");
-        setStatus("Fatto.", false); isGenerating = false; updateButtons(); autoHopCount = 0;
-      } catch(e){ setStatus("Errore.", false); isGenerating = false; updateButtons(); }
-    }
-
-    function renderTargets(){
-      targetsEl.innerHTML = "";
+    // --- RENDERING ---
+    function renderTargets() {
+      const grid = document.getElementById("targets");
+      grid.innerHTML = "";
       TARGETS.forEach((t, i) => {
-        const el = document.createElement("div"); el.className = "target-card" + (i === selectedTargetIndex ? " active" : "");
-        el.innerHTML = `<div class="ticon">${t.icon}</div><div><p class="tname">${t.label}</p><p class="tdesc">${t.desc}</p></div>`;
-        el.addEventListener("click", () => { selectedTargetIndex = i; renderTargets(); updateButtons(); scrollTo(secLen, cardLen); if(selectedLenKey) { scrollTo(sec3, card3); run("start"); } });
-        targetsEl.appendChild(el);
+        const div = document.createElement("div");
+        div.className = `target-card ${i === selectedTargetIndex ? 'active' : ''}`;
+        div.innerHTML = `<b>${t.icon} ${t.label}</b><br><small>${t.desc}</small>`;
+        div.onclick = () => {
+          selectedTargetIndex = i;
+          renderTargets();
+          document.getElementById("goLength").disabled = false;
+          scrollTo("secLen");
+        };
+        grid.appendChild(div);
       });
     }
 
-    function renderLengths(){
-      lengthsEl.innerHTML = "";
-      LENGTHS.forEach((l) => {
-        const el = document.createElement("div"); el.className = "len-card" + (l.key === selectedLenKey ? " active" : "");
-        el.innerHTML = `<div class="len-left"><div class="len-name">${l.label}</div><div class="len-desc">${l.desc}</div></div><div class="len-pill">${l.pill}</div>`;
-        el.addEventListener("click", () => { selectedLenKey = l.key; renderLengths(); updateButtons(); scrollTo(sec3, card3); run("start"); });
-        lengthsEl.appendChild(el);
+    function renderLengths() {
+      const grid = document.getElementById("lengths");
+      grid.innerHTML = "";
+      LENGTHS.forEach(l => {
+        const div = document.createElement("div");
+        div.className = `len-card ${l.key === selectedLenKey ? 'active' : ''}`;
+        div.innerHTML = `<b>${l.label}</b>`;
+        div.onclick = () => {
+          selectedLenKey = l.key;
+          renderLengths();
+          scrollTo("sec3");
+          run();
+        };
+        grid.appendChild(div);
       });
     }
 
-    goTargets.addEventListener("click", () => q.value.trim() ? scrollTo(sec2, card2) : q.focus());
-    backToQ.addEventListener("click", () => scrollTo(sec1, card1));
-    goLength.addEventListener("click", () => scrollTo(secLen, cardLen));
-    backToTargets.addEventListener("click", () => scrollTo(sec2, card2));
-    backToTargetsFinal.addEventListener("click", () => scrollTo(sec2, card2)); 
-    backToLen.addEventListener("click", () => scrollTo(secLen, cardLen)); 
-    copyBtn.addEventListener("click", () => { navigator.clipboard.writeText(accumulatedText.trim()); setStatus("Copiato!", false); setTimeout(()=>setStatus("Fatto.", false), 1000); });
+    // --- EVENTI ---
+    document.getElementById("goTargets").onclick = () => scrollTo("sec2");
+    document.getElementById("backToQ").onclick = () => scrollTo("sec1");
+    document.getElementById("goLength").onclick = () => scrollTo("secLen");
+    document.getElementById("backToTargets").onclick = () => scrollTo("sec2");
+    document.getElementById("backToTargetsFinal").onclick = () => scrollTo("sec2");
+    document.getElementById("backToLen").onclick = () => scrollTo("secLen");
+    document.getElementById("copyBtn").onclick = () => {
+      navigator.clipboard.writeText(accumulatedText);
+      alert("Copiato!");
+    };
 
-    renderTargets(); renderLengths(); updateButtons();
+    // Inizializza
+    renderTargets();
+    renderLengths();
   </script>
 </body>
 </html>
