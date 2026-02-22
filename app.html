@@ -404,15 +404,53 @@
     })();
 
     /* Configurazione Targets & Lengths */
-    const TARGETS = [
-      { label:"Bebè", icon:"👶", desc:"Pochissime parole, super semplice.", prompt:"Spiega come a un bebè: frasi molto brevi, parole semplicissime, niente dettagli tecnici.", baseTokens:1800, baseChars:4500 },
-      { label:"Bambino", icon:"🧒", desc:"Semplice, analogie, frasi brevi.", prompt:"Spiega come a un bambino: usa parole semplici, esempi concreti, frasi brevi.", baseTokens:2500, baseChars:6000 },
-      { label:"Ragazzo", icon:"👨", desc:"Chiaro e un po’ più dettagliato.", prompt:"Spiega come a un ragazzo: chiaro, un po’ più dettagliato, esempi e analogie.", baseTokens:2500, baseChars:7000 },
-      { label:"Universitario", icon:"🎓", desc:"Struttura e concetti corretti.", prompt:"Spiega come a uno studente universitario: struttura chiara, concetti corretti.", baseTokens:2500, baseChars:9000 },
-      { label:"Esperto", icon:"🧠", desc:"Dettagli tecnici e caveat.", prompt:"Spiega come a un esperto: dettagli tecnici, assunzioni esplicite, caveat.", baseTokens:3500, baseChars:12000 },
-      { label:"Scienziato", icon:"🧪", desc:"Rigore, limiti, definizioni.", prompt:"Spiega come a uno scienziato: rigore, definizioni, limiti, struttura.", baseTokens:3500, baseChars:14000 }
-    ];
 
+    /* Configurazione Targets Aggiornata: BAMBINO, RAGAZZO, UNIVERSITARIO, ADULTO, ESPERTO, SCIENZIATO */
+    const TARGETS = [
+      { 
+        label:"Bambino", 
+        icon:"🧒", 
+        desc:"Semplice, analogie e frasi brevi.", 
+        prompt:"Spiega come a un bambino di 8 anni: usa un linguaggio molto semplice, fai paragoni con oggetti quotidiani (es. il DNA è come un libro di ricette) e mantieni le frasi brevi.", 
+        baseTokens:2500, baseChars:6000 
+      },
+      { 
+        label:"Ragazzo", 
+        icon:"👨", 
+        desc:"Chiaro, moderno e con esempi pratici.", 
+        prompt:"Spiega come a un adolescente: usa un tono colloquiale ma corretto, evita termini troppo infantili, usa esempi tratti dalla tecnologia o dalla vita quotidiana dei giovani.", 
+        baseTokens:2500, baseChars:7000 
+      },
+      { 
+        label:"Universitario", 
+        icon:"🎓", 
+        desc:"Struttura accademica e concetti chiave.", 
+        prompt:"Spiega come a uno studente universitario: usa un linguaggio formale, organizza la spiegazione per punti logici, approfondisci i concetti fondamentali senza dare nulla per scontato.", 
+        baseTokens:2500, baseChars:9000 
+      },
+      { 
+        label:"Adulto", 
+        icon:"👤", 
+        desc:"Diretto, concreto e senza fronzoli.", 
+        prompt:"Spiega come a un adulto: vai dritto al punto, usa un tono serio e pragmatico, spiega l'utilità pratica del concetto e non perdere tempo in spiegazioni superflue.", 
+        baseTokens:2800, baseChars:10000 
+      },
+      { 
+        label:"Esperto", 
+        icon:"🧠", 
+        desc:"Dettagli tecnici e approfondimenti.", 
+        prompt:"Spiega come a un professionista del settore: dai per scontate le basi, approfondisci i meccanismi tecnici, usa la terminologia corretta e spiega i 'perché' dietro ai fenomeni.", 
+        baseTokens:3500, baseChars:12000 
+      },
+      { 
+        label:"Scienziato", 
+        icon:"🧪", 
+        desc:"Rigore, limiti e definizioni precise.", 
+        prompt:"Spiega come a un ricercatore/scienziato: usa il massimo rigore scientifico, cita limiti delle attuali conoscenze, usa terminologia specialistica e mantieni una struttura logica rigorosa.", 
+        baseTokens:3500, baseChars:14000 
+      }
+    ];
+        
     const LENGTHS = [
       { key:"breve", label:"Breve", desc:"Risposta rapida, essenziale.", pill:"~1 min", multiplier:0.45, instruction:"Rispondi in modo BREVE (essenziale), senza divagare." },
       { key:"medio", label:"Medio", desc:"Equilibrata, con esempi.", pill:"~2–3 min", multiplier:0.75, instruction:"Rispondi in modo MEDIO: chiaro, con qualche esempio, senza diventare troppo lungo." },
@@ -514,3 +552,4 @@
   </script>
 </body>
 </html>
+
