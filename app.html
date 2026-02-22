@@ -12,7 +12,22 @@
       async function boot(){
         if (!window.Clerk) return setTimeout(boot, 50);
         await window.Clerk.load();
-  
+
+        <script>
+          window.addEventListener("load", async () => {
+            await Clerk.load();
+        
+            const logoutBtn = document.getElementById("logoutBtn");
+        
+            if (logoutBtn) {
+              logoutBtn.addEventListener("click", async () => {
+                await Clerk.signOut();
+                window.location.href = "/"; // Torna alla home
+              });
+            }
+          });
+        </script>
+          
         // Se NON loggato → vai al sign-in e torna qui dopo login
         if (!window.Clerk.user) {
           const redirect = encodeURIComponent("/app.html");
@@ -310,6 +325,7 @@
         <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
       </nav>
 
+      <button id="logoutBtn" class="btn-ghost">Logout</button>
       <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
         <span></span><span></span><span></span>
       </button>
@@ -605,6 +621,7 @@
     </script>
 </body>
 </html>
+
 
 
 
