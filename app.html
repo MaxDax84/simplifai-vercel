@@ -481,8 +481,35 @@
       };
     }
 
+    function normalizeForDisplay(text){
+      if(!text) return "";
+    
+      let t = String(text);
+    
+      // 1) normalizza newline
+      t = t.replace(/\r\n/g, "\n");
+    
+      // 2) rimuovi marker continua ovunque (anche in mezzo)
+      t = t.replace(/\n?\.\.\.\(continua\)\n?/ig, "\n");
+    
+      // 3) unisci righe spezzate dentro lo stesso paragrafo
+      const parts = t.split(/\n{2,}/); // paragrafi
+      const fixed = parts.map(par => {
+        const lines = par.split("\n").map(s => s.trim()).filter(Boolean);
+        return lines.join(" ");
+      });
+    
+      t = fixed.join("\n\n");
+    
+      // 4) spazi multipli
+      t = t.replace(/[ \t]{2,}/g, " ");
+    
+      return t.trim();
+    }
+
+    
     function renderMarkdownSafe(text){
-      const cleaned = text.replace(/\.\.\.\(continua\)\s*$/i, "");
+      const cleaned = normalizeForDisplay(text);
       responseEl.innerHTML = DOMPurify.sanitize(marked.parse(cleaned));
     }
 
@@ -702,4 +729,5 @@
   </script>
 </body>
 </html>
+
 
