@@ -396,7 +396,7 @@
     ];
 
     const LENGTHS = [
-      { key:"breve", label:"Breve", desc:"Risposta rapida, essenziale.", pill:"~1 min", multiplier:0.25, instruction:"Rispondi in modo BREVE: massimo 4 frasi. Una sola analogia. Niente titoli, niente elenchi. Chiudi con una frase completa." },     
+      { key:"breve", label:"Breve", desc:"Risposta rapida, essenziale.", pill:"~1 min", multiplier:0.25, instruction:"Rispondi in modo BREVE: massimo 4 frasi. Una sola analogia. Niente titoli, niente elenchi. Chiudi con una frase completa. Metti un punto finale alla fine." },     
       { key:"medio", label:"Medio", desc:"Equilibrata, con esempi.", pill:"~2–3 min", multiplier:0.80, instruction:"Rispondi in modo MEDIO: chiaro, con qualche esempio, senza diventare troppo lungo." },
       { key:"lungo", label:"Lungo", desc:"Completa, ben strutturata.", pill:"~4–6 min", multiplier:1.20, instruction:"Rispondi in modo LUNGO: completo, ben strutturato, con esempi dove utile." }
     ];
@@ -700,7 +700,14 @@
             renderMarkdownSafe(accumulatedText);
           });
 
-        const needsMoreMarker = /\.\.\.\(continua\)\s*$/i.test(accumulatedText);
+        // ✅ C) dedup: se era un continue, elimina ripetizioni tra fine precedente e inizio continuazione
+          if(mode === "continue" && gotAnyChunk){
+            accumulatedText = mergeWithOverlap(beforeStream, localAppended);
+            accumulatedText = accumulatedText.replace(/[ \t]{2,}/g, " ");
+            renderMarkdownSafe(accumulatedText);
+          }
+
+          const needsMoreMarker = /\.\.\.\(continua\)\s*$/i.test(accumulatedText);
           accumulatedText = accumulatedText.replace(/\.\.\.\(continua\)\s*$/i, "");
           renderMarkdownSafe(accumulatedText);
           
@@ -796,6 +803,7 @@
   </script>
 </body>
 </html>
+
 
 
 
