@@ -81,6 +81,9 @@ ISTRUZIONI:
 - Non ripetere introduzioni o sezioni già fatte.
 - Mantieni lo stesso tono e livello del target.
 - Chiudi sempre le frasi (non interromperti a metà).
+- IMPORTANTISSIMO: termina SEMPRE con una frase conclusiva completa e un punto finale.
+- NON terminare con virgola, due punti, punto e virgola o connettivi tipo "e", "ma", "quindi".
+- Se stai per finire, fai una frase finale di chiusura (1 riga) e poi STOP.
 - Stai entro ~${budget} caratteri (massimo ${maxChars}).
 `.trim();
   }
@@ -95,6 +98,9 @@ ISTRUZIONI:
 - Risposta chiara, ben strutturata.
 - Usa titoli e liste quando utile.
 - Chiudi sempre le frasi (non interromperti a metà).
+- IMPORTANTISSIMO: termina SEMPRE con una frase conclusiva completa e un punto finale.
+- NON terminare con virgola, due punti, punto e virgola o connettivi tipo "e", "ma", "quindi".
+- Se stai per finire, fai una frase finale di chiusura (1 riga) e poi STOP.
 - Non iniziare una frase con lettera MAIUSCOLA dopo una virgola: usa un punto.
 - L’ultima frase deve finire con un punto (.) o punto interrogativo (?) o esclamativo (!).
 - Stai entro ~${budget} caratteri (massimo ${maxChars}).
