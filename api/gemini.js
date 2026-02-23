@@ -26,27 +26,31 @@ function clamp(n, min, max, fallback) {
   return Math.min(Math.max(x, min), max);
 }
 
-function looksCut(text) {
-  const tail = String(text || "").trim().slice(-240);
-  if (!tail) return false;
-  // Se il testo è molto corto, spesso è un output tronco: forza un continue
-  if (String(text || "").trim().length < 500) return true;
+function looksCut(text, maxChars) {
+    const full = String(text || "").trim();
+    const tail = full.slice(-240);
+    if (!tail) return false;
   
-  // se finisce con marker, è tagliata
-  if (/\.\.\.\(continua\)\s*$/i.test(tail)) return true;
-
-  // se finisce bene con punteggiatura, ok
-  const endsWell =
+    // marker esplicito
+    if (/\.\.\.\(continua\)\s*$/i.test(tail)) return true;
+  
+    // se finisce con virgola/due punti/punto e virgola -> è quasi sempre taglio
+    if (/[,:;]\s*$/.test(tail)) return true;
+  
+    // se finisce bene con punteggiatura forte o chiusure, ok
+    const endsWell =
       /[.!?…]\s*$/.test(tail) ||
       /[\)\]"]\s*$/.test(tail);
-    
-    // Se finisce con virgola/due punti/punto e virgola -> è tagliato
-  if (/[,:;]\s*$/.test(tail)) return true;
-  if (endsWell) return false;
-
-  // se termina con lettera/numero, probabile taglio
-  return /[A-Za-zÀ-ÖØ-öø-ÿ0-9]$/.test(tail);
-}
+    if (endsWell) return false;
+  
+    // Se è "breve" (maxChars basso), NON forzare continue solo perché è corta.
+    // Però se è molto corta e finisce male, sì.
+    const veryShortForBudget = full.length < Math.max(220, Math.floor(maxChars * 0.18));
+    if (veryShortForBudget) return true;
+  
+    // se termina con lettera/numero -> probabile taglio
+    return /[A-Za-zÀ-ÖØ-öø-ÿ0-9]$/.test(tail);
+  }
 
 function stripContinuaMarkers(text) {
   return String(text || "").replace(/\n?\.\.\.\(continua\)\s*$/ig, "").trim();
@@ -91,6 +95,8 @@ ISTRUZIONI:
 - Risposta chiara, ben strutturata.
 - Usa titoli e liste quando utile.
 - Chiudi sempre le frasi (non interromperti a metà).
+- Non iniziare una frase con lettera MAIUSCOLA dopo una virgola: usa un punto.
+- L’ultima frase deve finire con un punto (.) o punto interrogativo (?) o esclamativo (!).
 - Stai entro ~${budget} caratteri (massimo ${maxChars}).
 `.trim();
 }
@@ -244,7 +250,7 @@ export default async function handler(req) {
 
         // round 2-3 solo se sembra tagliato
         let hops = 0;
-        while (looksCut(fullText) && hops < 2) {
+        while (looksCut(fullText, maxChars) && hops < 2) {
           hops++;
           const r = await runRound("continue", fullText);
           fullText += r;
