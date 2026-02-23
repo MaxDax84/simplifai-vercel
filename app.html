@@ -406,8 +406,12 @@
     let accumulatedText = "";
     let isGenerating = false;
     let autoHopCount = 0;
-    const AUTO_CONTINUE_MAX_HOPS = 6;
-
+    function getMaxHops(){
+      if(selectedLenKey === "breve") return 1;
+      if(selectedLenKey === "medio") return 3;
+      return 6; // lungo
+    }
+    
     /* DOM */
     const q = document.getElementById("query");
     const targetsEl = document.getElementById("targets");
@@ -671,7 +675,7 @@
           query: q.value.trim(),
           targetPrompt: t.prompt + "\n" + l.instruction,
           mode: mode==="continue" ? "continue" : "start",
-          previousText: mode==="continue" ? accumulatedText : "",
+          previousText: mode==="continue" ? accumulatedText.slice(-8000) : "",
           maxTokens,
           maxChars
         };
@@ -714,7 +718,7 @@
           // ✅ continua se c'è marker OR se sembra tagliato a metà (tipo "Immag")
           const needsMore = needsMoreMarker || looksCutClientSide(accumulatedText);
           
-          if(needsMore && autoHopCount < AUTO_CONTINUE_MAX_HOPS){
+          if(needsMore && autoHopCount < getMaxHops()){
             autoHopCount++;
             isGenerating = false;
             updateButtons();
@@ -803,6 +807,7 @@
   </script>
 </body>
 </html>
+
 
 
 
