@@ -396,9 +396,9 @@
     ];
 
     const LENGTHS = [
-      { key:"breve", label:"Breve", desc:"Risposta rapida, essenziale.", pill:"~1 min", multiplier:0.45, instruction:"Rispondi in modo BREVE (essenziale), senza divagare." },
-      { key:"medio", label:"Medio", desc:"Equilibrata, con esempi.", pill:"~2–3 min", multiplier:0.75, instruction:"Rispondi in modo MEDIO: chiaro, con qualche esempio, senza diventare troppo lungo." },
-      { key:"lungo", label:"Lungo", desc:"Completa, ben strutturata.", pill:"~4–6 min", multiplier:1.00, instruction:"Rispondi in modo LUNGO: completo, ben strutturato, con esempi dove utile." }
+      { key:"breve", label:"Breve", desc:"Risposta rapida, essenziale.", pill:"~1 min", multiplier:0.30, instruction:"Rispondi in modo BREVE (essenziale), senza divagare." },
+      { key:"medio", label:"Medio", desc:"Equilibrata, con esempi.", pill:"~2–3 min", multiplier:0.80, instruction:"Rispondi in modo MEDIO: chiaro, con qualche esempio, senza diventare troppo lungo." },
+      { key:"lungo", label:"Lungo", desc:"Completa, ben strutturata.", pill:"~4–6 min", multiplier:1.20, instruction:"Rispondi in modo LUNGO: completo, ben strutturato, con esempi dove utile." }
     ];
 
     let selectedTargetIndex = -1;
@@ -486,24 +486,39 @@
     
       let t = String(text);
     
-      // 1) normalizza newline
+      // newline
       t = t.replace(/\r\n/g, "\n");
     
-      // 2) rimuovi marker continua ovunque (anche in mezzo)
+      // rimuovi marker continua ovunque
       t = t.replace(/\n?\.\.\.\(continua\)\n?/ig, "\n");
     
-      // 3) unisci righe spezzate dentro lo stesso paragrafo
-      const parts = t.split(/\n{2,}/); // paragrafi
-      const fixed = parts.map(par => {
-        const lines = par.split("\n").map(s => s.trim()).filter(Boolean);
-        return lines.join(" ");
+      // NON unire righe se sembra markdown "strutturato"
+      // (liste, titoli, blockquote, code)
+      const keepLine = (line) => {
+        const s = line.trim();
+        return (
+          s.startsWith("#") ||
+          s.startsWith("- ") ||
+          s.startsWith("* ") ||
+          /^\d+\.\s/.test(s) ||
+          s.startsWith(">") ||
+          s.startsWith("```") ||
+          s.startsWith("|")
+        );
+      };
+    
+      const paras = t.split(/\n{2,}/);
+      const fixed = paras.map(par => {
+        const lines = par.split("\n");
+        // se nel paragrafo c'è markdown "a righe", non schiacciare
+        if(lines.some(keepLine)) return par.trim();
+    
+        const joined = lines.map(s => s.trim()).filter(Boolean).join(" ");
+        return joined;
       });
     
       t = fixed.join("\n\n");
-    
-      // 4) spazi multipli
       t = t.replace(/[ \t]{2,}/g, " ");
-    
       return t.trim();
     }
 
@@ -729,5 +744,6 @@
   </script>
 </body>
 </html>
+
 
 
