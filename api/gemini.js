@@ -29,12 +29,19 @@ function clamp(n, min, max, fallback) {
 function looksCut(text) {
   const tail = String(text || "").trim().slice(-240);
   if (!tail) return false;
-
+  // Se il testo è molto corto, spesso è un output tronco: forza un continue
+  if (String(text || "").trim().length < 500) return true;
+  
   // se finisce con marker, è tagliata
   if (/\.\.\.\(continua\)\s*$/i.test(tail)) return true;
 
   // se finisce bene con punteggiatura, ok
-  const endsWell = /[.!?…]\s*$/.test(tail) || tail.endsWith(")") || tail.endsWith("]") || tail.endsWith('"');
+  const endsWell =
+      /[.!?…]\s*$/.test(tail) ||
+      /[\)\]"]\s*$/.test(tail);
+    
+    // Se finisce con virgola/due punti/punto e virgola -> è tagliato
+  if (/[,:;]\s*$/.test(tail)) return true;
   if (endsWell) return false;
 
   // se termina con lettera/numero, probabile taglio
@@ -49,7 +56,7 @@ function buildPrompt({ query, targetPrompt, mode, previousText, maxChars }) {
   const safeMode = mode === "continue" ? "continue" : "start";
   const prev = String(previousText || "").slice(0, 24000);
 
-  const budget = Math.max(900, Math.floor(maxChars * 0.9));
+  const budget = Math.max(1400, Math.floor(maxChars * 0.9));
 
   if (safeMode === "continue") {
     return `
