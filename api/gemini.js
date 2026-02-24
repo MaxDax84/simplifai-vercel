@@ -146,7 +146,7 @@ export default async function handler(req) {
 
     if (!query || !targetPrompt) return jsonError("Parametri mancanti: query/targetPrompt.", 400);
 
-    const maxTokens = clamp(body?.maxTokens, 256, 8000, 1200);
+    const maxTokens = clamp(body?.maxTokens, 512, 12000, 2500);
     const maxChars = clamp(body?.maxChars, 500, 50000, 6000);
 
     // ---- STREAM verso client (SSE pulito) ----
@@ -236,33 +236,11 @@ export default async function handler(req) {
       return roundText;
     };
 
-    // pump server-side: massimo 3 round per non spendere troppo
+    // pump server-side: 1 round SOLO (niente auto-continue)
     (async () => {
       try {
-        let fullText = "";
-
-        // se il client manda mode=continue, partiamo continuando, altrimenti start
-        const initialMode = (mode === "continue") ? "continue" : "start";
-        if (initialMode === "continue") {
-          fullText = String(previousText || "");
-        }
-
-        // round 1
-        const r1 = await runRound(initialMode, fullText);
-        fullText += r1;
-
-        // ripulisci marker se Gemini l’ha messo
-        fullText = stripContinuaMarkers(fullText);
-
-        // round 2-3 solo se sembra tagliato
-        let hops = 0;
-        while (looksCut(fullText, maxChars) && hops < 2) {
-          hops++;
-          const r = await runRound("continue", fullText);
-          fullText += r;
-          fullText = stripContinuaMarkers(fullText);
-        }
-
+        // Ignoriamo mode=continue lato server: un solo flusso coerente
+        await runRound("start", "");
         await closeStream();
       } catch (e) {
         await emitText(`⚠️ Errore: ${e?.message || "sconosciuto"}`);
