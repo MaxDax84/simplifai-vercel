@@ -30,7 +30,6 @@ function looksCut(text, maxChars) {
     const full = String(text || "").trim();
     const tail = full.slice(-240);
     if (!tail) return false;
-    const full = String(text || "").trim();
     if (full.length < 220) return true; // solo se è DAVVERO troppo corto
   
     // marker esplicito
