@@ -12,183 +12,268 @@
   <style>
     .section{ margin-top:22px; }
     .badge{ font-size:12px; color:var(--muted); margin-bottom:8px; }
-    .title{ margin:0 0 10px 0; font-size:20px; }
-    .subtitle{ margin:0 0 14px 0; color:var(--muted); line-height:1.35; }
-    .grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
-    @media (max-width: 920px){ .grid-2{ grid-template-columns: 1fr; } }
+    .title{
+      font-weight:900;
+      font-size:20px;
+      margin: 10px 0 25px;
+      display:block;
+    }
+    .subt{ color:var(--muted); font-size:14px; margin:0 0 14px; line-height:1.45; }
 
-    .input{
+    .hero-row{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; flex-wrap:wrap; margin-top:8px;
+    }
+    .credit-pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px; border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      color:var(--muted); font-size:12px; user-select:none;
+    }
+    .credit-pill b{ color:var(--text); }
+
+    textarea{
       width:100%;
-      min-height:104px;
-      padding:12px 12px;
-      border:1px solid rgba(255,255,255,.10);
+      min-height:180px;
+      background:rgba(0,0,0,.18);
+      border:1px solid var(--border);
       border-radius:14px;
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      outline:none;
-      resize: vertical;
+      padding:12px;
+      color:var(--text);
+      font-size:14px;
       line-height:1.45;
+      outline:none;
+      resize:vertical;
+      margin-bottom: 24px;
     }
-    .input:focus{ border-color: rgba(124,92,255,.55); box-shadow: 0 0 0 3px rgba(124,92,255,.18); }
-
-    .actions{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:14px; }
-    .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.06); color:var(--text); padding:10px 12px; border-radius:12px; cursor:pointer; text-decoration:none; }
-    .btn:hover{ background: rgba(255,255,255,.08); }
-    .btn:disabled{ opacity:.55; cursor:not-allowed; }
-    .btn-primary{ background: rgba(124,92,255,.28); border-color: rgba(124,92,255,.55); }
-    .btn-primary:hover{ background: rgba(124,92,255,.36); }
-
-    .card-dark{ background: rgba(10,12,20,.55); border: 1px solid rgba(255,255,255,.10); }
-
-    .target-grid{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px; }
-    @media (max-width: 920px){ .target-grid{ grid-template-columns: 1fr; } }
-
-    .target-card{
-      display:flex; gap:12px; align-items:flex-start;
-      padding:12px;
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:14px;
-      background: rgba(255,255,255,.06);
-      cursor:pointer;
-      transition: transform .08s ease, border-color .12s ease, background .12s ease;
+    textarea:focus{
+      border-color: rgba(124,92,255,.50);
+      box-shadow: 0 0 0 4px rgba(124,92,255,.15);
     }
-    .target-card:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
-    .target-card.active{ border-color: rgba(124,92,255,.75); background: rgba(124,92,255,.12); }
-    .ticon{
-      width:40px; height:40px; border-radius:12px;
-      display:flex; align-items:center; justify-content:center;
-      background: rgba(124,92,255,.18);
-      border:1px solid rgba(124,92,255,.35);
-      flex: 0 0 auto;
-      font-size:18px;
-    }
-    .tname{ margin:0; font-weight:700; }
-    .tdesc{ margin:4px 0 0 0; color:var(--muted); line-height:1.35; font-size:13px; }
 
-    .len-grid{ display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:12px; }
-    @media (max-width: 920px){ .len-grid{ grid-template-columns: 1fr; } }
-    .len-card{
-      padding:12px;
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:14px;
-      background: rgba(255,255,255,.06);
-      cursor:pointer;
+    .actions{
       display:flex;
       justify-content:space-between;
-      align-items:flex-start;
+      margin-top:14px;
+      flex-wrap:wrap;
       gap:10px;
-      transition: transform .08s ease, border-color .12s ease, background .12s ease;
+      align-items:center;
     }
-    .len-card:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
-    .len-card.active{ border-color: rgba(124,92,255,.75); background: rgba(124,92,255,.12); }
-    .len-left{ display:flex; flex-direction:column; gap:3px; }
-    .len-name{ font-weight:700; }
-    .len-desc{ font-size:13px; color:var(--muted); line-height:1.35; }
-    .len-pill{ font-size:12px; color:var(--muted); border:1px solid rgba(255,255,255,.10); padding:4px 8px; border-radius:999px; white-space:nowrap; }
+
+    .hint{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px; border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.02);
+      color:var(--muted); font-size:12px;
+    }
+
+    .targets-grid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:12px;
+      margin-bottom: 24px;
+    }
+    @media(max-width:900px){ .targets-grid{ grid-template-columns:1fr; } }
+
+    .target-card{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:14px;
+      display:flex; gap:12px;
+      cursor:pointer;
+      transition:.15s ease;
+      min-height:84px;
+      align-items:flex-start;
+    }
+    .target-card:hover{ background:rgba(255,255,255,.05); transform:translateY(-1px); }
+    .target-card.active{
+      border-color:rgba(124,92,255,.55);
+      background:rgba(124,92,255,.14);
+    }
+    .ticon{
+      width:38px; height:38px;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--border);
+      border-radius:12px;
+      font-size:18px;
+      flex:0 0 auto;
+    }
+    .tname{ margin:0; font-weight:900; }
+    .tdesc{ margin:4px 0 0; color:var(--muted); font-size:13px; line-height:1.35; }
+
+    .len-grid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:12px;
+      margin-bottom: 24px;
+    }
+    @media(max-width:900px){ .len-grid{ grid-template-columns:1fr; } }
+
+    .len-card{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:14px;
+      cursor:pointer;
+      transition:.15s ease;
+      min-height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .len-card:hover{ background:rgba(255,255,255,.05); transform:translateY(-1px); }
+    .len-card.active{
+      border-color:rgba(124,92,255,.55);
+      background:rgba(124,92,255,.14);
+    }
+    .len-left{ display:flex; flex-direction:column; gap:4px; }
+    .len-name{ font-weight:900; }
+    .len-desc{ color:var(--muted); font-size:13px; }
+    .len-pill{
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
 
     .chip{
       display:inline-flex; align-items:center; gap:10px;
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      font-size:13px;
+      padding:10px 12px; border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      color:var(--muted); font-size:13px;
       margin-bottom:10px;
+      flex-wrap:wrap;
+      opacity:.95;
     }
+    .chip b{ color:var(--text); }
 
     .response-shell{
-      border:1px solid rgba(255,255,255,.10);
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
       border-radius:16px;
-      background: rgba(255,255,255,.04);
-      padding:14px 14px;
-    }
-    .md{ line-height:1.55; }
-    .md h1,.md h2,.md h3{ margin: 12px 0 8px; }
-    .md p{ margin: 10px 0; }
-    .md ul, .md ol{ margin: 10px 0 10px 22px; }
-    .md blockquote{
-      margin: 12px 0;
-      padding: 10px 12px;
-      border-left: 3px solid rgba(124,92,255,.7);
-      background: rgba(124,92,255,.08);
-      border-radius: 10px;
-      color: var(--text);
-    }
-    .md code{
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.08);
-      padding: 2px 6px;
-      border-radius: 8px;
-      font-size: 0.95em;
-    }
-    .md pre code{
-      display:block;
-      padding: 12px;
-      overflow:auto;
+      padding:16px;
+      min-height:260px;
+      display:flex; flex-direction:column; gap:12px;
+      margin-bottom: 24px;
     }
 
-    .status{ display:flex; align-items:center; gap:10px; color:var(--muted); font-size:13px; }
+    .status{
+      font-size:12px; color:var(--muted);
+      display:flex; align-items:center; gap:10px;
+    }
     .spinner{
       width:14px; height:14px;
-      border:2px solid rgba(255,255,255,.22);
-      border-top-color: rgba(124,92,255,.85);
+      border:2px solid rgba(255,255,255,.25);
+      border-top-color:rgba(255,255,255,.9);
       border-radius:50%;
-      animation: spin .9s linear infinite;
+      animation:spin .8s linear infinite;
     }
-    @keyframes spin{ to{ transform: rotate(360deg); } }
+    @keyframes spin{ to{ transform:rotate(360deg); } }
 
-    .flash{ animation: flash .42s ease; }
-    @keyframes flash{
-      0%{ box-shadow: 0 0 0 0 rgba(124,92,255,.0); }
-      50%{ box-shadow: 0 0 0 4px rgba(124,92,255,.18); }
-      100%{ box-shadow: 0 0 0 0 rgba(124,92,255,.0); }
+    .flash{
+      outline:1px solid rgba(124,92,255,.45);
+      box-shadow:0 0 0 6px rgba(124,92,255,.12);
+      transition:.35s ease;
     }
+
+    .md{
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.7;
+      color: rgba(233,237,255,.92);
+      font-size:14px;
+    }
+    .md h1,.md h2,.md h3{ margin: 14px 0 8px; }
+    .md h1{ font-size: 20px; }
+    .md h2{ font-size: 18px; }
+    .md h3{ font-size: 16px; }
+    .md p{ margin: 10px 0; }
+    .md ul,.md ol{ margin: 10px 0 10px 22px; }
+    .md li{ margin: 6px 0; }
+    .md code{
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.08);
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+    .md pre{
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.08);
+      padding: 12px;
+      border-radius: 14px;
+      overflow:auto;
+    }
+    .md blockquote{
+      margin: 10px 0;
+      padding: 10px 12px;
+      border-left: 3px solid rgba(124,92,255,.55);
+      background: rgba(124,92,255,.10);
+      border-radius: 12px;
+      color: rgba(233,237,255,.88);
+    }
+    .md hr{
+      border:none;
+      border-top:1px solid rgba(255,255,255,.10);
+      margin: 14px 0;
+    }
+    .md a{ color: rgba(38,198,255,.95); }
   </style>
 </head>
 
 <body>
-  <!-- Header -->
-  <header class="header">
-    <div class="wrap nav">
-      <a class="brand" href="/">
-        <span class="logo-dot"></span>
-        <span class="brand-name">Simplif-AI</span>
-      </a>
+  <div class="wrap">
 
-      <nav class="navlinks">
-        <a href="/">Home</a>
-        <a href="/come-funziona.html">Come funziona</a>
-        <a href="/prezzi.html">Prezzi</a>
-        <a href="/app.html" class="btn small">Apri app</a>
+    <header>
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>Simplif-AI</h1>
+          <span>Concetti complessi spiegati in modo semplice. Scegli tu quanto.</span>
+        </div>
+      </div>
+
+      <nav id="mainNav">
+        <a href="/index.html" data-nav="home">Home</a>
+        <a href="/app.html" data-nav="app">App</a>
+        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
+        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
       </nav>
 
-      <button class="hamburger" id="navToggle" aria-label="Apri menu">
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
         <span></span><span></span><span></span>
       </button>
-    </div>
+    </header>
 
     <div class="mobile-nav" id="mobileNav">
-      <a href="/">Home</a>
+      <a href="/index.html">Home</a>
+      <a href="/app.html">Prova</a>
       <a href="/come-funziona.html">Come funziona</a>
       <a href="/prezzi.html">Prezzi</a>
-      <a href="/app.html" class="btn small" style="margin-top:8px;">Apri app</a>
     </div>
-  </header>
 
-  <div class="wrap" style="padding-top:18px; padding-bottom:26px;">
+    <div class="hero-row">
+      <div class="pilltag">✨ Flow</div>
+      <div class="credit-pill">⚡ Crediti disponibili: <b id="creditsValue">—</b></div>
+    </div>
+
     <section class="section" id="sec1">
       <div class="card" id="card1">
         <div class="card-inner">
-          <div class="badge">Step 1</div>
-          <h2 class="title">🧠 Cosa vuoi capire?</h2>
-          <p class="subtitle">Scrivi un concetto, un argomento o una domanda. Poi scegli target e lunghezza: la risposta arriva in streaming.</p>
-
-          <textarea id="query" class="input" placeholder="Esempio: Perché il cielo è blu?"></textarea>
-
+          <h2 class="title">✦ Scrivi la domanda</h2>
+          <textarea id="query" placeholder="Esempio: Cos'è il DNA e a cosa serve?"></textarea>
           <div class="actions">
+            <span class="hint">💡 Suggerimento: aggiungi “con esempi”</span>
             <button class="btn btn-primary" id="goTargets" type="button">Scegli target ↓</button>
-            <a class="btn" href="/prezzi.html">Vedi prezzi</a>
           </div>
         </div>
       </div>
@@ -197,15 +282,11 @@
     <section class="section" id="sec2">
       <div class="card" id="card2">
         <div class="card-inner">
-          <div class="badge">Step 2</div>
-          <h2 class="title">🎯 Per chi è la spiegazione?</h2>
-          <p class="subtitle">Scegli il livello di profondità e linguaggio.</p>
-
-          <div class="target-grid" id="targets"></div>
-
+          <h2 class="title">🎯 Seleziona il target</h2>
+          <div class="targets-grid" id="targets"></div>
           <div class="actions">
-            <button class="btn" id="backToQ" type="button">↑ Modifica domanda</button>
-            <button class="btn btn-primary" id="goLength" type="button" disabled>Scegli lunghezza ↓</button>
+            <button class="btn" id="backToQ" type="button">↑ Torna alla domanda</button>
+            <button class="btn btn-primary" id="goLength" type="button" disabled>Vai alla lunghezza ↓</button>
           </div>
         </div>
       </div>
@@ -214,12 +295,8 @@
     <section class="section" id="secLen">
       <div class="card" id="cardLen">
         <div class="card-inner">
-          <div class="badge">Step 3</div>
           <h2 class="title">🧾 Quanto vuoi lunga la risposta?</h2>
-          <p class="subtitle">Breve per un riassunto, Lungo per una spiegazione completa.</p>
-
           <div class="len-grid" id="lengths"></div>
-
           <div class="actions">
             <button class="btn" id="backToTargets" type="button">↑ Cambia target</button>
             <button class="btn btn-primary" id="goAnswer" type="button" disabled>Vai alla risposta ↓</button>
@@ -231,9 +308,9 @@
     <section class="section" id="sec3">
       <div class="card card-dark" id="card3">
         <div class="card-inner">
-          <div class="badge">Output</div>
           <h2 class="title">💬 Risposta</h2>
 
+          <!-- Chip sempre visibile: non sparisce mai -->
           <div class="chip" id="chips">
             🎯 Target: <b id="chipTarget">—</b>
             <span style="opacity:.5">•</span>
@@ -278,32 +355,63 @@
       if(!toggle || !mobileNav) return;
       toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
       mobileNav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => document.body.classList.remove("nav-open")));
-      document.addEventListener("keydown", (e) => { if(e.key === "Escape") document.body.classList.remove("nav-open"); });
     })();
 
-    /* Target & Length config */
+    /* Navbar active */
+    (function(){
+      const path = location.pathname.toLowerCase();
+      let key = "home";
+      if (path.includes("/app")) key = "app";
+      else if (path.includes("come-funziona")) key = "how";
+      else if (path.includes("prezzi")) key = "pricing";
+      document.querySelectorAll('#mainNav a').forEach(a=>{ if(a.dataset.nav === key) a.classList.add('nav-active'); });
+    })();
+
+    /* Targets & Lengths */
     const TARGETS = [
-      { label:"Bambino",  icon:"🧒", desc:"Semplice, chiaro, con esempi quotidiani.", baseTokens:2500, baseChars:6000,
-        prompt:"Spiega come a un bambino. Usa frasi brevi, esempi semplici, tono amichevole." },
-      { label:"Adulto",   icon:"🙂", desc:"Chiaro ma completo, con struttura e analogie.", baseTokens:2500, baseChars:6000,
-        prompt:"Spiega come a un adulto curioso. Struttura in modo ordinato, con esempi quando utili." },
-      { label:"Esperto",  icon:"🧠", desc:"Più tecnico, dettagli e terminologia corretta.", baseTokens:3500, baseChars:9000,
-        prompt:"Spiega come a un esperto. Sii preciso, tecnico, ma leggibile. Usa punti elenco e struttura." },
-      { label:"Scienziato", icon:"🔬", desc:"Massima profondità, concetti formali e rigore.", baseTokens:3500, baseChars:9000,
-        prompt:"Spiega come a uno scienziato. Massimo rigore, definizioni, eventuali formule/concetti formali se servono." }
+      { label:"Bambino", icon:"🧒", desc:"Semplice, analogie e frasi brevi.",
+        prompt:"Spiega come a un bambino di 8 anni: usa un linguaggio molto semplice, fai paragoni con oggetti quotidiani (es. il DNA è come un libro di ricette) e mantieni le frasi brevi.",
+        baseTokens:2500, baseChars:6000
+      },
+      { label:"Ragazzo", icon:"👨", desc:"Chiaro, moderno e con esempi pratici.",
+        prompt:"Spiega come a un adolescente: usa un tono colloquiale ma corretto, evita termini troppo infantili, usa esempi tratti dalla tecnologia o dalla vita quotidiana dei giovani.",
+        baseTokens:2500, baseChars:7000
+      },
+      { label:"Universitario", icon:"🎓", desc:"Struttura accademica e concetti chiave.",
+        prompt:"Spiega come a uno studente universitario: usa un linguaggio formale, organizza la spiegazione per punti logici, approfondisci i concetti fondamentali senza dare nulla per scontato.",
+        baseTokens:2500, baseChars:9000
+      },
+      { label:"Adulto", icon:"👤", desc:"Diretto, concreto e senza fronzoli.",
+        prompt:"Spiega come a un adulto: vai dritto al punto, usa un tono serio e pragmatico, spiega l'utilità pratica del concetto e non perdere tempo in spiegazioni superflue.",
+        baseTokens:2800, baseChars:10000
+      },
+      { label:"Esperto", icon:"🧠", desc:"Dettagli tecnici e approfondimenti.",
+        prompt:"Spiega come a un professionista del settore: dai per scontate le basi, approfondisci i meccanismi tecnici, usa la terminologia corretta e spiega i 'perché' dietro ai fenomeni.",
+        baseTokens:3500, baseChars:12000
+      },
+      { label:"Scienziato", icon:"🧪", desc:"Rigore, limiti e definizioni precise.",
+        prompt:"Spiega come a un ricercatore/scienziato: usa il massimo rigore scientifico, cita limiti delle attuali conoscenze, usa terminologia specialistica e mantieni una struttura logica rigorosa.",
+        baseTokens:3500, baseChars:14000
+      }
     ];
 
     const LENGTHS = [
-      { key:"breve", label:"Breve",  desc:"Diretta, essenziale.", pill:"~1–2 min", multiplier:0.70, instruction:"Rispondi in modo BREVE: diretto ed essenziale." },
-      { key:"medio", label:"Medio",  desc:"Equilibrata.",        pill:"~2–4 min", multiplier:1.00, instruction:"Rispondi in modo MEDIO: equilibrato e chiaro, con struttura." },
-      { key:"lungo", label:"Lungo",  desc:"Completa, ben strutturata.", pill:"~4–6 min", multiplier:1.20, instruction:"Rispondi in modo LUNGO: completo, ben strutturato, con esempi dove utile." }
+      { key:"breve", label:"Breve", desc:"Risposta rapida, essenziale.", pill:"~1 min", multiplier:0.25, instruction:"Rispondi in modo BREVE: massimo 4 frasi. Una sola analogia. Niente titoli, niente elenchi. Chiudi con una frase completa. Metti un punto finale alla fine." },     
+      { key:"medio", label:"Medio", desc:"Equilibrata, con esempi.", pill:"~2–3 min", multiplier:0.80, instruction:"Rispondi in modo MEDIO: chiaro, con qualche esempio, senza diventare troppo lungo." },
+      { key:"lungo", label:"Lungo", desc:"Completa, ben strutturata.", pill:"~4–6 min", multiplier:1.20, instruction:"Rispondi in modo LUNGO: completo, ben strutturato, con esempi dove utile." }
     ];
 
     let selectedTargetIndex = -1;
     let selectedLenKey = "";
     let accumulatedText = "";
     let isGenerating = false;
-
+    let autoHopCount = 0;
+    function getMaxHops(){
+      if(selectedLenKey === "breve") return 1;
+      if(selectedLenKey === "medio") return 3;
+      return 6; // lungo
+    }
+    
     /* DOM */
     const q = document.getElementById("query");
     const targetsEl = document.getElementById("targets");
@@ -335,6 +443,7 @@
 
     const chipTarget = document.getElementById("chipTarget");
     const chipLen = document.getElementById("chipLen");
+    const creditsValueEl = document.getElementById("creditsValue");
 
     function flash(card){
       card.classList.add("flash");
@@ -376,17 +485,52 @@
       };
     }
 
+    function looksCutClientSide(text){
+      const t = String(text || "").trim();
+      if(!t) return false;
+    
+      const tail = t.slice(-240);
+    
+      // se finisce con punteggiatura o chiusura, stop
+      if (/[.!?…]\s*$/.test(tail) || /[\)\]"]\s*$/.test(tail)) return false;
+    
+      // se è molto corto, non fare continue
+      if(t.length < 250) return false;
+    
+      // se finisce con lettera/numero, probabile taglio
+      if (/[A-Za-zÀ-ÖØ-öø-ÿ0-9]$/.test(tail)) return true;
+    
+      return false;
+    }
+
+    function mergeWithOverlap(prev, next){
+      prev = String(prev || "");
+      next = String(next || "");
+      if(!prev) return next;
+    
+      // cerca overlap massimo (fino a 200 caratteri) tra fine di prev e inizio di next
+      const max = Math.min(200, prev.length, next.length);
+      for(let k = max; k >= 40; k--){
+        const tail = prev.slice(-k);
+        const head = next.slice(0, k);
+        if(tail === head){
+          return prev + next.slice(k);
+        }
+      }
+      return prev + next;
+    }
+    
     function normalizeForDisplay(text){
       if(!text) return "";
-
+    
       let t = String(text);
-
+    
       // newline
       t = t.replace(/\r\n/g, "\n");
-
-      // rimuovi marker legacy (se mai arrivassero)
+    
+      // rimuovi marker continua ovunque
       t = t.replace(/\n?\.\.\.\(continua\)\n?/ig, "\n");
-
+    
       // NON unire righe se sembra markdown "strutturato"
       // (liste, titoli, blockquote, code)
       const keepLine = (line) => {
@@ -401,21 +545,23 @@
           s.startsWith("|")
         );
       };
-
+    
       const paras = t.split(/\n{2,}/);
       const fixed = paras.map(par => {
         const lines = par.split("\n");
+        // se nel paragrafo c'è markdown "a righe", non schiacciare
         if(lines.some(keepLine)) return par.trim();
-
+    
         const joined = lines.map(s => s.trim()).filter(Boolean).join(" ");
         return joined;
       });
-
+    
       t = fixed.join("\n\n");
       t = t.replace(/[ \t]{2,}/g, " ");
       return t.trim();
     }
 
+    
     function renderMarkdownSafe(text){
       const cleaned = normalizeForDisplay(text);
       responseEl.innerHTML = DOMPurify.sanitize(marked.parse(cleaned));
@@ -429,45 +575,48 @@
         body: JSON.stringify(payload)
       });
 
-      const rem = res.headers.get("content-type") || "";
+      const rem = res.headers.get("x-credits-remaining"),
+            lim = res.headers.get("x-credits-limit");
+      if(rem) creditsValueEl.textContent = lim ? `${rem}/${lim}` : rem;
+
       if(!res.ok){
-        const msg = await res.text().catch(()=> "");
-        throw new Error(msg || `HTTP ${res.status}`);
+        let msg = `Errore API (HTTP ${res.status})`;
+        try{
+          const j = await res.json();
+          if(j?.error) msg = j.error;
+        }catch(_){}
+        throw new Error(msg);
       }
+      if(!res.body) throw new Error("Stream non disponibile (res.body nullo).");
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder("utf-8");
-
       let buffer = "";
       let receivedAny = false;
 
       function processEventBlock(block){
-        // support: data: ... (multi-line)
-        const lines = block.split(/\r?\n/);
-        const dataLines = [];
-        for(const line of lines){
-          if(line.startsWith("data:")){
-            dataLines.push(line.slice(5).trimStart());
-          }
-        }
+        const dataLines = block
+          .split(/\r?\n/)
+          .filter(l => l.startsWith("data:"))
+          .map(l => l.slice(5).trim());
+
         if(!dataLines.length) return;
 
-        const data = dataLines.join("\n").trim();
-        if(!data) return;
+        const data = dataLines.join("\n");
+        if(!data || data === "[DONE]") return;
 
-        if(data === "[DONE]") return;
-
-        let obj;
-        try{ obj = JSON.parse(data); }catch(e){ return; }
-
-        const parts = obj?.candidates?.[0]?.content?.parts || [];
-        for(const p of parts){
-          const t = p?.text;
-          if(typeof t === "string" && t.length){
-            receivedAny = true;
-            onTextChunk(t);
+        try{
+          const json = JSON.parse(data);
+          const parts = json?.candidates?.[0]?.content?.parts;
+          if(Array.isArray(parts)){
+            for(const p of parts){
+              if(p?.text){
+                receivedAny = true;
+                onTextChunk(p.text);
+              }
+            }
           }
-        }
+        }catch(_){}
       }
 
       while(true){
@@ -476,7 +625,7 @@
 
         buffer += decoder.decode(value, { stream:true });
 
-        const blocks = buffer.split(/\n\s*\n/); // empty line separates events
+        const blocks = buffer.split(/\r?\n\r?\n/);
         buffer = blocks.pop() || "";
 
         for(const b of blocks){
@@ -491,9 +640,10 @@
       }
     }
 
-    async function run(){
+    async function run(mode){
       if(isGenerating) return;
 
+      // controlli soft (messaggi chiari)
       if(!q.value.trim()){
         setStatus("Scrivi una domanda per generare.", false);
         return;
@@ -507,6 +657,8 @@
         return;
       }
 
+      if(mode !== "continue") autoHopCount = 0;
+
       isGenerating = true;
       updateButtons();
       updateChips();
@@ -514,7 +666,7 @@
       const t = TARGETS[selectedTargetIndex];
       const l = LENGTHS.find(x=>x.key===selectedLenKey);
 
-      setStatus("Sto generando...", true);
+      setStatus(mode==="continue" ? "Sto continuando..." : "Sto generando...", true);
 
       try{
         const { maxTokens, maxChars } = computeLimits();
@@ -522,33 +674,60 @@
         const payload = {
           query: q.value.trim(),
           targetPrompt: t.prompt + "\n" + l.instruction,
-          mode: "start",
-          previousText: "",
+          mode: mode==="continue" ? "continue" : "start",
+          previousText: mode==="continue" ? accumulatedText.slice(-8000) : "",
           maxTokens,
           maxChars
         };
 
-        accumulatedText = "";
-        responseEl.innerHTML = "";
+        if(mode !== "continue"){
+          accumulatedText = "";
+          responseEl.innerHTML = "";
+        }
 
+        const beforeStream = accumulatedText;
+        let gotAnyChunk = false;
+        let localAppended = "";
+        
         await streamGemini(payload, (chunk) => {
-          const prev = accumulatedText;
-          const a = prev.slice(-1);
-          const b = String(chunk || "").slice(0,1);
-          const isAlnum = (c) => /[A-Za-zÀ-ÖØ-öø-ÿ0-9]/.test(c);
+            gotAnyChunk = true;
+          
+            const prev = accumulatedText;
+            const a = prev.slice(-1);
+            const b = String(chunk || "").slice(0,1);
+            const isAlnum = (c) => /[A-Za-zÀ-ÖØ-öø-ÿ0-9]/.test(c);
+          
+            const add = (prev && chunk && isAlnum(a) && isAlnum(b)) ? (" " + chunk) : chunk;
+            accumulatedText += add;
+            localAppended += add;
+          
+            renderMarkdownSafe(accumulatedText);
+          });
 
-          const add = (prev && chunk && isAlnum(a) && isAlnum(b)) ? (" " + chunk) : chunk;
-          accumulatedText += add;
+        // ✅ C) dedup: se era un continue, elimina ripetizioni tra fine precedente e inizio continuazione
+          if(mode === "continue" && gotAnyChunk){
+            accumulatedText = mergeWithOverlap(beforeStream, localAppended);
+            accumulatedText = accumulatedText.replace(/[ \t]{2,}/g, " ");
+            renderMarkdownSafe(accumulatedText);
+          }
 
+          const needsMoreMarker = /\.\.\.\(continua\)\s*$/i.test(accumulatedText);
+          accumulatedText = accumulatedText.replace(/\.\.\.\(continua\)\s*$/i, "");
           renderMarkdownSafe(accumulatedText);
-        });
-
-        // safety: rimuovi eventuali marker legacy
-        accumulatedText = accumulatedText.replace(/\.\.\.\(continua\)\s*$/i, "").trim();
-        renderMarkdownSafe(accumulatedText);
+          
+          // ✅ continua se c'è marker OR se sembra tagliato a metà (tipo "Immag")
+          const needsMore = needsMoreMarker || looksCutClientSide(accumulatedText);
+          
+          if(needsMore && autoHopCount < getMaxHops()){
+            autoHopCount++;
+            isGenerating = false;
+            updateButtons();
+            return run("continue");
+          }
 
         setStatus("Fatto.", false);
         isGenerating = false;
+        autoHopCount = 0;
         updateButtons();
 
       }catch(e){
@@ -575,7 +754,7 @@
           // se lunghezza già scelta, rigenera
           if(selectedLenKey){
             scrollTo(sec3, card3);
-            run();
+            run("start");
           }
         });
         targetsEl.appendChild(el);
@@ -594,7 +773,7 @@
           updateChips();
           updateButtons();
           scrollTo(sec3, card3);
-          run();
+          run("start");
         });
         lengthsEl.appendChild(el);
       });
@@ -608,9 +787,10 @@
     backToTargetsFinal.addEventListener("click", () => scrollTo(sec2, card2));
     backToLen.addEventListener("click", () => scrollTo(secLen, cardLen));
 
+    // ✅ questo è quello che spesso manca: bottone "Vai alla risposta"
     goAnswer.addEventListener("click", () => {
       scrollTo(sec3, card3);
-      run();
+      run("start");
     });
 
     copyBtn.addEventListener("click", () => {
@@ -627,3 +807,10 @@
   </script>
 </body>
 </html>
+
+
+
+
+
+
+
