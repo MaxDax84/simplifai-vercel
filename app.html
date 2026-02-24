@@ -711,18 +711,16 @@
             renderMarkdownSafe(accumulatedText);
           }
 
-          const needsMoreMarker = /\.\.\.\(continua\)\s*$/i.test(accumulatedText);
+        const needsMoreMarker = /\.\.\.\(continua\)\s*$/i.test(accumulatedText);
           accumulatedText = accumulatedText.replace(/\.\.\.\(continua\)\s*$/i, "");
           renderMarkdownSafe(accumulatedText);
           
-          // ✅ continua se c'è marker OR se sembra tagliato a metà (tipo "Immag")
-          const needsMore = needsMoreMarker || looksCutClientSide(accumulatedText);
-          
-          if(needsMore && autoHopCount < getMaxHops()){
-            autoHopCount++;
-            isGenerating = false;
-            updateButtons();
-            return run("continue");
+          // ✅ niente auto-continue lato client: ci pensa il server
+          setStatus("Fatto.", false);
+           isGenerating = false;
+           autoHopCount = 0;
+           updateButtons();
+          return;
           }
 
         setStatus("Fatto.", false);
@@ -807,6 +805,7 @@
   </script>
 </body>
 </html>
+
 
 
 
