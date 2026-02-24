@@ -256,7 +256,7 @@ export default async function handler(req) {
 
         // round 2-3 solo se sembra tagliato
         let hops = 0;
-        while (looksCut(fullText, maxChars) && hops < 2) {
+          while (looksCut(fullText) && hops < 4) {
           hops++;
           const r = await runRound("continue", fullText);
           fullText += r;
