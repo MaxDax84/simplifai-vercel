@@ -30,7 +30,6 @@ function looksCut(text, maxChars) {
     const full = String(text || "").trim();
     const tail = full.slice(-240);
     if (!tail) return false;
-    if (full.length < 220) return true; // solo se è DAVVERO troppo corto
   
     // marker esplicito
     if (/\.\.\.\(continua\)\s*$/i.test(tail)) return true;
@@ -257,7 +256,7 @@ export default async function handler(req) {
 
         // round 2-3 solo se sembra tagliato
         let hops = 0;
-          while (looksCut(fullText) && hops < 4) {
+        while (looksCut(fullText, maxChars) && hops < 2) {
           hops++;
           const r = await runRound("continue", fullText);
           fullText += r;
