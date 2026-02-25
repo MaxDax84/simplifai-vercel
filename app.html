@@ -601,8 +601,7 @@
 
     async function run(mode){
       if(isGenerating) return;
-
-      // controlli soft (messaggi chiari)
+    
       if(!q.value.trim()){
         setStatus("Scrivi una domanda per generare.", false);
         return;
@@ -615,19 +614,19 @@
         setStatus("Seleziona una lunghezza.", false);
         return;
       }
-
+    
       isGenerating = true;
       updateButtons();
       updateChips();
-
+    
       const t = TARGETS[selectedTargetIndex];
       const l = LENGTHS.find(x=>x.key===selectedLenKey);
-
+    
       setStatus("Sto generando...", true);
-      
+    
       try{
         const { maxTokens, maxChars } = computeLimits();
-
+    
         const payload = {
           query: q.value.trim(),
           targetPrompt: t.prompt + "\n" + l.instruction,
@@ -636,24 +635,25 @@
           maxTokens,
           maxChars
         };
-
+    
         accumulatedText = "";
         responseEl.innerHTML = "";
-      }
-        
-        setStatus("Fatto.", false);
-        isGenerating = false;
-        updateButtons();
-
-      }
     
-      catch(e){
+        await streamGemini(payload, (chunk) => {
+          accumulatedText += chunk;
+          renderMarkdownSafe(accumulatedText);
+        });
+    
+        setStatus("Fatto.", false);
+    
+      } catch(e){
         setStatus(e?.message ? `Errore: ${e.message}` : "Errore di generazione.", false);
+    
+      } finally{
         isGenerating = false;
         updateButtons();
       }
     }
-
     /* Rendering UI */
     function renderTargets(){
       targetsEl.innerHTML = "";
@@ -724,6 +724,7 @@
   </script>
 </body>
 </html>
+
 
 
 
