@@ -525,7 +525,21 @@
       const cleaned = normalizeForDisplay(text);
       responseEl.innerHTML = DOMPurify.sanitize(marked.parse(cleaned));
     }
-
+    
+    function ensureEndsClean(text){
+      let t = (text || "").trim();
+      if(!t) return t;
+    
+      if(/[.!?…]["')\]]?$/.test(t)) return t;
+    
+      const m = t.match(/[\s\S]*[.!?…]["')\]]?/);
+      if(m && m[0] && m[0].length >= 40){
+        return m[0].trim();
+      }
+    
+      return t + ".";
+    }
+    
     // SSE robusto: eventi separati da riga vuota, multi data:, CRLF ok
     async function streamGemini(payload, onTextChunk){
       const res = await fetch("/api/gemini", {
@@ -650,7 +664,10 @@
           accumulatedText += chunk;
           renderMarkdownSafe(accumulatedText);
         });
-    
+
+        accumulatedText = ensureEndsClean(accumulatedText);
+        renderMarkdownSafe(accumulatedText);
+        
         setStatus("Fatto.", false);
     
       } catch(e){
@@ -731,6 +748,7 @@
   </script>
 </body>
 </html>
+
 
 
 
