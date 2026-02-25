@@ -405,11 +405,6 @@
     let selectedLenKey = "";
     let accumulatedText = "";
     let isGenerating = false;
-    let autoHopCount = 0;
-    function getMaxHops(){
-      if(selectedLenKey === "breve") return 1;
-      if(selectedLenKey === "medio") return 3;
-      return 6; // lungo
     }
     
     /* DOM */
@@ -485,41 +480,6 @@
       };
     }
 
-    function looksCutClientSide(text){
-      const t = String(text || "").trim();
-      if(!t) return false;
-    
-      const tail = t.slice(-240);
-    
-      // se finisce con punteggiatura o chiusura, stop
-      if (/[.!?…]\s*$/.test(tail) || /[\)\]"]\s*$/.test(tail)) return false;
-    
-      // se è molto corto, non fare continue
-      if(t.length < 250) return false;
-    
-      // se finisce con lettera/numero, probabile taglio
-      if (/[A-Za-zÀ-ÖØ-öø-ÿ0-9]$/.test(tail)) return true;
-    
-      return false;
-    }
-
-    function mergeWithOverlap(prev, next){
-      prev = String(prev || "");
-      next = String(next || "");
-      if(!prev) return next;
-    
-      // cerca overlap massimo (fino a 200 caratteri) tra fine di prev e inizio di next
-      const max = Math.min(200, prev.length, next.length);
-      for(let k = max; k >= 40; k--){
-        const tail = prev.slice(-k);
-        const head = next.slice(0, k);
-        if(tail === head){
-          return prev + next.slice(k);
-        }
-      }
-      return prev + next;
-    }
-    
     function normalizeForDisplay(text){
       if(!text) return "";
     
@@ -657,8 +617,6 @@
         return;
       }
 
-      if(mode !== "continue") autoHopCount = 0;
-
       isGenerating = true;
       updateButtons();
       updateChips();
@@ -666,71 +624,31 @@
       const t = TARGETS[selectedTargetIndex];
       const l = LENGTHS.find(x=>x.key===selectedLenKey);
 
-      setStatus(mode==="continue" ? "Sto continuando..." : "Sto generando...", true);
-
+      setStatus("Sto generando...", true);
+      
       try{
         const { maxTokens, maxChars } = computeLimits();
 
         const payload = {
           query: q.value.trim(),
           targetPrompt: t.prompt + "\n" + l.instruction,
-          mode: mode==="continue" ? "continue" : "start",
-          previousText: mode==="continue" ? accumulatedText.slice(-8000) : "",
+          mode: "start",
+          previousText: "",
           maxTokens,
           maxChars
         };
 
-        if(mode !== "continue"){
-          accumulatedText = "";
-          responseEl.innerHTML = "";
-        }
-
-        const beforeStream = accumulatedText;
-        let gotAnyChunk = false;
-        let localAppended = "";
+        accumulatedText = "";
+        responseEl.innerHTML = "";
+      }
         
-        await streamGemini(payload, (chunk) => {
-            gotAnyChunk = true;
-          
-            const prev = accumulatedText;
-            const a = prev.slice(-1);
-            const b = String(chunk || "").slice(0,1);
-            const isAlnum = (c) => /[A-Za-zÀ-ÖØ-öø-ÿ0-9]/.test(c);
-          
-            const add = (prev && chunk && isAlnum(a) && isAlnum(b)) ? (" " + chunk) : chunk;
-            accumulatedText += add;
-            localAppended += add;
-          
-            renderMarkdownSafe(accumulatedText);
-          });
-
-        // ✅ C) dedup: se era un continue, elimina ripetizioni tra fine precedente e inizio continuazione
-          if(mode === "continue" && gotAnyChunk){
-            accumulatedText = mergeWithOverlap(beforeStream, localAppended);
-            accumulatedText = accumulatedText.replace(/[ \t]{2,}/g, " ");
-            renderMarkdownSafe(accumulatedText);
-          }
-
-          const needsMoreMarker = /\.\.\.\(continua\)\s*$/i.test(accumulatedText);
-          accumulatedText = accumulatedText.replace(/\.\.\.\(continua\)\s*$/i, "");
-          renderMarkdownSafe(accumulatedText);
-          
-          // ✅ continua se c'è marker OR se sembra tagliato a metà (tipo "Immag")
-          const needsMore = needsMoreMarker || looksCutClientSide(accumulatedText);
-          
-          if(needsMore && autoHopCount < getMaxHops()){
-            autoHopCount++;
-            isGenerating = false;
-            updateButtons();
-            return run("continue");
-          }
-
         setStatus("Fatto.", false);
         isGenerating = false;
-        autoHopCount = 0;
         updateButtons();
 
-      }catch(e){
+      }
+    
+      catch(e){
         setStatus(e?.message ? `Errore: ${e.message}` : "Errore di generazione.", false);
         isGenerating = false;
         updateButtons();
@@ -754,7 +672,7 @@
           // se lunghezza già scelta, rigenera
           if(selectedLenKey){
             scrollTo(sec3, card3);
-            run("start");
+            run();
           }
         });
         targetsEl.appendChild(el);
@@ -773,7 +691,7 @@
           updateChips();
           updateButtons();
           scrollTo(sec3, card3);
-          run("start");
+          run();
         });
         lengthsEl.appendChild(el);
       });
@@ -790,7 +708,7 @@
     // ✅ questo è quello che spesso manca: bottone "Vai alla risposta"
     goAnswer.addEventListener("click", () => {
       scrollTo(sec3, card3);
-      run("start");
+      run();
     });
 
     copyBtn.addEventListener("click", () => {
@@ -807,6 +725,7 @@
   </script>
 </body>
 </html>
+
 
 
 
