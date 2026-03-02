@@ -530,13 +530,33 @@
       let t = (text || "").trim();
       if(!t) return t;
     
+      // 1) Se finisce già bene, ok
       if(/[.!?…]["')\]]?$/.test(t)) return t;
     
-      const m = t.match(/[\s\S]*[.!?…]["')\]]?/);
-      if(m && m[0] && m[0].length >= 40){
-        return m[0].trim();
+      // 2) Se finisce con caratteri "aperti" (tipico taglio a metà)
+      if(/[([{«"']$/.test(t)){
+        t = t.replace(/[([{«"']+$/,"").trim();
       }
     
+      // 3) Se le parentesi sono sbilanciate, evita di "aggiustare": taglia all'ultima frase completa
+      const opens  = (t.match(/\(/g) || []).length;
+      const closes = (t.match(/\)/g) || []).length;
+      if(opens > closes){
+        const m = t.match(/[\s\S]*[.!?…]["')\]]?/);
+        if(m && m[0] && m[0].length >= 40) return m[0].trim();
+        // fallback: prova a chiudere parentesi aperte
+        t = t + ")".repeat(opens - closes);
+      }
+    
+      // 4) Taglia all'ultima chiusura "forte" se presente (meglio perdere poco che troncare male)
+      const lastPunct = Math.max(t.lastIndexOf("."), t.lastIndexOf("!"), t.lastIndexOf("?"), t.lastIndexOf("…"));
+      if(lastPunct >= 0 && lastPunct >= t.length - 120){
+        // se la punteggiatura è "vicina alla fine", taglia lì e chiudi.
+        t = t.slice(0, lastPunct + 1).trim();
+        return t;
+      }
+    
+      // 5) Fallback: aggiungi punto
       return t + ".";
     }
     
@@ -748,6 +768,7 @@
   </script>
 </body>
 </html>
+
 
 
 
