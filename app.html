@@ -668,7 +668,7 @@
         accumulatedText = ensureEndsClean(accumulatedText);
         renderMarkdownSafe(accumulatedText);
         
-        setStatus("Fatto.", false);
+        setStatus("Risposta generata.", false);
     
       } catch(e){
         setStatus(e?.message ? `Errore: ${e.message}` : "Errore di generazione.", false);
@@ -748,6 +748,7 @@
   </script>
 </body>
 </html>
+
 
 
 
