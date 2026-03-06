@@ -248,8 +248,7 @@
         <a href="/app.html" data-nav="app">App</a>
         <a href="/come-funziona.html" data-nav="how">Come funziona</a>
         <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
-        <span id="userEmail" style="color:var(--muted);font-size:13px;"></span>
-        <button class="btn" id="logoutBtn" type="button" style="display:none;padding:6px 14px;font-size:13px;">Esci</button>
+        <a href="/profilo.html" data-nav="profile">Profilo</a>
       </nav>
 
       <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
@@ -259,9 +258,10 @@
 
     <div class="mobile-nav" id="mobileNav">
       <a href="/index.html">Home</a>
-      <a href="/app.html">Prova</a>
+      <a href="/app.html">App</a>
       <a href="/come-funziona.html">Come funziona</a>
       <a href="/prezzi.html">Prezzi</a>
+      <a href="/profilo.html">Profilo</a>
     </div>
 
     <div class="hero-row">
@@ -356,9 +356,6 @@
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    const userEmailEl = document.getElementById("userEmail");
-    const logoutBtn   = document.getElementById("logoutBtn");
-
     let userCredits  = null;
     let currentUserId = null;
 
@@ -369,21 +366,14 @@
         return;
       }
       currentUserId = data.session.user.id;
-      userEmailEl.textContent = data.session.user?.email || "";
-      logoutBtn.style.display = "";
 
-      const { data: profile } = await sb
+      const { data: rows } = await sb
         .from('profiles')
         .select('credits')
         .eq('id', currentUserId)
-        .single();
-      userCredits = profile?.credits ?? 0;
+        .limit(1);
+      userCredits = rows?.[0]?.credits ?? 0;
       creditsValueEl.textContent = userCredits;
-    });
-
-    logoutBtn.addEventListener("click", async () => {
-      await sb.auth.signOut();
-      window.location.replace("/auth.html");
     });
 
     /* Mobile nav */

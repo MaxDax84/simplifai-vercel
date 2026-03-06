@@ -157,6 +157,7 @@
         <a href="/app.html" data-nav="app">App</a>
         <a href="/come-funziona.html" data-nav="how">Come funziona</a>
         <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
+        <a href="/profilo.html" data-nav="profile">Profilo</a>
       </nav>
 
       <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
@@ -169,6 +170,7 @@
       <a href="/app.html">App</a>
       <a href="/come-funziona.html">Come funziona</a>
       <a href="/prezzi.html">Prezzi</a>
+      <a href="/profilo.html">Profilo</a>
     </div>
 
     <div class="card">
@@ -338,24 +340,23 @@
 
       try {
         /* Leggi crediti attuali */
-        const { data: profile, error: fetchErr } = await sb
+        const { data: rows, error: fetchErr } = await sb
           .from('profiles')
           .select('credits')
           .eq('id', currentUserId)
-          .single();
+          .limit(1);
 
-        if(fetchErr) throw new Error("Impossibile leggere il profilo.");
+        if(fetchErr) throw new Error("Impossibile leggere il profilo: " + fetchErr.message);
 
-        const currentCredits = profile?.credits ?? 0;
+        const currentCredits = rows?.[0]?.credits ?? 0;
         const newCredits = currentCredits + pkg.credits;
 
-        /* Aggiorna crediti e piano */
+        /* Upsert: crea il profilo se non esiste, altrimenti aggiorna */
         const { error: updateErr } = await sb
           .from('profiles')
-          .update({ credits: newCredits, plan: pkgKey, updated_at: new Date().toISOString() })
-          .eq('id', currentUserId);
+          .upsert({ id: currentUserId, credits: newCredits, plan: pkgKey, updated_at: new Date().toISOString() });
 
-        if(updateErr) throw new Error("Impossibile aggiornare i crediti.");
+        if(updateErr) throw new Error("Impossibile aggiornare i crediti: " + updateErr.message);
 
         /* Mostra successo */
         document.getElementById('formSection').style.display = 'none';

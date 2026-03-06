@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Profilo – Simplif-AI</title>
+  <link rel="stylesheet" href="/theme.css">
+
+  <style>
+    .avatar{
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(124,92,255,.6), rgba(38,198,255,.4));
+      border: 2px solid rgba(124,92,255,.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; font-weight: 900;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .profile-hero{
+      display: flex; align-items: center; gap: 18px;
+      flex-wrap: wrap;
+    }
+    .profile-hero-text h2{ margin: 0 0 4px; font-size: 20px; font-weight: 900; }
+    .profile-hero-text span{ color: var(--muted); font-size: 13px; }
+
+    .section-title{
+      font-size: 16px; font-weight: 900;
+      margin: 0 0 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-gap{ display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
+
+    .label{ color: var(--muted); font-size: 13px; margin: 0 0 6px; }
+    .field{
+      width: 100%; min-height: 44px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.16);
+      color: var(--text);
+      padding: 10px 12px;
+      outline: none; font-size: 14px;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    .field:focus{
+      border-color: rgba(124,92,255,.50);
+      box-shadow: 0 0 0 4px rgba(124,92,255,.15);
+    }
+    .field:disabled{
+      opacity: .45; cursor: not-allowed;
+    }
+    textarea.field{ min-height: 90px; resize: vertical; }
+
+    .row2{
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    @media(max-width:560px){ .row2{ grid-template-columns: 1fr; } }
+
+    /* Pill selezionabili */
+    .pills{ display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill-opt{
+      padding: 8px 14px; border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--muted); font-size: 13px;
+      cursor: pointer; user-select: none;
+      transition: .15s;
+    }
+    .pill-opt:hover{ background: rgba(255,255,255,.07); }
+    .pill-opt.active{
+      border-color: rgba(124,92,255,.6);
+      background: rgba(124,92,255,.18);
+      color: var(--text);
+    }
+
+    /* Checkbox interessi */
+    .interests-grid{
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 8px;
+    }
+    .interest-item{
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 12px; border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      cursor: pointer; user-select: none;
+      font-size: 13px; color: var(--muted);
+      transition: .15s;
+    }
+    .interest-item:hover{ background: rgba(255,255,255,.07); }
+    .interest-item.active{
+      border-color: rgba(124,92,255,.6);
+      background: rgba(124,92,255,.18);
+      color: var(--text);
+    }
+    .interest-item input{ display: none; }
+
+    /* Livello conoscenza */
+    .know-grid{
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+    @media(max-width:560px){ .know-grid{ grid-template-columns: 1fr 1fr; } }
+    .know-item{
+      padding: 10px 6px; border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      text-align: center; cursor: pointer;
+      font-size: 12px; color: var(--muted);
+      transition: .15s;
+    }
+    .know-item .know-icon{ font-size: 20px; display: block; margin-bottom: 4px; }
+    .know-item:hover{ background: rgba(255,255,255,.07); }
+    .know-item.active{
+      border-color: rgba(124,92,255,.6);
+      background: rgba(124,92,255,.18);
+      color: var(--text);
+    }
+
+    .save-row{
+      display: flex; align-items: center; gap: 12px;
+      flex-wrap: wrap; margin-top: 8px;
+    }
+    .msg{ font-size: 13px; min-height: 16px; }
+    .msg.ok{ color: #5cf2a8; }
+    .msg.err{ color: #ff6b6b; }
+
+    .credit-badge{
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--muted); font-size: 13px;
+    }
+    .credit-badge b{ color: var(--text); }
+
+    .danger-zone{
+      border: 1px solid rgba(255,80,80,.25);
+      border-radius: 18px;
+      padding: 20px;
+    }
+    .danger-zone .section-title{ color: #ff6b6b; }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>Simplif-AI</h1>
+          <span>Concetti complessi spiegati in modo semplice. Scegli tu quanto.</span>
+        </div>
+      </div>
+
+      <nav id="mainNav">
+        <a href="/index.html" data-nav="home">Home</a>
+        <a href="/app.html" data-nav="app">App</a>
+        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
+        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
+        <a href="/profilo.html" data-nav="profile">Profilo</a>
+      </nav>
+
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+        <span></span><span></span><span></span>
+      </button>
+    </header>
+
+    <div class="mobile-nav" id="mobileNav">
+      <a href="/index.html">Home</a>
+      <a href="/app.html">App</a>
+      <a href="/come-funziona.html">Come funziona</a>
+      <a href="/prezzi.html">Prezzi</a>
+      <a href="/profilo.html">Profilo</a>
+    </div>
+
+    <!-- Hero profilo -->
+    <div class="card" style="margin-top:20px;">
+      <div class="card-inner">
+        <div class="profile-hero">
+          <div class="avatar" id="avatarEl">?</div>
+          <div class="profile-hero-text">
+            <h2 id="heroName">Caricamento...</h2>
+            <span id="heroEmail"></span>
+            <br>
+            <span class="credit-badge" style="margin-top:6px; display:inline-flex;">
+              ⚡ Crediti: <b id="heroCredits">—</b>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-gap">
+
+      <!-- 1. DATI PERSONALI -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="section-title">👤 Dati personali</div>
+
+          <div class="row2">
+            <div>
+              <div class="label">Nome</div>
+              <input class="field" id="fNome" placeholder="Mario" />
+            </div>
+            <div>
+              <div class="label">Cognome</div>
+              <input class="field" id="fCognome" placeholder="Rossi" />
+            </div>
+          </div>
+
+          <div style="height:12px;"></div>
+
+          <div class="row2">
+            <div>
+              <div class="label">Data di nascita</div>
+              <input class="field" id="fNascita" type="date" />
+            </div>
+            <div>
+              <div class="label">Città</div>
+              <input class="field" id="fCitta" placeholder="Milano" />
+            </div>
+          </div>
+
+          <div style="height:12px;"></div>
+
+          <div>
+            <div class="label">Professione</div>
+            <input class="field" id="fProfessione" placeholder="es. Insegnante, Ingegnere, Studente..." />
+          </div>
+
+          <div style="height:12px;"></div>
+
+          <div>
+            <div class="label">Bio (opzionale)</div>
+            <textarea class="field" id="fBio" placeholder="Presentati in poche righe..."></textarea>
+          </div>
+
+          <div style="height:16px;"></div>
+          <div class="save-row">
+            <button class="btn btn-primary" id="savePersonal" type="button">Salva dati personali</button>
+            <span class="msg" id="msgPersonal"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. CAMBIO PASSWORD -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="section-title">🔒 Sicurezza</div>
+
+          <div>
+            <div class="label">Email account</div>
+            <input class="field" id="fEmail" disabled />
+          </div>
+
+          <div style="height:12px;"></div>
+
+          <div>
+            <div class="label">Nuova password</div>
+            <input class="field" id="fPwd1" type="password" placeholder="Nuova password (min. 6 caratteri)" />
+          </div>
+
+          <div style="height:12px;"></div>
+
+          <div>
+            <div class="label">Conferma nuova password</div>
+            <input class="field" id="fPwd2" type="password" placeholder="Ripeti la nuova password" />
+          </div>
+
+          <div style="height:16px;"></div>
+          <div class="save-row">
+            <button class="btn btn-primary" id="savePwd" type="button">Aggiorna password</button>
+            <span class="msg" id="msgPwd"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. PROFILAZIONE -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="section-title">🧠 Profilo di apprendimento <span style="color:var(--muted);font-size:12px;font-weight:400;">(tutto opzionale)</span></div>
+
+          <!-- Livello istruzione -->
+          <div>
+            <div class="label">Livello di istruzione</div>
+            <select class="field" id="fIstruzione">
+              <option value="">— Seleziona —</option>
+              <option value="media">Licenza media</option>
+              <option value="diploma">Diploma superiore</option>
+              <option value="triennale">Laurea triennale</option>
+              <option value="magistrale">Laurea magistrale / Vecchio ordinamento</option>
+              <option value="dottorato">Dottorato / Post-laurea</option>
+            </select>
+          </div>
+
+          <div style="height:16px;"></div>
+
+          <!-- Settore -->
+          <div>
+            <div class="label">Settore lavorativo / di studio</div>
+            <select class="field" id="fSettore">
+              <option value="">— Seleziona —</option>
+              <option value="tecnologia">Tecnologia / Informatica</option>
+              <option value="medicina">Medicina / Salute</option>
+              <option value="economia">Economia / Finanza</option>
+              <option value="giurisprudenza">Giurisprudenza / Diritto</option>
+              <option value="ingegneria">Ingegneria</option>
+              <option value="scienze">Scienze naturali</option>
+              <option value="umanistico">Umanistico / Letterario</option>
+              <option value="arte">Arte / Design / Musica</option>
+              <option value="educazione">Educazione / Formazione</option>
+              <option value="commercio">Commercio / Marketing</option>
+              <option value="altro">Altro</option>
+            </select>
+          </div>
+
+          <div style="height:16px;"></div>
+
+          <!-- Obiettivo d'uso -->
+          <div>
+            <div class="label">Perché usi Simplif-AI?</div>
+            <div class="pills" id="pillsObiettivo">
+              <div class="pill-opt" data-val="studio">📚 Studio</div>
+              <div class="pill-opt" data-val="lavoro">💼 Lavoro</div>
+              <div class="pill-opt" data-val="curiosita">🔍 Curiosità personale</div>
+              <div class="pill-opt" data-val="ricerca">🧪 Ricerca</div>
+              <div class="pill-opt" data-val="insegnamento">👩‍🏫 Insegnamento</div>
+              <div class="pill-opt" data-val="altro">✏️ Altro</div>
+            </div>
+          </div>
+
+          <div style="height:16px;"></div>
+
+          <!-- Livello conoscenza -->
+          <div>
+            <div class="label">Come ti definiresti in media?</div>
+            <div class="know-grid" id="knowGrid">
+              <div class="know-item" data-val="principiante"><span class="know-icon">🌱</span>Principiante</div>
+              <div class="know-item" data-val="base"><span class="know-icon">📖</span>Base</div>
+              <div class="know-item" data-val="intermedio"><span class="know-icon">⚙️</span>Intermedio</div>
+              <div class="know-item" data-val="avanzato"><span class="know-icon">🚀</span>Avanzato</div>
+              <div class="know-item" data-val="esperto"><span class="know-icon">🧠</span>Esperto</div>
+            </div>
+          </div>
+
+          <div style="height:16px;"></div>
+
+          <!-- Interessi -->
+          <div>
+            <div class="label">Aree di interesse (seleziona tutte quelle che vuoi)</div>
+            <div class="interests-grid" id="interestsGrid">
+              <label class="interest-item"><input type="checkbox" value="scienza" /> 🔬 Scienza</label>
+              <label class="interest-item"><input type="checkbox" value="tecnologia" /> 💻 Tecnologia</label>
+              <label class="interest-item"><input type="checkbox" value="storia" /> 🏛️ Storia</label>
+              <label class="interest-item"><input type="checkbox" value="arte" /> 🎨 Arte</label>
+              <label class="interest-item"><input type="checkbox" value="economia" /> 📈 Economia</label>
+              <label class="interest-item"><input type="checkbox" value="medicina" /> 🏥 Medicina</label>
+              <label class="interest-item"><input type="checkbox" value="diritto" /> ⚖️ Diritto</label>
+              <label class="interest-item"><input type="checkbox" value="filosofia" /> 🤔 Filosofia</label>
+              <label class="interest-item"><input type="checkbox" value="matematica" /> ➗ Matematica</label>
+              <label class="interest-item"><input type="checkbox" value="ambiente" /> 🌿 Ambiente</label>
+              <label class="interest-item"><input type="checkbox" value="psicologia" /> 🧬 Psicologia</label>
+              <label class="interest-item"><input type="checkbox" value="sport" /> ⚽ Sport</label>
+              <label class="interest-item"><input type="checkbox" value="musica" /> 🎵 Musica</label>
+              <label class="interest-item"><input type="checkbox" value="letteratura" /> 📚 Letteratura</label>
+              <label class="interest-item"><input type="checkbox" value="politica" /> 🗳️ Politica</label>
+              <label class="interest-item"><input type="checkbox" value="cucina" /> 🍽️ Cucina</label>
+            </div>
+          </div>
+
+          <div style="height:16px;"></div>
+
+          <!-- Frequenza uso -->
+          <div>
+            <div class="label">Con che frequenza pensi di usare l'app?</div>
+            <div class="pills" id="pillsFrequenza">
+              <div class="pill-opt" data-val="giornaliero">📅 Ogni giorno</div>
+              <div class="pill-opt" data-val="settimanale">📆 Qualche volta a settimana</div>
+              <div class="pill-opt" data-val="occasionale">🕐 Occasionalmente</div>
+            </div>
+          </div>
+
+          <div style="height:16px;"></div>
+
+          <!-- Come ha conosciuto -->
+          <div>
+            <div class="label">Come hai conosciuto Simplif-AI?</div>
+            <select class="field" id="fComeConosciuto">
+              <option value="">— Seleziona —</option>
+              <option value="amici">Amici / Passaparola</option>
+              <option value="social">Social media</option>
+              <option value="ricerca">Ricerca su Google</option>
+              <option value="scuola">Scuola / Università</option>
+              <option value="lavoro">Collega di lavoro</option>
+              <option value="altro">Altro</option>
+            </select>
+          </div>
+
+          <div style="height:16px;"></div>
+
+          <!-- Vuoi capire meglio -->
+          <div>
+            <div class="label">C'è un argomento che vorresti capire meglio?</div>
+            <textarea class="field" id="fVuoiCapire" placeholder="es. Come funziona l'intelligenza artificiale, cosa sono i quanti, come leggere un bilancio..."></textarea>
+          </div>
+
+          <div style="height:16px;"></div>
+          <div class="save-row">
+            <button class="btn btn-primary" id="saveProfiling" type="button">Salva profilo di apprendimento</button>
+            <span class="msg" id="msgProfiling"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. ESCI -->
+      <div class="card danger-zone">
+        <div class="card-inner">
+          <div class="section-title">🚪 Sessione</div>
+          <p style="color:var(--muted);font-size:14px;margin:0 0 16px;">Disconnettiti dal tuo account su questo dispositivo.</p>
+          <button class="btn" id="logoutBtn" type="button" style="border-color:rgba(255,80,80,.35);color:#ff6b6b;">Esci dall'account</button>
+        </div>
+      </div>
+
+    </div>
+    <div style="height:32px;"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>
+    /* Mobile nav */
+    (function(){
+      const toggle = document.getElementById("navToggle");
+      const mobileNav = document.getElementById("mobileNav");
+      if(!toggle||!mobileNav) return;
+      toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
+      mobileNav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => document.body.classList.remove("nav-open")));
+    })();
+
+    /* Navbar active */
+    document.querySelectorAll('#mainNav a').forEach(a => {
+      if(a.dataset.nav === "profile") a.classList.add('nav-active');
+    });
+
+    const SUPABASE_URL  = "https://lmmiowagyqypdrdcemdo.supabase.co";
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    let currentUserId = null;
+
+    /* Stato pill / interessi */
+    let selectedObiettivo = "";
+    let selectedConoscenza = "";
+    let selectedInteressi = [];
+    let selectedFrequenza = "";
+
+    /* Helper messaggi */
+    function showMsg(id, text, type){
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.className = "msg " + type;
+      setTimeout(() => { el.textContent = ""; el.className = "msg"; }, 3500);
+    }
+
+    /* Pill singola */
+    function initPills(containerId, onSelect){
+      document.getElementById(containerId).querySelectorAll(".pill-opt").forEach(p => {
+        p.addEventListener("click", () => {
+          document.getElementById(containerId).querySelectorAll(".pill-opt").forEach(x => x.classList.remove("active"));
+          p.classList.add("active");
+          onSelect(p.dataset.val);
+        });
+      });
+    }
+
+    /* Know grid */
+    document.getElementById("knowGrid").querySelectorAll(".know-item").forEach(k => {
+      k.addEventListener("click", () => {
+        document.getElementById("knowGrid").querySelectorAll(".know-item").forEach(x => x.classList.remove("active"));
+        k.classList.add("active");
+        selectedConoscenza = k.dataset.val;
+      });
+    });
+
+    /* Interessi (multi) */
+    document.getElementById("interestsGrid").querySelectorAll(".interest-item").forEach(item => {
+      item.addEventListener("click", () => {
+        const cb = item.querySelector("input");
+        cb.checked = !cb.checked;
+        item.classList.toggle("active", cb.checked);
+        const val = cb.value;
+        if(cb.checked){
+          if(!selectedInteressi.includes(val)) selectedInteressi.push(val);
+        } else {
+          selectedInteressi = selectedInteressi.filter(v => v !== val);
+        }
+      });
+    });
+
+    initPills("pillsObiettivo", v => selectedObiettivo = v);
+    initPills("pillsFrequenza", v => selectedFrequenza = v);
+
+    /* Popola UI con dati profilo */
+    function fillUI(profile, email){
+      /* Hero */
+      const nome = profile.nome || "";
+      const cognome = profile.cognome || "";
+      const initials = ((nome[0]||"") + (cognome[0]||"")).toUpperCase() || (email?.[0]||"?").toUpperCase();
+      document.getElementById("avatarEl").textContent = initials;
+      document.getElementById("heroName").textContent = (nome || cognome) ? `${nome} ${cognome}`.trim() : "Il tuo profilo";
+      document.getElementById("heroEmail").textContent = email || "";
+      document.getElementById("heroCredits").textContent = profile.credits ?? 0;
+
+      /* Campi personali */
+      document.getElementById("fNome").value        = profile.nome || "";
+      document.getElementById("fCognome").value     = profile.cognome || "";
+      document.getElementById("fNascita").value     = profile.data_nascita || "";
+      document.getElementById("fCitta").value       = profile.citta || "";
+      document.getElementById("fProfessione").value = profile.professione || "";
+      document.getElementById("fBio").value         = profile.bio || "";
+      document.getElementById("fEmail").value       = email || "";
+
+      /* Profilazione select */
+      document.getElementById("fIstruzione").value    = profile.livello_istruzione || "";
+      document.getElementById("fSettore").value       = profile.settore || "";
+      document.getElementById("fComeConosciuto").value= profile.come_conosciuto || "";
+      document.getElementById("fVuoiCapire").value    = profile.vuoi_capire || "";
+
+      /* Obiettivo pill */
+      if(profile.obiettivo_uso){
+        selectedObiettivo = profile.obiettivo_uso;
+        document.getElementById("pillsObiettivo").querySelectorAll(".pill-opt").forEach(p => {
+          p.classList.toggle("active", p.dataset.val === selectedObiettivo);
+        });
+      }
+
+      /* Conoscenza */
+      if(profile.livello_conoscenza){
+        selectedConoscenza = profile.livello_conoscenza;
+        document.getElementById("knowGrid").querySelectorAll(".know-item").forEach(k => {
+          k.classList.toggle("active", k.dataset.val === selectedConoscenza);
+        });
+      }
+
+      /* Interessi */
+      if(Array.isArray(profile.interessi)){
+        selectedInteressi = profile.interessi;
+        document.getElementById("interestsGrid").querySelectorAll(".interest-item").forEach(item => {
+          const cb = item.querySelector("input");
+          const active = selectedInteressi.includes(cb.value);
+          cb.checked = active;
+          item.classList.toggle("active", active);
+        });
+      }
+
+      /* Frequenza */
+      if(profile.frequenza_uso){
+        selectedFrequenza = profile.frequenza_uso;
+        document.getElementById("pillsFrequenza").querySelectorAll(".pill-opt").forEach(p => {
+          p.classList.toggle("active", p.dataset.val === selectedFrequenza);
+        });
+      }
+    }
+
+    /* Carica sessione e profilo */
+    sb.auth.getSession().then(async ({ data }) => {
+      if(!data?.session){
+        window.location.replace("/auth.html");
+        return;
+      }
+      currentUserId = data.session.user.id;
+      const email = data.session.user.email;
+
+      const { data: rows } = await sb
+        .from('profiles')
+        .select('*')
+        .eq('id', currentUserId)
+        .limit(1);
+
+      fillUI(rows?.[0] || {}, email);
+    });
+
+    /* Salva dati personali */
+    document.getElementById("savePersonal").addEventListener("click", async () => {
+      if(!currentUserId) return;
+      const btn = document.getElementById("savePersonal");
+      btn.disabled = true;
+      const { error } = await sb.from('profiles').upsert({
+        id: currentUserId,
+        nome:        document.getElementById("fNome").value.trim(),
+        cognome:     document.getElementById("fCognome").value.trim(),
+        data_nascita:document.getElementById("fNascita").value || null,
+        citta:       document.getElementById("fCitta").value.trim(),
+        professione: document.getElementById("fProfessione").value.trim(),
+        bio:         document.getElementById("fBio").value.trim(),
+        updated_at:  new Date().toISOString()
+      });
+      btn.disabled = false;
+      if(error) showMsg("msgPersonal", "Errore: " + error.message, "err");
+      else {
+        showMsg("msgPersonal", "Salvato!", "ok");
+        /* Aggiorna hero */
+        const nome = document.getElementById("fNome").value.trim();
+        const cognome = document.getElementById("fCognome").value.trim();
+        const initials = ((nome[0]||"")+(cognome[0]||"")).toUpperCase() || document.getElementById("heroEmail").textContent[0].toUpperCase();
+        document.getElementById("avatarEl").textContent = initials;
+        document.getElementById("heroName").textContent = (nome||cognome) ? `${nome} ${cognome}`.trim() : "Il tuo profilo";
+      }
+    });
+
+    /* Cambio password */
+    document.getElementById("savePwd").addEventListener("click", async () => {
+      const p1 = document.getElementById("fPwd1").value;
+      const p2 = document.getElementById("fPwd2").value;
+      if(!p1){ showMsg("msgPwd", "Inserisci la nuova password.", "err"); return; }
+      if(p1.length < 6){ showMsg("msgPwd", "La password deve avere almeno 6 caratteri.", "err"); return; }
+      if(p1 !== p2){ showMsg("msgPwd", "Le password non coincidono.", "err"); return; }
+      const btn = document.getElementById("savePwd");
+      btn.disabled = true;
+      const { error } = await sb.auth.updateUser({ password: p1 });
+      btn.disabled = false;
+      if(error) showMsg("msgPwd", "Errore: " + error.message, "err");
+      else {
+        showMsg("msgPwd", "Password aggiornata!", "ok");
+        document.getElementById("fPwd1").value = "";
+        document.getElementById("fPwd2").value = "";
+      }
+    });
+
+    /* Salva profilazione */
+    document.getElementById("saveProfiling").addEventListener("click", async () => {
+      if(!currentUserId) return;
+      const btn = document.getElementById("saveProfiling");
+      btn.disabled = true;
+      const { error } = await sb.from('profiles').upsert({
+        id: currentUserId,
+        livello_istruzione: document.getElementById("fIstruzione").value || null,
+        settore:            document.getElementById("fSettore").value || null,
+        obiettivo_uso:      selectedObiettivo || null,
+        livello_conoscenza: selectedConoscenza || null,
+        interessi:          selectedInteressi.length ? selectedInteressi : null,
+        frequenza_uso:      selectedFrequenza || null,
+        come_conosciuto:    document.getElementById("fComeConosciuto").value || null,
+        vuoi_capire:        document.getElementById("fVuoiCapire").value.trim() || null,
+        updated_at:         new Date().toISOString()
+      });
+      btn.disabled = false;
+      if(error) showMsg("msgProfiling", "Errore: " + error.message, "err");
+      else showMsg("msgProfiling", "Profilo salvato!", "ok");
+    });
+
+    /* Logout */
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await sb.auth.signOut();
+      window.location.replace("/auth.html");
+    });
+  </script>
+</body>
+</html>
