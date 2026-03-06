@@ -46,6 +46,7 @@
       padding: 10px 12px;
       outline: none;
       font-size: 14px;
+      box-sizing: border-box;
     }
     .field:focus{
       border-color: rgba(124,92,255,.50);
@@ -119,6 +120,24 @@
       font-size: 12px;
       line-height: 1.45;
     }
+
+    .success-box{
+      display:none;
+      text-align:center;
+      padding: 28px 20px;
+    }
+    .success-icon{ font-size: 48px; margin-bottom: 12px; }
+    .success-title{ font-size: 22px; font-weight: 900; margin: 0 0 8px; }
+    .success-sub{ color: var(--muted); font-size: 14px; margin: 0 0 20px; }
+
+    .checkout-msg{
+      margin-top: 12px;
+      font-size: 13px;
+      min-height: 16px;
+      color: var(--muted);
+    }
+    .checkout-msg.error{ color: #ff6b6b; }
+    .checkout-msg.success{ color: #5cf2a8; }
   </style>
 </head>
 
@@ -140,13 +159,11 @@
         <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
       </nav>
 
-      <!-- mobile hamburger -->
       <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
         <span></span><span></span><span></span>
       </button>
     </header>
 
-    <!-- Mobile overlay menu -->
     <div class="mobile-nav" id="mobileNav">
       <a href="/index.html">Home</a>
       <a href="/app.html">App</a>
@@ -157,8 +174,8 @@
     <div class="card">
       <div class="card-inner hero">
         <span class="pilltag">🧾 CHECKOUT</span>
-        <div class="h1">Upgrade (mock)</div>
-        <p class="sub">Questa è una pagina demo: nessun pagamento reale. Serve per simulare il flusso.</p>
+        <div class="h1">Ricarica i tuoi crediti</div>
+        <p class="sub">Pagamento simulato: inserisci dati fittizi. I crediti vengono aggiunti subito al tuo account.</p>
       </div>
     </div>
 
@@ -166,96 +183,193 @@
       <!-- Form -->
       <div class="card">
         <div class="card-inner">
-          <div class="h2">✉️ Dati (mock)</div>
+          <!-- Form visibile prima del pagamento -->
+          <div id="formSection">
+            <div class="h2">✉️ Dati di pagamento (mock)</div>
 
-          <div class="row2">
-            <div>
-              <div class="label">Nome</div>
-              <input class="field" value="Mario" />
+            <div class="row2">
+              <div>
+                <div class="label">Nome</div>
+                <input class="field" id="fieldNome" value="Mario" />
+              </div>
+              <div>
+                <div class="label">Cognome</div>
+                <input class="field" id="fieldCognome" value="Rossi" />
+              </div>
             </div>
+
             <div>
-              <div class="label">Cognome</div>
-              <input class="field" value="Rossi" />
+              <div class="label">Email</div>
+              <input class="field" id="fieldEmail" value="mario@email.com" />
+            </div>
+
+            <div>
+              <div class="label">Numero carta (mock)</div>
+              <input class="field" id="fieldCarta" value="4242 4242 4242 4242" />
+            </div>
+
+            <div class="row2" style="margin-top:0;">
+              <div>
+                <div class="label">Scadenza</div>
+                <input class="field" value="12/28" />
+              </div>
+              <div>
+                <div class="label">CVV</div>
+                <input class="field" value="123" />
+              </div>
+            </div>
+
+            <div class="small" style="margin-top:12px;">
+              Nessun dato viene inviato o salvato. Simulazione UI.
+            </div>
+
+            <div class="checkout-msg" id="checkoutMsg"></div>
+
+            <div class="cta">
+              <button class="btn btn-primary" type="button" id="confirmBtn">✅ Conferma acquisto</button>
+              <a class="btn" href="/prezzi.html">← Torna ai prezzi</a>
             </div>
           </div>
 
-          <div>
-            <div class="label">Email</div>
-            <input class="field" value="mario@email.com" />
-          </div>
-
-          <div>
-            <div class="label">Carta (mock)</div>
-            <input class="field" value="4242 4242 4242 4242" />
-          </div>
-
-          <div class="small" style="margin-top:12px;">
-            Non viene inviato niente. È solo una simulazione UI.
-          </div>
-
-          <div class="cta">
-            <button class="btn btn-primary" type="button">✅ Conferma (mock)</button>
-            <a class="btn" href="/prezzi.html">← Torna ai prezzi</a>
+          <!-- Successo -->
+          <div class="success-box" id="successSection">
+            <div class="success-icon">🎉</div>
+            <p class="success-title">Acquisto completato!</p>
+            <p class="success-sub" id="successSub">I tuoi crediti sono stati aggiunti.</p>
+            <a class="btn btn-primary" href="/app.html">Vai all'app →</a>
           </div>
         </div>
       </div>
 
-      <!-- Summary -->
+      <!-- Riepilogo -->
       <div class="card">
         <div class="card-inner">
           <div class="h2">📦 Riepilogo</div>
-
           <div style="height:12px;"></div>
 
           <div class="planbox">
             <div class="plan-top">
-              <div style="font-weight:950; font-size:18px;">PRO</div>
-              <div class="plan-pill">Mensile</div>
+              <div style="font-weight:950; font-size:18px;" id="planLabel">PRO</div>
+              <div class="plan-pill" id="planBilling">Mensile</div>
             </div>
-
-            <div class="price">€14,99</div>
-            <div class="per">al mese</div>
-
-            <div class="small">
-              Più richieste e risposte più lunghe. Priorità più alta.
-            </div>
+            <div class="price" id="planPrice">€9,99</div>
+            <div class="per" id="planPer">al mese</div>
+            <div class="small" id="planCredits">Aggiunge 100 crediti al tuo account.</div>
           </div>
 
           <div class="note">
-            Nota: in produzione qui integreresti Stripe e metteresti limiti reali (requests/day, max tokens, ecc.).
+            I crediti vengono aggiunti immediatamente dopo la conferma. In produzione qui si integrerebbe Stripe.
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script>
-    // Mobile nav toggle
+    /* Mobile nav */
     (function(){
       const toggle = document.getElementById("navToggle");
       const mobileNav = document.getElementById("mobileNav");
       if(!toggle || !mobileNav) return;
-
-      toggle.addEventListener("click", () => {
-        document.body.classList.toggle("nav-open");
-      });
-      mobileNav.querySelectorAll("a").forEach(a => {
-        a.addEventListener("click", () => document.body.classList.remove("nav-open"));
-      });
+      toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
+      mobileNav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => document.body.classList.remove("nav-open")));
     })();
 
-    // Navbar active
+    /* Navbar active */
     (function(){
-      const path = location.pathname.toLowerCase();
-      let key = "home";
-      if (path.includes("/app")) key = "app";
-      else if (path.includes("come-funziona")) key = "how";
-      else if (path.includes("prezzi")) key = "pricing";
-      else if (path.includes("checkout")) key = "pricing";
       document.querySelectorAll('#mainNav a').forEach(a=>{
-        if(a.dataset.nav === key) a.classList.add('nav-active');
+        if(a.dataset.nav === "pricing") a.classList.add('nav-active');
       });
     })();
+
+    const SUPABASE_URL  = "https://lmmiowagyqypdrdcemdo.supabase.co";
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    /* Piani disponibili */
+    const PACKAGES = {
+      'pro-monthly': { label:'PRO', billing:'Mensile',  price:'€9,99',  per:'al mese',    credits: 100 },
+      'pro-yearly':  { label:'PRO', billing:'Annuale',  price:'€99,90', per:"all'anno",   credits: 1200 },
+    };
+
+    /* Leggi params URL */
+    const params  = new URLSearchParams(location.search);
+    const plan    = params.get('plan') || 'pro';
+    const billing = params.get('billing') || 'monthly';
+    const pkgKey  = `${plan}-${billing}`;
+    const pkg     = PACKAGES[pkgKey] || PACKAGES['pro-monthly'];
+
+    /* Popola riepilogo */
+    document.getElementById('planLabel').textContent   = pkg.label;
+    document.getElementById('planBilling').textContent = pkg.billing;
+    document.getElementById('planPrice').textContent   = pkg.price;
+    document.getElementById('planPer').textContent     = pkg.per;
+    document.getElementById('planCredits').textContent = `Aggiunge ${pkg.credits} crediti al tuo account.`;
+
+    /* Auth check */
+    let currentUserId = null;
+    sb.auth.getSession().then(({ data }) => {
+      if(!data?.session){
+        window.location.replace("/auth.html");
+        return;
+      }
+      currentUserId = data.session.user.id;
+    });
+
+    /* Messaggi */
+    const msgEl = document.getElementById("checkoutMsg");
+    function showMsg(text, type=""){
+      msgEl.textContent = text;
+      msgEl.className = "checkout-msg " + type;
+    }
+
+    /* Conferma acquisto */
+    const confirmBtn = document.getElementById("confirmBtn");
+    confirmBtn.addEventListener("click", async () => {
+      if(!currentUserId){
+        showMsg("Sessione non trovata. Ricarica la pagina.", "error");
+        return;
+      }
+
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = "Elaborazione...";
+      showMsg("");
+
+      try {
+        /* Leggi crediti attuali */
+        const { data: profile, error: fetchErr } = await sb
+          .from('profiles')
+          .select('credits')
+          .eq('id', currentUserId)
+          .single();
+
+        if(fetchErr) throw new Error("Impossibile leggere il profilo.");
+
+        const currentCredits = profile?.credits ?? 0;
+        const newCredits = currentCredits + pkg.credits;
+
+        /* Aggiorna crediti e piano */
+        const { error: updateErr } = await sb
+          .from('profiles')
+          .update({ credits: newCredits, plan: pkgKey, updated_at: new Date().toISOString() })
+          .eq('id', currentUserId);
+
+        if(updateErr) throw new Error("Impossibile aggiornare i crediti.");
+
+        /* Mostra successo */
+        document.getElementById('formSection').style.display = 'none';
+        const successSection = document.getElementById('successSection');
+        successSection.style.display = '';
+        document.getElementById('successSub').textContent =
+          `+${pkg.credits} crediti aggiunti. Totale: ${newCredits} crediti.`;
+
+      } catch(e) {
+        showMsg(e?.message || "Errore sconosciuto.", "error");
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = "✅ Conferma acquisto";
+      }
+    });
   </script>
 </body>
 </html>

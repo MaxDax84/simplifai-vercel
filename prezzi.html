@@ -189,6 +189,12 @@
       <a href="/prezzi.html">Prezzi</a>
     </div>
 
+    <!-- Banner crediti esauriti -->
+    <div id="noCreditsBanner" style="display:none; border:1px solid rgba(255,100,100,.35); background:rgba(255,60,60,.10); border-radius:16px; padding:16px 20px; margin-top:16px; text-align:center;">
+      <strong style="color:#ff8080;">Hai esaurito i tuoi crediti.</strong>
+      <span style="color:var(--muted); font-size:14px;"> Scegli un pacchetto qui sotto per ricaricare e continuare a usare Simplif-AI.</span>
+    </div>
+
     <!-- HERO -->
     <div class="card">
       <div class="card-inner pricing-hero">
@@ -222,14 +228,14 @@
               <p class="plan-name">FREE</p>
               <p class="plan-sub">Per usarlo ogni tanto.</p>
             </div>
-            <span class="tag">⚡ 5 domande/giorno</span>
+            <span class="tag">⚡ 10 crediti di benvenuto</span>
           </div>
 
           <div class="price">€0</div>
           <div class="per">sempre</div>
 
           <ul class="ul">
-            <li><span class="i">✅</span><span>5 domande al giorno</span></li>
+            <li><span class="i">✅</span><span>10 crediti al momento della registrazione</span></li>
             <li><span class="i">✅</span><span>Solo profilo "Bambino", "Ragazzo", "Universitario"</span></li>
             <li><span class="i">✅</span><span>Solo lunghezza "Breve" e "Media"</span></li>
           </ul>
@@ -257,7 +263,7 @@
           <div class="per" id="proPer">al mese</div>
 
           <ul class="ul">
-            <li><span class="i">🚀</span><span>100 domande / giorno (mock)</span></li>
+            <li><span class="i">🚀</span><span>100 crediti per ciclo di fatturazione</span></li>
             <li><span class="i">📚</span><span>Tutti i profili disponibili</span></li>
             <li><span class="i">🏎️</span><span>Tutte le lunghezze di risposta desiderate</span></li>
           </ul>
@@ -333,6 +339,17 @@
       </div>
     </div>
         
+  <script>
+    // Mostra banner se crediti esauriti
+    (function(){
+      const params = new URLSearchParams(location.search);
+      if(params.get("reason") === "no_credits"){
+        const banner = document.getElementById("noCreditsBanner");
+        if(banner) banner.style.display = "";
+      }
+    })();
+  </script>
+
   <script>
     // Mobile nav toggle
     (function(){

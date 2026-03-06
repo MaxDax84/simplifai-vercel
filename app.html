@@ -359,15 +359,26 @@
     const userEmailEl = document.getElementById("userEmail");
     const logoutBtn   = document.getElementById("logoutBtn");
 
-    /* Controlla sessione: reindirizza se non loggato */
-    sb.auth.getSession().then(({ data }) => {
+    let userCredits  = null;
+    let currentUserId = null;
+
+    /* Controlla sessione e carica crediti */
+    sb.auth.getSession().then(async ({ data }) => {
       if (!data?.session) {
         window.location.replace("/auth.html");
-      } else {
-        const email = data.session.user?.email || "";
-        userEmailEl.textContent = email;
-        logoutBtn.style.display = "";
+        return;
       }
+      currentUserId = data.session.user.id;
+      userEmailEl.textContent = data.session.user?.email || "";
+      logoutBtn.style.display = "";
+
+      const { data: profile } = await sb
+        .from('profiles')
+        .select('credits')
+        .eq('id', currentUserId)
+        .single();
+      userCredits = profile?.credits ?? 0;
+      creditsValueEl.textContent = userCredits;
     });
 
     logoutBtn.addEventListener("click", async () => {
@@ -662,7 +673,14 @@
 
     async function run(mode){
       if(isGenerating) return;
-    
+
+      /* Controllo crediti */
+      if(userCredits !== null && userCredits <= 0){
+        setStatus("Crediti esauriti. Ricarica per continuare.", false);
+        setTimeout(() => window.location.replace("/prezzi.html?reason=no_credits"), 1500);
+        return;
+      }
+
       if(!q.value.trim()){
         setStatus("Scrivi una domanda per generare.", false);
         return;
@@ -716,7 +734,16 @@
         renderMarkdownSafe(accumulatedText);
         
         setStatus("Risposta generata.", false);
-    
+
+        /* Decrementa crediti */
+        if(currentUserId && userCredits !== null){
+          userCredits = Math.max(0, userCredits - 1);
+          creditsValueEl.textContent = userCredits;
+          sb.from('profiles')
+            .update({ credits: userCredits, updated_at: new Date().toISOString() })
+            .eq('id', currentUserId);
+        }
+
       } catch(e){
         setStatus(e?.message ? `Errore: ${e.message}` : "Errore di generazione.", false);
     
