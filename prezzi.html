@@ -7,153 +7,104 @@
   <link rel="stylesheet" href="/theme.css">
 
   <style>
-    .pricing-hero{
-      text-align:center;
-      padding: 26px 18px;
-    }
+    .pricing-hero{ text-align:center; padding:26px 18px; }
 
+    /* Grid piani principali: 4 colonne */
     .grid{
       display:grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-      margin-top: 16px;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:14px;
+      margin-top:16px;
       align-items:stretch;
     }
-    @media(max-width: 980px){
-      .grid{ grid-template-columns: 1fr; }
-    }
+    @media(max-width:1100px){ .grid{ grid-template-columns: repeat(2, 1fr); } }
+    @media(max-width:600px){  .grid{ grid-template-columns: 1fr; } }
 
-    .plan{
-      height:100%;
-      display:flex;
-      flex-direction:column;
-      gap: 12px;
-    }
+    .plan{ height:100%; display:flex; flex-direction:column; gap:10px; }
 
     .plan-top{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:10px;
+      display:flex; align-items:flex-start;
+      justify-content:space-between; gap:8px;
     }
-
-    .plan-name{
-      font-weight: 950;
-      font-size: 18px;
-      letter-spacing: -.2px;
-      margin:0;
-    }
-    .plan-sub{
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
-      margin: 6px 0 0;
-    }
+    .plan-name{ font-weight:950; font-size:18px; letter-spacing:-.2px; margin:0; }
+    .plan-sub{ color:var(--muted); font-size:13px; line-height:1.45; margin:5px 0 0; }
 
     .tag{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      color: var(--muted);
-      font-size: 12px;
-      white-space: nowrap;
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      color:var(--muted); font-size:11px; white-space:nowrap;
     }
 
-    .price{
-      font-size: 46px;
-      font-weight: 950;
-      letter-spacing: -1px;
-      line-height: 1;
-      margin-top: 6px;
-    }
-    .per{
-      color: var(--muted);
-      font-size: 13px;
-      margin-top: 6px;
+    .price{ font-size:40px; font-weight:950; letter-spacing:-1px; line-height:1; margin-top:6px; }
+    .per{ color:var(--muted); font-size:13px; margin-top:5px; }
+
+    .credits-badge{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid rgba(124,92,255,.3);
+      background:rgba(124,92,255,.10);
+      font-size:12px; color:rgba(233,237,255,.85);
+      width:fit-content;
     }
 
     .ul{
-      list-style:none;
-      padding: 0;
-      margin: 8px 0 0;
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
+      list-style:none; padding:0; margin:6px 0 0;
+      display:flex; flex-direction:column; gap:8px;
+      color:var(--muted); font-size:13px; line-height:1.45;
     }
-    .ul li{
-      display:flex;
+    .ul li{ display:flex; gap:8px; align-items:flex-start; }
+    .ul .i{ width:16px; display:inline-flex; justify-content:center; flex:0 0 auto; opacity:.92; margin-top:1px; }
+
+    .plan-actions{ margin-top:auto; display:flex; flex-direction:column; gap:8px; }
+
+    /* Highlight PLUS */
+    .plus{
+      border:1px solid rgba(124,92,255,.4);
+      background:rgba(124,92,255,.10);
+    }
+    .plus .tag{
+      border-color:rgba(124,92,255,.4);
+      background:rgba(124,92,255,.15);
+      color:rgba(233,237,255,.92);
+    }
+
+    /* Enterprise card: full width */
+    .enterprise-card{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:20px;
+      align-items:center;
+    }
+    @media(max-width:700px){ .enterprise-card{ grid-template-columns:1fr; } }
+
+    .enterprise-left .plan-name{ font-size:22px; }
+    .enterprise-left p{ color:var(--muted); font-size:14px; line-height:1.5; margin:8px 0 0; }
+
+    .enterprise-features{
+      display:grid;
+      grid-template-columns:1fr 1fr;
       gap:10px;
-      align-items:flex-start;
     }
-    .ul .i{
-      width: 18px;
-      display:inline-flex;
-      justify-content:center;
-      flex: 0 0 auto;
-      opacity:.92;
-      margin-top: 1px;
+    @media(max-width:500px){ .enterprise-features{ grid-template-columns:1fr; } }
+    .ef-item{
+      display:flex; gap:8px; align-items:flex-start;
+      font-size:13px; color:var(--muted); line-height:1.4;
     }
 
-    .plan-actions{
-      margin-top:auto;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .plan-actions .btn{
-      flex: 1 1 180px;
-    }
-
-    /* Highlight PRO */
-    .pro{
-      border: 1px solid rgba(124,92,255,.35);
-      background: rgba(124,92,255,.10);
-    }
-    .pro .tag{
-      border-color: rgba(124,92,255,.35);
-      background: rgba(124,92,255,.12);
-      color: rgba(233,237,255,.92);
-    }
-
-    .fineprint{
-      margin-top: 14px;
-      color: var(--muted2);
-      font-size: 12px;
-      line-height: 1.45;
-      text-align:center;
-    }
+    .fineprint{ margin-top:14px; color:var(--muted2); font-size:12px; line-height:1.45; text-align:center; }
 
     .faq{
-      margin-top: 16px;
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 14px;
+      margin-top:16px; display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px;
     }
-    @media(max-width: 980px){
-      .faq{ grid-template-columns: 1fr; }
-    }
+    @media(max-width:980px){ .faq{ grid-template-columns:1fr; } }
+    .q{ font-weight:900; margin:0 0 6px; font-size:14px; }
+    .a{ margin:0; color:var(--muted); font-size:13px; line-height:1.5; }
 
-    .q{
-      font-weight: 900;
-      margin: 0 0 6px;
-      font-size: 14px;
-    }
-    .a{
-      margin: 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    /* Piccolo polish: più aria tra toggle e kicker */
-    .kicker{ margin-top: 8px; }
+    .kicker{ margin-top:8px; color:var(--muted); font-size:13px; }
   </style>
 </head>
 
@@ -167,7 +118,6 @@
           <span>Concetti complessi spiegati in modo semplice. Scegli tu quanto.</span>
         </div>
       </div>
-
       <nav id="mainNav">
         <a href="/index.html" data-nav="home">Home</a>
         <a href="/app.html" data-nav="app">App</a>
@@ -175,14 +125,11 @@
         <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
         <a href="/profilo.html" data-nav="profile">Profilo</a>
       </nav>
-
-      <!-- mobile hamburger -->
       <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
         <span></span><span></span><span></span>
       </button>
     </header>
 
-    <!-- Mobile overlay menu -->
     <div class="mobile-nav" id="mobileNav">
       <a href="/index.html">Home</a>
       <a href="/app.html">App</a>
@@ -201,12 +148,11 @@
     <div class="card">
       <div class="card-inner pricing-hero">
         <span class="pilltag">💎 PREZZI</span>
-        <div class="h1">Scegli il piano</div>
-        <p class="sub">Puoi provare gratis ogni giorno. Se ti serve di più, fai upgrade (mock).</p>
+        <div class="h1">Scegli il piano giusto per te</div>
+        <p class="sub">Inizia gratis. Passa a un piano superiore quando vuoi più potenza.</p>
         <div style="height:12px;"></div>
-        <a class="btn btn-primary" href="/app.html">🚀 Prova l’app</a>
+        <a class="btn btn-primary" href="/app.html">🚀 Prova l'app gratis</a>
 
-        <!-- Toggle billing -->
         <div class="toggle" style="margin-top:14px;">
           <span>Mensile</span>
           <div class="switch" id="billingSwitch" role="switch" aria-checked="false" tabindex="0">
@@ -215,33 +161,32 @@
           <span>Annuale</span>
           <span class="pilltag" style="margin-left:6px;">-20% (mock)</span>
         </div>
-
         <div class="kicker" id="billingHint">Prezzi mensili (mock).</div>
       </div>
     </div>
 
-    <!-- PLANS -->
+    <!-- PIANI -->
     <div class="grid">
+
       <!-- FREE -->
       <div class="card">
         <div class="card-inner plan">
           <div class="plan-top">
             <div>
               <p class="plan-name">FREE</p>
-              <p class="plan-sub">Per usarlo ogni tanto.</p>
+              <p class="plan-sub">Per iniziare e provare.</p>
             </div>
-            <span class="tag">⚡ 10 crediti di benvenuto</span>
+            <span class="tag">🎁 Gratis</span>
           </div>
-
           <div class="price">€0</div>
-          <div class="per">sempre</div>
-
+          <div class="per">per sempre</div>
+          <div class="credits-badge">⚡ 10 crediti di benvenuto</div>
           <ul class="ul">
-            <li><span class="i">✅</span><span>10 crediti al momento della registrazione</span></li>
-            <li><span class="i">✅</span><span>Solo profilo "Bambino", "Ragazzo", "Universitario"</span></li>
-            <li><span class="i">✅</span><span>Solo lunghezza "Breve" e "Media"</span></li>
+            <li><span class="i">✅</span><span>10 crediti alla registrazione</span></li>
+            <li><span class="i">✅</span><span>Tutti i 6 target disponibili</span></li>
+            <li><span class="i">✅</span><span>Tutte le lunghezze disponibili</span></li>
+            <li><span class="i">❌</span><span>Nessun rinnovo automatico</span></li>
           </ul>
-
           <div class="plan-actions">
             <a class="btn btn-primary" href="/app.html">Inizia gratis</a>
             <a class="btn" href="/come-funziona.html">Come funziona</a>
@@ -249,100 +194,145 @@
         </div>
       </div>
 
-      <!-- PRO (highlight) -->
-      <div class="card pro">
-        <div class="card-inner plan">
-          <div class="plan-top">
-            <div>
-              <p class="plan-name">PRO</p>
-              <p class="plan-sub">Per utilizzo più avanzato.</p>
-            </div>
-            <span class="tag">⭐ Consigliato</span>
-          </div>
-
-          <!-- questi due vengono aggiornati dal toggle -->
-          <div class="price" id="proPrice">€9,99</div>
-          <div class="per" id="proPer">al mese</div>
-
-          <ul class="ul">
-            <li><span class="i">🚀</span><span>100 crediti per ciclo di fatturazione</span></li>
-            <li><span class="i">📚</span><span>Tutti i profili disponibili</span></li>
-            <li><span class="i">🏎️</span><span>Tutte le lunghezze di risposta desiderate</span></li>
-          </ul>
-
-          <div class="plan-actions">
-            <!-- CTA unica (questa deve cambiare con il toggle) -->
-            <a class="btn btn-primary" id="proCta" href="/checkout.html?plan=pro&billing=monthly">Upgrade (mock)</a>
-            <a class="btn" href="/app.html">Prima provalo gratis</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- TEAM / EDU -->
+      <!-- LIGHT -->
       <div class="card">
         <div class="card-inner plan">
           <div class="plan-top">
             <div>
-              <p class="plan-name">Gruppi di persone</p>
-              <p class="plan-sub">Per classi o gruppi di parenti</p>
+              <p class="plan-name">LIGHT</p>
+              <p class="plan-sub">Per uso occasionale.</p>
             </div>
-            <span class="tag">🎓 Su richiesta</span>
+            <span class="tag">🌱 Essenziale</span>
           </div>
-
-          <div class="price">Da definire</div>
-          <div class="per">Contattaci per un preventivo</div>
-
+          <div class="price" id="lightPrice">€2,99</div>
+          <div class="per" id="lightPer">al mese</div>
+          <div class="credits-badge" id="lightCredits">⚡ 30 crediti/mese</div>
           <ul class="ul">
-            <li><span class="i">👥</span><span>150 domande al giorno per account nel gruppo</span></li>
-            <li><span class="i">📊</span><span>Tutti i profili e lunghezze</span></li>
-            <li><span class="i">🔒</span><span>Condivisione risposte con il gruppo</span></li>
+            <li><span class="i">✅</span><span>30 crediti per ciclo</span></li>
+            <li><span class="i">✅</span><span>Tutti i 6 target</span></li>
+            <li><span class="i">✅</span><span>Tutte le lunghezze</span></li>
+            <li><span class="i">✅</span><span>Crediti si accumulano</span></li>
           </ul>
-
           <div class="plan-actions">
-            <a class="btn btn-primary" href="/app.html">Upgrade (mock)</a>
-            <a class="btn" href="/come-funziona.html#step-4">Come funziona</a>
+            <a class="btn btn-primary" id="lightCta" href="/checkout.html?plan=light&billing=monthly">Upgrade (mock)</a>
+            <a class="btn" href="/app.html">Prima provalo</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLUS (highlight) -->
+      <div class="card plus">
+        <div class="card-inner plan">
+          <div class="plan-top">
+            <div>
+              <p class="plan-name">PLUS</p>
+              <p class="plan-sub">Il miglior rapporto qualità/prezzo.</p>
+            </div>
+            <span class="tag">⭐ Consigliato</span>
+          </div>
+          <div class="price" id="plusPrice">€4,99</div>
+          <div class="per" id="plusPer">al mese</div>
+          <div class="credits-badge" id="plusCredits">⚡ 60 crediti/mese</div>
+          <ul class="ul">
+            <li><span class="i">🚀</span><span>60 crediti per ciclo</span></li>
+            <li><span class="i">✅</span><span>Tutti i 6 target</span></li>
+            <li><span class="i">✅</span><span>Tutte le lunghezze</span></li>
+            <li><span class="i">✅</span><span>Crediti si accumulano</span></li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" id="plusCta" href="/checkout.html?plan=plus&billing=monthly">Upgrade (mock)</a>
+            <a class="btn" href="/app.html">Prima provalo</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRO -->
+      <div class="card">
+        <div class="card-inner plan">
+          <div class="plan-top">
+            <div>
+              <p class="plan-name">PRO</p>
+              <p class="plan-sub">Per uso intensivo e professionale.</p>
+            </div>
+            <span class="tag">🔥 Massima potenza</span>
+          </div>
+          <div class="price" id="proPrice">€9,99</div>
+          <div class="per" id="proPer">al mese</div>
+          <div class="credits-badge" id="proCredits">⚡ 150 crediti/mese</div>
+          <ul class="ul">
+            <li><span class="i">🔥</span><span>150 crediti per ciclo</span></li>
+            <li><span class="i">✅</span><span>Tutti i 6 target</span></li>
+            <li><span class="i">✅</span><span>Tutte le lunghezze</span></li>
+            <li><span class="i">✅</span><span>Crediti si accumulano</span></li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" id="proCta" href="/checkout.html?plan=pro&billing=monthly">Upgrade (mock)</a>
+            <a class="btn" href="/app.html">Prima provalo</a>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- ENTERPRISE -->
+    <div class="card" style="margin-top:14px;">
+      <div class="card-inner enterprise-card">
+        <div class="enterprise-left">
+          <span class="tag" style="margin-bottom:10px; display:inline-flex;">🏢 ENTERPRISE</span>
+          <p class="plan-name">Per gruppi e organizzazioni</p>
+          <p>Scuole, università, aziende e famiglie. Gestione centralizzata degli account, volume di crediti su misura e supporto dedicato.</p>
+          <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+            <a class="btn btn-primary" href="mailto:info@simplif-ai.it">Contattaci</a>
+            <a class="btn" href="/come-funziona.html">Come funziona</a>
+          </div>
+        </div>
+        <div class="enterprise-features">
+          <div class="ef-item"><span>👥</span><span>Crediti condivisi tra i membri del gruppo</span></div>
+          <div class="ef-item"><span>📊</span><span>Tutti i target e tutte le lunghezze</span></div>
+          <div class="ef-item"><span>🔒</span><span>Gestione account centralizzata</span></div>
+          <div class="ef-item"><span>🎓</span><span>Ideale per classi e corsi di formazione</span></div>
+          <div class="ef-item"><span>📞</span><span>Supporto dedicato e onboarding</span></div>
+          <div class="ef-item"><span>💼</span><span>Preventivo personalizzato su richiesta</span></div>
+        </div>
+      </div>
+    </div>
+
     <p class="fineprint">
-      Nota: al momento l’upgrade è una simulazione UI (mock). In produzione integreresti Stripe e limiti reali.
+      Nota: i piani a pagamento sono una simulazione UI (mock). Nessun addebito reale viene effettuato. In produzione si integrerebbe Stripe.
     </p>
 
     <!-- FAQ -->
     <div class="faq">
       <div class="card">
         <div class="card-inner">
-          <p class="q">I crediti si resettano ogni giorno?</p>
-          <p class="a">Sì: i crediti FREE si resettano giornalmente (UTC). In futuro i piani a pagamento avranno limiti più alti e crediti extra.</p>
+          <p class="q">I crediti scadono?</p>
+          <p class="a">No: i crediti acquistati si accumulano e non scadono. Quelli del piano FREE sono i 10 di benvenuto, non si rinnovano automaticamente.</p>
         </div>
       </div>
-    
       <div class="card">
         <div class="card-inner">
-          <p class="q">Se cambio target o lunghezza, rigenera?</p>
-          <p class="a">Sì: quando cambi impostazioni, la generazione riparte automaticamente con i nuovi parametri.</p>
+          <p class="q">Posso passare da un piano all'altro?</p>
+          <p class="a">Sì (in produzione). Al momento il sistema è mock: il checkout aggiunge i crediti del piano scelto direttamente al tuo account.</p>
         </div>
       </div>
-    
       <div class="card">
         <div class="card-inner">
-          <p class="q">Perché a volte la risposta finisce prima del previsto?</p>
-          <p class="a">Per mantenere coerenza e qualità, la risposta viene generata in un’unica passata con un limite di lunghezza. Se ti serve più dettaglio, prova “Lungo” o aggiungi: “approfondisci” / “con esempi”.</p>
+          <p class="q">Quanti crediti consuma ogni generazione?</p>
+          <p class="a">Dipende dal target: 1 credito per Bambino/Ragazzo/Universitario, 2 per Adulto/Esperto, 3 per Scienziato. Risposta "Lunga" aggiunge +1 credito extra.</p>
         </div>
       </div>
-    
       <div class="card">
         <div class="card-inner">
-          <p class="q">Posso usarlo da mobile?</p>
-          <p class="a">Sì: l’interfaccia è responsive. Inoltre c’è un menu mobile con hamburger per navigare tra le pagine.</p>
+          <p class="q">Cosa succede se esaurisco i crediti?</p>
+          <p class="a">Quando i crediti non sono sufficienti per la generazione richiesta, l'app mostra un avviso e ti reindirizza qui per ricaricare.</p>
         </div>
       </div>
     </div>
-        
+
+    <div style="height:32px;"></div>
+  </div>
+
   <script>
-    // Mostra banner se crediti esauriti
+    // Banner crediti esauriti
     (function(){
       const params = new URLSearchParams(location.search);
       if(params.get("reason") === "no_credits"){
@@ -350,77 +340,71 @@
         if(banner) banner.style.display = "";
       }
     })();
-  </script>
 
-  <script>
-    // Mobile nav toggle
+    // Mobile nav
     (function(){
       const toggle = document.getElementById("navToggle");
       const mobileNav = document.getElementById("mobileNav");
-      if(!toggle || !mobileNav) return;
-
-      toggle.addEventListener("click", () => {
-        document.body.classList.toggle("nav-open");
-      });
-      mobileNav.querySelectorAll("a").forEach(a => {
-        a.addEventListener("click", () => document.body.classList.remove("nav-open"));
-      });
+      if(!toggle||!mobileNav) return;
+      toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
+      mobileNav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => document.body.classList.remove("nav-open")));
     })();
 
     // Navbar active
-    (function(){
-      const path = location.pathname.toLowerCase();
-      let key = "home";
-      if (path.includes("/app")) key = "app";
-      else if (path.includes("come-funziona")) key = "how";
-      else if (path.includes("prezzi")) key = "pricing";
-      else if (path.includes("checkout")) key = "pricing";
-      document.querySelectorAll('#mainNav a').forEach(a=>{
-        if(a.dataset.nav === key) a.classList.add('nav-active');
-      });
-    })();
-  </script>
+    document.querySelectorAll('#mainNav a').forEach(a => {
+      if(a.dataset.nav === "pricing") a.classList.add('nav-active');
+    });
 
-  <script>
-    // Billing toggle (mensile/annuale)
+    // Billing toggle
     (function(){
-      const sw = document.getElementById("billingSwitch");
-      const hint = document.getElementById("billingHint");
-      const proPrice = document.getElementById("proPrice");
-      const proPer = document.getElementById("proPer");
-      const proCta = document.getElementById("proCta");
+      const sw      = document.getElementById("billingSwitch");
+      const hint    = document.getElementById("billingHint");
 
-      if(!sw || !hint || !proPrice || !proPer || !proCta) return;
+      const plans = [
+        {
+          priceEl:   document.getElementById("lightPrice"),
+          perEl:     document.getElementById("lightPer"),
+          creditsEl: document.getElementById("lightCredits"),
+          ctaEl:     document.getElementById("lightCta"),
+          monthly: { price:"€2,99",  per:"al mese",   credits:"⚡ 30 crediti/mese",  href:"/checkout.html?plan=light&billing=monthly" },
+          yearly:  { price:"€28,70", per:"all'anno",  credits:"⚡ 360 crediti/anno", href:"/checkout.html?plan=light&billing=yearly" }
+        },
+        {
+          priceEl:   document.getElementById("plusPrice"),
+          perEl:     document.getElementById("plusPer"),
+          creditsEl: document.getElementById("plusCredits"),
+          ctaEl:     document.getElementById("plusCta"),
+          monthly: { price:"€4,99",  per:"al mese",   credits:"⚡ 60 crediti/mese",   href:"/checkout.html?plan=plus&billing=monthly" },
+          yearly:  { price:"€47,90", per:"all'anno",  credits:"⚡ 720 crediti/anno",  href:"/checkout.html?plan=plus&billing=yearly" }
+        },
+        {
+          priceEl:   document.getElementById("proPrice"),
+          perEl:     document.getElementById("proPer"),
+          creditsEl: document.getElementById("proCredits"),
+          ctaEl:     document.getElementById("proCta"),
+          monthly: { price:"€9,99",  per:"al mese",   credits:"⚡ 150 crediti/mese",  href:"/checkout.html?plan=pro&billing=monthly" },
+          yearly:  { price:"€95,90", per:"all'anno",  credits:"⚡ 1800 crediti/anno", href:"/checkout.html?plan=pro&billing=yearly" }
+        }
+      ];
 
       let yearly = false;
 
       function apply(){
-        if(yearly){
-          sw.classList.add("on");
-          sw.setAttribute("aria-checked","true");
-
-          hint.textContent = "Prezzi annuali (mock) con -20%.";
-          proPrice.textContent = "€99,90";
-          proPer.textContent = "all'anno";
-          proCta.href = "/checkout.html?plan=pro&billing=yearly";
-        } else {
-          sw.classList.remove("on");
-          sw.setAttribute("aria-checked","false");
-
-          hint.textContent = "Prezzi mensili (mock).";
-          proPrice.textContent = "€9,99";
-          proPer.textContent = "al mese";
-          proCta.href = "/checkout.html?plan=pro&billing=monthly";
-        }
+        const mode = yearly ? "yearly" : "monthly";
+        sw.classList.toggle("on", yearly);
+        sw.setAttribute("aria-checked", String(yearly));
+        hint.textContent = yearly ? "Prezzi annuali (mock) con -20%." : "Prezzi mensili (mock).";
+        plans.forEach(p => {
+          p.priceEl.textContent   = p[mode].price;
+          p.perEl.textContent     = p[mode].per;
+          p.creditsEl.textContent = p[mode].credits;
+          p.ctaEl.href            = p[mode].href;
+        });
       }
 
       sw.addEventListener("click", () => { yearly = !yearly; apply(); });
-      sw.addEventListener("keydown", (e) => {
-        if(e.key === "Enter" || e.key === " "){
-          e.preventDefault();
-          yearly = !yearly;
-          apply();
-        }
+      sw.addEventListener("keydown", e => {
+        if(e.key === "Enter" || e.key === " "){ e.preventDefault(); yearly = !yearly; apply(); }
       });
 
       apply();
