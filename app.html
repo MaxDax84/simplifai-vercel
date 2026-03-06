@@ -6,6 +6,7 @@
   <title>Simplif-AI – App</title>
   <link rel="stylesheet" href="/theme.css">
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.11/dist/purify.min.js"></script>
 
@@ -247,6 +248,8 @@
         <a href="/app.html" data-nav="app">App</a>
         <a href="/come-funziona.html" data-nav="how">Come funziona</a>
         <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
+        <span id="userEmail" style="color:var(--muted);font-size:13px;"></span>
+        <button class="btn" id="logoutBtn" type="button" style="display:none;padding:6px 14px;font-size:13px;">Esci</button>
       </nav>
 
       <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
@@ -348,6 +351,30 @@
   </div>
 
   <script>
+    /* Supabase Auth */
+    const SUPABASE_URL  = "https://lmmiowagyqypdrdcemdo.supabase.co";
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    const userEmailEl = document.getElementById("userEmail");
+    const logoutBtn   = document.getElementById("logoutBtn");
+
+    /* Controlla sessione: reindirizza se non loggato */
+    sb.auth.getSession().then(({ data }) => {
+      if (!data?.session) {
+        window.location.replace("/auth.html");
+      } else {
+        const email = data.session.user?.email || "";
+        userEmailEl.textContent = email;
+        logoutBtn.style.display = "";
+      }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      await sb.auth.signOut();
+      window.location.replace("/auth.html");
+    });
+
     /* Mobile nav */
     (function(){
       const toggle = document.getElementById("navToggle");

@@ -1,0 +1,12 @@
+# Variabili d'ambiente (NON pubblicare su GitHub)
+.env
+.env.local
+.env.*.local
+
+# Dipendenze
+node_modules/
+
+# Build / cache Vercel
+.vercel/
+.next/
+dist/

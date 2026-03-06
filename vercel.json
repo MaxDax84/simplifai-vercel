@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/auth",           "destination": "/auth.html" },
     { "source": "/app",            "destination": "/app.html" },
     { "source": "/come-funziona",  "destination": "/come-funziona.html" },
     { "source": "/prezzi",         "destination": "/prezzi.html" },
