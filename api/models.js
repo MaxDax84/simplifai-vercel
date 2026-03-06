@@ -1,24 +1,31 @@
-export default async function handler(req, res) {
+export const config = { runtime: "edge" };
+
+function jsonResp(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { "Content-Type": "application/json; charset=utf-8" },
+  });
+}
+
+export default async function handler(req) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: "GEMINI_API_KEY non configurata su Vercel." });
+    return jsonResp({ error: "GEMINI_API_KEY non configurata su Vercel." }, 500);
   }
 
   try {
-    // ListModels su v1beta
     const r = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`
     );
     const data = await r.json();
 
     if (!r.ok || data?.error) {
-      return res.status(500).json({ error: data?.error?.message || `HTTP ${r.status}` });
+      return jsonResp({ error: data?.error?.message || `HTTP ${r.status}` }, 500);
     }
 
-    // Restituiamo solo i nomi, per semplicità
     const names = (data.models || []).map(m => m.name);
-    return res.status(200).json({ models: names });
+    return jsonResp({ models: names });
   } catch (e) {
-    return res.status(500).json({ error: e?.message || "Errore interno" });
+    return jsonResp({ error: e?.message || "Errore interno" }, 500);
   }
 }

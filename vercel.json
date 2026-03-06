@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/app",            "destination": "/app.html" },
+    { "source": "/come-funziona",  "destination": "/come-funziona.html" },
+    { "source": "/prezzi",         "destination": "/prezzi.html" },
+    { "source": "/checkout",       "destination": "/checkout.html" }
+  ]
+}
