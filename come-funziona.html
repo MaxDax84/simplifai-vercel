@@ -7,147 +7,132 @@
   <link rel="stylesheet" href="/theme.css">
 
   <style>
-    /* Hero */
-    .how-hero{
-      text-align:center;
-      padding: 26px 18px;
-    }
+    .how-hero{ text-align:center; padding: 26px 18px; }
 
-    /* Two columns layout */
     .how-shell{
       display:grid;
-      grid-template-columns: 320px 1fr;
+      grid-template-columns: 300px 1fr;
       gap: 18px;
       margin-top: 16px;
       align-items:start;
     }
-    @media (max-width: 980px){
-      .how-shell{ grid-template-columns: 1fr; }
-    }
+    @media(max-width:980px){ .how-shell{ grid-template-columns:1fr; } }
 
-    .sticky{ position: sticky; top: 18px; }
-    @media (max-width: 980px){ .sticky{ position: static; } }
+    .sticky{ position:sticky; top:18px; }
+    @media(max-width:980px){ .sticky{ position:static; } }
 
-    /* Mini-nav cards (same vibe as home) */
-    .mini-nav{
-      display:flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+    .mini-nav{ display:flex; flex-direction:column; gap:8px; }
     .mini-nav a{
-      display:flex;
-      gap: 10px;
-      align-items:center;
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      text-decoration:none;
-      color: var(--muted);
-      transition:.15s ease;
+      display:flex; gap:10px; align-items:center;
+      padding: 10px 12px; border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      text-decoration:none; color:var(--muted);
+      transition:.15s ease; font-size:14px;
     }
-    .mini-nav a:hover{
-      background: rgba(255,255,255,.05);
-      color: var(--text);
-      transform: translateY(-1px);
-    }
-    .mini-nav a.active{
-      border-color: rgba(124,92,255,.55);
-      background: rgba(124,92,255,.14);
-      color: var(--text);
-    }
+    .mini-nav a:hover{ background:rgba(255,255,255,.05); color:var(--text); transform:translateY(-1px); }
+    .mini-nav a.active{ border-color:rgba(124,92,255,.55); background:rgba(124,92,255,.14); color:var(--text); }
     .mini-dot{
-      width: 26px;
-      height: 26px;
-      border-radius: 999px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background: rgba(255,255,255,.06);
-      border: 1px solid var(--border);
-      font-weight: 900;
-      color: var(--text);
-      flex: 0 0 auto;
+      width:26px; height:26px; border-radius:999px;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(255,255,255,.06); border:1px solid var(--border);
+      font-weight:900; color:var(--text); flex:0 0 auto; font-size:13px;
     }
 
-    /* Steps */
-    .steps{
-      display:flex;
-      flex-direction: column;
-      gap: 14px;
-    }
+    .steps{ display:flex; flex-direction:column; gap:14px; }
 
-    .step-card{
-      padding: 18px;
-    }
-
-    .step-top{
-      display:flex;
-      align-items:flex-start;
-      gap: 12px;
-      margin-bottom: 8px;
-    }
-
+    .step-card{ padding:20px; }
+    .step-top{ display:flex; align-items:flex-start; gap:12px; margin-bottom:10px; }
     .step-num{
-      width: 34px;
-      height: 34px;
-      border-radius: 999px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight: 900;
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(38,198,255,.85));
-      color: #0b1020;
-      flex: 0 0 auto;
+      width:34px; height:34px; border-radius:999px;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:900; font-size:15px;
+      background:linear-gradient(135deg,rgba(124,92,255,.95),rgba(38,198,255,.85));
+      color:#0b1020; flex:0 0 auto;
     }
-    .step-title{
-      margin:0;
-      font-size: 18px;
-      font-weight: 900;
-      letter-spacing:.1px;
-    }
-    .step-sub{
-      margin: 6px 0 0;
-      color: var(--muted);
-      line-height: 1.45;
-      font-size: 14px;
-    }
+    .step-title{ margin:0; font-size:18px; font-weight:900; letter-spacing:.1px; }
+    .step-sub{ margin:6px 0 0; color:var(--muted); line-height:1.5; font-size:14px; }
 
     .step-points{
-      margin: 12px 0 0;
-      padding: 0;
-      list-style: none;
-      display:flex;
-      flex-direction: column;
-      gap: 10px;
-      color: var(--muted);
+      margin:12px 0 0; padding:0; list-style:none;
+      display:flex; flex-direction:column; gap:9px; color:var(--muted);
     }
-    .step-points li{
-      display:flex;
+    .step-points li{ display:flex; gap:10px; align-items:flex-start; line-height:1.45; font-size:14px; }
+    .step-points .icon{ width:18px; display:inline-flex; justify-content:center; flex:0 0 auto; margin-top:1px; }
+
+    /* Target grid */
+    .target-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
       gap:10px;
-      align-items:flex-start;
-      line-height: 1.4;
+      margin-top:14px;
     }
-    .step-points .icon{
-      width: 18px;
-      display:inline-flex;
-      justify-content:center;
-      opacity:.92;
-      flex: 0 0 auto;
-      margin-top: 1px;
+    @media(max-width:600px){ .target-grid{ grid-template-columns:1fr 1fr; } }
+
+    .tg-card{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      border-radius:14px;
+      padding:12px;
+      display:flex; flex-direction:column; gap:4px;
+    }
+    .tg-icon{ font-size:22px; }
+    .tg-name{ font-weight:900; font-size:14px; margin:0; }
+    .tg-desc{ color:var(--muted); font-size:12px; line-height:1.35; margin:0; }
+    .tg-cost{
+      display:inline-flex; align-items:center; gap:4px;
+      margin-top:4px;
+      font-size:11px; color:var(--muted);
+      background:rgba(124,92,255,.12);
+      border:1px solid rgba(124,92,255,.25);
+      border-radius:999px; padding:3px 8px;
+      width:fit-content;
     }
 
-    /* Reveal transitions */
-    .reveal{
-      opacity: 0;
-      transform: translateY(14px);
-      transition: opacity .6s cubic-bezier(.2,.8,.2,1), transform .6s cubic-bezier(.2,.8,.2,1);
-      will-change: opacity, transform;
+    /* Length table */
+    .len-table{ width:100%; border-collapse:collapse; margin-top:14px; font-size:14px; }
+    .len-table th{ text-align:left; color:var(--muted); font-weight:600; padding:6px 10px; border-bottom:1px solid var(--border); }
+    .len-table td{ padding:10px 10px; border-bottom:1px solid rgba(255,255,255,.05); color:var(--muted); }
+    .len-table td:first-child{ color:var(--text); font-weight:700; }
+    .len-table tr:last-child td{ border-bottom:none; }
+
+    /* Credits box */
+    .credit-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:14px;
     }
-    .reveal.in{
-      opacity: 1;
-      transform: translateY(0);
+    @media(max-width:520px){ .credit-grid{ grid-template-columns:1fr; } }
+    .credit-box{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      border-radius:14px;
+      padding:14px;
     }
+    .credit-box-title{ font-weight:900; font-size:14px; margin:0 0 6px; }
+    .credit-box p{ color:var(--muted); font-size:13px; margin:0; line-height:1.45; }
+
+    /* FAQ */
+    .faq-list{ display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+    .faq-item{ border:1px solid var(--border); background:rgba(255,255,255,.03); border-radius:14px; overflow:hidden; }
+    .faq-q{
+      padding:14px 16px; font-weight:700; font-size:14px;
+      cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+      user-select:none;
+    }
+    .faq-q:hover{ background:rgba(255,255,255,.03); }
+    .faq-chevron{ font-size:11px; color:var(--muted); transition:.2s; }
+    .faq-item.open .faq-chevron{ transform:rotate(180deg); }
+    .faq-a{ display:none; padding:0 16px 14px; color:var(--muted); font-size:14px; line-height:1.5; }
+    .faq-item.open .faq-a{ display:block; }
+
+    /* CTA finale */
+    .cta-finale{ text-align:center; padding:26px 18px; }
+
+    /* Reveal */
+    .reveal{ opacity:0; transform:translateY(14px); transition:opacity .6s cubic-bezier(.2,.8,.2,1), transform .6s cubic-bezier(.2,.8,.2,1); }
+    .reveal.in{ opacity:1; transform:translateY(0); }
   </style>
 </head>
 
@@ -170,13 +155,11 @@
         <a href="/profilo.html" data-nav="profile">Profilo</a>
       </nav>
 
-      <!-- mobile hamburger -->
       <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
         <span></span><span></span><span></span>
       </button>
     </header>
 
-    <!-- Mobile overlay menu -->
     <div class="mobile-nav" id="mobileNav">
       <a href="/index.html">Home</a>
       <a href="/app.html">App</a>
@@ -189,24 +172,28 @@
     <div class="card">
       <div class="card-inner how-hero reveal">
         <span class="pilltag">🧭 COME FUNZIONA</span>
-        <div class="h1">Step-by-step, super semplice</div>
-        <p class="sub">  </p>
+        <div class="h1">Tutto quello che devi sapere</div>
+        <p class="sub">Dalla domanda alla risposta in 3 passi. Scopri i target, le lunghezze, i crediti e come personalizzare la tua esperienza.</p>
         <div style="height:12px;"></div>
-        <a class="btn btn-primary" href="#step-1">Inizia dai passaggi</a>
+        <a class="btn btn-primary" href="#step-1">Vedi i passaggi ↓</a>
       </div>
     </div>
 
     <div class="how-shell">
-      <!-- LEFT sticky -->
+
+      <!-- LEFT sticky nav -->
       <div class="sticky">
         <div class="card">
           <div class="card-inner">
-            <div style="font-weight:900; margin-bottom:10px;">📍 Passaggi</div>
+            <div style="font-weight:900; margin-bottom:10px; font-size:14px;">📍 Indice</div>
             <div class="mini-nav" id="miniNav">
               <a href="#step-1" data-step="1"><span class="mini-dot">1</span> Scrivi la domanda</a>
               <a href="#step-2" data-step="2"><span class="mini-dot">2</span> Scegli il target</a>
               <a href="#step-3" data-step="3"><span class="mini-dot">3</span> Scegli la lunghezza</a>
-              <a href="#step-4" data-step="4"><span class="mini-dot">4</span> Streaming & Copia</a>
+              <a href="#step-4" data-step="4"><span class="mini-dot">4</span> Leggi e copia</a>
+              <a href="#step-5" data-step="5"><span class="mini-dot">⚡</span> Crediti</a>
+              <a href="#step-6" data-step="6"><span class="mini-dot">👤</span> Profilo</a>
+              <a href="#step-7" data-step="7"><span class="mini-dot">?</span> FAQ</a>
             </div>
           </div>
         </div>
@@ -215,124 +202,320 @@
 
         <div class="card">
           <div class="card-inner">
-            <div style="font-weight:900; margin-bottom:6px;">✨ Tip veloce</div>
-            <p class="sub" style="margin:0;">
-              Se vuoi risposte migliori, aggiungi contesto: “sto studiando”, “mi serve un esempio”, “in 5 punti”, ecc.
+            <div style="font-weight:900; margin-bottom:6px; font-size:14px;">💡 Tip</div>
+            <p class="sub" style="margin:0; font-size:13px;">
+              Aggiungi contesto alla domanda: <em>"sto studiando per un esame"</em>, <em>"mi serve un esempio pratico"</em>, <em>"spiegami passo passo"</em>. La qualità della risposta migliora molto.
             </p>
+          </div>
+        </div>
+
+        <div style="height:14px;"></div>
+
+        <div class="card">
+          <div class="card-inner" style="text-align:center;">
+            <p style="margin:0 0 10px; font-size:13px; color:var(--muted);">Pronto a provare?</p>
+            <a class="btn btn-primary" href="/app.html" style="width:100%; display:block;">Vai all'app →</a>
           </div>
         </div>
       </div>
 
-      <!-- RIGHT steps -->
+      <!-- RIGHT content -->
       <div class="steps">
+
+        <!-- STEP 1 -->
         <div class="card step-card reveal" id="step-1">
           <div class="step-top">
             <div class="step-num">1</div>
             <div>
               <p class="step-title">Scrivi la domanda</p>
-              <p class="step-sub">Inserisci il tema (anche solo una parola) oppure una domanda completa. Più contesto = risposta più precisa.</p>
+              <p class="step-sub">Inserisci qualsiasi concetto, tema o domanda. Può essere una parola sola ("fotosintesi") o una frase articolata. Più contesto dai, più la risposta sarà pertinente.</p>
             </div>
           </div>
           <ul class="step-points">
-            <li><span class="icon">✍️</span><span>Puoi scrivere anche multi-riga.</span></li>
-            <li><span class="icon">🎯</span><span>Aggiungi un obiettivo: “con esempi”, “in 10 righe”, “passo passo”.</span></li>
-            <li><span class="icon">🧩</span><span>Per temi tecnici, aggiungi contesto (esame, lavoro, curiosità).</span></li>
+            <li><span class="icon">✍️</span><span>Puoi scrivere anche domande lunghe e articolate su più righe.</span></li>
+            <li><span class="icon">🎯</span><span>Aggiungi un obiettivo: "con esempi pratici", "in 5 punti", "confrontando A e B".</span></li>
+            <li><span class="icon">🧩</span><span>Per argomenti tecnici, specifica il contesto: esame universitario, curiosità personale, presentazione lavoro.</span></li>
+            <li><span class="icon">🌍</span><span>Puoi scrivere in italiano o in un'altra lingua: la risposta sarà nella stessa lingua della domanda.</span></li>
           </ul>
         </div>
 
+        <!-- STEP 2 -->
         <div class="card step-card reveal" id="step-2">
           <div class="step-top">
             <div class="step-num">2</div>
             <div>
               <p class="step-title">Scegli il target</p>
-              <p class="step-sub">Il target cambia tono, profondità e lessico: da “bebè” fino a “scienziato”.</p>
+              <p class="step-sub">Il target determina tono, profondità e lessico della risposta. Scegli il livello a cui vuoi essere spiegato il concetto. Ogni target ha un costo diverso in crediti.</p>
             </div>
           </div>
-          <ul class="step-points">
-            <li><span class="icon">👶</span><span><b>Bebè</b>: pochissime parole, super semplice.</span></li>
-            <li><span class="icon">🎓</span><span><b>Universitario</b>: struttura, definizioni, passaggi logici.</span></li>
-            <li><span class="icon">🧪</span><span><b>Scienziato</b>: rigore, limiti, assunzioni, caveat.</span></li>
+
+          <div class="target-grid">
+            <div class="tg-card">
+              <div class="tg-icon">🧒</div>
+              <p class="tg-name">Bambino</p>
+              <p class="tg-desc">Linguaggio semplicissimo, analogie con oggetti quotidiani, frasi brevi.</p>
+              <div class="tg-cost">⚡ 1 credito</div>
+            </div>
+            <div class="tg-card">
+              <div class="tg-icon">👨</div>
+              <p class="tg-name">Ragazzo</p>
+              <p class="tg-desc">Tono colloquiale e moderno, esempi dalla vita quotidiana e dalla tecnologia.</p>
+              <div class="tg-cost">⚡ 1 credito</div>
+            </div>
+            <div class="tg-card">
+              <div class="tg-icon">🎓</div>
+              <p class="tg-name">Universitario</p>
+              <p class="tg-desc">Linguaggio formale, struttura logica, definizioni e passaggi accademici.</p>
+              <div class="tg-cost">⚡ 1 credito</div>
+            </div>
+            <div class="tg-card">
+              <div class="tg-icon">👤</div>
+              <p class="tg-name">Adulto</p>
+              <p class="tg-desc">Diretto e pragmatico, si concentra sull'utilità pratica del concetto.</p>
+              <div class="tg-cost">⚡ 2 crediti</div>
+            </div>
+            <div class="tg-card">
+              <div class="tg-icon">🧠</div>
+              <p class="tg-name">Esperto</p>
+              <p class="tg-desc">Terminologia tecnica, meccanismi profondi, spiega i "perché" dietro ai fenomeni.</p>
+              <div class="tg-cost">⚡ 2 crediti</div>
+            </div>
+            <div class="tg-card">
+              <div class="tg-icon">🧪</div>
+              <p class="tg-name">Scienziato</p>
+              <p class="tg-desc">Massimo rigore scientifico, limiti delle conoscenze attuali, terminologia specialistica.</p>
+              <div class="tg-cost">⚡ 3 crediti</div>
+            </div>
+          </div>
+
+          <ul class="step-points" style="margin-top:14px;">
+            <li><span class="icon">🔄</span><span>Puoi cambiare target in qualsiasi momento: la risposta si rigenera automaticamente con le nuove impostazioni.</span></li>
+            <li><span class="icon">🎯</span><span>Non esiste una scelta "giusta": prova lo stesso concetto su due target diversi per confrontare le prospettive.</span></li>
           </ul>
         </div>
 
+        <!-- STEP 3 -->
         <div class="card step-card reveal" id="step-3">
           <div class="step-top">
             <div class="step-num">3</div>
             <div>
               <p class="step-title">Scegli la lunghezza</p>
-              <p class="step-sub">Breve → Medio → Lungo. Dopo la scelta, la generazione parte automaticamente.</p>
+              <p class="step-sub">La lunghezza definisce quanto sarà estesa e approfondita la risposta. Selezionandola, la generazione parte automaticamente senza premere nessun altro bottone.</p>
             </div>
           </div>
-          <ul class="step-points">
-            <li><span class="icon">🧾</span><span><b>Breve</b>: essenziale e rapido.</span></li>
-            <li><span class="icon">⚖️</span><span><b>Medio</b>: equilibrio, con esempi.</span></li>
-            <li><span class="icon">📚</span><span><b>Lungo</b>: completo e ben strutturato.</span></li>
+
+          <table class="len-table">
+            <thead>
+              <tr>
+                <th>Lunghezza</th>
+                <th>Descrizione</th>
+                <th>Tempo stimato</th>
+                <th>Costo extra</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>🧾 Breve</td>
+                <td>Risposta rapida ed essenziale, massimo 4-5 frasi.</td>
+                <td>~1 min lettura</td>
+                <td style="color:#5cf2a8;">+0 crediti</td>
+              </tr>
+              <tr>
+                <td>⚖️ Medio</td>
+                <td>Equilibrata, con esempi e un riepilogo finale.</td>
+                <td>~2–3 min lettura</td>
+                <td style="color:#5cf2a8;">+0 crediti</td>
+              </tr>
+              <tr>
+                <td>📚 Lungo</td>
+                <td>Completa, strutturata con titoli e paragrafi, esempi approfonditi.</td>
+                <td>~5–8 min lettura</td>
+                <td style="color:#f5a623;">+1 credito</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <ul class="step-points" style="margin-top:14px;">
+            <li><span class="icon">⚡</span><span>La generazione parte in automatico non appena selezioni la lunghezza.</span></li>
+            <li><span class="icon">🔄</span><span>Vuoi cambiare? Clicca su un altro target o lunghezza: la risposta si rigenera.</span></li>
           </ul>
         </div>
 
+        <!-- STEP 4 -->
         <div class="card step-card reveal" id="step-4">
           <div class="step-top">
             <div class="step-num">4</div>
             <div>
-              <p class="step-title">Streaming & Copia</p>
-              <p class="step-sub">La risposta arriva in tempo reale, in un’unica generazione. “Copia” prende tutto il testo prodotto.</p>
+              <p class="step-title">Leggi la risposta e copia</p>
+              <p class="step-sub">La risposta arriva in tempo reale tramite streaming: vedi i paragrafi mentre vengono scritti. Al termine, puoi copiarla con un click.</p>
             </div>
           </div>
           <ul class="step-points">
-            <li><span class="icon">⚡</span><span>Streaming: vedi subito i primi paragrafi mentre vengono scritti.</span></li>
-            <li><span class="icon">🧩</span><span>Vuoi più dettaglio? Aumenta la lunghezza o aggiungi: “approfondisci” / “con esempi”.</span></li>
-            <li><span class="icon">⧉</span><span>“Copia” salva tutto il testo generato.</span></li>
+            <li><span class="icon">📡</span><span><b>Streaming in tempo reale</b>: il testo appare progressivamente, non devi aspettare che sia tutto pronto.</span></li>
+            <li><span class="icon">📝</span><span><b>Formattazione automatica</b>: titoli, liste, grassetti e blocchi di codice vengono renderizzati in Markdown.</span></li>
+            <li><span class="icon">⧉</span><span><b>Copia</b>: il bottone "Copia" salva tutto il testo generato negli appunti in formato testo semplice.</span></li>
+            <li><span class="icon">🔁</span><span><b>Rigenera</b>: vuoi una versione diversa? Cambia target o lunghezza per una nuova risposta sullo stesso tema.</span></li>
           </ul>
         </div>
+
+        <!-- STEP 5: CREDITI -->
+        <div class="card step-card reveal" id="step-5">
+          <div class="step-top">
+            <div class="step-num" style="background:linear-gradient(135deg,rgba(255,196,0,.8),rgba(255,120,0,.7));">⚡</div>
+            <div>
+              <p class="step-title">Come funzionano i crediti</p>
+              <p class="step-sub">Ogni generazione costa un certo numero di crediti in base al target e alla lunghezza scelti. I crediti si scalano automaticamente a ogni risposta completata.</p>
+            </div>
+          </div>
+
+          <div class="credit-grid">
+            <div class="credit-box">
+              <p class="credit-box-title">🧒👨🎓 Target base</p>
+              <p>Bambino, Ragazzo, Universitario costano <b style="color:var(--text);">1 credito</b> a generazione.</p>
+            </div>
+            <div class="credit-box">
+              <p class="credit-box-title">👤🧠 Target avanzati</p>
+              <p>Adulto ed Esperto costano <b style="color:var(--text);">2 crediti</b> a generazione.</p>
+            </div>
+            <div class="credit-box">
+              <p class="credit-box-title">🧪 Target Scienziato</p>
+              <p>Scienziato costa <b style="color:var(--text);">3 crediti</b>: è il livello più elaborato.</p>
+            </div>
+            <div class="credit-box">
+              <p class="credit-box-title">📚 Risposta Lunga</p>
+              <p>La lunghezza "Lungo" aggiunge <b style="color:var(--text);">+1 credito</b> extra. Breve e Medio non costano nulla in più.</p>
+            </div>
+          </div>
+
+          <ul class="step-points" style="margin-top:14px;">
+            <li><span class="icon">👁️</span><span>I tuoi crediti disponibili sono sempre visibili in alto nell'app, in tempo reale.</span></li>
+            <li><span class="icon">🛒</span><span>Esauriti i crediti? Vai su <a href="/prezzi.html" style="color:rgba(124,92,255,.9);">Prezzi</a> per ricaricare con un pacchetto (simulazione mock).</span></li>
+            <li><span class="icon">🎁</span><span>Al momento della registrazione ricevi crediti di benvenuto per provare l'app gratuitamente.</span></li>
+          </ul>
+        </div>
+
+        <!-- STEP 6: PROFILO -->
+        <div class="card step-card reveal" id="step-6">
+          <div class="step-top">
+            <div class="step-num" style="background:linear-gradient(135deg,rgba(38,198,255,.8),rgba(124,92,255,.7));">👤</div>
+            <div>
+              <p class="step-title">Il tuo profilo</p>
+              <p class="step-sub">La pagina Profilo ti permette di personalizzare la tua esperienza su Simplif-AI e di gestire i tuoi dati account.</p>
+            </div>
+          </div>
+          <ul class="step-points">
+            <li><span class="icon">📋</span><span><b>Dati personali</b>: nome, cognome, data di nascita, città, professione e bio.</span></li>
+            <li><span class="icon">🔒</span><span><b>Sicurezza</b>: puoi aggiornare email e password in qualsiasi momento.</span></li>
+            <li><span class="icon">🧠</span><span><b>Profilo di apprendimento</b>: indica livello di istruzione, settore, interessi e obiettivo d'uso. Questi dati ci aiutano a migliorare l'esperienza (non influenzano la generazione attuale).</span></li>
+            <li><span class="icon">🚪</span><span><b>Disconnessione</b>: il bottone "Esci" si trova in fondo alla pagina Profilo.</span></li>
+          </ul>
+          <div style="margin-top:14px;">
+            <a class="btn" href="/profilo.html">Vai al profilo →</a>
+          </div>
+        </div>
+
+        <!-- STEP 7: FAQ -->
+        <div class="card step-card reveal" id="step-7">
+          <div class="step-top">
+            <div class="step-num" style="background:linear-gradient(135deg,rgba(92,255,196,.7),rgba(38,198,255,.7));">?</div>
+            <div>
+              <p class="step-title">Domande frequenti</p>
+              <p class="step-sub">Risposte rapide alle domande più comuni sull'uso di Simplif-AI.</p>
+            </div>
+          </div>
+
+          <div class="faq-list">
+            <div class="faq-item">
+              <div class="faq-q">Posso cambiare target o lunghezza dopo aver generato? <span class="faq-chevron">▼</span></div>
+              <div class="faq-a">Sì: cliccando su un nuovo target o una nuova lunghezza la risposta si rigenera automaticamente con le nuove impostazioni. Attenzione: ogni rigenerazione consuma crediti.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">Perché la risposta a volte si ferma prima del previsto? <span class="faq-chevron">▼</span></div>
+              <div class="faq-a">Le risposte hanno un limite massimo di token (unità di testo) per mantenere velocità e qualità. Per risposte più lunghe usa la lunghezza "Lungo" con target Esperto o Scienziato. Aggiungi "approfondisci con esempi" nella domanda per guidare il modello.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">I crediti vengono scalati anche se la risposta è incompleta? <span class="faq-chevron">▼</span></div>
+              <div class="faq-a">I crediti vengono scalati al completamento della generazione. Se si verifica un errore prima del completamento, i crediti non vengono sottratti.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">Posso usare Simplif-AI da smartphone? <span class="faq-chevron">▼</span></div>
+              <div class="faq-a">Sì: l'interfaccia è completamente responsive. Su mobile trovi il menu hamburger in alto a destra per navigare tra le sezioni.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">In che lingua risponde l'app? <span class="faq-chevron">▼</span></div>
+              <div class="faq-a">La risposta viene generata nella stessa lingua della domanda. Se scrivi in italiano, risponde in italiano. Se scrivi in inglese, risponde in inglese.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">Qual è la differenza tra Esperto e Scienziato? <span class="faq-chevron">▼</span></div>
+              <div class="faq-a">Esperto usa terminologia tecnica e approfondisce i meccanismi come farebbe un professionista del settore. Scienziato va oltre: usa rigore scientifico formale, cita limiti e incertezze delle conoscenze attuali, e mantiene uno stile da paper accademico.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">Come faccio a ricaricare i crediti? <span class="faq-chevron">▼</span></div>
+              <div class="faq-a">Vai su <a href="/prezzi.html" style="color:rgba(124,92,255,.9);">Prezzi</a> e scegli un pacchetto. Al momento il sistema di pagamento è una simulazione (mock): nessun addebito reale viene effettuato.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA finale -->
+        <div class="card reveal">
+          <div class="card-inner cta-finale">
+            <span class="pilltag">🚀 PRONTO?</span>
+            <div class="h1" style="margin-top:10px;">Inizia adesso</div>
+            <p class="sub">Scrivi la tua prima domanda e scegli come vuoi essere spiegato il mondo.</p>
+            <div style="height:14px;"></div>
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+              <a class="btn btn-primary" href="/app.html">Prova l'app →</a>
+              <a class="btn" href="/prezzi.html">Vedi i prezzi</a>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
+    <div style="height:32px;"></div>
   </div>
 
   <script>
-    // Mobile nav toggle
+    // Mobile nav
     (function(){
       const toggle = document.getElementById("navToggle");
       const mobileNav = document.getElementById("mobileNav");
-      if(!toggle || !mobileNav) return;
-
-      toggle.addEventListener("click", () => {
-        document.body.classList.toggle("nav-open");
-      });
-      mobileNav.querySelectorAll("a").forEach(a => {
-        a.addEventListener("click", () => document.body.classList.remove("nav-open"));
-      });
+      if(!toggle||!mobileNav) return;
+      toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
+      mobileNav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => document.body.classList.remove("nav-open")));
     })();
 
     // Navbar active
-    (function(){
-      const path = location.pathname.toLowerCase();
-      let key = "home";
-      if (path.includes("/app")) key = "app";
-      else if (path.includes("come-funziona")) key = "how";
-      else if (path.includes("prezzi")) key = "pricing";
-      else if (path.includes("checkout")) key = "pricing";
-      document.querySelectorAll('#mainNav a').forEach(a=>{
-        if(a.dataset.nav === key) a.classList.add('nav-active');
-      });
-    })();
+    document.querySelectorAll('#mainNav a').forEach(a => {
+      if(a.dataset.nav === "how") a.classList.add('nav-active');
+    });
 
     // Reveal on scroll
     const io = new IntersectionObserver((entries) => {
       entries.forEach(e => { if(e.isIntersecting) e.target.classList.add("in"); });
-    }, { threshold: 0.15 });
+    }, { threshold: 0.1 });
     document.querySelectorAll(".reveal").forEach(el => io.observe(el));
 
     // Mini-nav active on scroll
     const miniLinks = Array.from(document.querySelectorAll("#miniNav a"));
-    const stepSections = ["step-1","step-2","step-3","step-4"].map(id => document.getElementById(id));
+    const stepIds = ["step-1","step-2","step-3","step-4","step-5","step-6","step-7"];
+    const stepSections = stepIds.map(id => document.getElementById(id));
     const io2 = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if(!e.isIntersecting) return;
-        const id = e.target.id;
-        miniLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === ("#" + id)));
+        miniLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id));
       });
-    }, { threshold: 0.6 });
-    stepSections.forEach(s => io2.observe(s));
+    }, { threshold: 0.5 });
+    stepSections.forEach(s => { if(s) io2.observe(s); });
+
+    // FAQ accordion
+    document.querySelectorAll(".faq-item").forEach(item => {
+      item.querySelector(".faq-q").addEventListener("click", () => {
+        const isOpen = item.classList.contains("open");
+        document.querySelectorAll(".faq-item").forEach(i => i.classList.remove("open"));
+        if(!isOpen) item.classList.add("open");
+      });
+    });
   </script>
 </body>
 </html>
