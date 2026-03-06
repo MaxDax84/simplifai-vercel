@@ -255,10 +255,16 @@
 
           <div>
             <div class="label">Email account</div>
-            <input class="field" id="fEmail" disabled />
+            <input class="field" id="fEmail" type="email" placeholder="La tua email" />
           </div>
 
-          <div style="height:12px;"></div>
+          <div style="height:8px;"></div>
+          <div class="save-row">
+            <button class="btn btn-primary" id="saveEmail" type="button">Aggiorna email</button>
+            <span class="msg" id="msgEmail"></span>
+          </div>
+
+          <div style="height:20px; border-top:1px solid var(--border); margin-top:8px;"></div>
 
           <div>
             <div class="label">Nuova password</div>
@@ -610,6 +616,18 @@
         document.getElementById("avatarEl").textContent = initials;
         document.getElementById("heroName").textContent = (nome||cognome) ? `${nome} ${cognome}`.trim() : "Il tuo profilo";
       }
+    });
+
+    /* Aggiorna email */
+    document.getElementById("saveEmail").addEventListener("click", async () => {
+      const newEmail = document.getElementById("fEmail").value.trim();
+      if(!newEmail){ showMsg("msgEmail", "Inserisci un'email valida.", "err"); return; }
+      const btn = document.getElementById("saveEmail");
+      btn.disabled = true;
+      const { error } = await sb.auth.updateUser({ email: newEmail });
+      btn.disabled = false;
+      if(error) showMsg("msgEmail", "Errore: " + error.message, "err");
+      else showMsg("msgEmail", "Controlla la tua email per confermare il cambio.", "ok");
     });
 
     /* Cambio password */
