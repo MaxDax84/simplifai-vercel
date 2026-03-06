@@ -411,22 +411,22 @@
       },
       { label:"Adulto", icon:"👤", desc:"Diretto, concreto e senza fronzoli.", cost:2,
         prompt:"Spiega come a un adulto: vai dritto al punto, usa un tono serio e pragmatico, spiega l'utilità pratica del concetto e non perdere tempo in spiegazioni superflue.",
-        baseTokens:2800, baseChars:10000
+        baseTokens:3500, baseChars:12000
       },
       { label:"Esperto", icon:"🧠", desc:"Dettagli tecnici e approfondimenti.", cost:2,
         prompt:"Spiega come a un professionista del settore: dai per scontate le basi, approfondisci i meccanismi tecnici, usa la terminologia corretta e spiega i 'perché' dietro ai fenomeni.",
-        baseTokens:3500, baseChars:12000
+        baseTokens:4500, baseChars:16000
       },
       { label:"Scienziato", icon:"🧪", desc:"Rigore, limiti e definizioni precise.", cost:3,
         prompt:"Spiega come a un ricercatore/scienziato: usa il massimo rigore scientifico, cita limiti delle attuali conoscenze, usa terminologia specialistica e mantieni una struttura logica rigorosa.",
-        baseTokens:3500, baseChars:14000
+        baseTokens:5000, baseChars:20000
       }
     ];
 
     const LENGTHS = [
-      { key:"breve", label:"Breve", desc:"Risposta rapida, essenziale.", pill:"~1 min", costExtra:0, multiplier:0.70, minWords: 90, instruction:"Rispondi in modo BREVE: massimo 4 frasi. Una sola analogia. Niente titoli, niente elenchi. Chiudi con una frase completa. Metti un punto finale alla fine." },
-      { key:"medio", label:"Medio", desc:"Equilibrata, con esempi.", pill:"~2–3 min", costExtra:0, multiplier:1.00, minWords: 300, instruction:"Rispondi in modo MEDIO: chiaro, con qualche esempio, senza diventare troppo lungo." },
-      { key:"lungo", label:"Lungo", desc:"Completa, ben strutturata.", pill:"~4–6 min", costExtra:1, multiplier:1.20, minWords: 6500, instruction:"Rispondi in modo LUNGO: completo, ben strutturato, con esempi dove utile." }
+      { key:"breve", label:"Breve", desc:"Risposta rapida, essenziale.", pill:"~1 min", costExtra:0, multiplier:0.60, minWords: 80, instruction:"Rispondi in modo BREVE: massimo 4 frasi. Una sola analogia. Niente titoli, niente elenchi. Chiudi con una frase completa. Metti un punto finale alla fine." },
+      { key:"medio", label:"Medio", desc:"Equilibrata, con esempi.", pill:"~2–3 min", costExtra:0, multiplier:1.00, minWords: 250, instruction:"Rispondi in modo MEDIO: chiaro, con qualche esempio, senza diventare troppo lungo. Concludi con un paragrafo di riepilogo." },
+      { key:"lungo", label:"Lungo", desc:"Completa, ben strutturata.", pill:"~5–8 min", costExtra:1, multiplier:1.60, minWords: 700, instruction:"Rispondi in modo LUNGO e approfondito: usa titoli, paragrafi, esempi. Concludi SEMPRE con un paragrafo di sintesi finale completo. Non interrompere frasi a metà." }
     ];
 
     function computeCost(){
@@ -508,7 +508,7 @@
       const maxChars  = Math.round(t.baseChars  * l.multiplier);
 
       return {
-        maxTokens: Math.max(256, Math.min(maxTokens, 8000)),
+        maxTokens: Math.max(256, Math.min(maxTokens, 10000)),
         maxChars:  Math.max(500, Math.min(maxChars, 50000))
       };
     }
@@ -737,9 +737,10 @@
           const cost = computeCost();
           userCredits = Math.max(0, userCredits - cost);
           creditsValueEl.textContent = userCredits;
-          await sb.from('profiles')
+          const { error: creditErr } = await sb.from('profiles')
             .update({ credits: userCredits, updated_at: new Date().toISOString() })
             .eq('id', currentUserId);
+          if(creditErr) console.error("Errore aggiornamento crediti:", creditErr.message);
         }
 
       } catch(e){

@@ -146,7 +146,7 @@ export default async function handler(req) {
 
     if (!query || !targetPrompt) return jsonError("Parametri mancanti: query/targetPrompt.", 400);
 
-    const maxTokens = clamp(body?.maxTokens, 512, 12000, 2500);
+    const maxTokens = clamp(body?.maxTokens, 512, 16000, 2500);
     const maxChars = clamp(body?.maxChars, 500, 50000, 6000);
 
     // ---- STREAM verso client (SSE pulito) ----
