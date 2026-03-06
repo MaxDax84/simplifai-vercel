@@ -120,6 +120,21 @@
       background: rgba(255,255,255,.04);
       color: var(--text);
     }
+    .forgot-link{
+      display: block;
+      text-align: right;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: -8px;
+      margin-bottom: 16px;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .forgot-link:hover{ color: var(--text); }
   </style>
 </head>
 
@@ -171,7 +186,39 @@
             <label for="loginPassword">Password</label>
             <input type="password" id="loginPassword" placeholder="••••••••" required />
           </div>
+          <button type="button" class="forgot-link" id="forgotLink">Hai dimenticato la password?</button>
           <button class="btn btn-primary btn-auth" type="submit" id="loginBtn">Accedi</button>
+        </form>
+
+        <!-- Reset password: inserisci email -->
+        <form id="resetForm" style="display:none;">
+          <div class="auth-logo" style="margin-bottom:16px;">
+            <h1 style="font-size:18px;">Reset password</h1>
+            <p>Inserisci la tua email: ti mandiamo un link per impostare una nuova password.</p>
+          </div>
+          <div class="form-group">
+            <label for="resetEmail">Email account</label>
+            <input type="email" id="resetEmail" placeholder="tua@email.com" required />
+          </div>
+          <button class="btn btn-primary btn-auth" type="submit" id="resetBtn">Invia link di reset</button>
+          <button type="button" class="forgot-link" id="backToLogin" style="text-align:center; margin-top:10px;">← Torna al login</button>
+        </form>
+
+        <!-- Nuova password (dopo click sul link nell'email) -->
+        <form id="newPwdForm" style="display:none;">
+          <div class="auth-logo" style="margin-bottom:16px;">
+            <h1 style="font-size:18px;">Nuova password</h1>
+            <p>Scegli la tua nuova password per accedere a Simplif-AI.</p>
+          </div>
+          <div class="form-group">
+            <label for="newPwd1">Nuova password</label>
+            <input type="password" id="newPwd1" placeholder="Almeno 6 caratteri" required minlength="6" />
+          </div>
+          <div class="form-group">
+            <label for="newPwd2">Conferma password</label>
+            <input type="password" id="newPwd2" placeholder="Ripeti la password" required minlength="6" />
+          </div>
+          <button class="btn btn-primary btn-auth" type="submit" id="newPwdBtn">Salva nuova password</button>
         </form>
 
         <!-- Signup form (hidden by default) -->
@@ -312,6 +359,83 @@
         magicForm.style.display = "none";
       }
       btn.disabled = false; btn.textContent = "Invia link";
+    });
+
+    /* ── RESET PASSWORD ── */
+    const resetForm  = document.getElementById("resetForm");
+    const newPwdForm = document.getElementById("newPwdForm");
+    const tabs       = document.querySelector(".tabs");
+    const divider    = document.querySelector(".divider");
+    const magicSection = document.getElementById("magicBtn");
+
+    function showSection(section) {
+      // nasconde tutto, mostra solo la sezione richiesta
+      loginForm.style.display   = "none";
+      signupForm.style.display  = "none";
+      resetForm.style.display   = "none";
+      newPwdForm.style.display  = "none";
+      magicForm.style.display   = "none";
+      tabs.style.display        = section === "login" || section === "signup" ? "" : "none";
+      divider.style.display     = section === "login" || section === "signup" ? "" : "none";
+      magicSection.style.display= section === "login" || section === "signup" ? "" : "none";
+
+      if (section === "login")   { loginForm.style.display  = ""; tabLogin.classList.add("active"); tabSignup.classList.remove("active"); }
+      if (section === "signup")  { signupForm.style.display = ""; tabSignup.classList.add("active"); tabLogin.classList.remove("active"); }
+      if (section === "reset")   resetForm.style.display  = "";
+      if (section === "newpwd")  newPwdForm.style.display = "";
+      clearMsg();
+    }
+
+    /* Forgot link → mostra form reset */
+    document.getElementById("forgotLink").addEventListener("click", () => showSection("reset"));
+
+    /* Torna al login dal form reset */
+    document.getElementById("backToLogin").addEventListener("click", () => showSection("login"));
+
+    /* Invia email di reset */
+    const resetBtn = document.getElementById("resetBtn");
+    resetBtn.dataset.label = "Invia link di reset";
+    resetForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("resetEmail").value.trim();
+      setLoading(resetBtn, true);
+      clearMsg();
+      const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + "/auth.html"
+      });
+      setLoading(resetBtn, false);
+      if (error) {
+        showMsg(error.message, "error");
+      } else {
+        showMsg("Email inviata! Controlla la casella (anche spam) e clicca il link.", "success");
+      }
+    });
+
+    /* Rileva ritorno dall'email di reset (type=recovery nell'hash) */
+    sb.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") {
+        showSection("newpwd");
+      }
+    });
+
+    /* Salva nuova password */
+    const newPwdBtn = document.getElementById("newPwdBtn");
+    newPwdBtn.dataset.label = "Salva nuova password";
+    newPwdForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const p1 = document.getElementById("newPwd1").value;
+      const p2 = document.getElementById("newPwd2").value;
+      if (p1 !== p2) { showMsg("Le password non coincidono.", "error"); return; }
+      setLoading(newPwdBtn, true);
+      clearMsg();
+      const { error } = await sb.auth.updateUser({ password: p1 });
+      setLoading(newPwdBtn, false);
+      if (error) {
+        showMsg(error.message, "error");
+      } else {
+        showMsg("Password aggiornata! Reindirizzo...", "success");
+        setTimeout(() => window.location.replace("/app.html"), 1200);
+      }
     });
   </script>
 </body>
