@@ -397,37 +397,43 @@
 
     /* Targets & Lengths */
     const TARGETS = [
-      { label:"Bambino", icon:"🧒", desc:"Semplice, analogie e frasi brevi.",
+      { label:"Bambino", icon:"🧒", desc:"Semplice, analogie e frasi brevi.", cost:1,
         prompt:"Spiega come a un bambino di 8 anni: usa un linguaggio molto semplice, fai paragoni con oggetti quotidiani (es. il DNA è come un libro di ricette) e mantieni le frasi brevi.",
         baseTokens:2500, baseChars:6000
       },
-      { label:"Ragazzo", icon:"👨", desc:"Chiaro, moderno e con esempi pratici.",
+      { label:"Ragazzo", icon:"👨", desc:"Chiaro, moderno e con esempi pratici.", cost:1,
         prompt:"Spiega come a un adolescente: usa un tono colloquiale ma corretto, evita termini troppo infantili, usa esempi tratti dalla tecnologia o dalla vita quotidiana dei giovani.",
         baseTokens:2500, baseChars:7000
       },
-      { label:"Universitario", icon:"🎓", desc:"Struttura accademica e concetti chiave.",
+      { label:"Universitario", icon:"🎓", desc:"Struttura accademica e concetti chiave.", cost:1,
         prompt:"Spiega come a uno studente universitario: usa un linguaggio formale, organizza la spiegazione per punti logici, approfondisci i concetti fondamentali senza dare nulla per scontato.",
         baseTokens:2500, baseChars:9000
       },
-      { label:"Adulto", icon:"👤", desc:"Diretto, concreto e senza fronzoli.",
+      { label:"Adulto", icon:"👤", desc:"Diretto, concreto e senza fronzoli.", cost:2,
         prompt:"Spiega come a un adulto: vai dritto al punto, usa un tono serio e pragmatico, spiega l'utilità pratica del concetto e non perdere tempo in spiegazioni superflue.",
         baseTokens:2800, baseChars:10000
       },
-      { label:"Esperto", icon:"🧠", desc:"Dettagli tecnici e approfondimenti.",
+      { label:"Esperto", icon:"🧠", desc:"Dettagli tecnici e approfondimenti.", cost:2,
         prompt:"Spiega come a un professionista del settore: dai per scontate le basi, approfondisci i meccanismi tecnici, usa la terminologia corretta e spiega i 'perché' dietro ai fenomeni.",
         baseTokens:3500, baseChars:12000
       },
-      { label:"Scienziato", icon:"🧪", desc:"Rigore, limiti e definizioni precise.",
+      { label:"Scienziato", icon:"🧪", desc:"Rigore, limiti e definizioni precise.", cost:3,
         prompt:"Spiega come a un ricercatore/scienziato: usa il massimo rigore scientifico, cita limiti delle attuali conoscenze, usa terminologia specialistica e mantieni una struttura logica rigorosa.",
         baseTokens:3500, baseChars:14000
       }
     ];
 
     const LENGTHS = [
-      { key:"breve", label:"Breve", desc:"Risposta rapida, essenziale.", pill:"~1 min", multiplier:0.70, minWords: 90, instruction:"Rispondi in modo BREVE: massimo 4 frasi. Una sola analogia. Niente titoli, niente elenchi. Chiudi con una frase completa. Metti un punto finale alla fine." },     
-      { key:"medio", label:"Medio", desc:"Equilibrata, con esempi.", pill:"~2–3 min", multiplier:1.00, minWords: 300, instruction:"Rispondi in modo MEDIO: chiaro, con qualche esempio, senza diventare troppo lungo." },
-      { key:"lungo", label:"Lungo", desc:"Completa, ben strutturata.", pill:"~4–6 min", multiplier:1.20, minWords: 6500, instruction:"Rispondi in modo LUNGO: completo, ben strutturato, con esempi dove utile." }
+      { key:"breve", label:"Breve", desc:"Risposta rapida, essenziale.", pill:"~1 min", costExtra:0, multiplier:0.70, minWords: 90, instruction:"Rispondi in modo BREVE: massimo 4 frasi. Una sola analogia. Niente titoli, niente elenchi. Chiudi con una frase completa. Metti un punto finale alla fine." },
+      { key:"medio", label:"Medio", desc:"Equilibrata, con esempi.", pill:"~2–3 min", costExtra:0, multiplier:1.00, minWords: 300, instruction:"Rispondi in modo MEDIO: chiaro, con qualche esempio, senza diventare troppo lungo." },
+      { key:"lungo", label:"Lungo", desc:"Completa, ben strutturata.", pill:"~4–6 min", costExtra:1, multiplier:1.20, minWords: 6500, instruction:"Rispondi in modo LUNGO: completo, ben strutturato, con esempi dove utile." }
     ];
+
+    function computeCost(){
+      const t = selectedTargetIndex >= 0 ? TARGETS[selectedTargetIndex] : null;
+      const l = selectedLenKey ? LENGTHS.find(x => x.key === selectedLenKey) : null;
+      return (t?.cost ?? 0) + (l?.costExtra ?? 0);
+    }
 
     let selectedTargetIndex = -1;
     let selectedLenKey = "";
@@ -665,9 +671,10 @@
       if(isGenerating) return;
 
       /* Controllo crediti */
-      if(userCredits !== null && userCredits <= 0){
-        setStatus("Crediti esauriti. Ricarica per continuare.", false);
-        setTimeout(() => window.location.replace("/prezzi.html?reason=no_credits"), 1500);
+      const cost = computeCost();
+      if(userCredits !== null && userCredits < cost){
+        setStatus(`Crediti insufficienti (servono ${cost}, hai ${userCredits}). Ricarica per continuare.`, false);
+        setTimeout(() => window.location.replace("/prezzi.html?reason=no_credits"), 2000);
         return;
       }
 
@@ -727,9 +734,10 @@
 
         /* Decrementa crediti */
         if(currentUserId && userCredits !== null){
-          userCredits = Math.max(0, userCredits - 1);
+          const cost = computeCost();
+          userCredits = Math.max(0, userCredits - cost);
           creditsValueEl.textContent = userCredits;
-          sb.from('profiles')
+          await sb.from('profiles')
             .update({ credits: userCredits, updated_at: new Date().toISOString() })
             .eq('id', currentUserId);
         }
@@ -748,7 +756,7 @@
       TARGETS.forEach((t, i) => {
         const el = document.createElement("div");
         el.className = "target-card" + (i === selectedTargetIndex ? " active" : "");
-        el.innerHTML = `<div class="ticon">${t.icon}</div><div><p class="tname">${t.label}</p><p class="tdesc">${t.desc}</p></div>`;
+        el.innerHTML = `<div class="ticon">${t.icon}</div><div><p class="tname">${t.label}</p><p class="tdesc">${t.desc}</p><p style="margin:4px 0 0;font-size:11px;color:var(--muted);">⚡ ${t.cost} credit${t.cost > 1 ? "i" : "o"}</p></div>`;
         el.addEventListener("click", () => {
           selectedTargetIndex = i;
           renderTargets();
@@ -771,7 +779,8 @@
       LENGTHS.forEach((l) => {
         const el = document.createElement("div");
         el.className = "len-card" + (l.key === selectedLenKey ? " active" : "");
-        el.innerHTML = `<div class="len-left"><div class="len-name">${l.label}</div><div class="len-desc">${l.desc}</div></div><div class="len-pill">${l.pill}</div>`;
+        const extraLabel = l.costExtra > 0 ? `<span style="font-size:11px;color:var(--muted);">+${l.costExtra} credito extra</span>` : `<span style="font-size:11px;color:var(--muted);">nessun extra</span>`;
+        el.innerHTML = `<div class="len-left"><div class="len-name">${l.label}</div><div class="len-desc">${l.desc}</div>${extraLabel}</div><div class="len-pill">${l.pill}</div>`;
         el.addEventListener("click", () => {
           selectedLenKey = l.key;
           renderLengths();
