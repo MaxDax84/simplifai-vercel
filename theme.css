@@ -406,3 +406,238 @@ body.nav-open .mobile-nav{
   gap: 4px;
   flex-wrap: wrap;
 }
+
+/* =====================================================
+   DARK / LIGHT MODE
+   ===================================================== */
+
+html[data-theme="light"]{
+  --bg:        #eef0ff;
+  --text:      #0d1133;
+  --muted:     rgba(13,17,51,.62);
+  --muted2:    rgba(13,17,51,.42);
+  --border:    rgba(13,17,51,.13);
+  --card:      rgba(255,255,255,.82);
+  --card-dark: rgba(235,238,255,.68);
+}
+
+html[data-theme="light"] .mobile-nav{
+  background: rgba(218,224,255,.97);
+}
+html[data-theme="light"] .mobile-nav a{ color:#0d1133; }
+
+/* ── textarea + risposta in light mode ── */
+html[data-theme="light"] textarea{
+  background: rgba(255,255,255,.75);
+  border-color: rgba(13,17,51,.15);
+  color: #0d1133;
+}
+html[data-theme="light"] .md{ color: rgba(13,17,51,.88); }
+html[data-theme="light"] .md h1,
+html[data-theme="light"] .md h2,
+html[data-theme="light"] .md h3{ color:#0d1133; }
+html[data-theme="light"] .md code{
+  background:rgba(13,17,51,.07);
+  border-color:rgba(13,17,51,.12);
+  color:#0d1133;
+}
+html[data-theme="light"] .md pre{
+  background:rgba(13,17,51,.05);
+  border-color:rgba(13,17,51,.10);
+}
+html[data-theme="light"] .md blockquote{ color:rgba(13,17,51,.82); }
+html[data-theme="light"] .md a{ color:#5b36d1; }
+html[data-theme="light"] .spinner{
+  border-color:rgba(13,17,51,.18);
+  border-top-color:rgba(13,17,51,.72);
+}
+
+/* ── Theme Toggle Button ── */
+.theme-btn{
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.04);
+  color:var(--text);
+  width:36px; height:36px;
+  border-radius:12px;
+  font-size:16px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition:.15s ease;
+  flex:0 0 auto;
+  padding:0;
+}
+.theme-btn:hover{ background:rgba(255,255,255,.09); }
+html[data-theme="light"] .theme-btn{ background:rgba(0,0,0,.04); }
+html[data-theme="light"] .theme-btn:hover{ background:rgba(0,0,0,.08); }
+
+/* =====================================================
+   SKELETON LOADER
+   ===================================================== */
+
+@keyframes shimmer{
+  to{ background-position:-200% 0; }
+}
+.skeleton-wrap{
+  display:flex; flex-direction:column; gap:12px; padding:4px 0;
+}
+.skeleton-line{
+  border-radius:8px;
+  background:linear-gradient(
+    90deg,
+    var(--sk-a, rgba(255,255,255,.06)) 25%,
+    var(--sk-b, rgba(255,255,255,.15)) 50%,
+    var(--sk-a, rgba(255,255,255,.06)) 75%
+  );
+  background-size:200% 100%;
+  animation:shimmer 1.5s linear infinite;
+}
+html[data-theme="light"]{
+  --sk-a: rgba(13,17,51,.07);
+  --sk-b: rgba(13,17,51,.17);
+}
+
+/* =====================================================
+   ONE-TAP SUGGESTIONS
+   ===================================================== */
+
+.chips-row{
+  display:flex; flex-wrap:wrap; gap:8px;
+  justify-content:center;
+  margin-top:16px;
+}
+.chip-suggest{
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.04);
+  color:var(--muted);
+  padding:8px 14px;
+  border-radius:999px;
+  font-size:13px;
+  cursor:pointer;
+  transition:.15s ease;
+  text-decoration:none;
+  white-space:nowrap;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.chip-suggest:hover{
+  background:rgba(255,255,255,.08);
+  border-color:rgba(124,92,255,.4);
+  color:var(--text);
+}
+html[data-theme="light"] .chip-suggest{ background:rgba(0,0,0,.04); }
+html[data-theme="light"] .chip-suggest:hover{ background:rgba(124,92,255,.09); }
+
+/* =====================================================
+   HISTORY SECTION
+   ===================================================== */
+
+.history-chips{
+  display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;
+}
+.history-chip{
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.03);
+  color:var(--muted);
+  padding:7px 12px;
+  border-radius:999px;
+  font-size:12px;
+  cursor:pointer;
+  transition:.15s ease;
+  max-width:260px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.history-chip:hover{ background:rgba(255,255,255,.07); color:var(--text); }
+html[data-theme="light"] .history-chip{ background:rgba(0,0,0,.04); }
+html[data-theme="light"] .history-chip:hover{ background:rgba(0,0,0,.07); }
+
+.history-clear{
+  font-size:11px; color:var(--muted2);
+  cursor:pointer; background:none; border:none;
+  padding:4px 8px; border-radius:8px; transition:.15s ease;
+}
+.history-clear:hover{ color:var(--text); }
+
+/* =====================================================
+   PDF EXPORT (contenitore nascosto, sempre bianco)
+   ===================================================== */
+
+.pdf-render{
+  position:absolute; left:-9999px; top:0;
+  width:720px; padding:28px 32px;
+  background:#fff; color:#111;
+  font-family:ui-sans-serif,system-ui,-apple-system,sans-serif;
+  font-size:14px; line-height:1.75;
+}
+.pdf-render h1,.pdf-render h2,.pdf-render h3{ color:#111; margin:16px 0 8px; }
+.pdf-render h1{ font-size:22px; }
+.pdf-render h2{ font-size:18px; }
+.pdf-render h3{ font-size:15px; }
+.pdf-render p{ margin:10px 0; }
+.pdf-render ul,.pdf-render ol{ margin:8px 0 8px 20px; }
+.pdf-render li{ margin:5px 0; }
+.pdf-render code{
+  background:#f0f2f5; border:1px solid #dde;
+  padding:2px 5px; border-radius:4px; font-size:12px;
+}
+.pdf-render pre{
+  background:#f5f7f9; border:1px solid #dde;
+  padding:12px; border-radius:8px;
+}
+.pdf-render blockquote{
+  margin:10px 0; padding:8px 14px;
+  border-left:3px solid #7c5cff;
+  background:#f5f3ff; border-radius:4px;
+}
+.pdf-render a{ color:#5b36d1; }
+
+/* =====================================================
+   FAQ ACCORDION (index.html)
+   ===================================================== */
+
+.faq-section{ margin-top:36px; }
+.faq-section-title{
+  text-align:center; font-size:24px; font-weight:900;
+  margin:0 0 18px; letter-spacing:-.3px;
+}
+.faq-list{ display:flex; flex-direction:column; gap:10px; }
+.faq-item{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+.faq-item summary{
+  padding:16px 18px;
+  font-weight:700; font-size:14px;
+  cursor:pointer; list-style:none;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  color:var(--text); user-select:none;
+}
+.faq-item summary::-webkit-details-marker{ display:none; }
+.faq-item summary::after{
+  content:"+"; font-size:20px; font-weight:400;
+  color:var(--muted); transition:transform .2s ease; flex:0 0 auto;
+}
+.faq-item[open] summary::after{ transform:rotate(45deg); }
+.faq-body{
+  padding:0 18px 16px;
+  color:var(--muted); font-size:13px; line-height:1.6;
+}
+.faq-body a{ color:rgba(124,92,255,.9); text-decoration:none; }
+.faq-body a:hover{ text-decoration:underline; }
+
+/* =====================================================
+   RESPONSIVE: MOBILE FIXES
+   ===================================================== */
+
+@media(max-width:520px){
+  .chips-row{ gap:6px; }
+  .chip-suggest{ font-size:12px; padding:7px 11px; }
+  .history-chips{ gap:6px; }
+  .history-chip{ max-width:200px; }
+}

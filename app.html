@@ -6,7 +6,16 @@
   <title>Simplif-AI – Chiedimi qualcosa</title>
  <link rel="stylesheet" href="/theme.css">
 
+  <!-- FOUC prevention -->
+  <script>
+    (function(){
+      if(localStorage.getItem('sai_theme')==='light')
+        document.documentElement.setAttribute('data-theme','light');
+    })();
+  </script>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.11/dist/purify.min.js"></script>
 
@@ -246,6 +255,18 @@
     }
     .md a{ color: rgba(38,198,255,.95); }
 
+    /* suggestion chips nell'app (sopra textarea) */
+    .chips-row-app{
+      display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;
+    }
+    /* history header row */
+    .history-header{
+      display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;
+    }
+    .history-title{
+      font-weight:900; font-size:15px; margin:0;
+    }
+
     /* ── Formule MathJax ── */
     .md mjx-container{
       overflow-x: auto;
@@ -283,9 +304,12 @@
         <a href="/profilo.html" data-nav="profile">Profilo</a>
       </nav>
 
-      <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
-        <span></span><span></span><span></span>
-      </button>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema">☀️</button>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </header>
 
     <div class="mobile-nav" id="mobileNav">
@@ -301,11 +325,33 @@
       <div class="credit-pill">⚡ Crediti disponibili: <b id="creditsValue">—</b></div>
     </div>
 
+    <!-- ── Ultime Ricerche ── -->
+    <section id="historySection" style="display:none; margin-bottom:0;">
+      <div class="card" style="margin-top:16px;">
+        <div class="card-inner">
+          <div class="history-header">
+            <p class="history-title">🕐 Ultime Ricerche</p>
+            <button class="history-clear" id="historyClear" type="button">Cancella</button>
+          </div>
+          <div class="history-chips" id="historyList"></div>
+        </div>
+      </div>
+    </section>
+
     <section class="section" id="sec1">
       <div class="card" id="card1">
         <div class="card-inner">
           <h2 class="title">✦ Scrivi la domanda</h2>
           <textarea id="query" placeholder="Esempio: Cos'è il DNA e a cosa serve?"></textarea>
+
+          <!-- suggestion chips -->
+          <div class="chips-row-app">
+            <button class="chip-suggest" type="button" data-q="Cos'è l'inflazione?">💰 Cos'è l'inflazione?</button>
+            <button class="chip-suggest" type="button" data-q="Com'è fatto un motore a scoppio?">⚙️ Motore a scoppio</button>
+            <button class="chip-suggest" type="button" data-q="Cosa sono i geni e il DNA?">🧬 Geni e DNA</button>
+            <button class="chip-suggest" type="button" data-q="Perché il cielo è blu?">🌤️ Cielo blu</button>
+          </div>
+
           <div class="actions">
             <span class="hint">💡 Suggerimento: aggiungi “con esempi”</span>
             <button class="btn btn-primary" id="goTargets" type="button">Scegli target ↓</button>
@@ -353,6 +399,16 @@
           </div>
 
           <div class="response-shell" id="responseShell">
+            <!-- Skeleton loader -->
+            <div id="skeletonLoader" class="skeleton-wrap" style="display:none;">
+              <div class="skeleton-line" style="height:13px;width:88%;"></div>
+              <div class="skeleton-line" style="height:13px;width:70%;"></div>
+              <div class="skeleton-line" style="height:13px;width:94%;"></div>
+              <div class="skeleton-line" style="height:13px;width:60%;"></div>
+              <div class="skeleton-line" style="height:13px;width:82%;"></div>
+              <div class="skeleton-line" style="height:13px;width:75%;"></div>
+            </div>
+
             <div id="response" class="md"></div>
 
             <div class="actions" style="margin-top:0;">
@@ -363,6 +419,7 @@
 
               <div style="display:flex;gap:10px;flex-wrap:wrap;">
                 <button class="btn" id="copyBtn" type="button" disabled>⧉ Copia</button>
+                <button class="btn" id="pdfBtn" type="button" disabled>⬇ PDF</button>
               </div>
             </div>
           </div>
@@ -379,6 +436,9 @@
         </div>
       </div>
     </section>
+
+    <!-- PDF export container (invisible) -->
+    <div id="pdfContent" class="pdf-render"></div>
 
     <div style="height:26px;"></div>
 
@@ -512,10 +572,12 @@
     const cardLen = document.getElementById("cardLen");
     const card3 = document.getElementById("card3");
 
-    const responseEl = document.getElementById("response");
-    const spinner = document.getElementById("spinner");
-    const statusEl = document.getElementById("status");
-    const copyBtn = document.getElementById("copyBtn");
+    const responseEl   = document.getElementById("response");
+    const skeletonEl   = document.getElementById("skeletonLoader");
+    const spinner      = document.getElementById("spinner");
+    const statusEl     = document.getElementById("status");
+    const copyBtn      = document.getElementById("copyBtn");
+    const pdfBtn       = document.getElementById("pdfBtn");
 
     const chipTarget = document.getElementById("chipTarget");
     const chipLen = document.getElementById("chipLen");
@@ -536,6 +598,7 @@
 
     function updateButtons(){
       copyBtn.disabled = isGenerating || !accumulatedText.trim();
+      pdfBtn.disabled  = isGenerating || !accumulatedText.trim();
       goLength.disabled = selectedTargetIndex < 0;
       goAnswer.disabled = !selectedLenKey;
     }
@@ -604,6 +667,9 @@
 
     
     function renderMarkdownSafe(text){
+      // Nascondi skeleton al primo render
+      if(skeletonEl && skeletonEl.style.display !== "none")
+        skeletonEl.style.display = "none";
       const cleaned = normalizeForDisplay(text);
       responseEl.innerHTML = DOMPurify.sanitize(marked.parse(cleaned));
       if(window.MathJax && MathJax.typesetPromise){
@@ -773,7 +839,8 @@
     
         accumulatedText = "";
         responseEl.innerHTML = "";
-    
+        skeletonEl.style.display = "flex";   // mostra skeleton
+
         await streamGemini(payload, (chunk) => {
           accumulatedText += chunk;
           renderMarkdownSafe(accumulatedText);
@@ -781,8 +848,10 @@
 
         accumulatedText = ensureEndsClean(accumulatedText);
         renderMarkdownSafe(accumulatedText);
-        
+
         setStatus("Risposta generata.", false);
+        saveToHistory(q.value.trim());
+        renderHistory();
 
         /* Decrementa crediti */
         if(currentUserId && userCredits !== null){
@@ -796,9 +865,11 @@
         }
 
       } catch(e){
+        skeletonEl.style.display = "none";
         setStatus("Ops! Il server è momentaneamente sovraccarico. I tuoi crediti non sono stati scalati — riprova tra qualche secondo 🔄", false);
-    
+
       } finally{
+        skeletonEl.style.display = "none";
         isGenerating = false;
         updateButtons();
       }
@@ -867,11 +938,104 @@
       setTimeout(()=>setStatus("Fatto.", false), 1000);
     });
 
+    /* ── Dark/Light Theme ── */
+    (function(){
+      const btn = document.getElementById('themeBtn');
+      if(!btn) return;
+      function apply(dark){
+        if(dark){ document.documentElement.removeAttribute('data-theme'); }
+        else     { document.documentElement.setAttribute('data-theme','light'); }
+        btn.textContent = dark ? '☀️' : '🌙';
+        localStorage.setItem('sai_theme', dark ? 'dark' : 'light');
+      }
+      let isDark = localStorage.getItem('sai_theme') !== 'light';
+      apply(isDark);
+      btn.addEventListener('click', () => { isDark = !isDark; apply(isDark); });
+    })();
+
+    /* ── History (localStorage) ── */
+    function loadHistory(){
+      try{ return JSON.parse(localStorage.getItem('sai_history') || '[]'); }
+      catch(_){ return []; }
+    }
+    function saveToHistory(query){
+      if(!query) return;
+      let list = loadHistory().filter(x => x !== query);
+      list.unshift(query);
+      localStorage.setItem('sai_history', JSON.stringify(list.slice(0, 5)));
+    }
+    function renderHistory(){
+      const list = loadHistory();
+      const section = document.getElementById('historySection');
+      const container = document.getElementById('historyList');
+      if(!section || !container) return;
+      if(!list.length){ section.style.display = 'none'; return; }
+      section.style.display = '';
+      container.innerHTML = '';
+      list.forEach(query => {
+        const chip = document.createElement('button');
+        chip.className = 'history-chip';
+        chip.textContent = query;
+        chip.type = 'button';
+        chip.addEventListener('click', () => {
+          q.value = query;
+          scrollTo(sec1, card1);
+          q.focus();
+        });
+        container.appendChild(chip);
+      });
+    }
+    document.getElementById('historyClear').addEventListener('click', () => {
+      localStorage.removeItem('sai_history');
+      renderHistory();
+    });
+
+    /* ── Suggestion Chips ── */
+    document.querySelectorAll('.chips-row-app .chip-suggest').forEach(btn => {
+      btn.addEventListener('click', () => {
+        q.value = btn.dataset.q || btn.textContent.trim();
+        scrollTo(sec2, card2);
+      });
+    });
+
+    /* ── URL param auto-run (?q=...) ── */
+    (function(){
+      const params = new URLSearchParams(location.search);
+      const qParam = params.get('q');
+      if(qParam){
+        q.value = qParam;
+        history.replaceState({}, '', location.pathname);
+        setTimeout(() => { if(q.value.trim()) scrollTo(sec2, card2); }, 350);
+      }
+    })();
+
+    /* ── PDF Download ── */
+    pdfBtn.addEventListener('click', () => {
+      if(!accumulatedText.trim()) return;
+      const pdfContent = document.getElementById('pdfContent');
+      const t = selectedTargetIndex >= 0 ? TARGETS[selectedTargetIndex] : null;
+      const l = selectedLenKey ? LENGTHS.find(x => x.key === selectedLenKey) : null;
+      let header = '<div style="font-size:12px;color:#888;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #eee;">';
+      header += '<strong style="color:#333;">Simplif-AI</strong> &nbsp;—&nbsp; ';
+      if(t) header += 'Target: <strong style="color:#333;">' + t.label + '</strong>';
+      if(t && l) header += ' &nbsp;•&nbsp; ';
+      if(l) header += 'Lunghezza: <strong style="color:#333;">' + l.label + '</strong>';
+      header += '</div>';
+      pdfContent.innerHTML = header + DOMPurify.sanitize(marked.parse(normalizeForDisplay(accumulatedText)));
+      html2pdf().set({
+        margin: [14, 16, 14, 16],
+        filename: 'risposta-simplif-ai.pdf',
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }).from(pdfContent).save();
+    });
+
     // init
     renderTargets();
     renderLengths();
     updateChips();
     updateButtons();
+    renderHistory();
   </script>
 </body>
 </html>

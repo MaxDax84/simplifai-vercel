@@ -6,6 +6,14 @@
   <title>Cookie Policy – Simplif-AI</title>
   <link rel="stylesheet" href="/theme.css">
 
+  <!-- FOUC prevention -->
+  <script>
+    (function(){
+      if(localStorage.getItem('sai_theme')==='light')
+        document.documentElement.setAttribute('data-theme','light');
+    })();
+  </script>
+
   <style>
     .policy-hero{ text-align:center; padding:26px 18px; }
     .policy-content{ margin-top:18px; display:flex; flex-direction:column; gap:16px; }
@@ -138,9 +146,12 @@
         <a href="/profilo.html" data-nav="profile">Profilo</a>
       </nav>
 
-      <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
-        <span></span><span></span><span></span>
-      </button>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema">☀️</button>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </header>
 
     <div class="mobile-nav" id="mobileNav">
@@ -268,6 +279,21 @@
     (function(){
       const h = document.querySelector('header');
       if(h) window.addEventListener('scroll', () => h.classList.toggle('scrolled', window.scrollY > 10), { passive: true });
+    })();
+
+    // ── Dark/Light Theme ──
+    (function(){
+      const btn = document.getElementById('themeBtn');
+      if(!btn) return;
+      function applyTheme(dark){
+        if(dark){ document.documentElement.removeAttribute('data-theme'); }
+        else     { document.documentElement.setAttribute('data-theme','light'); }
+        btn.textContent = dark ? '☀️' : '🌙';
+        localStorage.setItem('sai_theme', dark ? 'dark' : 'light');
+      }
+      let isDark = localStorage.getItem('sai_theme') !== 'light';
+      applyTheme(isDark);
+      btn.addEventListener('click', () => { isDark = !isDark; applyTheme(isDark); });
     })();
   </script>
 </body>

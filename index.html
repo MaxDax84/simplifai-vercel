@@ -6,8 +6,15 @@
   <title>Simplif-AI</title>
   <link rel="stylesheet" href="/theme.css">
 
+  <!-- FOUC prevention: applica il tema prima del paint -->
+  <script>
+    (function(){
+      if(localStorage.getItem('sai_theme')==='light')
+        document.documentElement.setAttribute('data-theme','light');
+    })();
+  </script>
+
   <style>
-    /* Layout identico allo screenshot: hero centrato, pulito */
     .landing{
       min-height: 80vh;
       display:flex;
@@ -51,7 +58,6 @@
       flex-wrap:wrap;
     }
 
-    /* bottone “pill” grande come nello screenshot */
     .cta .btn{
       border-radius: 999px;
       padding: 16px 26px;
@@ -60,15 +66,14 @@
       box-shadow: 0 18px 60px rgba(0,0,0,.22);
     }
 
-    /* allinea header come nella tua immagine */
     header{
       align-items:flex-start;
     }
 
-    /* su mobile: un pelo più aria */
     @media (max-width: 520px){
       .landing{ min-height: 76vh; }
       .cta .btn{ width: 100%; max-width: 360px; }
+      .chips-row .chip-suggest{ font-size: 12px; }
     }
   </style>
 </head>
@@ -91,10 +96,12 @@
         <a href="/profilo.html" data-nav="profile">Profilo</a>
       </nav>
 
-      <!-- mobile hamburger -->
-      <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
-        <span></span><span></span><span></span>
-      </button>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema">☀️</button>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </header>
 
     <!-- Mobile overlay menu -->
@@ -117,8 +124,61 @@
         <div class="cta">
           <a class="btn btn-primary" href="/app.html">🚀 Vuoi provare? Clicca qua!</a>
         </div>
+
+        <!-- ── One-tap suggestions ── -->
+        <div class="chips-row">
+          <a class="chip-suggest" href="/app.html?q=Cos%27%C3%A8+l%27inflazione%3F">💰 Cos'è l'inflazione?</a>
+          <a class="chip-suggest" href="/app.html?q=Com%27%C3%A8+fatto+un+motore+a+scoppio%3F">⚙️ Com'è fatto un motore?</a>
+          <a class="chip-suggest" href="/app.html?q=Cosa+sono+i+geni+e+il+DNA%3F">🧬 Geni e DNA</a>
+          <a class="chip-suggest" href="/app.html?q=Perch%C3%A9+il+cielo+%C3%A8+blu%3F">🌤️ Perché il cielo è blu?</a>
+        </div>
       </div>
     </section>
+
+    <!-- ══════════════════ FAQ ══════════════════ -->
+    <section class="faq-section">
+      <p class="faq-section-title">Domande frequenti</p>
+      <div class="faq-list">
+
+        <details class="faq-item">
+          <summary>Cos'è Simplif-AI?</summary>
+          <div class="faq-body">
+            Simplif-AI è una piattaforma alimentata da intelligenza artificiale che spiega qualsiasi concetto nel modo giusto per te: dalla versione per un bambino di 8 anni fino al rigore da ricercatore scientifico. Scegli il <em>target</em> e la <em>lunghezza</em> della risposta, e il resto lo facciamo noi.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>È davvero gratuito?</summary>
+          <div class="faq-body">
+            Sì: ogni account riceve <strong>10 crediti di benvenuto</strong> senza bisogno di carta di credito. Quando li esaurisci, puoi ricaricare con pacchetti a partire da <strong>€1,99</strong> (pagamento unico, nessun abbonamento obbligatorio) oppure scegliere un piano mensile da €2,99.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Come funzionano i crediti?</summary>
+          <div class="faq-body">
+            Ogni spiegazione consuma 1–3 crediti in base al target scelto (Bambino/Ragazzo/Universitario = 1 credito; Adulto/Esperto = 2; Scienziato = 3). La risposta "Lunga" aggiunge +1 credito extra. I crediti non scadono mai e si accumulano — acquistali quando vuoi.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>I miei dati vengono salvati?</summary>
+          <div class="faq-body">
+            Le domande vengono inviate all'API di Google Gemini per generare la risposta e non vengono archiviate su nostri database. La <em>cronologia locale</em> (ultime 5 ricerche) rimane solo nel tuo browser tramite localStorage e non è mai trasmessa a server.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Posso usarlo per studiare o insegnare?</summary>
+          <div class="faq-body">
+            Assolutamente sì. Seleziona il target "Universitario" o "Scienziato" per spiegazioni strutturate con terminologia tecnica. Puoi scaricare la risposta in <strong>PDF</strong> direttamente dall'app per tenerla con te o condividerla. Simplif-AI è utilizzato da studenti, docenti e professionisti che vogliono capire concetti al di fuori della loro specializzazione.
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <div style="height:32px;"></div>
 
     <footer class="site-footer">
       <span>© 2025 Simplif-AI</span>
@@ -135,13 +195,10 @@
       const toggle = document.getElementById("navToggle");
       const mobileNav = document.getElementById("mobileNav");
       if(!toggle || !mobileNav) return;
-
-      toggle.addEventListener("click", () => {
-        document.body.classList.toggle("nav-open");
-      });
-      mobileNav.querySelectorAll("a").forEach(a => {
-        a.addEventListener("click", () => document.body.classList.remove("nav-open"));
-      });
+      toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
+      mobileNav.querySelectorAll("a").forEach(a =>
+        a.addEventListener("click", () => document.body.classList.remove("nav-open"))
+      );
     })();
 
     // Navbar active
@@ -152,7 +209,7 @@
       else if (path.includes("come-funziona")) key = "how";
       else if (path.includes("prezzi")) key = "pricing";
       else if (path.includes("checkout")) key = "pricing";
-      document.querySelectorAll('#mainNav a').forEach(a=>{
+      document.querySelectorAll('#mainNav a').forEach(a =>{
         if(a.dataset.nav === key) a.classList.add('nav-active');
       });
     })();
@@ -160,7 +217,25 @@
     // Sticky header scroll effect
     (function(){
       const h = document.querySelector('header');
-      if(h) window.addEventListener('scroll', () => h.classList.toggle('scrolled', window.scrollY > 10), { passive: true });
+      if(h) window.addEventListener('scroll', () => h.classList.toggle('scrolled', window.scrollY > 10), { passive:true });
+    })();
+
+    // ── Dark/Light Theme ──
+    (function(){
+      const btn = document.getElementById('themeBtn');
+      if(!btn) return;
+      function apply(dark){
+        if(dark){
+          document.documentElement.removeAttribute('data-theme');
+        } else {
+          document.documentElement.setAttribute('data-theme','light');
+        }
+        btn.textContent = dark ? '☀️' : '🌙';
+        localStorage.setItem('sai_theme', dark ? 'dark' : 'light');
+      }
+      let isDark = localStorage.getItem('sai_theme') !== 'light';
+      apply(isDark);
+      btn.addEventListener('click', () => { isDark = !isDark; apply(isDark); });
     })();
   </script>
 </body>
