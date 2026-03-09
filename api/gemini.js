@@ -1,65 +1,36 @@
 export const config = { runtime: "edge" };
 
-function corsHeaders(extra = {}) {
-  return {
+function corsHeaders(extra) {
+  extra = extra || {};
+  return Object.assign({
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
-    ...extra,
-  };
+  }, extra);
 }
 
-function jsonError(message, status = 500, extra = {}) {
+function jsonError(message, status, extra) {
+  status = status || 500;
+  extra = extra || {};
   return new Response(JSON.stringify({ error: message }), {
-    status,
-    headers: corsHeaders({
+    status: status,
+    headers: corsHeaders(Object.assign({
       "Content-Type": "application/json; charset=utf-8",
       "X-SimplifAI-API": "gemini-proxy",
-      ...extra,
-    }),
+    }, extra)),
   });
 }
 
 function clamp(n, min, max, fallback) {
-  const x = Number(n);
+  var x = Number(n);
   if (!Number.isFinite(x)) return fallback;
   return Math.min(Math.max(x, min), max);
 }
 
-function looksCut(text, maxChars) {
-    const full = String(text || "").trim();
-    const tail = full.slice(-240);
-    if (!tail) return false;
-  
-    // marker esplicito
-    if (/\.\.\.\(continua\)\s*$/i.test(tail)) return true;
-  
-    // se finisce con virgola/due punti/punto e virgola -> è quasi sempre taglio
-    if (/[,:;]\s*$/.test(tail)) return true;
-  
-    // se finisce bene con punteggiatura forte o chiusure, ok
-    const endsWell =
-      /[.!?…]\s*$/.test(tail) ||
-      /[\)\]"]\s*$/.test(tail);
-    if (endsWell) return false;
-  
-    // Se è "breve" (maxChars basso), NON forzare continue solo perché è corta.
-    // Però se è molto corta e finisce male, sì.
-    const veryShortForBudget = full.length < Math.max(220, Math.floor(maxChars * 0.18));
-    if (veryShortForBudget) return true;
-  
-    // se termina con lettera/numero -> probabile taglio
-    return /[A-Za-zÀ-ÖØ-öø-ÿ0-9]$/.test(tail);
-  }
-
-function stripContinuaMarkers(text) {
-  return String(text || "").replace(/\n?\.\.\.\(continua\)\s*$/ig, "").trim();
-}
-
-function buildPrompt({ query, targetPrompt, mode, previousText, maxChars }) {
-  const safeMode = mode === "continue" ? "continue" : "start";
-  const prev = String(previousText || "").slice(0, 24000);
-  const budget = Math.max(1400, Math.floor(maxChars * 0.9));
+function buildPrompt(query, targetPrompt, mode, previousText, maxChars) {
+  var safeMode = mode === "continue" ? "continue" : "start";
+  var prev = String(previousText || "").slice(0, 24000);
+  var budget = Math.max(1400, Math.floor(maxChars * 0.9));
 
   if (safeMode === "continue") {
     return [
@@ -79,10 +50,10 @@ function buildPrompt({ query, targetPrompt, mode, previousText, maxChars }) {
       "- Continua dal punto esatto in cui si e interrotta.",
       "- Non ripetere introduzioni o sezioni gia fatte.",
       "- Mantieni lo stesso tono e livello del target.",
-      "- Chiudi sempre le frasi (non interromperti a meta).",
-      "- IMPORTANTISSIMO: termina SEMPRE con una frase conclusiva completa e un punto finale.",
-      "- NON terminare con virgola, due punti, punto e virgola o connettivi tipo e, ma, quindi.",
-      "- Se stai per finire, fai una frase finale di chiusura (1 riga) e poi STOP.",
+      "- Chiudi sempre le frasi.",
+      "- Termina SEMPRE con una frase conclusiva completa e un punto finale.",
+      "- NON terminare con virgola, due punti o connettivi.",
+      "- Se stai per finire, fai una frase finale di chiusura e poi STOP.",
       "- Stai entro circa " + budget + " caratteri (massimo " + maxChars + ")."
     ].join("\n");
   }
@@ -96,22 +67,20 @@ function buildPrompt({ query, targetPrompt, mode, previousText, maxChars }) {
     "ISTRUZIONI:",
     "- Risposta chiara, ben strutturata.",
     "- Usa titoli e liste quando utile.",
-    "- Chiudi sempre le frasi (non interromperti a meta).",
-    "- IMPORTANTISSIMO: termina SEMPRE con una frase conclusiva completa e un punto finale.",
-    "- NON terminare con virgola, due punti, punto e virgola o connettivi tipo e, ma, quindi.",
-    "- Se stai per finire, fai una frase finale di chiusura (1 riga) e poi STOP.",
-    "- Non iniziare una frase con lettera MAIUSCOLA dopo una virgola: usa un punto.",
-    "- L’ultima frase deve finire con un punto, punto interrogativo o esclamativo.",
+    "- Chiudi sempre le frasi.",
+    "- Termina SEMPRE con una frase conclusiva completa e un punto finale.",
+    "- NON terminare con virgola, due punti o connettivi.",
+    "- Se stai per finire, fai una frase finale di chiusura e poi STOP.",
+    "- Non iniziare una frase con lettera maiuscola dopo una virgola.",
     "- Stai entro circa " + budget + " caratteri (massimo " + maxChars + ")."
   ].join("\n");
 }
 
-async function callGeminiSSE({ apiKey, prompt, maxTokens }) {
-  const url =
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent" +
+async function callGeminiSSE(apiKey, prompt, maxTokens) {
+  var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent" +
     "?alt=sse&key=" + apiKey;
 
-  const upstream = await fetch(url, {
+  return fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -119,38 +88,34 @@ async function callGeminiSSE({ apiKey, prompt, maxTokens }) {
       generationConfig: { temperature: 0.6, maxOutputTokens: maxTokens },
     }),
   });
-
-  return upstream;
 }
 
-async function callGeminiWithRetry({ apiKey, prompt, maxTokens }) {
-  const MAX_ATTEMPTS = 3;
-  let lastError = new Error("Errore sconosciuto");
+async function callGeminiWithRetry(apiKey, prompt, maxTokens) {
+  var MAX_ATTEMPTS = 3;
+  var lastError = new Error("Errore sconosciuto");
 
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+  for (var attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     if (attempt > 0) {
       await new Promise(function(resolve) { setTimeout(resolve, 2500 * attempt); });
     }
 
-    const res = await callGeminiSSE({ apiKey, prompt, maxTokens });
+    var res = await callGeminiSSE(apiKey, prompt, maxTokens);
     if (res.ok) return res;
 
-    let errBody = "";
+    var errBody = "";
     try { errBody = await res.text(); } catch(e) { errBody = ""; }
 
-    let msg = "Errore upstream (" + res.status + ")";
+    var msg = "Errore upstream (" + res.status + ")";
     try {
-      const j = JSON.parse(errBody);
+      var j = JSON.parse(errBody);
       if (j && j.error && j.error.message) msg = j.error.message;
     } catch(e) {
       if (errBody) msg = msg + ": " + errBody.slice(0, 300);
     }
     lastError = new Error(msg);
 
-    const lower = msg.toLowerCase();
-    const retryable =
-      res.status === 429 ||
-      res.status >= 500 ||
+    var lower = msg.toLowerCase();
+    var retryable = res.status === 429 || res.status >= 500 ||
       lower.indexOf("high demand") !== -1 ||
       lower.indexOf("overloaded") !== -1 ||
       lower.indexOf("quota") !== -1;
@@ -170,106 +135,97 @@ export default async function handler(req) {
   }
 
   try {
-    const apiKey = process.env.GEMINI_API_KEY;
+    var apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return jsonError("GEMINI_API_KEY mancante su Vercel.", 500);
 
-    let body;
+    var body;
     try { body = await req.json(); } catch(e) { return jsonError("Body JSON non valido.", 400); }
 
-    const query = String(body?.query || "").trim();
-    const targetPrompt = String(body?.targetPrompt || "").trim();
-    const mode = body?.mode;
-    const previousText = body?.previousText || "";
+    var query = String((body && body.query) || "").trim();
+    var targetPrompt = String((body && body.targetPrompt) || "").trim();
+    var mode = body && body.mode;
+    var previousText = (body && body.previousText) || "";
 
     if (!query || !targetPrompt) return jsonError("Parametri mancanti: query/targetPrompt.", 400);
 
-    const maxTokens = clamp(body?.maxTokens, 512, 16000, 2500);
-    const maxChars = clamp(body?.maxChars, 500, 50000, 6000);
+    var maxTokens = clamp(body && body.maxTokens, 512, 16000, 2500);
+    var maxChars = clamp(body && body.maxChars, 500, 50000, 6000);
 
-    // ---- STREAM verso client (SSE pulito) ----
-    const encoder = new TextEncoder();
-    const decoder = new TextDecoder();
+    var encoder = new TextEncoder();
+    var decoder = new TextDecoder();
 
-    const { readable, writable } = new TransformStream();
-    const writer = writable.getWriter();
+    var ts = new TransformStream();
+    var readable = ts.readable;
+    var writer = ts.writable.getWriter();
 
-    const emitText = async (text) => {
-      const t = String(text || "");
+    async function emitText(text) {
+      var t = String(text || "");
       if (!t) return;
-      const json = { candidates: [{ content: { parts: [{ text: t }] } }] };
+      var json = { candidates: [{ content: { parts: [{ text: t }] } }] };
       await writer.write(encoder.encode("data: " + JSON.stringify(json) + "\n\n"));
-    };
+    }
 
-    const closeStream = async () => {
-      await writer.write(encoder.encode("data: [DONE]" + "\n\n"));
+    async function closeStream() {
+      await writer.write(encoder.encode("data: [DONE]\n\n"));
       try { await writer.close(); } catch(e) {}
-    };
+    }
 
-    // Esegue un “round” (start o continue) e raccoglie il testo completo di quel round,
-    // mentre lo streamma anche al client in real time.
-    const runRound = async (roundMode, currentText) => {
-      const prompt = buildPrompt({
-        query,
-        targetPrompt,
-        mode: roundMode,
-        previousText: currentText,
-        maxChars
-      });
+    async function runRound(roundMode, currentText) {
+      var prompt = buildPrompt(query, targetPrompt, roundMode, currentText, maxChars);
+      var upstream = await callGeminiWithRetry(apiKey, prompt, maxTokens);
 
-      const upstream = await callGeminiWithRetry({ apiKey, prompt, maxTokens });
-      if (!upstream.body) throw new Error(“Upstream body nullo (stream non disponibile).”);
+      if (!upstream.body) throw new Error("Upstream body nullo.");
 
-      const reader = upstream.body.getReader();
-      let buffer = "";
-      let roundText = "";
+      var reader = upstream.body.getReader();
+      var buffer = "";
+      var roundText = "";
 
-      const processBlock = async (block) => {
-        const lines = block.split(/\r?\n/);
-        const dataLines = lines.filter(l => l.startsWith("data:")).map(l => l.slice(5).trim());
+      async function processBlock(block) {
+        var lines = block.split(/\r?\n/);
+        var dataLines = lines.filter(function(l) { return l.startsWith("data:"); })
+                             .map(function(l) { return l.slice(5).trim(); });
         if (!dataLines.length) return;
 
-        const data = dataLines.join("\n");
+        var data = dataLines.join("\n");
         if (!data || data === "[DONE]") return;
 
-        let json;
-        try { json = JSON.parse(data); } catch(e) { return; }
+        var parsed;
+        try { parsed = JSON.parse(data); } catch(e) { return; }
 
-        const parts = json?.candidates?.[0]?.content?.parts;
+        var candidates = parsed && parsed.candidates;
+        var parts = candidates && candidates[0] && candidates[0].content && candidates[0].content.parts;
         if (!Array.isArray(parts)) return;
 
-        const chunk = parts.map(p => p?.text ? String(p.text) : "").join("");
+        var chunk = parts.map(function(p) { return (p && p.text) ? String(p.text) : ""; }).join("");
         if (!chunk) return;
 
         roundText += chunk;
-        // streamma subito al client (ma NON marker continua)
         await emitText(chunk);
-      };
+      }
 
       while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
+        var result = await reader.read();
+        if (result.done) break;
 
-        buffer += decoder.decode(value, { stream: true });
-        const blocks = buffer.split(/\r?\n\r?\n/);
+        buffer += decoder.decode(result.value, { stream: true });
+        var blocks = buffer.split(/\r?\n\r?\n/);
         buffer = blocks.pop() || "";
 
-        for (const b of blocks) {
-          if (b.trim()) await processBlock(b);
+        for (var i = 0; i < blocks.length; i++) {
+          if (blocks[i].trim()) await processBlock(blocks[i]);
         }
       }
       if (buffer.trim()) await processBlock(buffer);
 
       return roundText;
-    };
+    }
 
-    // pump server-side: 1 round SOLO (niente auto-continue)
-    (async () => {
+    (async function() {
       try {
-        // Ignoriamo mode=continue lato server: un solo flusso coerente
         await runRound("start", "");
         await closeStream();
-      } catch (e) {
-        await emitText("Errore: " + (e && e.message ? e.message : "sconosciuto"));
+      } catch(e) {
+        await emitText("Errore: " + ((e && e.message) ? e.message : "sconosciuto"));
         await closeStream();
       }
     })();
@@ -283,7 +239,7 @@ export default async function handler(req) {
         "X-SimplifAI-API": "gemini-proxy",
       }),
     });
-  } catch (e) {
-    return jsonError(e?.message || "Errore sconosciuto", 500);
+  } catch(e) {
+    return jsonError((e && e.message) || "Errore sconosciuto", 500);
   }
 }
