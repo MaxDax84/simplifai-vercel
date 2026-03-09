@@ -72,9 +72,9 @@ TARGET/STILE:
 ${targetPrompt}
 
 TESTO GIÀ DATO (non ripeterlo):
-"""
+---
 ${prev}
-"""
+---
 
 ISTRUZIONI:
 - Continua dal punto esatto in cui si è interrotta.
