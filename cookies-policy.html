@@ -36,10 +36,18 @@
     .policy-section a{ color:rgba(124,92,255,.9); text-decoration:none; }
     .policy-section a:hover{ text-decoration:underline; }
 
+    .cookie-table-wrap{
+      overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
+      margin-top:12px;
+      /* evita che la tabella sfori il padding del card */
+      margin-left:-2px;
+      margin-right:-2px;
+    }
     .cookie-table{
       width:100%;
+      min-width:480px;
       border-collapse:collapse;
-      margin-top:12px;
       font-size:13px;
     }
     .cookie-table th{
@@ -48,6 +56,7 @@
       font-weight:600;
       padding:8px 10px;
       border-bottom:1px solid var(--border);
+      white-space:nowrap;
     }
     .cookie-table td{
       padding:10px;
@@ -58,6 +67,47 @@
     }
     .cookie-table td:first-child{ color:var(--text); font-weight:700; }
     .cookie-table tr:last-child td{ border-bottom:none; }
+
+    /* ── Stacking su schermi < 600px ── */
+    @media(max-width:600px){
+      .cookie-table-wrap{ margin-left:0; margin-right:0; }
+      .cookie-table,
+      .cookie-table thead,
+      .cookie-table tbody,
+      .cookie-table th,
+      .cookie-table td,
+      .cookie-table tr{ display:block; }
+
+      .cookie-table thead{ display:none; }
+
+      .cookie-table tr{
+        margin-bottom:16px;
+        border:1px solid var(--border);
+        border-radius:10px;
+        overflow:hidden;
+      }
+      .cookie-table tr:last-child{ margin-bottom:0; }
+
+      .cookie-table td{
+        padding:8px 12px;
+        border-bottom:1px solid rgba(255,255,255,.05);
+        position:relative;
+      }
+      .cookie-table td:last-child{ border-bottom:none; }
+
+      /* etichetta di colonna inline */
+      .cookie-table td::before{
+        content:attr(data-label);
+        display:block;
+        font-size:10px;
+        font-weight:700;
+        text-transform:uppercase;
+        letter-spacing:.05em;
+        color:var(--muted2, var(--muted));
+        margin-bottom:3px;
+      }
+      .cookie-table td:first-child{ color:var(--text); font-weight:700; }
+    }
 
     .update-date{
       text-align:center;
@@ -122,6 +172,7 @@
       <div class="card policy-section">
         <h2>2. Tipologie di cookie utilizzati</h2>
 
+        <div class="cookie-table-wrap">
         <table class="cookie-table">
           <thead>
             <tr>
@@ -133,25 +184,26 @@
           </thead>
           <tbody>
             <tr>
-              <td>sb-* (Supabase)</td>
-              <td>Gestione della sessione di autenticazione. Indispensabili per mantenere l'utente connesso al proprio account.</td>
-              <td>Sessione / 1 anno</td>
-              <td>Supabase (tecnico)</td>
+              <td data-label="Nome / Tipo">sb-* (Supabase)</td>
+              <td data-label="Finalità">Gestione della sessione di autenticazione. Indispensabili per mantenere l'utente connesso al proprio account.</td>
+              <td data-label="Durata">Sessione / 1 anno</td>
+              <td data-label="Provenienza">Supabase (tecnico)</td>
             </tr>
             <tr>
-              <td>localStorage (token sessione)</td>
-              <td>Archiviazione locale del token di autenticazione per evitare di richiedere il login ad ogni visita.</td>
-              <td>Fino al logout</td>
-              <td>Interno (tecnico)</td>
+              <td data-label="Nome / Tipo">localStorage (token sessione)</td>
+              <td data-label="Finalità">Archiviazione locale del token di autenticazione per evitare di richiedere il login ad ogni visita.</td>
+              <td data-label="Durata">Fino al logout</td>
+              <td data-label="Provenienza">Interno (tecnico)</td>
             </tr>
             <tr>
-              <td>Preferenze UI</td>
-              <td>Memorizzazione locale delle preferenze di navigazione (es. target e lunghezza selezionati).</td>
-              <td>Sessione</td>
-              <td>Interno (tecnico)</td>
+              <td data-label="Nome / Tipo">Preferenze UI</td>
+              <td data-label="Finalità">Memorizzazione locale delle preferenze di navigazione (es. target e lunghezza selezionati).</td>
+              <td data-label="Durata">Sessione</td>
+              <td data-label="Provenienza">Interno (tecnico)</td>
             </tr>
           </tbody>
         </table>
+        </div>
 
         <p style="margin-top:14px;">Attualmente Simplif-AI <strong style="color:var(--text);">non utilizza cookie di profilazione, di marketing o di tracciamento di terze parti</strong> (come Google Analytics, Meta Pixel o simili).</p>
       </div>

@@ -10,6 +10,23 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.11/dist/purify.min.js"></script>
 
+  <!-- MathJax v3: rendering formule LaTeX inline ($...$) e display ($$...$$) -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script','noscript','style','textarea','pre','code']
+      },
+      svg: { fontCache: 'global' },
+      startup: { typeset: false }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+
   <style>
     .section{ margin-top:22px; }
     .badge{ font-size:12px; color:var(--muted); margin-bottom:8px; }
@@ -228,6 +245,21 @@
       margin: 14px 0;
     }
     .md a{ color: rgba(38,198,255,.95); }
+
+    /* ── Formule MathJax ── */
+    .md mjx-container{
+      overflow-x: auto;
+      max-width: 100%;
+      display: block;
+    }
+    /* formule inline: non forzare block */
+    .md mjx-container[jax="SVG"][display="true"]{
+      margin: 10px 0;
+    }
+    .md mjx-container svg{
+      max-width: 100%;
+      height: auto;
+    }
   </style>
 </head>
 
@@ -574,6 +606,10 @@
     function renderMarkdownSafe(text){
       const cleaned = normalizeForDisplay(text);
       responseEl.innerHTML = DOMPurify.sanitize(marked.parse(cleaned));
+      if(window.MathJax && MathJax.typesetPromise){
+        MathJax.typesetClear([responseEl]);
+        MathJax.typesetPromise([responseEl]).catch(function(err){ console.warn("MathJax:", err); });
+      }
     }
     
     function ensureEndsClean(text){
