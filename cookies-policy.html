@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cookie Policy – Simplif-AI</title>
+  <link rel="stylesheet" href="/theme.css">
+
+  <style>
+    .policy-hero{ text-align:center; padding:26px 18px; }
+    .policy-content{ margin-top:18px; display:flex; flex-direction:column; gap:16px; }
+
+    .policy-section{ padding:22px; }
+    .policy-section h2{
+      margin:0 0 12px;
+      font-size:18px;
+      font-weight:900;
+      display:flex; align-items:center; gap:10px;
+    }
+    .policy-section p{
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.7;
+      margin:0 0 10px;
+    }
+    .policy-section p:last-child{ margin-bottom:0; }
+    .policy-section ul{
+      margin:8px 0 10px 20px;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.7;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .policy-section a{ color:rgba(124,92,255,.9); text-decoration:none; }
+    .policy-section a:hover{ text-decoration:underline; }
+
+    .cookie-table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:12px;
+      font-size:13px;
+    }
+    .cookie-table th{
+      text-align:left;
+      color:var(--muted);
+      font-weight:600;
+      padding:8px 10px;
+      border-bottom:1px solid var(--border);
+    }
+    .cookie-table td{
+      padding:10px;
+      border-bottom:1px solid rgba(255,255,255,.05);
+      color:var(--muted);
+      vertical-align:top;
+      line-height:1.5;
+    }
+    .cookie-table td:first-child{ color:var(--text); font-weight:700; }
+    .cookie-table tr:last-child td{ border-bottom:none; }
+
+    .update-date{
+      text-align:center;
+      color:var(--muted2);
+      font-size:12px;
+      margin-top:10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <header>
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>Simplif-AI</h1>
+          <span>Concetti complessi spiegati in modo semplice. Scegli tu quanto.</span>
+        </div>
+      </div>
+
+      <nav id="mainNav">
+        <a href="/index.html" data-nav="home">Home</a>
+        <a href="/app.html" data-nav="app">Chiedimi qualcosa</a>
+        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
+        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
+        <a href="/profilo.html" data-nav="profile">Profilo</a>
+      </nav>
+
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+        <span></span><span></span><span></span>
+      </button>
+    </header>
+
+    <div class="mobile-nav" id="mobileNav">
+      <a href="/index.html">Home</a>
+      <a href="/app.html">Chiedimi qualcosa</a>
+      <a href="/come-funziona.html">Come funziona</a>
+      <a href="/prezzi.html">Prezzi</a>
+      <a href="/profilo.html">Profilo</a>
+    </div>
+
+    <!-- HERO -->
+    <div class="card">
+      <div class="card-inner policy-hero">
+        <span class="pilltag">🍪 COOKIE</span>
+        <div class="h1">Cookie Policy</div>
+        <p class="sub">Informazioni su come utilizziamo i cookie e le tecnologie di tracciamento simili.</p>
+        <p class="update-date">Ultimo aggiornamento: 9 marzo 2025</p>
+      </div>
+    </div>
+
+    <div class="policy-content">
+
+      <div class="card policy-section">
+        <h2>1. Cosa sono i cookie</h2>
+        <p>I cookie sono piccoli file di testo che i siti web salvano nel tuo browser quando li visiti. Vengono utilizzati per far funzionare correttamente il sito, ricordare le tue preferenze e raccogliere informazioni statistiche sull'utilizzo.</p>
+        <p>Oltre ai cookie tradizionali, utilizziamo tecnologie simili come il <strong style="color:var(--text);">localStorage</strong> del browser per mantenere la tua sessione attiva e memorizzare preferenze locali senza inviare dati al server ad ogni richiesta.</p>
+      </div>
+
+      <div class="card policy-section">
+        <h2>2. Tipologie di cookie utilizzati</h2>
+
+        <table class="cookie-table">
+          <thead>
+            <tr>
+              <th>Nome / Tipo</th>
+              <th>Finalità</th>
+              <th>Durata</th>
+              <th>Provenienza</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>sb-* (Supabase)</td>
+              <td>Gestione della sessione di autenticazione. Indispensabili per mantenere l'utente connesso al proprio account.</td>
+              <td>Sessione / 1 anno</td>
+              <td>Supabase (tecnico)</td>
+            </tr>
+            <tr>
+              <td>localStorage (token sessione)</td>
+              <td>Archiviazione locale del token di autenticazione per evitare di richiedere il login ad ogni visita.</td>
+              <td>Fino al logout</td>
+              <td>Interno (tecnico)</td>
+            </tr>
+            <tr>
+              <td>Preferenze UI</td>
+              <td>Memorizzazione locale delle preferenze di navigazione (es. target e lunghezza selezionati).</td>
+              <td>Sessione</td>
+              <td>Interno (tecnico)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p style="margin-top:14px;">Attualmente Simplif-AI <strong style="color:var(--text);">non utilizza cookie di profilazione, di marketing o di tracciamento di terze parti</strong> (come Google Analytics, Meta Pixel o simili).</p>
+      </div>
+
+      <div class="card policy-section">
+        <h2>3. Cookie tecnici — base giuridica</h2>
+        <p>I cookie tecnici sono strettamente necessari per il funzionamento del servizio e non richiedono il tuo consenso ai sensi dell'art. 122, comma 1, del Codice Privacy e delle Linee guida del Garante Privacy italiano. Senza questi cookie non sarebbe possibile autenticarsi né utilizzare le funzionalità dell'app.</p>
+      </div>
+
+      <div class="card policy-section">
+        <h2>4. Gestione e disabilitazione dei cookie</h2>
+        <p>Puoi gestire o eliminare i cookie tramite le impostazioni del tuo browser. Di seguito i link alle guide ufficiali dei principali browser:</p>
+        <ul>
+          <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener">Google Chrome</a></li>
+          <li><a href="https://support.mozilla.org/it/kb/Eliminare%20i%20cookie" target="_blank" rel="noopener">Mozilla Firefox</a></li>
+          <li><a href="https://support.apple.com/it-it/guide/safari/sfri11471/mac" target="_blank" rel="noopener">Apple Safari</a></li>
+          <li><a href="https://support.microsoft.com/it-it/microsoft-edge/eliminare-i-cookie-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank" rel="noopener">Microsoft Edge</a></li>
+        </ul>
+        <p><strong style="color:var(--text);">Attenzione:</strong> la disabilitazione dei cookie tecnici impedirà il corretto funzionamento del servizio: non sarà possibile accedere al proprio account né utilizzare l'app.</p>
+      </div>
+
+      <div class="card policy-section">
+        <h2>5. Cookie di terze parti</h2>
+        <p>Il nostro sito utilizza librerie JavaScript caricate da CDN esterni (es. Supabase JS, Marked.js, DOMPurify). Queste librerie potrebbero impostare cookie propri o accedere a cookie già presenti. Ti invitiamo a consultare le relative informative:</p>
+        <ul>
+          <li><a href="https://supabase.com/privacy" target="_blank" rel="noopener">Privacy Policy di Supabase</a></li>
+          <li><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy di Google (per Gemini API)</a></li>
+        </ul>
+      </div>
+
+      <div class="card policy-section">
+        <h2>6. Modifiche alla Cookie Policy</h2>
+        <p>Ci riserviamo il diritto di aggiornare questa Cookie Policy in qualsiasi momento, ad esempio in seguito all'introduzione di nuove funzionalità o tecnologie. La data dell'ultimo aggiornamento è indicata in cima a questo documento.</p>
+        <p>Per ulteriori informazioni sul trattamento dei dati personali, consulta la nostra <a href="/privacy-policy.html">Privacy Policy</a>.</p>
+      </div>
+
+      <div class="card policy-section" style="text-align:center;">
+        <p style="color:var(--muted); font-size:14px; margin:0 0 14px;">Hai domande sulla nostra Cookie Policy?</p>
+        <a href="mailto:privacy@simplif-ai.com" class="btn btn-primary">Contattaci</a>
+      </div>
+
+    </div>
+
+    <footer class="site-footer">
+      <span>© 2025 Simplif-AI</span>
+      <div class="footer-links">
+        <a href="/privacy-policy.html">Privacy Policy</a>
+        <a href="/cookies-policy.html">Cookie Policy</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    (function(){
+      const toggle = document.getElementById("navToggle");
+      const mobileNav = document.getElementById("mobileNav");
+      if(!toggle || !mobileNav) return;
+      toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
+      mobileNav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => document.body.classList.remove("nav-open")));
+    })();
+
+    (function(){
+      const h = document.querySelector('header');
+      if(h) window.addEventListener('scroll', () => h.classList.toggle('scrolled', window.scrollY > 10), { passive: true });
+    })();
+  </script>
+</body>
+</html>

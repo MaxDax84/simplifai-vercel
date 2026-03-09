@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Simplif-AI – App</title>
+  <title>Simplif-AI – Chiedimi qualcosa</title>
  <link rel="stylesheet" href="/theme.css">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -245,7 +245,7 @@
 
       <nav id="mainNav">
         <a href="/index.html" data-nav="home">Home</a>
-        <a href="/app.html" data-nav="app">App</a>
+        <a href="/app.html" data-nav="app">Chiedimi qualcosa</a>
         <a href="/come-funziona.html" data-nav="how">Come funziona</a>
         <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
         <a href="/profilo.html" data-nav="profile">Profilo</a>
@@ -258,7 +258,7 @@
 
     <div class="mobile-nav" id="mobileNav">
       <a href="/index.html">Home</a>
-      <a href="/app.html">App</a>
+      <a href="/app.html">Chiedimi qualcosa</a>
       <a href="/come-funziona.html">Come funziona</a>
       <a href="/prezzi.html">Prezzi</a>
       <a href="/profilo.html">Profilo</a>
@@ -348,6 +348,14 @@
     </section>
 
     <div style="height:26px;"></div>
+
+    <footer class="site-footer">
+      <span>© 2025 Simplif-AI</span>
+      <div class="footer-links">
+        <a href="/privacy-policy.html">Privacy Policy</a>
+        <a href="/cookies-policy.html">Cookie Policy</a>
+      </div>
+    </footer>
   </div>
 
   <script>
@@ -393,6 +401,12 @@
       else if (path.includes("come-funziona")) key = "how";
       else if (path.includes("prezzi")) key = "pricing";
       document.querySelectorAll('#mainNav a').forEach(a=>{ if(a.dataset.nav === key) a.classList.add('nav-active'); });
+    })();
+
+    /* Sticky header */
+    (function(){
+      const h = document.querySelector('header');
+      if(h) window.addEventListener('scroll', () => h.classList.toggle('scrolled', window.scrollY > 10), { passive: true });
     })();
 
     /* Targets & Lengths */

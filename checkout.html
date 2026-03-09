@@ -154,7 +154,7 @@
 
       <nav id="mainNav">
         <a href="/index.html" data-nav="home">Home</a>
-        <a href="/app.html" data-nav="app">App</a>
+        <a href="/app.html" data-nav="app">Chiedimi qualcosa</a>
         <a href="/come-funziona.html" data-nav="how">Come funziona</a>
         <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
         <a href="/profilo.html" data-nav="profile">Profilo</a>
@@ -167,7 +167,7 @@
 
     <div class="mobile-nav" id="mobileNav">
       <a href="/index.html">Home</a>
-      <a href="/app.html">App</a>
+      <a href="/app.html">Chiedimi qualcosa</a>
       <a href="/come-funziona.html">Come funziona</a>
       <a href="/prezzi.html">Prezzi</a>
       <a href="/profilo.html">Profilo</a>
@@ -238,7 +238,7 @@
             <div class="success-icon">🎉</div>
             <p class="success-title">Acquisto completato!</p>
             <p class="success-sub" id="successSub">I tuoi crediti sono stati aggiunti.</p>
-            <a class="btn btn-primary" href="/app.html">Vai all'app →</a>
+            <a class="btn btn-primary" href="/app.html">Chiedimi qualcosa →</a>
           </div>
         </div>
       </div>
@@ -265,6 +265,14 @@
         </div>
       </div>
     </div>
+
+    <footer class="site-footer">
+      <span>© 2025 Simplif-AI</span>
+      <div class="footer-links">
+        <a href="/privacy-policy.html">Privacy Policy</a>
+        <a href="/cookies-policy.html">Cookie Policy</a>
+      </div>
+    </footer>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -283,6 +291,12 @@
       document.querySelectorAll('#mainNav a').forEach(a=>{
         if(a.dataset.nav === "pricing") a.classList.add('nav-active');
       });
+    })();
+
+    /* Sticky header */
+    (function(){
+      const h = document.querySelector('header');
+      if(h) window.addEventListener('scroll', () => h.classList.toggle('scrolled', window.scrollY > 10), { passive: true });
     })();
 
     const SUPABASE_URL  = "https://lmmiowagyqypdrdcemdo.supabase.co";
