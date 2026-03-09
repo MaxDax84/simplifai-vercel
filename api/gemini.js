@@ -124,6 +124,44 @@ async function callGeminiSSE({ apiKey, prompt, maxTokens }) {
   return upstream;
 }
 
+async function callGeminiWithRetry({ apiKey, prompt, maxTokens }) {
+  const MAX_ATTEMPTS = 3;
+  let lastError = new Error("Errore sconosciuto");
+
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    if (attempt > 0) {
+      await new Promise(function(resolve) { setTimeout(resolve, 2500 * attempt); });
+    }
+
+    const res = await callGeminiSSE({ apiKey, prompt, maxTokens });
+    if (res.ok) return res;
+
+    let errBody = "";
+    try { errBody = await res.text(); } catch(e) { errBody = ""; }
+
+    let msg = "Errore upstream (" + res.status + ")";
+    try {
+      const j = JSON.parse(errBody);
+      if (j && j.error && j.error.message) msg = j.error.message;
+    } catch(e) {
+      if (errBody) msg = msg + ": " + errBody.slice(0, 300);
+    }
+    lastError = new Error(msg);
+
+    const lower = msg.toLowerCase();
+    const retryable =
+      res.status === 429 ||
+      res.status >= 500 ||
+      lower.indexOf("high demand") !== -1 ||
+      lower.indexOf("overloaded") !== -1 ||
+      lower.indexOf("quota") !== -1;
+
+    if (!retryable) break;
+  }
+
+  throw lastError;
+}
+
 export default async function handler(req) {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders({ "X-SimplifAI-API": "gemini-proxy" }) });
@@ -137,7 +175,7 @@ export default async function handler(req) {
     if (!apiKey) return jsonError("GEMINI_API_KEY mancante su Vercel.", 500);
 
     let body;
-    try { body = await req.json(); } catch { return jsonError("Body JSON non valido.", 400); }
+    try { body = await req.json(); } catch(e) { return jsonError("Body JSON non valido.", 400); }
 
     const query = String(body?.query || "").trim();
     const targetPrompt = String(body?.targetPrompt || "").trim();
@@ -165,7 +203,7 @@ export default async function handler(req) {
 
     const closeStream = async () => {
       await writer.write(encoder.encode("data: [DONE]\n\n"));
-      try { await writer.close(); } catch {}
+      try { await writer.close(); } catch(e) {}
     };
 
     // Esegue un “round” (start o continue) e raccoglie il testo completo di quel round,
@@ -179,36 +217,7 @@ export default async function handler(req) {
         maxChars
       });
 
-      const MAX_ATTEMPTS = 3;
-      let upstream, lastError;
-
-      for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-        if (attempt > 0) {
-          await new Promise(r => setTimeout(r, 2500 * attempt));
-        }
-        upstream = await callGeminiSSE({ apiKey, prompt, maxTokens });
-        if (upstream.ok) { lastError = null; break; }
-
-        const errText = await upstream.text().catch(() => “”);
-        let msg = `Errore upstream (${upstream.status})`;
-        try {
-          const j = JSON.parse(errText);
-          msg = j?.error?.message || msg;
-        } catch {
-          if (errText) msg = `${msg}: ${errText.slice(0, 300)}`;
-        }
-        lastError = new Error(msg);
-
-        const isRetryable =
-          upstream.status === 429 ||
-          upstream.status >= 500 ||
-          msg.toLowerCase().includes(“high demand”) ||
-          msg.toLowerCase().includes(“overloaded”) ||
-          msg.toLowerCase().includes(“quota”);
-        if (!isRetryable) break;
-      }
-
-      if (!upstream.ok) throw lastError;
+      const upstream = await callGeminiWithRetry({ apiKey, prompt, maxTokens });
       if (!upstream.body) throw new Error(“Upstream body nullo (stream non disponibile).”);
 
       const reader = upstream.body.getReader();
@@ -224,7 +233,7 @@ export default async function handler(req) {
         if (!data || data === "[DONE]") return;
 
         let json;
-        try { json = JSON.parse(data); } catch { return; }
+        try { json = JSON.parse(data); } catch(e) { return; }
 
         const parts = json?.candidates?.[0]?.content?.parts;
         if (!Array.isArray(parts)) return;
