@@ -59,58 +59,57 @@ function stripContinuaMarkers(text) {
 function buildPrompt({ query, targetPrompt, mode, previousText, maxChars }) {
   const safeMode = mode === "continue" ? "continue" : "start";
   const prev = String(previousText || "").slice(0, 24000);
-
   const budget = Math.max(1400, Math.floor(maxChars * 0.9));
 
   if (safeMode === "continue") {
-    return `
-Continua la spiegazione.
-
-DOMANDA/CONCETTO: "${query}"
-
-TARGET/STILE:
-${targetPrompt}
-
-TESTO GIÀ DATO (non ripeterlo):
----
-${prev}
----
-
-ISTRUZIONI:
-- Continua dal punto esatto in cui si è interrotta.
-- Non ripetere introduzioni o sezioni già fatte.
-- Mantieni lo stesso tono e livello del target.
-- Chiudi sempre le frasi (non interromperti a metà).
-- IMPORTANTISSIMO: termina SEMPRE con una frase conclusiva completa e un punto finale.
-- NON terminare con virgola, due punti, punto e virgola o connettivi tipo "e", "ma", "quindi".
-- Se stai per finire, fai una frase finale di chiusura (1 riga) e poi STOP.
-- Stai entro ~${budget} caratteri (massimo ${maxChars}).
-`.trim();
+    return [
+      "Continua la spiegazione.",
+      "",
+      "DOMANDA/CONCETTO: " + query,
+      "",
+      "TARGET/STILE:",
+      targetPrompt,
+      "",
+      "TESTO GIA DATO (non ripeterlo):",
+      "---",
+      prev,
+      "---",
+      "",
+      "ISTRUZIONI:",
+      "- Continua dal punto esatto in cui si e interrotta.",
+      "- Non ripetere introduzioni o sezioni gia fatte.",
+      "- Mantieni lo stesso tono e livello del target.",
+      "- Chiudi sempre le frasi (non interromperti a meta).",
+      "- IMPORTANTISSIMO: termina SEMPRE con una frase conclusiva completa e un punto finale.",
+      "- NON terminare con virgola, due punti, punto e virgola o connettivi tipo e, ma, quindi.",
+      "- Se stai per finire, fai una frase finale di chiusura (1 riga) e poi STOP.",
+      "- Stai entro circa " + budget + " caratteri (massimo " + maxChars + ")."
+    ].join("\n");
   }
 
-  return `
-Spiega il seguente concetto: "${query}"
-
-TARGET/STILE:
-${targetPrompt}
-
-ISTRUZIONI:
-- Risposta chiara, ben strutturata.
-- Usa titoli e liste quando utile.
-- Chiudi sempre le frasi (non interromperti a metà).
-- IMPORTANTISSIMO: termina SEMPRE con una frase conclusiva completa e un punto finale.
-- NON terminare con virgola, due punti, punto e virgola o connettivi tipo "e", "ma", "quindi".
-- Se stai per finire, fai una frase finale di chiusura (1 riga) e poi STOP.
-- Non iniziare una frase con lettera MAIUSCOLA dopo una virgola: usa un punto.
-- L’ultima frase deve finire con un punto (.) o punto interrogativo (?) o esclamativo (!).
-- Stai entro ~${budget} caratteri (massimo ${maxChars}).
-`.trim();
+  return [
+    "Spiega il seguente concetto: " + query,
+    "",
+    "TARGET/STILE:",
+    targetPrompt,
+    "",
+    "ISTRUZIONI:",
+    "- Risposta chiara, ben strutturata.",
+    "- Usa titoli e liste quando utile.",
+    "- Chiudi sempre le frasi (non interromperti a meta).",
+    "- IMPORTANTISSIMO: termina SEMPRE con una frase conclusiva completa e un punto finale.",
+    "- NON terminare con virgola, due punti, punto e virgola o connettivi tipo e, ma, quindi.",
+    "- Se stai per finire, fai una frase finale di chiusura (1 riga) e poi STOP.",
+    "- Non iniziare una frase con lettera MAIUSCOLA dopo una virgola: usa un punto.",
+    "- L’ultima frase deve finire con un punto, punto interrogativo o esclamativo.",
+    "- Stai entro circa " + budget + " caratteri (massimo " + maxChars + ")."
+  ].join("\n");
 }
 
 async function callGeminiSSE({ apiKey, prompt, maxTokens }) {
   const url =
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent` +
-    `?alt=sse&key=${apiKey}`;
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent" +
+    "?alt=sse&key=" + apiKey;
 
   const upstream = await fetch(url, {
     method: "POST",
@@ -198,11 +197,11 @@ export default async function handler(req) {
       const t = String(text || "");
       if (!t) return;
       const json = { candidates: [{ content: { parts: [{ text: t }] } }] };
-      await writer.write(encoder.encode(`data: ${JSON.stringify(json)}\n\n`));
+      await writer.write(encoder.encode("data: " + JSON.stringify(json) + "\n\n"));
     };
 
     const closeStream = async () => {
-      await writer.write(encoder.encode("data: [DONE]\n\n"));
+      await writer.write(encoder.encode("data: [DONE]" + "\n\n"));
       try { await writer.close(); } catch(e) {}
     };
 
@@ -270,7 +269,7 @@ export default async function handler(req) {
         await runRound("start", "");
         await closeStream();
       } catch (e) {
-        await emitText(`⚠️ Errore: ${e?.message || "sconosciuto"}`);
+        await emitText("Errore: " + (e && e.message ? e.message : "sconosciuto"));
         await closeStream();
       }
     })();
