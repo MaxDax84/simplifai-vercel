@@ -339,6 +339,7 @@
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
               <button class="btn" id="backToLen" type="button">↑ Cambia lunghezza</button>
               <button class="btn" id="backToTargetsFinal" type="button">↑ Cambia target</button>
+              <button class="btn" id="backToQuestion" type="button">↑ Cambia domanda</button>
             </div>
 
             <a class="btn" href="/prezzi.html" style="margin-left:auto;">Vedi Prezzi</a>
@@ -467,6 +468,7 @@
 
     const backToTargetsFinal = document.getElementById("backToTargetsFinal");
     const backToLen = document.getElementById("backToLen");
+    const backToQuestion = document.getElementById("backToQuestion");
 
     const sec1 = document.getElementById("sec1");
     const sec2 = document.getElementById("sec2");
@@ -758,7 +760,7 @@
         }
 
       } catch(e){
-        setStatus(e?.message ? `Errore: ${e.message}` : "Errore di generazione.", false);
+        setStatus("Ops! Il server è momentaneamente sovraccarico. I tuoi crediti non sono stati scalati — riprova tra qualche secondo 🔄", false);
     
       } finally{
         isGenerating = false;
@@ -815,6 +817,7 @@
     backToTargets.addEventListener("click", () => scrollTo(sec2, card2));
     backToTargetsFinal.addEventListener("click", () => scrollTo(sec2, card2));
     backToLen.addEventListener("click", () => scrollTo(secLen, cardLen));
+    backToQuestion.addEventListener("click", () => scrollTo(sec1, card1));
 
     // ✅ questo è quello che spesso manca: bottone "Vai alla risposta"
     goAnswer.addEventListener("click", () => {

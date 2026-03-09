@@ -179,9 +179,17 @@ export default async function handler(req) {
         maxChars
       });
 
-      const upstream = await callGeminiSSE({ apiKey, prompt, maxTokens });
-      if (!upstream.ok) {
-        const errText = await upstream.text().catch(() => "");
+      const MAX_ATTEMPTS = 3;
+      let upstream, lastError;
+
+      for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+        if (attempt > 0) {
+          await new Promise(r => setTimeout(r, 2500 * attempt));
+        }
+        upstream = await callGeminiSSE({ apiKey, prompt, maxTokens });
+        if (upstream.ok) { lastError = null; break; }
+
+        const errText = await upstream.text().catch(() => “”);
         let msg = `Errore upstream (${upstream.status})`;
         try {
           const j = JSON.parse(errText);
@@ -189,9 +197,19 @@ export default async function handler(req) {
         } catch {
           if (errText) msg = `${msg}: ${errText.slice(0, 300)}`;
         }
-        throw new Error(msg);
+        lastError = new Error(msg);
+
+        const isRetryable =
+          upstream.status === 429 ||
+          upstream.status >= 500 ||
+          msg.toLowerCase().includes(“high demand”) ||
+          msg.toLowerCase().includes(“overloaded”) ||
+          msg.toLowerCase().includes(“quota”);
+        if (!isRetryable) break;
       }
-      if (!upstream.body) throw new Error("Upstream body nullo (stream non disponibile).");
+
+      if (!upstream.ok) throw lastError;
+      if (!upstream.body) throw new Error(“Upstream body nullo (stream non disponibile).”);
 
       const reader = upstream.body.getReader();
       let buffer = "";
