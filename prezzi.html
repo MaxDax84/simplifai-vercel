@@ -17,16 +17,45 @@
   <style>
     .pricing-hero{ text-align:center; padding:26px 18px; }
 
-    /* Grid piani principali: 4 colonne */
+    /* Banner benvenuto */
+    .welcome-banner{
+      display:flex; align-items:center; justify-content:center;
+      gap:10px; flex-wrap:wrap; text-align:center;
+      border:1px solid rgba(124,92,255,.35);
+      background:rgba(124,92,255,.10);
+      border-radius:16px;
+      padding:14px 20px;
+      margin-top:16px;
+      font-size:14px;
+    }
+    .welcome-banner strong{ color:var(--text); font-weight:900; }
+    html[data-theme="light"] .welcome-banner{
+      border-color:rgba(124,92,255,.4);
+      background:rgba(124,92,255,.10);
+      color:rgba(13,17,51,.82);
+    }
+    html[data-theme="light"] .welcome-banner strong{ color:#0d1133; }
+
+    /* Grid piani principali: 3 colonne */
     .grid{
       display:grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
+      grid-template-columns: repeat(3, minmax(0,1fr));
       gap:14px;
       margin-top:16px;
       align-items:stretch;
     }
-    @media(max-width:1100px){ .grid{ grid-template-columns: repeat(2, 1fr); } }
-    @media(max-width:600px){  .grid{ grid-template-columns: 1fr; } }
+    @media(max-width:900px){ .grid{ grid-template-columns: repeat(2, 1fr); } }
+    @media(max-width:560px){ .grid{ grid-template-columns: 1fr; } }
+
+    /* Toggle billing labels */
+    .billing-label{
+      font-size:13px; color:var(--muted);
+      transition:.15s ease; font-weight:500;
+    }
+    .billing-label.active{
+      color:var(--accent); font-weight:900;
+    }
+    html[data-theme="light"] .billing-label.active{ color:#5b36d1; }
 
     .plan{ height:100%; display:flex; flex-direction:column; gap:10px; }
 
@@ -139,7 +168,17 @@
     }
     .topup .price{ font-size:36px; }
 
-    .fineprint{ margin-top:14px; color:var(--muted2); font-size:12px; line-height:1.45; text-align:center; }
+    .fineprint{ margin-top:14px; color:var(--muted); font-size:12px; line-height:1.55; text-align:center; }
+    html[data-theme="light"] .fineprint{ color:rgba(13,17,51,.60); }
+
+    .credits-note{
+      margin-top:10px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:13px 18px;
+      font-size:13px; color:var(--muted); text-align:center; line-height:1.55;
+    }
+    html[data-theme="light"] .credits-note{ color:rgba(13,17,51,.68); }
 
     .faq{
       margin-top:16px; display:grid;
@@ -186,6 +225,18 @@
     html[data-theme="light"] .knob{
       background: rgba(13,17,51,.8);
     }
+
+    /* ── Light mode: fix testi piani ── */
+    html[data-theme="light"] .plan-sub{ color:rgba(13,17,51,.60); }
+    html[data-theme="light"] .ul{ color:rgba(13,17,51,.72); }
+    html[data-theme="light"] .per{ color:rgba(13,17,51,.60); }
+    html[data-theme="light"] .ef-item{ color:rgba(13,17,51,.72); }
+    html[data-theme="light"] .kicker{ color:rgba(13,17,51,.60); }
+    html[data-theme="light"] .q{ color:#0d1133; }
+    html[data-theme="light"] .a{ color:rgba(13,17,51,.72); }
+    html[data-theme="light"] .enterprise-left p{ color:rgba(13,17,51,.70); }
+    html[data-theme="light"] .topup-section-label span{ color:rgba(13,17,51,.60); }
+    html[data-theme="light"] .team-note{ color:rgba(13,17,51,.70); }
   </style>
 </head>
 
@@ -233,49 +284,29 @@
       <div class="card-inner pricing-hero">
         <span class="pilltag">💎 PREZZI</span>
         <div class="h1">Scegli il piano giusto per te</div>
-        <p class="sub">Inizia gratis. Passa a un piano superiore quando vuoi più potenza.</p>
+        <p class="sub">Scegli il piano più adatto a te. Nessun costo nascosto, crediti trasparenti.</p>
         <div class="toggle" style="margin-top:14px;">
-          <span>Mensile</span>
+          <span class="billing-label active" id="billingLabelMonthly">Mensile</span>
           <div class="switch" id="billingSwitch" role="switch" aria-checked="false" tabindex="0">
             <div class="knob"></div>
           </div>
-          <span>Annuale</span>
+          <span class="billing-label" id="billingLabelYearly">Annuale</span>
           <span class="pilltag" style="margin-left:6px;">-20% (mock)</span>
         </div>
         <div class="kicker" id="billingHint">Prezzi mensili (mock).</div>
       </div>
     </div>
 
+    <!-- Banner benvenuto -->
+    <div class="welcome-banner">
+      🎁 <strong>Registrati ora per ricevere 10 crediti di benvenuto omaggio!</strong>
+      <a href="/auth.html" class="btn btn-primary" style="margin-left:6px;min-height:36px;padding:8px 16px;font-size:13px;">Crea account gratis</a>
+    </div>
+
     <!-- PIANI -->
     <div class="grid">
 
-      <!-- FREE -->
-      <div class="card">
-        <div class="card-inner plan">
-          <div class="plan-top">
-            <div>
-              <p class="plan-name">FREE</p>
-              <p class="plan-sub">Per iniziare e provare.</p>
-            </div>
-            <span class="tag">🎁 Gratis</span>
-          </div>
-          <div class="price">€0</div>
-          <div class="per">per sempre</div>
-          <div class="credits-badge">⚡ 10 crediti di benvenuto</div>
-          <ul class="ul">
-            <li><span class="i">✅</span><span>10 crediti alla registrazione</span></li>
-            <li><span class="i">✅</span><span>Tutti i 6 target disponibili</span></li>
-            <li><span class="i">✅</span><span>Tutte le lunghezze disponibili</span></li>
-            <li><span class="i">❌</span><span>Nessun rinnovo automatico</span></li>
-          </ul>
-          <div class="plan-actions">
-            <a class="btn btn-primary" href="/app.html">Inizia gratis</a>
-            <a class="btn" href="/come-funziona.html">Come funziona</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- LIGHT -->
+      <!-- LIGHT (BASE) -->
       <div class="card">
         <div class="card-inner plan">
           <div class="plan-top">
@@ -358,12 +389,12 @@
 
     <div class="topup-grid">
 
-      <!-- MINI BOOST -->
+      <!-- PACCHETTO BASE -->
       <div class="card topup">
         <div class="card-inner plan">
           <div class="plan-top">
             <div>
-              <p class="plan-name">MINI BOOST</p>
+              <p class="plan-name">PACCHETTO BASE</p>
               <p class="plan-sub">Una ricarica veloce, senza impegno.</p>
             </div>
             <span class="tag">⚡ Una tantum</span>
@@ -372,8 +403,8 @@
           <div class="per">pagamento unico</div>
           <div class="credits-badge">⚡ 18 crediti</div>
           <ul class="ul">
-            <li><span class="i">✅</span><span>18 crediti subito sul tuo account</span></li>
-            <li><span class="i">✅</span><span>Crediti validi 12 mesi</span></li>
+            <li><span class="i">✅</span><span><strong>18 crediti</strong> subito sul tuo account</span></li>
+            <li><span class="i">✅</span><span>Validi 12 mesi dall'acquisto</span></li>
             <li><span class="i">✅</span><span>Tutti i 6 target disponibili</span></li>
             <li><span class="i">✅</span><span>Tutte le lunghezze</span></li>
             <li><span class="i">❌</span><span>Nessun rinnovo automatico</span></li>
@@ -384,12 +415,12 @@
         </div>
       </div>
 
-      <!-- MAXI BOOST -->
+      <!-- PACCHETTO PREMIUM -->
       <div class="card topup">
         <div class="card-inner plan">
           <div class="plan-top">
             <div>
-              <p class="plan-name">MAXI BOOST</p>
+              <p class="plan-name">PACCHETTO PREMIUM</p>
               <p class="plan-sub">Una scorta generosa, sempre a portata.</p>
             </div>
             <span class="tag">⚡ Una tantum</span>
@@ -398,8 +429,8 @@
           <div class="per">pagamento unico</div>
           <div class="credits-badge">⚡ 45 crediti</div>
           <ul class="ul">
-            <li><span class="i">✅</span><span>45 crediti subito sul tuo account</span></li>
-            <li><span class="i">✅</span><span>Crediti validi 12 mesi</span></li>
+            <li><span class="i">✅</span><span><strong>45 crediti</strong> subito sul tuo account</span></li>
+            <li><span class="i">✅</span><span>Validi 12 mesi dall'acquisto</span></li>
             <li><span class="i">✅</span><span>Tutti i 6 target disponibili</span></li>
             <li><span class="i">✅</span><span>Tutte le lunghezze</span></li>
             <li><span class="i">❌</span><span>Nessun rinnovo automatico</span></li>
@@ -412,32 +443,23 @@
 
     </div>
 
-    <!-- ENTERPRISE -->
+    <!-- TEAM / ENTERPRISE -->
     <div class="card" style="margin-top:14px;">
-      <div class="card-inner enterprise-card">
-        <div class="enterprise-left">
-          <span class="tag" style="margin-bottom:10px; display:inline-flex;">🏢 ENTERPRISE</span>
-          <p class="plan-name">Per gruppi e organizzazioni</p>
-          <p>Contattaci per scontistiche dedicate.</p>
-          <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
-            <a class="btn btn-primary" href="mailto:info@simplif-ai.it">Contattaci</a>
-            <a class="btn" href="/come-funziona.html">Come funziona</a>
-          </div>
-        </div>
-        <div class="enterprise-features">
-          <div class="ef-item"><span>👥</span><span>Crediti condivisi tra i membri del gruppo</span></div>
-          <div class="ef-item"><span>📊</span><span>Tutti i target e tutte le lunghezze</span></div>
-          <div class="ef-item"><span>🔒</span><span>Gestione account centralizzata</span></div>
-          <div class="ef-item"><span>🎓</span><span>Ideale per classi e corsi di formazione</span></div>
-          <div class="ef-item"><span>📞</span><span>Supporto dedicato e onboarding</span></div>
-          <div class="ef-item"><span>💼</span><span>Preventivo personalizzato su richiesta</span></div>
-        </div>
+      <div class="card-inner" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 22px;">
+        <p class="team-note" style="margin:0;font-size:14px;color:var(--muted);">
+          👥 <strong style="color:var(--text);font-weight:900;">Hai bisogno di un pacchetto per il tuo team?</strong><br>
+          <span style="font-size:13px;">Contattaci per scontistiche dedicate a gruppi e aziende.</span>
+        </p>
+        <a href="mailto:sales@simplif-ai.it" class="btn btn-primary" style="white-space:nowrap;flex-shrink:0;">Contattaci →</a>
       </div>
     </div>
 
     <p class="fineprint">
       Nota: i piani a pagamento sono una simulazione UI (mock). Nessun addebito reale viene effettuato. In produzione si integrerebbe Stripe.
     </p>
+    <div class="credits-note">
+      ⏱ <strong>I crediti hanno una validità di 12 mesi</strong> dalla data di acquisto o dall'ultima ricarica effettuata.
+    </div>
 
     <!-- FAQ -->
     <div class="faq">
@@ -468,7 +490,7 @@
       <div class="card">
         <div class="card-inner">
           <p class="q">Ricariche e abbonamenti si combinano?</p>
-          <p class="a">Sì: i crediti dei pacchetti una tantum (Mini Boost / Maxi Boost) si sommano a quelli di un eventuale abbonamento attivo. Tutti i crediti si accumulano e ogni ricarica estende la scadenza dell'intero saldo a 12 mesi dalla data dell'acquisto.</p>
+          <p class="a">Sì: i crediti dei pacchetti una tantum (Pacchetto Base / Pacchetto Premium) si sommano a quelli di un eventuale abbonamento attivo. Tutti i crediti si accumulano e ogni ricarica estende la scadenza dell'intero saldo a 12 mesi dalla data dell'acquisto.</p>
         </div>
       </div>
     </div>
@@ -484,6 +506,7 @@
       <div class="footer-links">
         <a href="/privacy-policy.html">Privacy Policy</a>
         <a href="/cookies-policy.html">Cookie Policy</a>
+        <a href="/contatti.html">Contatti</a>
       </div>
     </footer>
   </div>
@@ -520,8 +543,10 @@
 
     // Billing toggle
     (function(){
-      const sw      = document.getElementById("billingSwitch");
-      const hint    = document.getElementById("billingHint");
+      const sw         = document.getElementById("billingSwitch");
+      const hint       = document.getElementById("billingHint");
+      const lblMonthly = document.getElementById("billingLabelMonthly");
+      const lblYearly  = document.getElementById("billingLabelYearly");
 
       const plans = [
         {
@@ -557,6 +582,8 @@
         sw.classList.toggle("on", yearly);
         sw.setAttribute("aria-checked", String(yearly));
         hint.textContent = yearly ? "Prezzi annuali (mock) con -20%." : "Prezzi mensili (mock).";
+        lblMonthly.classList.toggle("active", !yearly);
+        lblYearly.classList.toggle("active", yearly);
         plans.forEach(p => {
           p.priceEl.textContent   = p[mode].price;
           p.perEl.textContent     = p[mode].per;

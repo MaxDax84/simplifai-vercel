@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contatti – Simplif-AI</title>
+  <link rel="stylesheet" href="/theme.css">
+
+  <!-- FOUC prevention -->
+  <script>
+    (function(){
+      if(localStorage.getItem('sai_theme')==='light')
+        document.documentElement.setAttribute('data-theme','light');
+    })();
+  </script>
+
+  <style>
+    .contact-hero{
+      text-align:center;
+      padding:26px 18px;
+    }
+
+    .contact-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+      margin-top:18px;
+    }
+    @media(max-width:680px){
+      .contact-grid{ grid-template-columns:1fr; }
+    }
+
+    .contact-card{
+      padding:22px;
+    }
+    .contact-card h2{
+      margin:0 0 16px;
+      font-size:16px;
+      font-weight:900;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .contact-item{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      padding:14px 0;
+      border-bottom:1px solid var(--border);
+    }
+    .contact-item:last-child{ border-bottom:none; }
+    .contact-label{
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.6px;
+      text-transform:uppercase;
+      color:var(--muted2);
+    }
+    .contact-link{
+      font-size:14px;
+      color:var(--accent);
+      text-decoration:none;
+      font-weight:600;
+      transition:.15s ease;
+    }
+    .contact-link:hover{
+      color:var(--accent2);
+      text-decoration:underline;
+    }
+
+    /* Form */
+    .form-card{
+      padding:22px;
+    }
+    .form-card h2{
+      margin:0 0 18px;
+      font-size:16px;
+      font-weight:900;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .form-group{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      margin-bottom:14px;
+    }
+    .form-group label{
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:.4px;
+      text-transform:uppercase;
+      color:var(--muted2);
+    }
+    .form-group input,
+    .form-group textarea{
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:11px 14px;
+      font-size:14px;
+      color:var(--text);
+      font-family:inherit;
+      width:100%;
+      transition:.15s ease;
+      outline:none;
+      resize:vertical;
+    }
+    html[data-theme="light"] .form-group input,
+    html[data-theme="light"] .form-group textarea{
+      background:rgba(255,255,255,.75);
+      border-color:rgba(13,17,51,.15);
+      color:#0d1133;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus{
+      border-color:rgba(124,92,255,.5);
+      background:rgba(124,92,255,.05);
+    }
+    .form-group textarea{
+      min-height:110px;
+    }
+    .form-note{
+      font-size:12px;
+      color:var(--muted2);
+      margin:0 0 16px;
+      line-height:1.5;
+    }
+    .btn-send{
+      width:100%;
+      border-radius:14px;
+      padding:13px;
+      font-size:14px;
+      font-weight:900;
+      min-height:48px;
+    }
+
+    .back-row{
+      text-align:center;
+      margin:28px 0 6px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <header>
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>Simplif-AI</h1>
+        </div>
+      </div>
+
+      <nav id="mainNav">
+        <a href="/index.html" data-nav="home">Home</a>
+        <a href="/app.html" data-nav="app">Chiedimi qualcosa</a>
+        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
+        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
+        <a href="/profilo.html" data-nav="profile">Profilo</a>
+      </nav>
+
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema">☀️</button>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </header>
+
+    <div class="mobile-nav" id="mobileNav">
+      <a href="/index.html">Home</a>
+      <a href="/app.html">Chiedimi qualcosa</a>
+      <a href="/come-funziona.html">Come funziona</a>
+      <a href="/prezzi.html">Prezzi</a>
+      <a href="/profilo.html">Profilo</a>
+    </div>
+
+    <!-- HERO -->
+    <div class="card">
+      <div class="card-inner contact-hero">
+        <span class="pilltag">✉️ CONTATTI</span>
+        <div class="h1">Contattaci</div>
+        <p class="sub">Siamo qui per aiutarti. Scrivici per supporto, domande sulla privacy o qualsiasi altra necessità.</p>
+      </div>
+    </div>
+
+    <!-- GRID: info + form -->
+    <div class="contact-grid">
+
+      <!-- Riferimenti email -->
+      <div class="card contact-card">
+        <h2>📬 Riferimenti</h2>
+
+        <div class="contact-item">
+          <span class="contact-label">Supporto generale</span>
+          <a class="contact-link" href="mailto:info@simplif-ai.it">info@simplif-ai.it</a>
+          <span style="font-size:12px;color:var(--muted2);margin-top:2px;">Per domande sul servizio, i crediti o il tuo account.</span>
+        </div>
+
+        <div class="contact-item">
+          <span class="contact-label">Privacy &amp; Dati</span>
+          <a class="contact-link" href="mailto:privacy@simplif-ai.it">privacy@simplif-ai.it</a>
+          <span style="font-size:12px;color:var(--muted2);margin-top:2px;">Per richieste GDPR, cancellazione dati o segnalazioni sulla privacy.</span>
+        </div>
+
+        <div class="contact-item">
+          <span class="contact-label">Aziende &amp; Licenze</span>
+          <a class="contact-link" href="mailto:sales@simplif-ai.it">sales@simplif-ai.it</a>
+          <span style="font-size:12px;color:var(--muted2);margin-top:2px;">Per pacchetti aziendali, scontistiche di gruppo o partnership.</span>
+        </div>
+      </div>
+
+      <!-- Form di contatto -->
+      <div class="card form-card">
+        <h2>💬 Scrivici un messaggio</h2>
+        <p class="form-note">Compila il form: si aprirà il tuo client email con il messaggio precompilato.</p>
+
+        <form id="contactForm" novalidate>
+          <div class="form-group">
+            <label for="contactName">Nome</label>
+            <input type="text" id="contactName" placeholder="Il tuo nome" autocomplete="name" />
+          </div>
+          <div class="form-group">
+            <label for="contactEmail">Email</label>
+            <input type="email" id="contactEmail" placeholder="tua@email.it" autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label for="contactMsg">Messaggio</label>
+            <textarea id="contactMsg" placeholder="Scrivi qui il tuo messaggio..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-send">Apri client email →</button>
+        </form>
+      </div>
+
+    </div>
+
+    <!-- Torna alla home -->
+    <div class="back-row">
+      <a href="/index.html" class="btn">← Torna alla Home</a>
+    </div>
+
+    <footer class="site-footer">
+      <span>© 2025 Simplif-AI</span>
+      <div class="footer-links">
+        <a href="/privacy-policy.html">Privacy Policy</a>
+        <a href="/cookies-policy.html">Cookie Policy</a>
+        <a href="/contatti.html">Contatti</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // Mobile nav toggle
+    (function(){
+      const toggle = document.getElementById("navToggle");
+      const mobileNav = document.getElementById("mobileNav");
+      if(!toggle || !mobileNav) return;
+      toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
+      mobileNav.querySelectorAll("a").forEach(a =>
+        a.addEventListener("click", () => document.body.classList.remove("nav-open"))
+      );
+    })();
+
+    // Sticky header
+    (function(){
+      const h = document.querySelector('header');
+      if(h) window.addEventListener('scroll', () => h.classList.toggle('scrolled', window.scrollY > 10), { passive:true });
+    })();
+
+    // Dark/Light Theme
+    (function(){
+      const btn = document.getElementById('themeBtn');
+      if(!btn) return;
+      function apply(dark){
+        if(dark){
+          document.documentElement.removeAttribute('data-theme');
+        } else {
+          document.documentElement.setAttribute('data-theme','light');
+        }
+        btn.textContent = dark ? '☀️' : '🌙';
+        localStorage.setItem('sai_theme', dark ? 'dark' : 'light');
+      }
+      let isDark = localStorage.getItem('sai_theme') !== 'light';
+      apply(isDark);
+      btn.addEventListener('click', () => { isDark = !isDark; apply(isDark); });
+    })();
+
+    // Contact form → mailto
+    document.getElementById('contactForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const name    = document.getElementById('contactName').value.trim();
+      const email   = document.getElementById('contactEmail').value.trim();
+      const message = document.getElementById('contactMsg').value.trim();
+
+      const subject = encodeURIComponent('Contatto dal sito – ' + (name || 'Utente'));
+      const body    = encodeURIComponent(
+        (name  ? 'Nome: ' + name + '\n'  : '') +
+        (email ? 'Email: ' + email + '\n': '') +
+        '\nMessaggio:\n' + (message || '')
+      );
+
+      window.location.href = 'mailto:info@simplif-ai.it?subject=' + subject + '&body=' + body;
+    });
+  </script>
+</body>
+</html>
