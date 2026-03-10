@@ -270,6 +270,17 @@
       if (data?.session) window.location.replace("/app.html");
     });
 
+    /* Messaggio post-cancellazione account */
+    (function(){
+      if(new URLSearchParams(location.search).get("deleted") === "1"){
+        const msgEl = document.getElementById("authMsg");
+        if(msgEl){
+          msgEl.textContent = "Il tuo account è stato eliminato definitivamente. Ci dispiace vederti andare!";
+          msgEl.className = "auth-msg ok";
+        }
+      }
+    })();
+
     /* Tabs */
     const tabLogin  = document.getElementById("tabLogin");
     const tabSignup = document.getElementById("tabSignup");

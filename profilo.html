@@ -143,6 +143,84 @@
       padding: 20px;
     }
     .danger-zone .section-title{ color: #ff6b6b; }
+
+    /* ── Delete account modal ── */
+    .delete-modal{
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(5,8,18,.88);
+      backdrop-filter: blur(14px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .delete-modal.open{ display: flex; }
+    html[data-theme="light"] .delete-modal{ background: rgba(200,205,240,.80); }
+
+    .delete-modal-box{
+      background: var(--bg);
+      border: 1px solid rgba(255,80,80,.40);
+      border-radius: 22px;
+      padding: 28px 24px;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 24px 80px rgba(0,0,0,.40);
+    }
+    .delete-modal-box h3{
+      margin: 0 0 14px;
+      font-size: 20px; font-weight: 900;
+      color: #ff6b6b;
+    }
+    .delete-modal-box p{
+      color: var(--muted); font-size: 13px;
+      margin: 0 0 10px; line-height: 1.6;
+    }
+    .delete-modal-box .warn-list{
+      list-style: none; padding: 0; margin: 0 0 18px;
+      display: flex; flex-direction: column; gap: 7px;
+    }
+    .delete-modal-box .warn-list li{
+      display: flex; gap: 8px; align-items: flex-start;
+      font-size: 13px; color: var(--muted); line-height: 1.45;
+    }
+    .delete-modal-box .confirm-label{
+      font-size: 12px; font-weight: 700;
+      letter-spacing: .4px; text-transform: uppercase;
+      color: var(--muted2); margin-bottom: 6px;
+    }
+    .delete-modal-box .confirm-input{
+      width: 100%;
+      background: rgba(255,80,80,.06);
+      border: 1px solid rgba(255,80,80,.30);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 15px; font-weight: 900;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: #ff6b6b; outline: none;
+      font-family: inherit;
+      box-sizing: border-box;
+      margin-bottom: 18px;
+    }
+    .delete-modal-box .confirm-input::placeholder{ color: rgba(255,107,107,.35); letter-spacing: 1px; text-transform: none; font-weight: 400; }
+    .delete-modal-box .confirm-input:focus{ border-color: rgba(255,80,80,.55); }
+    .delete-modal-box .modal-actions{ display: flex; gap: 10px; flex-wrap: wrap; }
+    .delete-modal-box .modal-actions .btn-cancel{ flex: 1; }
+    .delete-modal-box .modal-actions .btn-delete{
+      flex: 1;
+      border-color: rgba(255,80,80,.50);
+      background: rgba(255,60,60,.12);
+      color: #ff6b6b; font-weight: 900;
+      opacity: .4; pointer-events: none;
+      transition: .15s ease;
+    }
+    .delete-modal-box .modal-actions .btn-delete.ready{
+      opacity: 1; pointer-events: auto;
+    }
+    .delete-modal-box .modal-actions .btn-delete.ready:hover{
+      background: rgba(255,60,60,.22);
+    }
+    html[data-theme="light"] .delete-modal-box{ background: #eef0ff; }
   </style>
 </head>
 
@@ -404,11 +482,58 @@
         </div>
       </div>
 
+      <!-- 5. ELIMINA ACCOUNT -->
+      <div class="card danger-zone" style="border-color:rgba(255,60,60,.35);">
+        <div class="card-inner">
+          <div class="section-title">🗑️ Elimina account</div>
+          <p style="color:var(--muted);font-size:14px;margin:0 0 10px;line-height:1.55;">
+            Questa operazione è <strong style="color:var(--text);">permanente e irreversibile</strong>.
+            Prima di procedere, leggi attentamente cosa comporta:
+          </p>
+          <ul style="list-style:none;padding:0;margin:0 0 18px;display:flex;flex-direction:column;gap:7px;">
+            <li style="display:flex;gap:8px;font-size:13px;color:var(--muted);align-items:flex-start;"><span>🗑️</span><span>Tutti i tuoi dati personali e di profilazione verranno eliminati definitivamente.</span></li>
+            <li style="display:flex;gap:8px;font-size:13px;align-items:flex-start;color:#ff8080;font-weight:700;"><span>⚡</span><span>Perderai immediatamente tutti i crediti ancora disponibili, senza rimborso.</span></li>
+            <li style="display:flex;gap:8px;font-size:13px;color:var(--muted);align-items:flex-start;"><span>🔒</span><span>L'account non potrà essere recuperato in nessun modo.</span></li>
+          </ul>
+          <button class="btn" id="openDeleteModalBtn" type="button"
+            style="border-color:rgba(255,60,60,.45);background:rgba(255,50,50,.08);color:#ff6b6b;">
+            Elimina il mio account
+          </button>
+        </div>
+      </div>
+
     </div>
     <div style="height:32px;"></div>
 
     <div style="text-align:center; margin-bottom:16px;">
       <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="font-size:13px;">↑ Torna su</button>
+    </div>
+
+    <!-- ── Modal conferma eliminazione account ── -->
+    <div class="delete-modal" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+      <div class="delete-modal-box">
+        <h3 id="deleteModalTitle">⚠️ Conferma eliminazione</h3>
+        <p>Stai per eliminare definitivamente il tuo account e <strong style="color:#ff8080;">perdere tutti i crediti residui</strong>. Questa azione non può essere annullata.</p>
+        <ul class="warn-list">
+          <li><span>🗑️</span><span>Dati personali e profilo eliminati.</span></li>
+          <li><span>⚡</span><span>Crediti persi senza possibilità di rimborso.</span></li>
+          <li><span>🚫</span><span>Accesso all'account revocato immediatamente.</span></li>
+        </ul>
+        <div class="confirm-label">Digita <strong>ELIMINA</strong> per confermare</div>
+        <input
+          class="confirm-input"
+          id="deleteConfirmInput"
+          type="text"
+          placeholder="Digita ELIMINA..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <div id="deleteErrorMsg" style="color:#ff6b6b;font-size:13px;margin:-10px 0 14px;min-height:16px;"></div>
+        <div class="modal-actions">
+          <button class="btn btn-cancel" id="cancelDeleteBtn" type="button">Annulla</button>
+          <button class="btn btn-delete" id="confirmDeleteBtn" type="button">Elimina definitivamente</button>
+        </div>
+      </div>
     </div>
 
     <footer class="site-footer">
@@ -644,6 +769,92 @@
       await sb.auth.signOut();
       window.location.replace("/auth.html");
     });
+
+    /* ── Elimina account ── */
+    (function(){
+      const openBtn      = document.getElementById("openDeleteModalBtn");
+      const modal        = document.getElementById("deleteModal");
+      const cancelBtn    = document.getElementById("cancelDeleteBtn");
+      const confirmBtn   = document.getElementById("confirmDeleteBtn");
+      const input        = document.getElementById("deleteConfirmInput");
+      const errorMsg     = document.getElementById("deleteErrorMsg");
+
+      function openModal(){
+        input.value = "";
+        errorMsg.textContent = "";
+        confirmBtn.classList.remove("ready");
+        modal.classList.add("open");
+        setTimeout(() => input.focus(), 80);
+      }
+      function closeModal(){
+        modal.classList.remove("open");
+        input.value = "";
+        errorMsg.textContent = "";
+        confirmBtn.classList.remove("ready");
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = "Elimina definitivamente";
+      }
+
+      openBtn.addEventListener("click", openModal);
+      cancelBtn.addEventListener("click", closeModal);
+
+      // Chiudi cliccando fuori dal box
+      modal.addEventListener("click", e => {
+        if(e.target === modal) closeModal();
+      });
+
+      // Chiudi con Escape
+      document.addEventListener("keydown", e => {
+        if(e.key === "Escape" && modal.classList.contains("open")) closeModal();
+      });
+
+      // Abilita il tasto solo quando l'utente ha scritto esattamente "ELIMINA"
+      input.addEventListener("input", () => {
+        const ready = input.value.trim().toUpperCase() === "ELIMINA";
+        confirmBtn.classList.toggle("ready", ready);
+        errorMsg.textContent = "";
+      });
+
+      // Conferma ed esegui la cancellazione
+      confirmBtn.addEventListener("click", async () => {
+        if(input.value.trim().toUpperCase() !== "ELIMINA"){
+          errorMsg.textContent = "Digita ELIMINA per procedere.";
+          return;
+        }
+        if(!currentUserId){
+          errorMsg.textContent = "Sessione scaduta. Ricarica la pagina.";
+          return;
+        }
+
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = "Eliminazione in corso…";
+        errorMsg.textContent = "";
+
+        try {
+          // 1. Elimina i dati del profilo dalla tabella profiles
+          const { error: profileErr } = await sb
+            .from('profiles')
+            .delete()
+            .eq('id', currentUserId);
+
+          if(profileErr) throw new Error("Errore eliminazione profilo: " + profileErr.message);
+
+          // 2. Chiama la funzione RPC SECURITY DEFINER che elimina l'utente da auth.users
+          const { error: rpcErr } = await sb.rpc('delete_user');
+
+          if(rpcErr) throw new Error("Errore eliminazione account: " + rpcErr.message);
+
+          // 3. Sign out locale e redirect
+          await sb.auth.signOut();
+          window.location.replace("/auth.html?deleted=1");
+
+        } catch(err) {
+          errorMsg.textContent = err.message;
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = "Elimina definitivamente";
+        }
+      });
+    })();
   </script>
 </body>
 </html>
