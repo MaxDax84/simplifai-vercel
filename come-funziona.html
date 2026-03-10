@@ -442,10 +442,6 @@
               <div class="faq-a">Sì: l'interfaccia è completamente responsive. Su mobile trovi il menu hamburger in alto a destra per navigare tra le sezioni.</div>
             </div>
             <div class="faq-item">
-              <div class="faq-q">In che lingua risponde l'app? <span class="faq-chevron">▼</span></div>
-              <div class="faq-a">La risposta viene generata nella stessa lingua della domanda. Se scrivi in italiano, risponde in italiano. Se scrivi in inglese, risponde in inglese.</div>
-            </div>
-            <div class="faq-item">
               <div class="faq-q">Qual è la differenza tra Esperto e Scienziato? <span class="faq-chevron">▼</span></div>
               <div class="faq-a">Esperto usa terminologia tecnica e approfondisce i meccanismi come farebbe un professionista del settore. Scienziato va oltre: usa rigore scientifico formale, cita limiti e incertezze delle conoscenze attuali, e mantiene uno stile da paper accademico.</div>
             </div>
@@ -465,7 +461,7 @@
             <div style="height:14px;"></div>
             <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
               <a class="btn btn-primary" href="/app.html">Chiedimi qualcosa →</a>
-              <a class="btn" href="/prezzi.html">Vedi i prezzi</a>
+              <a class="btn" href="/prezzi.html">Aggiungi crediti</a>
             </div>
           </div>
         </div>
@@ -473,6 +469,10 @@
       </div>
     </div>
     <div style="height:32px;"></div>
+
+    <div style="text-align:center; margin-bottom:16px;">
+      <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="font-size:13px;">↑ Torna su</button>
+    </div>
 
     <footer class="site-footer">
       <span>© 2025 Simplif-AI</span>
@@ -530,6 +530,23 @@
       const h = document.querySelector('header');
       if(h) window.addEventListener('scroll', () => h.classList.toggle('scrolled', window.scrollY > 10), { passive: true });
     })();
+
+    // Scroll con offset header per tutti i link anchor (#step-X) e "Vedi i passaggi"
+    function scrollToId(id) {
+      var target = document.getElementById(id);
+      if (!target) return;
+      var headerH = (document.querySelector('header') || {}).offsetHeight || 60;
+      var top = target.getBoundingClientRect().top + window.pageYOffset - headerH - 12;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    }
+    document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+      a.addEventListener('click', function(e) {
+        var id = a.getAttribute('href').slice(1);
+        if (!id || !document.getElementById(id)) return;
+        e.preventDefault();
+        scrollToId(id);
+      });
+    });
   </script>
 </body>
 </html>

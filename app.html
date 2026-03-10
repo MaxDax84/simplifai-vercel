@@ -321,8 +321,7 @@
     </div>
 
     <div class="hero-row">
-      <div class="pilltag">✨ Flow</div>
-      <div class="credit-pill">⚡ Crediti disponibili: <b id="creditsValue">—</b></div>
+      <a class="credit-pill" href="/prezzi.html" style="text-decoration:none;">⚡ Crediti disponibili: <b id="creditsValue">—</b></a>
     </div>
 
     <!-- ── Ultime Ricerche ── -->
@@ -380,7 +379,7 @@
           <div class="len-grid" id="lengths"></div>
           <div class="actions">
             <button class="btn" id="backToTargets" type="button">↑ Cambia target</button>
-            <button class="btn btn-primary" id="goAnswer" type="button" disabled>Vai alla risposta ↓</button>
+            <button class="btn btn-primary" id="goAnswer" type="button" disabled>Genera la risposta ↓</button>
           </div>
         </div>
       </div>
@@ -442,6 +441,10 @@
 
     <div style="height:26px;"></div>
 
+    <div style="text-align:center; margin-bottom:16px;">
+      <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="font-size:13px;">↑ Torna su</button>
+    </div>
+
     <footer class="site-footer">
       <span>© 2025 Simplif-AI</span>
       <div class="footer-links">
@@ -470,11 +473,19 @@
 
       const { data: rows } = await sb
         .from('profiles')
-        .select('credits')
+        .select('credits, credits_expiry')
         .eq('id', currentUserId)
         .limit(1);
       userCredits = rows?.[0]?.credits ?? 0;
       creditsValueEl.textContent = userCredits;
+
+      /* Verifica scadenza crediti */
+      var expiry = rows?.[0]?.credits_expiry;
+      if (expiry && new Date(expiry) < new Date()) {
+        userCredits = 0;
+        creditsValueEl.textContent = "0 (scaduti)";
+        await sb.from('profiles').update({ credits: 0, updated_at: new Date().toISOString() }).eq('id', currentUserId);
+      }
     });
 
     /* Mobile nav */
@@ -588,7 +599,9 @@
       setTimeout(()=>card.classList.remove("flash"), 420);
     }
     function scrollTo(sec, card){
-      sec.scrollIntoView({ behavior:"smooth", block:"start" });
+      var headerH = (document.querySelector('header') || {}).offsetHeight || 60;
+      var top = sec.getBoundingClientRect().top + window.pageYOffset - headerH - 8;
+      window.scrollTo({ top: top, behavior: 'smooth' });
       flash(card);
     }
     function setStatus(text, loading=false){

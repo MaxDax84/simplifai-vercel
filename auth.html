@@ -326,23 +326,71 @@
       }
     });
 
+    /* ── Helper: upsert crediti di benvenuto (richiede sessione attiva) ── */
+    async function applyWelcomeCredits(userId) {
+      var expiry = new Date();
+      expiry.setFullYear(expiry.getFullYear() + 1);
+      var { error: profileErr } = await sb.from('profiles').upsert({
+        id: userId,
+        credits: 10,
+        credits_expiry: expiry.toISOString(),
+        updated_at: new Date().toISOString()
+      });
+      if (profileErr) console.error("Errore crediti iniziali:", profileErr.message);
+    }
+
     /* Signup */
     const signupBtn = document.getElementById("signupBtn");
     signupBtn.dataset.label = "Crea account";
     signupForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      setLoading(signupBtn, true);
       clearMsg();
+
       const email    = document.getElementById("signupEmail").value.trim();
       const password = document.getElementById("signupPassword").value;
-      const { error } = await sb.auth.signUp({ email, password });
+
+      /* Validazione base */
+      if (!email || !password) {
+        showMsg("Inserisci email e password.", "error"); return;
+      }
+      if (password.length < 6) {
+        showMsg("La password deve avere almeno 6 caratteri.", "error"); return;
+      }
+
+      setLoading(signupBtn, true);
+
+      const { data: signUpData, error } = await sb.auth.signUp({ email, password });
+
       if (error) {
         showMsg(error.message, "error");
         setLoading(signupBtn, false);
-      } else {
-        showMsg("Account creato! Controlla la tua email per confermare.", "success");
-        setLoading(signupBtn, false);
+        return;
       }
+
+      if (signUpData?.session) {
+        /*
+         * CASO A – conferma email DISABILITATA:
+         * Supabase restituisce già una sessione attiva → upsert immediato.
+         */
+        await applyWelcomeCredits(signUpData.user.id);
+        showMsg("Benvenuto! Hai 10 crediti gratuiti! Reindirizzo...", "success");
+        setTimeout(() => window.location.replace("/app.html"), 1400);
+
+      } else if (signUpData?.user?.id) {
+        /*
+         * CASO B – conferma email ABILITATA:
+         * Non c'è ancora sessione → auth.uid() sarebbe null → RLS bloccherebbe.
+         * Salviamo l'ID in localStorage; l'upsert avverrà in onAuthStateChange
+         * quando l'utente clicca il link di conferma e si autentica.
+         */
+        localStorage.setItem('sai_pending_welcome', signUpData.user.id);
+        showMsg("Benvenuto! Hai 10 crediti gratuiti! Controlla la tua email per confermare l'account.", "success");
+      } else {
+        /* Risposta anomala (es. utente già registrato ma non confermato) */
+        showMsg("Registrazione inviata. Se non ricevi l'email, controlla la cartella spam.", "success");
+      }
+
+      setLoading(signupBtn, false);
     });
 
     /* Magic link */
@@ -411,10 +459,23 @@
       }
     });
 
-    /* Rileva ritorno dall'email di reset (type=recovery nell'hash) */
-    sb.auth.onAuthStateChange((event) => {
+    /* Rileva eventi auth: reset password + prima login dopo conferma email */
+    sb.auth.onAuthStateChange(async (event, session) => {
       if (event === "PASSWORD_RECOVERY") {
         showSection("newpwd");
+        return;
+      }
+
+      /*
+       * CASO B (continua): l'utente ha cliccato il link di conferma ed è ora
+       * autenticato. Applichiamo i crediti di benvenuto con la sessione attiva.
+       */
+      if (event === "SIGNED_IN" && session?.user?.id) {
+        var pendingId = localStorage.getItem('sai_pending_welcome');
+        if (pendingId && pendingId === session.user.id) {
+          localStorage.removeItem('sai_pending_welcome');
+          await applyWelcomeCredits(session.user.id);
+        }
       }
     });
 

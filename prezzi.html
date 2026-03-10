@@ -150,6 +150,42 @@
     .a{ margin:0; color:var(--muted); font-size:13px; line-height:1.5; }
 
     .kicker{ margin-top:8px; color:var(--muted); font-size:13px; }
+
+    /* ── Light mode: fix contrasti hardcoded ── */
+    html[data-theme="light"] .credits-badge{
+      color: rgba(70,40,180,.9);
+      background: rgba(124,92,255,.12);
+      border-color: rgba(124,92,255,.35);
+    }
+    html[data-theme="light"] .plus .tag{
+      color: rgba(70,40,180,.9);
+      background: rgba(124,92,255,.15);
+      border-color: rgba(124,92,255,.4);
+    }
+    html[data-theme="light"] .topup{
+      border-color: rgba(180,120,0,.3);
+      background: rgba(255,185,40,.06);
+    }
+    html[data-theme="light"] .topup .tag{
+      color: rgba(120,70,0,.9);
+      background: rgba(255,185,40,.18);
+      border-color: rgba(180,120,0,.4);
+    }
+    html[data-theme="light"] .topup .credits-badge{
+      color: rgba(120,70,0,.9);
+      background: rgba(255,185,40,.14);
+      border-color: rgba(180,120,0,.35);
+    }
+    html[data-theme="light"] .tag{
+      background: rgba(0,0,0,.05);
+      border-color: rgba(13,17,51,.18);
+    }
+    html[data-theme="light"] .switch{
+      background: rgba(0,0,0,.10);
+    }
+    html[data-theme="light"] .knob{
+      background: rgba(13,17,51,.8);
+    }
   </style>
 </head>
 
@@ -198,9 +234,6 @@
         <span class="pilltag">💎 PREZZI</span>
         <div class="h1">Scegli il piano giusto per te</div>
         <p class="sub">Inizia gratis. Passa a un piano superiore quando vuoi più potenza.</p>
-        <div style="height:12px;"></div>
-        <a class="btn btn-primary" href="/app.html">🚀 Prova gratis</a>
-
         <div class="toggle" style="margin-top:14px;">
           <span>Mensile</span>
           <div class="switch" id="billingSwitch" role="switch" aria-checked="false" tabindex="0">
@@ -263,7 +296,6 @@
           </ul>
           <div class="plan-actions">
             <a class="btn btn-primary" id="lightCta" href="/checkout.html?plan=light&billing=monthly">Upgrade (mock)</a>
-            <a class="btn" href="/app.html">Prima provalo</a>
           </div>
         </div>
       </div>
@@ -289,7 +321,6 @@
           </ul>
           <div class="plan-actions">
             <a class="btn btn-primary" id="plusCta" href="/checkout.html?plan=plus&billing=monthly">Upgrade (mock)</a>
-            <a class="btn" href="/app.html">Prima provalo</a>
           </div>
         </div>
       </div>
@@ -315,7 +346,6 @@
           </ul>
           <div class="plan-actions">
             <a class="btn btn-primary" id="proCta" href="/checkout.html?plan=pro&billing=monthly">Upgrade (mock)</a>
-            <a class="btn" href="/app.html">Prima provalo</a>
           </div>
         </div>
       </div>
@@ -343,7 +373,7 @@
           <div class="credits-badge">⚡ 18 crediti</div>
           <ul class="ul">
             <li><span class="i">✅</span><span>18 crediti subito sul tuo account</span></li>
-            <li><span class="i">✅</span><span>Crediti senza scadenza</span></li>
+            <li><span class="i">✅</span><span>Crediti validi 12 mesi</span></li>
             <li><span class="i">✅</span><span>Tutti i 6 target disponibili</span></li>
             <li><span class="i">✅</span><span>Tutte le lunghezze</span></li>
             <li><span class="i">❌</span><span>Nessun rinnovo automatico</span></li>
@@ -369,7 +399,7 @@
           <div class="credits-badge">⚡ 45 crediti</div>
           <ul class="ul">
             <li><span class="i">✅</span><span>45 crediti subito sul tuo account</span></li>
-            <li><span class="i">✅</span><span>Crediti senza scadenza</span></li>
+            <li><span class="i">✅</span><span>Crediti validi 12 mesi</span></li>
             <li><span class="i">✅</span><span>Tutti i 6 target disponibili</span></li>
             <li><span class="i">✅</span><span>Tutte le lunghezze</span></li>
             <li><span class="i">❌</span><span>Nessun rinnovo automatico</span></li>
@@ -388,7 +418,7 @@
         <div class="enterprise-left">
           <span class="tag" style="margin-bottom:10px; display:inline-flex;">🏢 ENTERPRISE</span>
           <p class="plan-name">Per gruppi e organizzazioni</p>
-          <p>Scuole, università, aziende e famiglie. Gestione centralizzata degli account, volume di crediti su misura e supporto dedicato.</p>
+          <p>Contattaci per scontistiche dedicate.</p>
           <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
             <a class="btn btn-primary" href="mailto:info@simplif-ai.it">Contattaci</a>
             <a class="btn" href="/come-funziona.html">Come funziona</a>
@@ -414,7 +444,7 @@
       <div class="card">
         <div class="card-inner">
           <p class="q">I crediti scadono?</p>
-          <p class="a">No: i crediti acquistati si accumulano e non scadono. Quelli del piano FREE sono i 10 di benvenuto, non si rinnovano automaticamente.</p>
+          <p class="a">I crediti hanno una validità di 12 mesi. Ogni nuova ricarica estende la validità di tutti i tuoi crediti per altri 12 mesi. I 10 crediti di benvenuto scadono 12 mesi dopo la registrazione, salvo che tu non effettui una ricarica prima.</p>
         </div>
       </div>
       <div class="card">
@@ -426,7 +456,7 @@
       <div class="card">
         <div class="card-inner">
           <p class="q">Quanti crediti consuma ogni generazione?</p>
-          <p class="a">Dipende dal target: 1 credito per Bambino/Ragazzo/Universitario, 2 per Adulto/Esperto, 3 per Scienziato. Risposta "Lunga" aggiunge +1 credito extra.</p>
+          <p class="a">I crediti scalano da 1 a 4 in base alla complessità: 1 credito per Bambino/Ragazzo/Universitario, 2 per Adulto/Esperto, 3 per Scienziato. La risposta "Lunga" aggiunge +1 credito extra (massimo 4 in totale).</p>
         </div>
       </div>
       <div class="card">
@@ -438,12 +468,16 @@
       <div class="card">
         <div class="card-inner">
           <p class="q">Ricariche e abbonamenti si combinano?</p>
-          <p class="a">Sì: i crediti dei pacchetti una tantum (Mini Boost / Maxi Boost) si sommano a quelli di un eventuale abbonamento attivo. Tutti i crediti si accumulano e non scadono mai.</p>
+          <p class="a">Sì: i crediti dei pacchetti una tantum (Mini Boost / Maxi Boost) si sommano a quelli di un eventuale abbonamento attivo. Tutti i crediti si accumulano e ogni ricarica estende la scadenza dell'intero saldo a 12 mesi dalla data dell'acquisto.</p>
         </div>
       </div>
     </div>
 
     <div style="height:32px;"></div>
+
+    <div style="text-align:center; margin-bottom:16px;">
+      <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="font-size:13px;">↑ Torna su</button>
+    </div>
 
     <footer class="site-footer">
       <span>© 2025 Simplif-AI</span>

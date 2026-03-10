@@ -233,13 +233,6 @@
             <input class="field" id="fProfessione" placeholder="es. Insegnante, Ingegnere, Studente..." />
           </div>
 
-          <div style="height:12px;"></div>
-
-          <div>
-            <div class="label">Bio (opzionale)</div>
-            <textarea class="field" id="fBio" placeholder="Presentati in poche righe..."></textarea>
-          </div>
-
           <div style="height:16px;"></div>
           <div class="save-row">
             <button class="btn btn-primary" id="savePersonal" type="button">Salva dati personali</button>
@@ -342,20 +335,6 @@
 
           <div style="height:16px;"></div>
 
-          <!-- Livello conoscenza -->
-          <div>
-            <div class="label">Come ti definiresti in media?</div>
-            <div class="know-grid" id="knowGrid">
-              <div class="know-item" data-val="principiante"><span class="know-icon">🌱</span>Principiante</div>
-              <div class="know-item" data-val="base"><span class="know-icon">📖</span>Base</div>
-              <div class="know-item" data-val="intermedio"><span class="know-icon">⚙️</span>Intermedio</div>
-              <div class="know-item" data-val="avanzato"><span class="know-icon">🚀</span>Avanzato</div>
-              <div class="know-item" data-val="esperto"><span class="know-icon">🧠</span>Esperto</div>
-            </div>
-          </div>
-
-          <div style="height:16px;"></div>
-
           <!-- Interessi -->
           <div>
             <div class="label">Aree di interesse (seleziona tutte quelle che vuoi)</div>
@@ -409,15 +388,8 @@
 
           <div style="height:16px;"></div>
 
-          <!-- Vuoi capire meglio -->
-          <div>
-            <div class="label">C'è un argomento che vorresti capire meglio?</div>
-            <textarea class="field" id="fVuoiCapire" placeholder="es. Come funziona l'intelligenza artificiale, cosa sono i quanti, come leggere un bilancio..."></textarea>
-          </div>
-
-          <div style="height:16px;"></div>
           <div class="save-row">
-            <button class="btn btn-primary" id="saveProfiling" type="button">Salva profilo di apprendimento</button>
+            <button class="btn btn-primary" id="saveProfiling" type="button">Salva profilo personale</button>
             <span class="msg" id="msgProfiling"></span>
           </div>
         </div>
@@ -426,7 +398,7 @@
       <!-- 4. ESCI -->
       <div class="card danger-zone">
         <div class="card-inner">
-          <div class="section-title">🚪 Sessione</div>
+          <div class="section-title">🚪 Logout</div>
           <p style="color:var(--muted);font-size:14px;margin:0 0 16px;">Disconnettiti dal tuo account su questo dispositivo.</p>
           <button class="btn" id="logoutBtn" type="button" style="border-color:rgba(255,80,80,.35);color:#ff6b6b;">Esci dall'account</button>
         </div>
@@ -434,6 +406,10 @@
 
     </div>
     <div style="height:32px;"></div>
+
+    <div style="text-align:center; margin-bottom:16px;">
+      <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="font-size:13px;">↑ Torna su</button>
+    </div>
 
     <footer class="site-footer">
       <span>© 2025 Simplif-AI</span>
@@ -474,7 +450,6 @@
 
     /* Stato pill / interessi */
     let selectedObiettivo = "";
-    let selectedConoscenza = "";
     let selectedInteressi = [];
     let selectedFrequenza = "";
 
@@ -496,15 +471,6 @@
         });
       });
     }
-
-    /* Know grid */
-    document.getElementById("knowGrid").querySelectorAll(".know-item").forEach(k => {
-      k.addEventListener("click", () => {
-        document.getElementById("knowGrid").querySelectorAll(".know-item").forEach(x => x.classList.remove("active"));
-        k.classList.add("active");
-        selectedConoscenza = k.dataset.val;
-      });
-    });
 
     /* Interessi (multi) */
     document.getElementById("interestsGrid").querySelectorAll(".interest-item").forEach(item => {
@@ -541,28 +507,18 @@
       document.getElementById("fNascita").value     = profile.data_nascita || "";
       document.getElementById("fCitta").value       = profile.citta || "";
       document.getElementById("fProfessione").value = profile.professione || "";
-      document.getElementById("fBio").value         = profile.bio || "";
       document.getElementById("fEmail").value       = email || "";
 
       /* Profilazione select */
       document.getElementById("fIstruzione").value    = profile.livello_istruzione || "";
       document.getElementById("fSettore").value       = profile.settore || "";
       document.getElementById("fComeConosciuto").value= profile.come_conosciuto || "";
-      document.getElementById("fVuoiCapire").value    = profile.vuoi_capire || "";
 
       /* Obiettivo pill */
       if(profile.obiettivo_uso){
         selectedObiettivo = profile.obiettivo_uso;
         document.getElementById("pillsObiettivo").querySelectorAll(".pill-opt").forEach(p => {
           p.classList.toggle("active", p.dataset.val === selectedObiettivo);
-        });
-      }
-
-      /* Conoscenza */
-      if(profile.livello_conoscenza){
-        selectedConoscenza = profile.livello_conoscenza;
-        document.getElementById("knowGrid").querySelectorAll(".know-item").forEach(k => {
-          k.classList.toggle("active", k.dataset.val === selectedConoscenza);
         });
       }
 
@@ -616,7 +572,6 @@
         data_nascita:document.getElementById("fNascita").value || null,
         citta:       document.getElementById("fCitta").value.trim(),
         professione: document.getElementById("fProfessione").value.trim(),
-        bio:         document.getElementById("fBio").value.trim(),
         updated_at:  new Date().toISOString()
       });
       btn.disabled = false;
@@ -673,11 +628,9 @@
         livello_istruzione: document.getElementById("fIstruzione").value || null,
         settore:            document.getElementById("fSettore").value || null,
         obiettivo_uso:      selectedObiettivo || null,
-        livello_conoscenza: selectedConoscenza || null,
         interessi:          selectedInteressi.length ? selectedInteressi : null,
         frequenza_uso:      selectedFrequenza || null,
         come_conosciuto:    document.getElementById("fComeConosciuto").value || null,
-        vuoi_capire:        document.getElementById("fVuoiCapire").value.trim() || null,
         updated_at:         new Date().toISOString()
       });
       btn.disabled = false;
