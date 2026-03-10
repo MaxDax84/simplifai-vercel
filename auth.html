@@ -355,6 +355,29 @@
       return creditsGranted ?? 0;
     }
 
+    /*
+     * ── Helper: invia email transazionale via /api/send-email ──
+     * Fire-and-forget: non blocca il flusso UI.
+     * Richiede la sessione corrente per estrarre il JWT.
+     */
+    async function sendEmailFireAndForget(type, payload) {
+      try {
+        var { data: sessionData } = await sb.auth.getSession();
+        var token = sessionData && sessionData.session && sessionData.session.access_token;
+        if (!token) return;
+        fetch("/api/send-email", {
+          method: "POST",
+          headers: {
+            "Content-Type":  "application/json",
+            "Authorization": "Bearer " + token,
+          },
+          body: JSON.stringify(Object.assign({ type: type }, payload)),
+        }).catch(function(e) { console.warn("send-email failed:", e); });
+      } catch(e) {
+        console.warn("sendEmailFireAndForget error:", e);
+      }
+    }
+
     /* Signup */
     const signupBtn = document.getElementById("signupBtn");
     signupBtn.dataset.label = "Crea account";
@@ -406,6 +429,7 @@
          * Supabase restituisce già una sessione attiva → RPC immediata.
          */
         var granted = await applyWelcomeCredits();
+        sendEmailFireAndForget("welcome", { credits: granted }); // fire-and-forget
         var msg = granted > 0
           ? "Benvenuto! Hai ricevuto 10 crediti gratuiti! Reindirizzo..."
           : "Benvenuto! Account creato. Reindirizzo...";
@@ -510,7 +534,8 @@
         var pendingId = localStorage.getItem('sai_pending_welcome');
         if (pendingId && pendingId === session.user.id) {
           localStorage.removeItem('sai_pending_welcome');
-          await applyWelcomeCredits(); // RPC controlla processed_welcomes internamente
+          var grantedB = await applyWelcomeCredits(); // RPC controlla processed_welcomes
+          sendEmailFireAndForget("welcome", { credits: grantedB }); // fire-and-forget
         }
       }
     });

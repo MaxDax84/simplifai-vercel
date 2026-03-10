@@ -333,14 +333,37 @@
     document.getElementById('planCredits').textContent = `Aggiunge ${pkg.credits} crediti al tuo account.`;
 
     /* Auth check */
-    let currentUserId = null;
+    let currentUserId   = null;
+    let currentSession  = null;
     sb.auth.getSession().then(({ data }) => {
       if(!data?.session){
         window.location.replace("/auth.html");
         return;
       }
-      currentUserId = data.session.user.id;
+      currentUserId  = data.session.user.id;
+      currentSession = data.session;
     });
+
+    /* Fire-and-forget: invia email di conferma acquisto */
+    function sendPurchaseEmail(pkg) {
+      try {
+        var token = currentSession && currentSession.access_token;
+        if (!token) return;
+        fetch("/api/send-email", {
+          method: "POST",
+          headers: {
+            "Content-Type":  "application/json",
+            "Authorization": "Bearer " + token,
+          },
+          body: JSON.stringify({
+            type: "purchase",
+            pkg: { label: pkg.label, credits: pkg.credits, price: pkg.price },
+          }),
+        }).catch(function(e) { console.warn("send-email failed:", e); });
+      } catch(e) {
+        console.warn("sendPurchaseEmail error:", e);
+      }
+    }
 
     /* Messaggi */
     const msgEl = document.getElementById("checkoutMsg");
@@ -389,6 +412,9 @@
         successSection.style.display = '';
         document.getElementById('successSub').textContent =
           `+${pkg.credits} crediti aggiunti. Totale: ${newCredits} crediti.`;
+
+        /* Email di conferma acquisto (fire-and-forget, non blocca l'UI) */
+        sendPurchaseEmail(pkg);
 
       } catch(e) {
         showMsg(e?.message || "Errore sconosciuto.", "error");
