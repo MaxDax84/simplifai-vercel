@@ -148,7 +148,7 @@ export default async function handler(req) {
 
     if (!query || !targetPrompt) return jsonError("Parametri mancanti: query/targetPrompt.", 400);
 
-    var maxTokens = clamp(body && body.maxTokens, 512, 16000, 2500);
+    var maxTokens = clamp(body && body.maxTokens, 512, 20000, 3500);
     var maxChars = clamp(body && body.maxChars, 500, 50000, 6000);
 
     var encoder = new TextEncoder();

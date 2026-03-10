@@ -221,6 +221,30 @@
       background: rgba(255,60,60,.22);
     }
     html[data-theme="light"] .delete-modal-box{ background: #eef0ff; }
+
+    /* ── Banner benvenuto post-conferma email ── */
+    .welcome-banner{
+      display: none;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(124,92,255,.15), rgba(38,198,255,.12));
+      border: 1px solid rgba(124,92,255,.40);
+      border-radius: 16px;
+      padding: 14px 18px;
+      margin-top: 18px;
+      font-size: 14px;
+      color: var(--text);
+      position: relative;
+    }
+    .welcome-banner.show{ display: flex; }
+    .welcome-banner .wb-icon{ font-size: 22px; flex-shrink: 0; }
+    .welcome-banner .wb-close{
+      position: absolute; top: 10px; right: 12px;
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 18px; line-height: 1;
+      padding: 0;
+    }
+    .welcome-banner .wb-close:hover{ color: var(--text); }
   </style>
 </head>
 
@@ -254,6 +278,13 @@
       <a href="/come-funziona.html">Come funziona</a>
       <a href="/prezzi.html">Prezzi</a>
       <a href="/profilo.html">Profilo</a>
+    </div>
+
+    <!-- Banner benvenuto post-conferma email -->
+    <div class="welcome-banner" id="welcomeBanner" role="alert">
+      <span class="wb-icon">🎉</span>
+      <span id="welcomeBannerText"></span>
+      <button class="wb-close" id="welcomeBannerClose" aria-label="Chiudi">×</button>
     </div>
 
     <!-- Hero profilo -->
@@ -557,6 +588,22 @@
       mobileNav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => document.body.classList.remove("nav-open")));
     })();
 
+    /* ── Banner benvenuto post-conferma email ── */
+    (function(){
+      var msg = localStorage.getItem('sai_welcome_msg');
+      if(!msg) return;
+      localStorage.removeItem('sai_welcome_msg');
+      var banner = document.getElementById('welcomeBanner');
+      var text   = document.getElementById('welcomeBannerText');
+      var close  = document.getElementById('welcomeBannerClose');
+      if(!banner || !text) return;
+      text.textContent = msg;
+      banner.classList.add('show');
+      close.addEventListener('click', function(){ banner.classList.remove('show'); });
+      // Auto-chiudi dopo 8 secondi
+      setTimeout(function(){ banner.classList.remove('show'); }, 8000);
+    })();
+
     /* Navbar active */
     document.querySelectorAll('#mainNav a').forEach(a => {
       if(a.dataset.nav === "profile") a.classList.add('nav-active');
@@ -684,6 +731,20 @@
         .limit(1);
 
       fillUI(rows?.[0] || {}, email);
+
+      /* Aggiorna il contatore crediti in tempo reale tramite realtime subscription */
+      sb.channel('profile-credits-' + currentUserId)
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: 'id=eq.' + currentUserId
+        }, function(payload) {
+          if(payload.new && payload.new.credits !== undefined){
+            document.getElementById('heroCredits').textContent = payload.new.credits;
+          }
+        })
+        .subscribe();
     });
 
     /* Salva dati personali */

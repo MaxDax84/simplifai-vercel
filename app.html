@@ -185,8 +185,10 @@
       border:1px solid var(--border);
       background: rgba(255,255,255,.03);
       border-radius:16px;
-      padding:16px;
+      padding:16px 16px 28px;
       min-height:260px;
+      height:auto;
+      overflow:visible;
       display:flex; flex-direction:column; gap:12px;
       margin-bottom: 24px;
     }
@@ -516,27 +518,27 @@
     const TARGETS = [
       { label:"Bambino", icon:"🧒", desc:"Semplice, analogie e frasi brevi.", cost:1,
         prompt:"Spiega come a un bambino di 8 anni: usa un linguaggio molto semplice, fai paragoni con oggetti quotidiani (es. il DNA è come un libro di ricette) e mantieni le frasi brevi.",
-        baseTokens:2500, baseChars:6000
+        baseTokens:3500, baseChars:6000
       },
       { label:"Ragazzo", icon:"👨", desc:"Chiaro, moderno e con esempi pratici.", cost:1,
         prompt:"Spiega come a un adolescente: usa un tono colloquiale ma corretto, evita termini troppo infantili, usa esempi tratti dalla tecnologia o dalla vita quotidiana dei giovani.",
-        baseTokens:2500, baseChars:7000
+        baseTokens:3500, baseChars:7000
       },
       { label:"Universitario", icon:"🎓", desc:"Struttura accademica e concetti chiave.", cost:1,
         prompt:"Spiega come a uno studente universitario: usa un linguaggio formale, organizza la spiegazione per punti logici, approfondisci i concetti fondamentali senza dare nulla per scontato.",
-        baseTokens:2500, baseChars:9000
+        baseTokens:4000, baseChars:9000
       },
       { label:"Adulto", icon:"👤", desc:"Diretto, concreto e senza fronzoli.", cost:2,
         prompt:"Spiega come a un adulto: vai dritto al punto, usa un tono serio e pragmatico, spiega l'utilità pratica del concetto e non perdere tempo in spiegazioni superflue.",
-        baseTokens:3500, baseChars:12000
+        baseTokens:5000, baseChars:12000
       },
       { label:"Esperto", icon:"🧠", desc:"Dettagli tecnici e approfondimenti.", cost:2,
         prompt:"Spiega come a un professionista del settore: dai per scontate le basi, approfondisci i meccanismi tecnici, usa la terminologia corretta e spiega i 'perché' dietro ai fenomeni.",
-        baseTokens:4500, baseChars:16000
+        baseTokens:6500, baseChars:16000
       },
       { label:"Scienziato", icon:"🧪", desc:"Rigore, limiti e definizioni precise.", cost:3,
         prompt:"Spiega come a un ricercatore/scienziato: usa il massimo rigore scientifico, cita limiti delle attuali conoscenze, usa terminologia specialistica e mantieni una struttura logica rigorosa.",
-        baseTokens:5000, baseChars:20000
+        baseTokens:8000, baseChars:20000
       }
     ];
 

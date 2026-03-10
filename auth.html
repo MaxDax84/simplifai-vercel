@@ -265,9 +265,15 @@
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    /* Se l'utente è già loggato, vai subito all'app */
+    /* Se l'utente è già loggato, vai subito all'app.
+     * Se c'è un hash di callback auth (conferma email, magic link, ecc.)
+     * NON redirezionare qui: lascia che onAuthStateChange gestisca il flusso
+     * in modo da completare l'applicazione crediti PRIMA del redirect. */
     sb.auth.getSession().then(({ data }) => {
-      if (data?.session) window.location.replace("/app.html");
+      if (!data?.session) return;
+      const h = window.location.hash;
+      if (h.includes('access_token') || h.includes('type=')) return;
+      window.location.replace("/app.html");
     });
 
     /* Messaggio post-cancellazione account */
@@ -338,24 +344,6 @@
     });
 
     /*
-     * ── Helper: assegna crediti di benvenuto via RPC (richiede sessione attiva) ──
-     *
-     * La funzione server-side apply_welcome_credits() esegue atomicamente:
-     *   1. Controlla se l'email è già in processed_welcomes
-     *      → SÌ: crea il profilo con 0 crediti (account precedentemente cancellato)
-     *      → NO: inserisce l'email in processed_welcomes, crea profilo con 10 crediti
-     *   2. Restituisce il numero di crediti effettivamente assegnati (10 oppure 0)
-     *
-     * In questo modo è impossibile ottenere crediti multipli cancellando
-     * e ri-creando lo stesso account.
-     */
-    async function applyWelcomeCredits() {
-      var { data: creditsGranted, error } = await sb.rpc('apply_welcome_credits');
-      if (error) console.error("Errore crediti iniziali:", error.message);
-      return creditsGranted ?? 0;
-    }
-
-    /*
      * ── Helper: invia email transazionale via /api/send-email ──
      * Fire-and-forget: non blocca il flusso UI.
      * Richiede la sessione corrente per estrarre il JWT.
@@ -398,7 +386,11 @@
 
       setLoading(signupBtn, true);
 
-      const { data: signUpData, error } = await sb.auth.signUp({ email, password });
+      const { data: signUpData, error } = await sb.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: window.location.origin + "/auth.html" }
+      });
 
       if (error) {
         var rawMsg = (error.message || "").toLowerCase();
@@ -426,25 +418,22 @@
       if (signUpData?.session) {
         /*
          * CASO A – conferma email DISABILITATA:
-         * Supabase restituisce già una sessione attiva → RPC immediata.
+         * Sessione attiva subito. Il trigger handle_new_user ha già assegnato
+         * i 10 crediti al momento dell'INSERT in auth.users.
          */
-        var granted = await applyWelcomeCredits();
-        sendEmailFireAndForget("welcome", { credits: granted }); // fire-and-forget
-        var msg = granted > 0
-          ? "Benvenuto! Hai ricevuto 10 crediti gratuiti! Reindirizzo..."
-          : "Benvenuto! Account creato. Reindirizzo...";
-        showMsg(msg, "success");
+        sendEmailFireAndForget("welcome", { credits: 10 });
+        showMsg("Benvenuto! Hai ricevuto 10 crediti gratuiti! Reindirizzo...", "success");
         setTimeout(() => window.location.replace("/app.html"), 1400);
 
       } else if (signUpData?.user?.id) {
         /*
          * CASO B – conferma email ABILITATA:
-         * Non c'è ancora sessione → auth.uid() sarebbe null → RLS bloccherebbe.
-         * Salviamo l'ID in localStorage; la RPC verrà chiamata in onAuthStateChange
-         * quando l'utente clicca il link di conferma e si autentica.
+         * Il trigger ha già assegnato i crediti all'INSERT.
+         * Salviamo l'ID in localStorage solo per mostrare il banner
+         * di benvenuto dopo che l'utente clicca il link di conferma.
          */
         localStorage.setItem('sai_pending_welcome', signUpData.user.id);
-        showMsg("Account creato! Controlla la tua email per confermare l'account.", "success");
+        showMsg("Account creato! Controlla la tua email per confermare l'account. ✉️ Controlla anche nella cartella Spam se non la trovi entro qualche minuto.", "success");
       } else {
         /* Risposta anomala (es. utente già registrato ma non confermato) */
         showMsg("Registrazione inviata. Se non ricevi l'email, controlla la cartella spam.", "success");
@@ -461,9 +450,19 @@
       btn.disabled = true; btn.textContent = "...";
       const { error } = await sb.auth.signInWithOtp({ email });
       if (error) {
-        showMsg(error.message, "error");
+        var rawMagicMsg = (error.message || "").toLowerCase();
+        var friendlyMagicMsg = error.message;
+        if (rawMagicMsg.includes("sending confirmation email") ||
+            rawMagicMsg.includes("error sending") ||
+            rawMagicMsg.includes("email rate limit") ||
+            rawMagicMsg.includes("unable to send") ||
+            rawMagicMsg.includes("smtp")) {
+          friendlyMagicMsg = "Il servizio email è temporaneamente non disponibile. "
+                           + "Riprova tra qualche minuto o accedi con email e password.";
+        }
+        showMsg(friendlyMagicMsg, "error");
       } else {
-        showMsg("Link inviato! Controlla la tua email.", "success");
+        showMsg("Link inviato! Controlla la tua email. Controlla anche nella cartella Spam se non lo trovi.", "success");
         magicForm.style.display = "none";
       }
       btn.disabled = false; btn.textContent = "Invia link";
@@ -526,16 +525,30 @@
         return;
       }
 
-      /*
-       * CASO B (continua): l'utente ha cliccato il link di conferma ed è ora
-       * autenticato. Applichiamo i crediti di benvenuto con la sessione attiva.
-       */
       if (event === "SIGNED_IN" && session?.user?.id) {
         var pendingId = localStorage.getItem('sai_pending_welcome');
+
         if (pendingId && pendingId === session.user.id) {
+          /*
+           * CASO B (continua): l'utente ha cliccato il link di conferma.
+           * I crediti sono già stati assegnati dal trigger handle_new_user
+           * al momento della registrazione. Qui mostriamo solo il banner
+           * di benvenuto e mandiamo l'email transazionale.
+           */
           localStorage.removeItem('sai_pending_welcome');
-          var grantedB = await applyWelcomeCredits(); // RPC controlla processed_welcomes
-          sendEmailFireAndForget("welcome", { credits: grantedB }); // fire-and-forget
+          sendEmailFireAndForget("welcome", { credits: 10 });
+          localStorage.setItem('sai_welcome_msg',
+            "✅ Email confermata! Abbiamo aggiunto 10 crediti di benvenuto al tuo account.");
+          window.location.replace("/profilo.html");
+          return;
+        }
+
+        /*
+         * Accesso via magic link o altra fonte hash-based (nessun credito pendente).
+         * Redireziona all'app solo se siamo arrivati qui via hash di callback.
+         */
+        if (window.location.hash.includes('access_token')) {
+          window.location.replace("/app.html");
         }
       }
     });
