@@ -831,20 +831,17 @@
         errorMsg.textContent = "";
 
         try {
-          // 1. Elimina i dati del profilo dalla tabella profiles
-          const { error: profileErr } = await sb
-            .from('profiles')
-            .delete()
-            .eq('id', currentUserId);
-
-          if(profileErr) throw new Error("Errore eliminazione profilo: " + profileErr.message);
-
-          // 2. Chiama la funzione RPC SECURITY DEFINER che elimina l'utente da auth.users
-          const { error: rpcErr } = await sb.rpc('delete_user');
+          /*
+           * Unica chiamata RPC SECURITY DEFINER che esegue in sequenza:
+           *   1. Inserisce l'email in processed_welcomes (blocca crediti futuri)
+           *   2. Soft-delete del profilo: deleted_at = now(), credits = 0
+           *   3. Hard-delete da auth.users (revoca l'accesso)
+           */
+          const { error: rpcErr } = await sb.rpc('soft_delete_user');
 
           if(rpcErr) throw new Error("Errore eliminazione account: " + rpcErr.message);
 
-          // 3. Sign out locale e redirect
+          // Sign out locale e redirect
           await sb.auth.signOut();
           window.location.replace("/auth.html?deleted=1");
 

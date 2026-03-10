@@ -337,17 +337,22 @@
       }
     });
 
-    /* ── Helper: upsert crediti di benvenuto (richiede sessione attiva) ── */
-    async function applyWelcomeCredits(userId) {
-      var expiry = new Date();
-      expiry.setFullYear(expiry.getFullYear() + 1);
-      var { error: profileErr } = await sb.from('profiles').upsert({
-        id: userId,
-        credits: 10,
-        credits_expiry: expiry.toISOString(),
-        updated_at: new Date().toISOString()
-      });
-      if (profileErr) console.error("Errore crediti iniziali:", profileErr.message);
+    /*
+     * ── Helper: assegna crediti di benvenuto via RPC (richiede sessione attiva) ──
+     *
+     * La funzione server-side apply_welcome_credits() esegue atomicamente:
+     *   1. Controlla se l'email è già in processed_welcomes
+     *      → SÌ: crea il profilo con 0 crediti (account precedentemente cancellato)
+     *      → NO: inserisce l'email in processed_welcomes, crea profilo con 10 crediti
+     *   2. Restituisce il numero di crediti effettivamente assegnati (10 oppure 0)
+     *
+     * In questo modo è impossibile ottenere crediti multipli cancellando
+     * e ri-creando lo stesso account.
+     */
+    async function applyWelcomeCredits() {
+      var { data: creditsGranted, error } = await sb.rpc('apply_welcome_credits');
+      if (error) console.error("Errore crediti iniziali:", error.message);
+      return creditsGranted ?? 0;
     }
 
     /* Signup */
@@ -381,21 +386,24 @@
       if (signUpData?.session) {
         /*
          * CASO A – conferma email DISABILITATA:
-         * Supabase restituisce già una sessione attiva → upsert immediato.
+         * Supabase restituisce già una sessione attiva → RPC immediata.
          */
-        await applyWelcomeCredits(signUpData.user.id);
-        showMsg("Benvenuto! Hai 10 crediti gratuiti! Reindirizzo...", "success");
+        var granted = await applyWelcomeCredits();
+        var msg = granted > 0
+          ? "Benvenuto! Hai ricevuto 10 crediti gratuiti! Reindirizzo..."
+          : "Benvenuto! Account creato. Reindirizzo...";
+        showMsg(msg, "success");
         setTimeout(() => window.location.replace("/app.html"), 1400);
 
       } else if (signUpData?.user?.id) {
         /*
          * CASO B – conferma email ABILITATA:
          * Non c'è ancora sessione → auth.uid() sarebbe null → RLS bloccherebbe.
-         * Salviamo l'ID in localStorage; l'upsert avverrà in onAuthStateChange
+         * Salviamo l'ID in localStorage; la RPC verrà chiamata in onAuthStateChange
          * quando l'utente clicca il link di conferma e si autentica.
          */
         localStorage.setItem('sai_pending_welcome', signUpData.user.id);
-        showMsg("Benvenuto! Hai 10 crediti gratuiti! Controlla la tua email per confermare l'account.", "success");
+        showMsg("Account creato! Controlla la tua email per confermare l'account.", "success");
       } else {
         /* Risposta anomala (es. utente già registrato ma non confermato) */
         showMsg("Registrazione inviata. Se non ricevi l'email, controlla la cartella spam.", "success");
@@ -485,7 +493,7 @@
         var pendingId = localStorage.getItem('sai_pending_welcome');
         if (pendingId && pendingId === session.user.id) {
           localStorage.removeItem('sai_pending_welcome');
-          await applyWelcomeCredits(session.user.id);
+          await applyWelcomeCredits(); // RPC controlla processed_welcomes internamente
         }
       }
     });
