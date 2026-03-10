@@ -90,10 +90,8 @@
 
     .hint{
       display:inline-flex; align-items:center; gap:8px;
-      padding:8px 10px; border-radius:999px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.02);
-      color:var(--muted); font-size:12px;
+      padding:4px 0;
+      color:var(--muted2); font-size:12px;
     }
 
     .targets-grid{
@@ -598,7 +596,7 @@
       card.classList.add("flash");
       setTimeout(()=>card.classList.remove("flash"), 420);
     }
-    function scrollTo(sec, card){
+    function scrollToSection(sec, card){
       var headerH = (document.querySelector('header') || {}).offsetHeight || 60;
       var top = sec.getBoundingClientRect().top + window.pageYOffset - headerH - 8;
       window.scrollTo({ top: top, behavior: 'smooth' });
@@ -899,11 +897,11 @@
           renderTargets();
           updateChips();
           updateButtons();
-          scrollTo(secLen, cardLen);
+          scrollToSection(secLen, cardLen);
 
           // se lunghezza già scelta, rigenera
           if(selectedLenKey){
-            scrollTo(sec3, card3);
+            scrollToSection(sec3, card3);
             run();
           }
         });
@@ -923,7 +921,7 @@
           renderLengths();
           updateChips();
           updateButtons();
-          scrollTo(sec3, card3);
+          scrollToSection(sec3, card3);
           run();
         });
         lengthsEl.appendChild(el);
@@ -931,17 +929,17 @@
     }
 
     /* Event Listeners */
-    goTargets.addEventListener("click", () => q.value.trim() ? scrollTo(sec2, card2) : q.focus());
-    backToQ.addEventListener("click", () => scrollTo(sec1, card1));
-    goLength.addEventListener("click", () => scrollTo(secLen, cardLen));
-    backToTargets.addEventListener("click", () => scrollTo(sec2, card2));
-    backToTargetsFinal.addEventListener("click", () => scrollTo(sec2, card2));
-    backToLen.addEventListener("click", () => scrollTo(secLen, cardLen));
-    backToQuestion.addEventListener("click", () => scrollTo(sec1, card1));
+    goTargets.addEventListener("click", () => q.value.trim() ? scrollToSection(sec2, card2) : q.focus());
+    backToQ.addEventListener("click", () => scrollToSection(sec1, card1));
+    goLength.addEventListener("click", () => scrollToSection(secLen, cardLen));
+    backToTargets.addEventListener("click", () => scrollToSection(sec2, card2));
+    backToTargetsFinal.addEventListener("click", () => scrollToSection(sec2, card2));
+    backToLen.addEventListener("click", () => scrollToSection(secLen, cardLen));
+    backToQuestion.addEventListener("click", () => scrollToSection(sec1, card1));
 
     // ✅ questo è quello che spesso manca: bottone "Vai alla risposta"
     goAnswer.addEventListener("click", () => {
-      scrollTo(sec3, card3);
+      scrollToSection(sec3, card3);
       run();
     });
 
@@ -992,7 +990,7 @@
         chip.type = 'button';
         chip.addEventListener('click', () => {
           q.value = query;
-          scrollTo(sec1, card1);
+          scrollToSection(sec1, card1);
           q.focus();
         });
         container.appendChild(chip);
@@ -1007,7 +1005,7 @@
     document.querySelectorAll('.chips-row-app .chip-suggest').forEach(btn => {
       btn.addEventListener('click', () => {
         q.value = btn.dataset.q || btn.textContent.trim();
-        scrollTo(sec2, card2);
+        scrollToSection(sec2, card2);
       });
     });
 
@@ -1018,7 +1016,7 @@
       if(qParam){
         q.value = qParam;
         history.replaceState({}, '', location.pathname);
-        setTimeout(() => { if(q.value.trim()) scrollTo(sec2, card2); }, 350);
+        setTimeout(() => { if(q.value.trim()) scrollToSection(sec2, card2); }, 350);
       }
     })();
 

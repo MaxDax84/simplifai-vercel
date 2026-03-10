@@ -314,6 +314,7 @@ header.scrolled{
 
 .nav-toggle{
   display:none;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
   width:44px;height:44px;
@@ -322,6 +323,7 @@ header.scrolled{
   background:rgba(255,255,255,.04);
   cursor:pointer;
   padding:0;
+  gap:0;
 }
 
 .nav-toggle span{
@@ -534,21 +536,6 @@ html[data-theme="light"]{
 html[data-theme="light"] .chip-suggest{ background:rgba(0,0,0,.04); }
 html[data-theme="light"] .chip-suggest:hover{ background:rgba(124,92,255,.09); }
 
-/* Suggerimenti nella pagina domanda: aspetto testo, non bottone */
-.chips-row-app .chip-suggest{
-  border-color:transparent;
-  background:transparent;
-  color:var(--muted2);
-  font-size:12px;
-  padding:4px 6px;
-}
-.chips-row-app .chip-suggest:hover{
-  background:rgba(255,255,255,.04);
-  border-color:transparent;
-  color:var(--muted);
-}
-html[data-theme="light"] .chips-row-app .chip-suggest{ background:transparent; }
-html[data-theme="light"] .chips-row-app .chip-suggest:hover{ background:rgba(0,0,0,.04); }
 
 /* =====================================================
    HISTORY SECTION
