@@ -378,7 +378,24 @@
       const { data: signUpData, error } = await sb.auth.signUp({ email, password });
 
       if (error) {
-        showMsg(error.message, "error");
+        var rawMsg = (error.message || "").toLowerCase();
+        var friendlyMsg = error.message; // fallback al messaggio originale
+
+        if (rawMsg.includes("sending confirmation email") ||
+            rawMsg.includes("email rate limit") ||
+            rawMsg.includes("unable to send") ||
+            rawMsg.includes("smtp")) {
+          friendlyMsg = "Problema temporaneo nell'invio dell'email di conferma. "
+                      + "Riprova tra qualche minuto oppure usa il link magico qui sotto.";
+        } else if (rawMsg.includes("already registered") || rawMsg.includes("user already exists")) {
+          friendlyMsg = "Questa email è già registrata. Prova ad accedere o usa 'Hai dimenticato la password?'.";
+        } else if (rawMsg.includes("invalid email")) {
+          friendlyMsg = "Indirizzo email non valido.";
+        } else if (rawMsg.includes("password")) {
+          friendlyMsg = "La password deve avere almeno 6 caratteri.";
+        }
+
+        showMsg(friendlyMsg, "error");
         setLoading(signupBtn, false);
         return;
       }
