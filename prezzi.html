@@ -297,10 +297,10 @@
       </div>
     </div>
 
-    <!-- Banner benvenuto -->
-    <div class="welcome-banner">
+    <!-- Banner benvenuto (nascosto via JS se l'utente è già loggato) -->
+    <div class="welcome-banner" id="welcomeBanner">
       🎁 <strong>Registrati ora per ricevere 10 crediti di benvenuto omaggio!</strong>
-      <a href="/auth.html" class="btn btn-primary" style="margin-left:6px;min-height:36px;padding:8px 16px;font-size:13px;">Crea account gratis</a>
+      <a href="/auth.html" class="btn btn-primary" style="margin-left:6px;min-height:36px;padding:8px 16px;font-size:13px;" id="welcomeCta">Crea account gratis</a>
     </div>
 
     <!-- PIANI -->
@@ -614,6 +614,32 @@
     applyTheme(isDark);
     btn.addEventListener('click', () => { isDark = !isDark; applyTheme(isDark); });
   })();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>
+    // ── Session check: banner benvenuto ──
+    (function(){
+      const SUPABASE_URL  = "https://lmmiowagyqypdrdcemdo.supabase.co";
+      const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
+      const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+      const banner = document.getElementById("welcomeBanner");
+      const cta    = document.getElementById("welcomeCta");
+
+      sb.auth.getSession().then(({ data }) => {
+        if (data.session) {
+          // Utente loggato: nascondi il banner
+          if (banner) banner.style.display = "none";
+        } else {
+          // Non loggato: banner visibile, CTA punta alla registrazione
+          if (cta) {
+            cta.textContent = "Crea account gratis";
+            cta.href = "/auth.html";
+          }
+        }
+      });
+    })();
   </script>
 </body>
 </html>
