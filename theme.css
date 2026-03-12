@@ -477,10 +477,22 @@ html[data-theme="light"] .spinner{
 .theme-btn:hover{ background:rgba(255,255,255,.09); }
 html[data-theme="light"] .theme-btn{ background:rgba(0,0,0,.04); }
 html[data-theme="light"] .theme-btn:hover{ background:rgba(0,0,0,.08); }
-/* Both icons always in DOM; CSS picks the right one based on data-theme */
-.theme-btn .icon-moon{ display:none; }
-html[data-theme="light"] .theme-btn .icon-sun{ display:none; }
-html[data-theme="light"] .theme-btn .icon-moon{ display:inline; }
+/* Both icons overlaid; opacity transition on theme switch */
+.theme-btn{ position:relative; }
+.theme-btn .icon-sun,
+.theme-btn .icon-moon{
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  transition:opacity .2s ease;
+  line-height:1;
+  pointer-events:none;
+  user-select:none;
+}
+.theme-btn .icon-sun  { opacity:1; }
+.theme-btn .icon-moon { opacity:0; }
+html[data-theme="light"] .theme-btn .icon-sun  { opacity:0; }
+html[data-theme="light"] .theme-btn .icon-moon { opacity:1; }
 
 /* =====================================================
    SKELETON LOADER
