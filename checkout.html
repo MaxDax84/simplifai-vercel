@@ -270,6 +270,9 @@
             <div class="price" id="planPrice">€9,99</div>
             <div class="per" id="planPer">al mese</div>
             <div class="small" id="planCredits">Aggiunge 100 crediti al tuo account.</div>
+            <div id="promoBadge" style="display:none;margin-top:10px;padding:7px 14px;border-radius:999px;border:1px solid rgba(92,242,168,.30);background:rgba(92,242,168,.08);font-size:12px;color:#5cf2a8;width:fit-content;">
+              🏷️ <span id="promoBadgeLabel"></span>
+            </div>
           </div>
 
           <div class="note">
@@ -317,6 +320,8 @@
     const billing = params.get('billing') || 'monthly';
     const pkgKey  = `${plan}-${billing}`;
     const pkg     = PACKAGES[pkgKey] || PACKAGES['pro-monthly'];
+    const promoCode = (params.get('promo') || '').trim().toUpperCase();
+    let activePromoDiscount = 0;
 
     /* Popola riepilogo */
     document.getElementById('planLabel').textContent   = pkg.label;
@@ -324,6 +329,23 @@
     document.getElementById('planPrice').textContent   = pkg.price;
     document.getElementById('planPer').textContent     = pkg.per;
     document.getElementById('planCredits').textContent = `Aggiunge ${pkg.credits} crediti al tuo account.`;
+
+    /* Valida promo se presente nell'URL */
+    if (promoCode) {
+      sb.rpc('validate_promo_code', { p_code: promoCode }).then(({ data }) => {
+        if (!data || !data.valid) return;
+        activePromoDiscount = data.discount;
+        const n = parseFloat(pkg.price.replace('€','').replace(',','.'));
+        const priceEl = document.getElementById('planPrice');
+        const s = '<s style="opacity:.42;font-size:.70em;font-weight:500;">' + pkg.price + '</s>&thinsp;';
+        priceEl.innerHTML = data.discount >= 100
+          ? s + '<span style="color:#5cf2a8;">GRATIS</span>'
+          : s + '€' + (n * (1 - data.discount / 100)).toFixed(2).replace('.', ',');
+        const badge = document.getElementById('promoBadge');
+        document.getElementById('promoBadgeLabel').textContent = promoCode + ' – ' + data.discount + '% di sconto';
+        if (badge) badge.style.display = '';
+      });
+    }
 
     /* Auth check */
     let currentUserId   = null;
@@ -378,9 +400,11 @@
       showMsg("");
 
       try {
-        /* Incremento atomico via RPC: elimina race condition tra tab multiple */
-        const { data: newCredits, error: rpcErr } = await sb
-          .rpc('add_credits', { amount: pkg.credits });
+        /* RPC: usa promo (incrementa usage_count + aggiunge crediti) se presente, altrimenti add_credits */
+        const rpcCall = (promoCode && activePromoDiscount > 0)
+          ? sb.rpc('apply_promo_and_add_credits', { p_code: promoCode, p_amount: pkg.credits })
+          : sb.rpc('add_credits', { amount: pkg.credits });
+        const { data: newCredits, error: rpcErr } = await rpcCall;
 
         if(rpcErr) throw new Error("Impossibile aggiornare i crediti: " + rpcErr.message);
 
