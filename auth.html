@@ -531,14 +531,20 @@
         if (pendingId && pendingId === session.user.id) {
           /*
            * CASO B (continua): l'utente ha cliccato il link di conferma.
-           * I crediti sono già stati assegnati dal trigger handle_new_user
-           * al momento della registrazione. Qui mostriamo solo il banner
-           * di benvenuto e mandiamo l'email transazionale.
+           * Verifichiamo se il trigger ha effettivamente assegnato crediti
+           * (se l'email era già stata usata e poi eliminata, credits = 0).
            */
           localStorage.removeItem('sai_pending_welcome');
-          sendEmailFireAndForget("welcome", { credits: 10 });
-          localStorage.setItem('sai_welcome_msg',
-            "✅ Email confermata! Abbiamo aggiunto 10 crediti di benvenuto al tuo account.");
+          var profileRes = await sb.from('profiles')
+            .select('credits')
+            .eq('id', session.user.id)
+            .single();
+          var gotCredits = profileRes.data && profileRes.data.credits > 0;
+          if (gotCredits) {
+            sendEmailFireAndForget("welcome", { credits: 10 });
+            localStorage.setItem('sai_welcome_msg',
+              "✅ Email confermata! Abbiamo aggiunto 10 crediti di benvenuto al tuo account.");
+          }
           window.location.replace("/app.html");
           return;
         }
