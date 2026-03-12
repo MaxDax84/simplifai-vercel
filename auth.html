@@ -372,6 +372,9 @@
       if (!email || !password) {
         showMsg("Inserisci email e password.", "error"); return;
       }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+        showMsg("Inserisci un indirizzo email valido.", "error"); return;
+      }
       if (password.length < 6) {
         showMsg("La password deve avere almeno 6 caratteri.", "error"); return;
       }

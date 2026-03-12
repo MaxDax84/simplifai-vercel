@@ -308,14 +308,23 @@
     <div class="card" style="margin-top:20px;">
       <div class="card-inner">
         <div class="profile-hero">
-          <div class="avatar" id="avatarEl">?</div>
-          <div class="profile-hero-text">
-            <h2 id="heroName">Caricamento...</h2>
-            <span id="heroEmail"></span>
-            <br>
-            <span class="credit-badge" style="margin-top:6px; display:inline-flex;">
-              ⚡ Crediti: <b id="heroCredits">—</b>
-            </span>
+          <div class="avatar" id="avatarEl" style="opacity:.35;">?</div>
+          <div class="profile-hero-text" style="flex:1;">
+            <!-- Skeleton visibile durante il caricamento -->
+            <div id="heroSkeleton" class="skeleton-wrap" style="max-width:260px;">
+              <div class="skeleton-line" style="height:18px;width:60%;"></div>
+              <div class="skeleton-line" style="height:13px;width:80%;"></div>
+              <div class="skeleton-line" style="height:26px;width:40%;border-radius:999px;"></div>
+            </div>
+            <!-- Contenuto reale, nascosto finché non carica -->
+            <div id="heroContent" style="display:none;">
+              <h2 id="heroName" style="margin:0 0 4px;font-size:20px;font-weight:900;"></h2>
+              <span id="heroEmail" style="color:var(--muted);font-size:13px;"></span>
+              <br>
+              <span class="credit-badge" style="margin-top:6px; display:inline-flex;">
+                ⚡ Crediti: <b id="heroCredits">—</b>
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -644,8 +653,28 @@
     initPills("pillsObiettivo", v => selectedObiettivo = v);
     initPills("pillsFrequenza", v => selectedFrequenza = v);
 
+    /* Disabilita i bottoni salva durante il caricamento iniziale */
+    ['savePersonal','saveEmail','savePwd','saveProfiling'].forEach(id => {
+      const btn = document.getElementById(id);
+      if(btn) btn.disabled = true;
+    });
+
     /* Popola UI con dati profilo */
     function fillUI(profile, email){
+      /* Nascondi skeleton, mostra contenuto hero */
+      const skeleton = document.getElementById('heroSkeleton');
+      const content  = document.getElementById('heroContent');
+      const avatar   = document.getElementById('avatarEl');
+      if(skeleton) skeleton.style.display = 'none';
+      if(content)  content.style.display  = '';
+      if(avatar)   avatar.style.opacity   = '1';
+
+      /* Riabilita bottoni salva */
+      ['savePersonal','saveEmail','savePwd','saveProfiling'].forEach(id => {
+        const btn = document.getElementById(id);
+        if(btn) btn.disabled = false;
+      });
+
       /* Hero */
       const nome = profile.nome || "";
       const cognome = profile.cognome || "";

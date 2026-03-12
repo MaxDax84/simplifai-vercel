@@ -966,9 +966,16 @@
     });
 
     copyBtn.addEventListener("click", () => {
-      navigator.clipboard.writeText(accumulatedText);
-      setStatus("Copiato!", false);
-      setTimeout(()=>setStatus("Fatto.", false), 1000);
+      navigator.clipboard.writeText(accumulatedText).then(() => {
+        copyBtn.textContent = "✓ Copiato";
+        setStatus("Testo copiato negli appunti.", false);
+        setTimeout(() => {
+          copyBtn.textContent = "⧉ Copia";
+          setStatus("Fatto.", false);
+        }, 2000);
+      }).catch(() => {
+        setStatus("Impossibile copiare. Seleziona il testo manualmente.", false);
+      });
     });
 
     /* ── History (localStorage) ── */
