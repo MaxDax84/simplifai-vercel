@@ -914,7 +914,7 @@
            *   2. Soft-delete del profilo: deleted_at = now(), credits = 0
            *   3. Hard-delete da auth.users (revoca l'accesso)
            */
-          const { error: rpcErr } = await sb.rpc('soft_delete_user', { user_id: currentUserId });
+          const { error: rpcErr } = await sb.rpc('soft_delete_user');
 
           if(rpcErr) throw new Error("Errore eliminazione account: " + rpcErr.message);
 
