@@ -519,6 +519,21 @@
         creditsValueEl.textContent = "0 (scaduti)";
         await sb.from('profiles').update({ credits: 0, updated_at: new Date().toISOString() }).eq('id', currentUserId);
       }
+
+      /* Realtime: mantieni il contatore sincronizzato tra tab */
+      sb.channel('app-credits-' + currentUserId)
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: 'id=eq.' + currentUserId
+        }, function(payload){
+          if(payload.new && payload.new.credits !== undefined){
+            userCredits = payload.new.credits;
+            creditsValueEl.textContent = userCredits;
+          }
+        })
+        .subscribe();
     });
 
 
@@ -773,28 +788,26 @@
       let receivedAny = false;
 
       function processEventBlock(block){
-        const dataLines = block
-          .split(/\r?\n/)
-          .filter(l => l.startsWith("data:"))
-          .map(l => l.slice(5).trim());
-
-        if(!dataLines.length) return;
-
-        const data = dataLines.join("\n");
-        if(!data || data === "[DONE]") return;
-
-        try{
-          const json = JSON.parse(data);
-          const parts = json?.candidates?.[0]?.content?.parts;
-          if(Array.isArray(parts)){
-            for(const p of parts){
-              if(p?.text){
-                receivedAny = true;
-                onTextChunk(p.text);
+        /* Ogni riga "data:" è un JSON indipendente — non unire le righe */
+        for(const line of block.split(/\r?\n/)){
+          if(!line.startsWith("data:")) continue;
+          const data = line.slice(5).trim();
+          if(!data || data === "[DONE]") continue;
+          try{
+            const json = JSON.parse(data);
+            const parts = json?.candidates?.[0]?.content?.parts;
+            if(Array.isArray(parts)){
+              for(const p of parts){
+                if(p?.text){
+                  receivedAny = true;
+                  onTextChunk(p.text);
+                }
               }
             }
+          }catch(e){
+            console.warn("SSE parse error:", e.message, "| data:", data.slice(0, 120));
           }
-        }catch(_){}
+        }
       }
 
       while(true){
