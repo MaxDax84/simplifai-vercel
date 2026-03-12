@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Pagine private – non indicizzare
+Disallow: /app.html
+Disallow: /profilo.html
+Disallow: /checkout.html
+Disallow: /auth.html
+
+Sitemap: https://www.simplif-ai.it/sitemap.xml
