@@ -1,9 +1,14 @@
 {
+  "redirects": [
+    { "source": "/index.html", "destination": "/", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/auth",           "destination": "/auth.html" },
     { "source": "/app",            "destination": "/app.html" },
     { "source": "/come-funziona",  "destination": "/come-funziona.html" },
     { "source": "/prezzi",         "destination": "/prezzi.html" },
-    { "source": "/checkout",       "destination": "/checkout.html" }
+    { "source": "/checkout",       "destination": "/checkout.html" },
+    { "source": "/contatti",       "destination": "/contatti.html" },
+    { "source": "/profilo",        "destination": "/profilo.html" }
   ]
 }

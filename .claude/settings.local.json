@@ -5,7 +5,8 @@
       "Bash(cd \"C:\\\\Users\\\\Massimo\\\\Documents\\\\Projects\\\\Simplif-AI\\\\simplifai-vercel\" && npx vercel --prod 2>&1)",
       "Bash(cd \"C:\\\\Users\\\\Massimo\\\\Documents\\\\Projects\\\\Simplif-AI\\\\simplifai-vercel\" && npx vercel login 2>&1)",
       "Bash(cd \"C:\\\\Users\\\\Massimo\\\\Documents\\\\Projects\\\\Simplif-AI\\\\simplifai-vercel\" && npx vercel --prod --yes 2>&1)",
-      "Bash(Get-Content \"C:\\\\Users\\\\Massimo\\\\Documents\\\\Projects\\\\Simplif-AI\\\\simplifai-vercel\\\\app.html\" | Select-Object -Last 8)"
+      "Bash(Get-Content \"C:\\\\Users\\\\Massimo\\\\Documents\\\\Projects\\\\Simplif-AI\\\\simplifai-vercel\\\\app.html\" | Select-Object -Last 8)",
+      "Bash(git add:*)"
     ]
   }
 }
