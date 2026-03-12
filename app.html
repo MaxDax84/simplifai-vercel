@@ -16,7 +16,7 @@
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- html2pdf caricato lazily al primo click: non blocca il caricamento iniziale -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.11/dist/purify.min.js"></script>
 
@@ -736,11 +736,22 @@
     
     // SSE robusto: eventi separati da riga vuota, multi data:, CRLF ok
     async function streamGemini(payload, onTextChunk){
-      const res = await fetch("/api/gemini", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify(payload)
-      });
+      const controller = new AbortController();
+      const timeoutId  = setTimeout(() => controller.abort(), 60000); // 60s timeout
+      let res;
+      try {
+        res = await fetch("/api/gemini", {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+      } catch(err) {
+        clearTimeout(timeoutId);
+        if(err.name === "AbortError") throw new Error("Richiesta scaduta (timeout 60s). Riprova.");
+        throw err;
+      }
+      clearTimeout(timeoutId);
 
       const rem = res.headers.get("x-credits-remaining"),
             lim = res.headers.get("x-credits-limit");
@@ -1016,12 +1027,29 @@
       }
     })();
 
-    /* ── PDF Download ── */
+    /* ── PDF Download (html2pdf caricato lazily al primo click) ── */
+    const HTML2PDF_URL = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+    let html2pdfLoaded = false;
+
+    function loadHtml2pdf(){
+      if(html2pdfLoaded) return Promise.resolve();
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = HTML2PDF_URL;
+        s.onload  = () => { html2pdfLoaded = true; resolve(); };
+        s.onerror = () => reject(new Error("Impossibile caricare html2pdf."));
+        document.head.appendChild(s);
+      });
+    }
+
     pdfBtn.addEventListener('click', () => {
       if(!accumulatedText.trim()) return;
-      const pdfContent = document.getElementById('pdfContent');
-      const t = selectedTargetIndex >= 0 ? TARGETS[selectedTargetIndex] : null;
-      const l = selectedLenKey ? LENGTHS.find(x => x.key === selectedLenKey) : null;
+      pdfBtn.disabled = true;
+      pdfBtn.textContent = "⏳ Preparazione…";
+      loadHtml2pdf().then(() => {
+        const pdfContent = document.getElementById('pdfContent');
+        const t = selectedTargetIndex >= 0 ? TARGETS[selectedTargetIndex] : null;
+        const l = selectedLenKey ? LENGTHS.find(x => x.key === selectedLenKey) : null;
       let header = '<div style="font-size:12px;color:#888;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #eee;">';
       header += '<strong style="color:#333;">Simplif-AI</strong> &nbsp;—&nbsp; ';
       if(t) header += 'Target: <strong style="color:#333;">' + t.label + '</strong>';
@@ -1035,6 +1063,14 @@
         html2canvas: { scale: 2, useCORS: true },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       }).from(pdfContent).save();
+        pdfBtn.disabled = false;
+        pdfBtn.textContent = "⬇ PDF";
+      }).catch((err) => {
+        console.error("PDF export failed:", err);
+        setStatus("Errore durante la generazione del PDF. Riprova.", false);
+        pdfBtn.disabled = false;
+        pdfBtn.textContent = "⬇ PDF";
+      });
     });
 
     // init
