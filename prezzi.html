@@ -412,6 +412,24 @@
       <a href="/auth.html" class="btn btn-primary" style="margin-left:6px;min-height:36px;padding:8px 16px;font-size:13px;" id="welcomeCta">Crea account gratis</a>
     </div>
 
+    <!-- CODICE SCONTO -->
+    <div class="card" style="margin-top:14px;">
+      <div class="card-inner">
+        <p style="margin:0 0 10px;font-size:14px;font-weight:700;">🏷️ Hai un codice sconto?</p>
+        <div id="promoInputRow" style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input id="promoInput" class="promo-field" type="text" placeholder="es. BENVENUTO20" autocomplete="off" spellcheck="false" maxlength="32" />
+          <button id="promoApplyBtn" class="btn btn-primary" type="button" style="white-space:nowrap;">Applica</button>
+        </div>
+        <div id="promoActiveRow" style="display:none;align-items:center;gap:10px;">
+          <div class="promo-badge">
+            🏷️ <span id="promoActiveLabel"></span>
+            <button class="promo-remove" id="promoRemoveBtn" type="button" title="Rimuovi codice">✕</button>
+          </div>
+        </div>
+        <div id="promoMsg" style="margin-top:8px;font-size:13px;min-height:16px;"></div>
+      </div>
+    </div>
+
     <!-- PIANI -->
     <div class="grid">
 
@@ -488,24 +506,6 @@
             <a class="btn btn-primary" id="proCta" href="/checkout.html?plan=pro&billing=monthly">Upgrade (mock)</a>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- CODICE SCONTO -->
-    <div class="card" style="margin-top:14px;">
-      <div class="card-inner">
-        <p style="margin:0 0 10px;font-size:14px;font-weight:700;">🏷️ Hai un codice sconto?</p>
-        <div id="promoInputRow" style="display:flex;gap:8px;flex-wrap:wrap;">
-          <input id="promoInput" class="promo-field" type="text" placeholder="es. BENVENUTO20" autocomplete="off" spellcheck="false" maxlength="32" />
-          <button id="promoApplyBtn" class="btn btn-primary" type="button" style="white-space:nowrap;">Applica</button>
-        </div>
-        <div id="promoActiveRow" style="display:none;align-items:center;gap:10px;">
-          <div class="promo-badge">
-            🏷️ <span id="promoActiveLabel"></span>
-            <button class="promo-remove" id="promoRemoveBtn" type="button" title="Rimuovi codice">✕</button>
-          </div>
-        </div>
-        <div id="promoMsg" style="margin-top:8px;font-size:13px;min-height:16px;"></div>
       </div>
     </div>
 
