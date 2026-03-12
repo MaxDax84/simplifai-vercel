@@ -6,6 +6,14 @@
   <title>Profilo – Simplif-AI</title>
   <link rel="stylesheet" href="/theme.css">
 
+  <!-- FOUC prevention: applica il tema prima del paint -->
+  <script>
+    (function(){
+      if(localStorage.getItem('sai_theme')==='light')
+        document.documentElement.setAttribute('data-theme','light');
+    })();
+  </script>
+
   <style>
     .avatar{
       width: 72px; height: 72px;
@@ -222,6 +230,41 @@
     }
     html[data-theme="light"] .delete-modal-box{ background: #eef0ff; }
 
+    /* ── Light mode overrides ── */
+    html[data-theme="light"] .field{
+      background: rgba(255,255,255,.80);
+      border-color: rgba(13,17,51,.15);
+      color: #0d1133;
+    }
+    html[data-theme="light"] .field:focus{
+      border-color: rgba(91,54,209,.50);
+    }
+    html[data-theme="light"] .field:disabled{ opacity: .45; }
+    html[data-theme="light"] .pill-opt{
+      background: rgba(0,0,0,.03); color: rgba(13,17,51,.65);
+    }
+    html[data-theme="light"] .pill-opt:hover{ background: rgba(0,0,0,.06); }
+    html[data-theme="light"] .pill-opt.active{
+      background: rgba(91,54,209,.12);
+      border-color: rgba(91,54,209,.50);
+      color: #0d1133;
+    }
+    html[data-theme="light"] .interest-item{
+      background: rgba(0,0,0,.03); color: rgba(13,17,51,.65);
+    }
+    html[data-theme="light"] .interest-item:hover{ background: rgba(0,0,0,.06); }
+    html[data-theme="light"] .interest-item.active{
+      background: rgba(91,54,209,.12);
+      border-color: rgba(91,54,209,.50);
+      color: #0d1133;
+    }
+    html[data-theme="light"] .credit-badge{
+      background: rgba(0,0,0,.04);
+    }
+    html[data-theme="light"] .danger-zone{
+      border-color: rgba(200,50,50,.30);
+    }
+
   </style>
 </head>
 
@@ -244,9 +287,12 @@
         <a href="/profilo.html" data-nav="profile">Profilo</a>
       </nav>
 
-      <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
-        <span></span><span></span><span></span>
-      </button>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema">☀️</button>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </header>
 
     <div class="mobile-nav" id="mobileNav">
@@ -570,6 +616,21 @@
       if(h) window.addEventListener('scroll', () => h.classList.toggle('scrolled', window.scrollY > 10), { passive: true });
     })();
 
+    /* Theme toggle */
+    (function(){
+      const btn = document.getElementById('themeBtn');
+      if(!btn) return;
+      function applyTheme(dark){
+        if(dark){ document.documentElement.removeAttribute('data-theme'); }
+        else     { document.documentElement.setAttribute('data-theme','light'); }
+        btn.textContent = dark ? '☀️' : '🌙';
+        localStorage.setItem('sai_theme', dark ? 'dark' : 'light');
+      }
+      let isDark = localStorage.getItem('sai_theme') !== 'light';
+      applyTheme(isDark);
+      btn.addEventListener('click', () => { isDark = !isDark; applyTheme(isDark); });
+    })();
+
     const SUPABASE_URL  = "https://lmmiowagyqypdrdcemdo.supabase.co";
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -853,7 +914,7 @@
            *   2. Soft-delete del profilo: deleted_at = now(), credits = 0
            *   3. Hard-delete da auth.users (revoca l'accesso)
            */
-          const { error: rpcErr } = await sb.rpc('soft_delete_user');
+          const { error: rpcErr } = await sb.rpc('soft_delete_user', { user_id: currentUserId });
 
           if(rpcErr) throw new Error("Errore eliminazione account: " + rpcErr.message);
 

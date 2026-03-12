@@ -6,6 +6,14 @@
   <title>Come funziona – Simplif-AI</title>
   <link rel="stylesheet" href="/theme.css">
 
+  <!-- FOUC prevention: applica il tema prima del paint -->
+  <script>
+    (function(){
+      if(localStorage.getItem('sai_theme')==='light')
+        document.documentElement.setAttribute('data-theme','light');
+    })();
+  </script>
+
   <style>
     .how-hero{ text-align:center; padding: 26px 18px; }
 
@@ -133,6 +141,47 @@
     /* Reveal */
     .reveal{ opacity:0; transform:translateY(14px); transition:opacity .6s cubic-bezier(.2,.8,.2,1), transform .6s cubic-bezier(.2,.8,.2,1); }
     .reveal.in{ opacity:1; transform:translateY(0); }
+
+    /* ── Light mode overrides ── */
+    html[data-theme="light"] .mini-nav a{
+      background: rgba(0,0,0,.03); color: rgba(13,17,51,.65);
+    }
+    html[data-theme="light"] .mini-nav a:hover{
+      background: rgba(0,0,0,.06); color: #0d1133;
+    }
+    html[data-theme="light"] .mini-nav a.active{
+      border-color: rgba(91,54,209,.45);
+      background: rgba(91,54,209,.10);
+      color: #0d1133;
+    }
+    html[data-theme="light"] .mini-dot{
+      background: rgba(0,0,0,.06);
+      border-color: rgba(13,17,51,.13);
+      color: #0d1133;
+    }
+    html[data-theme="light"] .tg-card{
+      background: rgba(255,255,255,.70);
+      border-color: rgba(13,17,51,.13);
+    }
+    html[data-theme="light"] .tg-cost{
+      background: rgba(91,54,209,.09);
+      border-color: rgba(91,54,209,.20);
+    }
+    html[data-theme="light"] .len-table th{
+      border-bottom-color: rgba(13,17,51,.13);
+    }
+    html[data-theme="light"] .len-table td{
+      border-bottom-color: rgba(13,17,51,.07);
+    }
+    html[data-theme="light"] .credit-box{
+      background: rgba(255,255,255,.70);
+      border-color: rgba(13,17,51,.13);
+    }
+    html[data-theme="light"] .faq-item{
+      background: rgba(255,255,255,.70);
+      border-color: rgba(13,17,51,.13);
+    }
+    html[data-theme="light"] .faq-q:hover{ background: rgba(0,0,0,.03); }
   </style>
 </head>
 
@@ -155,9 +204,12 @@
         <a href="/profilo.html" data-nav="profile">Profilo</a>
       </nav>
 
-      <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
-        <span></span><span></span><span></span>
-      </button>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema">☀️</button>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </header>
 
     <div class="mobile-nav" id="mobileNav">
@@ -505,17 +557,27 @@
     }, { threshold: 0.1 });
     document.querySelectorAll(".reveal").forEach(el => io.observe(el));
 
-    // Mini-nav active on scroll
+    // Mini-nav active on scroll (scroll-position based, no IntersectionObserver off-by-one)
     const miniLinks = Array.from(document.querySelectorAll("#miniNav a"));
     const stepIds = ["step-1","step-2","step-3","step-4","step-5","step-6","step-7"];
-    const stepSections = stepIds.map(id => document.getElementById(id));
-    const io2 = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if(!e.isIntersecting) return;
-        miniLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id));
+    const stepSections = stepIds.map(id => document.getElementById(id)).filter(Boolean);
+
+    function updateScrollSpy() {
+      const headerH = (document.querySelector('header') || {}).offsetHeight || 60;
+      const threshold = headerH + 24;
+      let active = stepSections[0];
+      for (const section of stepSections) {
+        if (section.getBoundingClientRect().top <= threshold) {
+          active = section;
+        }
+      }
+      miniLinks.forEach(a => {
+        a.classList.toggle("active", a.getAttribute("href") === "#" + active.id);
       });
-    }, { threshold: 0.5 });
-    stepSections.forEach(s => { if(s) io2.observe(s); });
+    }
+
+    window.addEventListener("scroll", updateScrollSpy, { passive: true });
+    updateScrollSpy();
 
     // FAQ accordion
     document.querySelectorAll(".faq-item").forEach(item => {
@@ -530,6 +592,21 @@
     (function(){
       const h = document.querySelector('header');
       if(h) window.addEventListener('scroll', () => h.classList.toggle('scrolled', window.scrollY > 10), { passive: true });
+    })();
+
+    // Theme toggle
+    (function(){
+      const btn = document.getElementById('themeBtn');
+      if(!btn) return;
+      function applyTheme(dark){
+        if(dark){ document.documentElement.removeAttribute('data-theme'); }
+        else     { document.documentElement.setAttribute('data-theme','light'); }
+        btn.textContent = dark ? '☀️' : '🌙';
+        localStorage.setItem('sai_theme', dark ? 'dark' : 'light');
+      }
+      let isDark = localStorage.getItem('sai_theme') !== 'light';
+      applyTheme(isDark);
+      btn.addEventListener('click', () => { isDark = !isDark; applyTheme(isDark); });
     })();
 
     // Scroll con offset header per tutti i link anchor (#step-X) e "Vedi i passaggi"
