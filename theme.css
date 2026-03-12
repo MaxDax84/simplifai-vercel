@@ -477,6 +477,9 @@ html[data-theme="light"] .spinner{
 .theme-btn:hover{ background:rgba(255,255,255,.09); }
 html[data-theme="light"] .theme-btn{ background:rgba(0,0,0,.04); }
 html[data-theme="light"] .theme-btn:hover{ background:rgba(0,0,0,.08); }
+/* Icon via CSS so it's always in sync with data-theme (no JS flash) */
+.theme-btn::after{ content:'☀️'; }
+html[data-theme="light"] .theme-btn::after{ content:'🌙'; }
 
 /* =====================================================
    SKELETON LOADER

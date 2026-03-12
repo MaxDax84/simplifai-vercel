@@ -97,7 +97,7 @@
       </nav>
 
       <div style="display:flex;align-items:center;gap:8px;">
-        <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema">☀️</button>
+        <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema"></button>
         <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
           <span></span><span></span><span></span>
         </button>
@@ -242,7 +242,7 @@
         } else {
           document.documentElement.setAttribute('data-theme','light');
         }
-        btn.textContent = dark ? '☀️' : '🌙';
+
         localStorage.setItem('sai_theme', dark ? 'dark' : 'light');
       }
       let isDark = localStorage.getItem('sai_theme') !== 'light';
