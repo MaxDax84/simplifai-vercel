@@ -521,26 +521,6 @@
       }
     })();
 
-    // Mobile nav
-    (function(){
-      const toggle = document.getElementById("navToggle");
-      const mobileNav = document.getElementById("mobileNav");
-      if(!toggle||!mobileNav) return;
-      toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
-      mobileNav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => document.body.classList.remove("nav-open")));
-    })();
-
-    // Navbar active
-    document.querySelectorAll('#mainNav a').forEach(a => {
-      if(a.dataset.nav === "pricing") a.classList.add('nav-active');
-    });
-
-    // Sticky header
-    (function(){
-      const h = document.querySelector('header');
-      if(h) window.addEventListener('scroll', () => h.classList.toggle('scrolled', window.scrollY > 10), { passive: true });
-    })();
-
     // Billing toggle
     (function(){
       const sw         = document.getElementById("billingSwitch");
@@ -600,21 +580,8 @@
       apply();
     })();
 
-  // ── Dark/Light Theme ──
-  (function(){
-    const btn = document.getElementById('themeBtn');
-    if(!btn) return;
-    function applyTheme(dark){
-      if(dark){ document.documentElement.removeAttribute('data-theme'); }
-      else     { document.documentElement.setAttribute('data-theme','light'); }
-
-      localStorage.setItem('sai_theme', dark ? 'dark' : 'light');
-    }
-    let isDark = localStorage.getItem('sai_theme') !== 'light';
-    applyTheme(isDark);
-    btn.addEventListener('click', () => { isDark = !isDark; applyTheme(isDark); });
-  })();
   </script>
+  <script src="/shared.js" defer></script>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script>

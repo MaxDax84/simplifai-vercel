@@ -6,6 +6,14 @@
   <title>Checkout – Simplif-AI</title>
   <link rel="stylesheet" href="/theme.css">
 
+  <!-- FOUC prevention -->
+  <script>
+    (function(){
+      if(localStorage.getItem('sai_theme')==='light')
+        document.documentElement.setAttribute('data-theme','light');
+    })();
+  </script>
+
   <style>
     .hero{
       text-align:center;
@@ -160,9 +168,12 @@
         <a href="/profilo.html" data-nav="profile">Profilo</a>
       </nav>
 
-      <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
-        <span></span><span></span><span></span>
-      </button>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema"><span class="icon-sun">☀️</span><span class="icon-moon">🌙</span></button>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </header>
 
     <div class="mobile-nav" id="mobileNav">
@@ -282,28 +293,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script>
-    /* Mobile nav */
-    (function(){
-      const toggle = document.getElementById("navToggle");
-      const mobileNav = document.getElementById("mobileNav");
-      if(!toggle || !mobileNav) return;
-      toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
-      mobileNav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => document.body.classList.remove("nav-open")));
-    })();
-
-    /* Navbar active */
-    (function(){
-      document.querySelectorAll('#mainNav a').forEach(a=>{
-        if(a.dataset.nav === "pricing") a.classList.add('nav-active');
-      });
-    })();
-
-    /* Sticky header */
-    (function(){
-      const h = document.querySelector('header');
-      if(h) window.addEventListener('scroll', () => h.classList.toggle('scrolled', window.scrollY > 10), { passive: true });
-    })();
-
     const SUPABASE_URL  = "https://lmmiowagyqypdrdcemdo.supabase.co";
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -423,5 +412,6 @@
       }
     });
   </script>
+  <script src="/shared.js" defer></script>
 </body>
 </html>

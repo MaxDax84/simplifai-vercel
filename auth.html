@@ -252,15 +252,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script>
-    /* Mobile nav */
-    (function(){
-      const toggle = document.getElementById("navToggle");
-      const mobileNav = document.getElementById("mobileNav");
-      if(!toggle || !mobileNav) return;
-      toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
-      mobileNav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => document.body.classList.remove("nav-open")));
-    })();
-
     const SUPABASE_URL  = "https://lmmiowagyqypdrdcemdo.supabase.co";
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -579,5 +570,6 @@
       }
     });
   </script>
+  <script src="/shared.js" defer></script>
 </body>
 </html>

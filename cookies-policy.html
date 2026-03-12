@@ -273,33 +273,6 @@
   </div>
 
   <script>
-    (function(){
-      const toggle = document.getElementById("navToggle");
-      const mobileNav = document.getElementById("mobileNav");
-      if(!toggle || !mobileNav) return;
-      toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
-      mobileNav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => document.body.classList.remove("nav-open")));
-    })();
-
-    (function(){
-      const h = document.querySelector('header');
-      if(h) window.addEventListener('scroll', () => h.classList.toggle('scrolled', window.scrollY > 10), { passive: true });
-    })();
-
-    // ── Dark/Light Theme ──
-    (function(){
-      const btn = document.getElementById('themeBtn');
-      if(!btn) return;
-      function applyTheme(dark){
-        if(dark){ document.documentElement.removeAttribute('data-theme'); }
-        else     { document.documentElement.setAttribute('data-theme','light'); }
-
-        localStorage.setItem('sai_theme', dark ? 'dark' : 'light');
-      }
-      let isDark = localStorage.getItem('sai_theme') !== 'light';
-      applyTheme(isDark);
-      btn.addEventListener('click', () => { isDark = !isDark; applyTheme(isDark); });
-    })();
-  </script>
+  <script src="/shared.js" defer></script>
 </body>
 </html>

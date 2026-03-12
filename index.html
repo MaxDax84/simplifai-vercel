@@ -201,54 +201,6 @@
     </footer>
   </div>
 
-  <script>
-    // Mobile nav toggle
-    (function(){
-      const toggle = document.getElementById("navToggle");
-      const mobileNav = document.getElementById("mobileNav");
-      if(!toggle || !mobileNav) return;
-      toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
-      mobileNav.querySelectorAll("a").forEach(a =>
-        a.addEventListener("click", () => document.body.classList.remove("nav-open"))
-      );
-    })();
-
-    // Navbar active
-    (function(){
-      const path = location.pathname.toLowerCase();
-      let key = "home";
-      if (path.includes("/app")) key = "app";
-      else if (path.includes("come-funziona")) key = "how";
-      else if (path.includes("prezzi")) key = "pricing";
-      else if (path.includes("checkout")) key = "pricing";
-      document.querySelectorAll('#mainNav a').forEach(a =>{
-        if(a.dataset.nav === key) a.classList.add('nav-active');
-      });
-    })();
-
-    // Sticky header scroll effect
-    (function(){
-      const h = document.querySelector('header');
-      if(h) window.addEventListener('scroll', () => h.classList.toggle('scrolled', window.scrollY > 10), { passive:true });
-    })();
-
-    // ── Dark/Light Theme ──
-    (function(){
-      const btn = document.getElementById('themeBtn');
-      if(!btn) return;
-      function apply(dark){
-        if(dark){
-          document.documentElement.removeAttribute('data-theme');
-        } else {
-          document.documentElement.setAttribute('data-theme','light');
-        }
-
-        localStorage.setItem('sai_theme', dark ? 'dark' : 'light');
-      }
-      let isDark = localStorage.getItem('sai_theme') !== 'light';
-      apply(isDark);
-      btn.addEventListener('click', () => { isDark = !isDark; apply(isDark); });
-    })();
-  </script>
+  <script src="/shared.js" defer></script>
 </body>
 </html>

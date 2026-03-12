@@ -537,20 +537,6 @@
   </div>
 
   <script>
-    // Mobile nav
-    (function(){
-      const toggle = document.getElementById("navToggle");
-      const mobileNav = document.getElementById("mobileNav");
-      if(!toggle||!mobileNav) return;
-      toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
-      mobileNav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => document.body.classList.remove("nav-open")));
-    })();
-
-    // Navbar active
-    document.querySelectorAll('#mainNav a').forEach(a => {
-      if(a.dataset.nav === "how") a.classList.add('nav-active');
-    });
-
     // Reveal on scroll
     const io = new IntersectionObserver((entries) => {
       entries.forEach(e => { if(e.isIntersecting) e.target.classList.add("in"); });
@@ -588,27 +574,6 @@
       });
     });
 
-    // Sticky header
-    (function(){
-      const h = document.querySelector('header');
-      if(h) window.addEventListener('scroll', () => h.classList.toggle('scrolled', window.scrollY > 10), { passive: true });
-    })();
-
-    // Theme toggle
-    (function(){
-      const btn = document.getElementById('themeBtn');
-      if(!btn) return;
-      function applyTheme(dark){
-        if(dark){ document.documentElement.removeAttribute('data-theme'); }
-        else     { document.documentElement.setAttribute('data-theme','light'); }
-
-        localStorage.setItem('sai_theme', dark ? 'dark' : 'light');
-      }
-      let isDark = localStorage.getItem('sai_theme') !== 'light';
-      applyTheme(isDark);
-      btn.addEventListener('click', () => { isDark = !isDark; applyTheme(isDark); });
-    })();
-
     // Scroll con offset header per tutti i link anchor (#step-X) e "Vedi i passaggi"
     function scrollToId(id) {
       var target = document.getElementById(id);
@@ -626,5 +591,6 @@
       });
     });
   </script>
+  <script src="/shared.js" defer></script>
 </body>
 </html>
