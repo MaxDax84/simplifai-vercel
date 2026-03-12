@@ -40,7 +40,7 @@
   function applyTheme(dark) {
     if (dark) { document.documentElement.removeAttribute('data-theme'); }
     else      { document.documentElement.setAttribute('data-theme', 'light'); }
-    localStorage.setItem('sai_theme', dark ? 'dark' : 'light');
+    try { localStorage.setItem('sai_theme', dark ? 'dark' : 'light'); } catch(_) {}
   }
   var isDark = localStorage.getItem('sai_theme') !== 'light';
   applyTheme(isDark);

@@ -375,26 +375,11 @@
       showMsg("");
 
       try {
-        /* Leggi crediti attuali */
-        const { data: rows, error: fetchErr } = await sb
-          .from('profiles')
-          .select('credits')
-          .eq('id', currentUserId)
-          .limit(1);
+        /* Incremento atomico via RPC: elimina race condition tra tab multiple */
+        const { data: newCredits, error: rpcErr } = await sb
+          .rpc('add_credits', { amount: pkg.credits });
 
-        if(fetchErr) throw new Error("Impossibile leggere il profilo: " + fetchErr.message);
-
-        const currentCredits = rows?.[0]?.credits ?? 0;
-        const newCredits = currentCredits + pkg.credits;
-        var newExpiry = new Date();
-        newExpiry.setFullYear(newExpiry.getFullYear() + 1);
-
-        /* Upsert: crea il profilo se non esiste, altrimenti aggiorna */
-        const { error: updateErr } = await sb
-          .from('profiles')
-          .upsert({ id: currentUserId, credits: newCredits, plan: pkgKey, credits_expiry: newExpiry.toISOString(), updated_at: new Date().toISOString() });
-
-        if(updateErr) throw new Error("Impossibile aggiornare i crediti: " + updateErr.message);
+        if(rpcErr) throw new Error("Impossibile aggiornare i crediti: " + rpcErr.message);
 
         /* Mostra successo */
         document.getElementById('formSection').style.display = 'none';

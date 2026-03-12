@@ -980,7 +980,12 @@
       if(!query) return;
       let list = loadHistory().filter(x => x !== query);
       list.unshift(query);
-      localStorage.setItem('sai_history', JSON.stringify(list.slice(0, 5)));
+      try {
+        localStorage.setItem('sai_history', JSON.stringify(list.slice(0, 5)));
+      } catch(e) {
+        // QuotaExceededError (es. Safari con storage limitato): ignora silenziosamente
+        console.warn('saveToHistory: localStorage pieno, history non salvata.', e);
+      }
     }
     function renderHistory(){
       const list = loadHistory();
