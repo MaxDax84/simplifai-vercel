@@ -205,6 +205,24 @@
       text-underline-offset: 2px;
     }
     .consent-group a:hover{ color: var(--text); }
+    .input-error{
+      border-color: #ff6b6b !important;
+      box-shadow: 0 0 0 4px rgba(255,107,107,.12) !important;
+    }
+    .field-err{
+      display: block;
+      font-size: 12px;
+      color: #ff6b6b;
+      margin-top: -10px;
+      margin-bottom: 10px;
+      padding-left: 2px;
+    }
+    .consent-group.consent-error{
+      border: 1px solid #ff6b6b;
+      border-radius: 8px;
+      padding: 6px 8px;
+      background: rgba(255,107,107,.06);
+    }
   </style>
 </head>
 
@@ -508,19 +526,49 @@
       }
     }
 
-    /* Signup — checkbox consenso */
+    /* Signup — validazione inline */
     const consentCheck = document.getElementById("consentCheck");
+
+    function setFieldErr(id, msg) {
+      var el = document.getElementById(id);
+      el.classList.add("input-error");
+      var errEl = el.parentElement.querySelector(".field-err");
+      if (!errEl) {
+        errEl = document.createElement("span");
+        errEl.className = "field-err";
+        el.parentElement.appendChild(errEl);
+      }
+      errEl.textContent = msg;
+      el.addEventListener("input",  function(){ clearFieldErr(id); }, { once: true });
+      el.addEventListener("change", function(){ clearFieldErr(id); }, { once: true });
+    }
+
+    function clearFieldErr(id) {
+      var el = document.getElementById(id);
+      el.classList.remove("input-error");
+      var errEl = el.parentElement.querySelector(".field-err");
+      if (errEl) errEl.remove();
+    }
+
+    function setConsentErr(show) {
+      var group = document.getElementById("consentCheck").closest(".consent-group");
+      group.classList.toggle("consent-error", show);
+      if (show) {
+        consentCheck.addEventListener("change", function(){ setConsentErr(false); }, { once: true });
+      }
+    }
+
+    function clearAllSignupErrors() {
+      ["signupNome","signupCognome","signupEmail","signupPassword"].forEach(clearFieldErr);
+      setConsentErr(false);
+    }
 
     const signupBtn = document.getElementById("signupBtn");
     signupBtn.dataset.label = "Crea account";
     signupForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       clearMsg();
-
-      if (!consentCheck.checked) {
-        showMsg("Devi accettare i Termini di Servizio, la Privacy Policy e il DPA per registrarti.", "error");
-        return;
-      }
+      clearAllSignupErrors();
 
       const nome     = document.getElementById("signupNome").value.trim();
       const cognome  = document.getElementById("signupCognome").value.trim();
@@ -530,19 +578,16 @@
       const nazione  = document.getElementById("signupNazione").value;
       const referral = document.getElementById("signupReferral").value;
 
-      /* Validazione base */
-      if (!nome || !cognome) {
-        showMsg("Inserisci nome e cognome.", "error"); return;
-      }
-      if (!email || !password) {
-        showMsg("Inserisci email e password.", "error"); return;
-      }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-        showMsg("Inserisci un indirizzo email valido.", "error"); return;
-      }
-      if (password.length < 6) {
-        showMsg("La password deve avere almeno 6 caratteri.", "error"); return;
-      }
+      /* Validazione — mostra tutti gli errori insieme */
+      var hasErrors = false;
+      if (!nome)    { setFieldErr("signupNome",     "Inserisci il tuo nome.");        hasErrors = true; }
+      if (!cognome) { setFieldErr("signupCognome",  "Inserisci il tuo cognome.");     hasErrors = true; }
+      if (!email)                                        { setFieldErr("signupEmail",    "Inserisci la tua email.");         hasErrors = true; }
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { setFieldErr("signupEmail", "Indirizzo email non valido.");  hasErrors = true; }
+      if (!password)              { setFieldErr("signupPassword", "Inserisci la password.");          hasErrors = true; }
+      else if (password.length < 6) { setFieldErr("signupPassword", "Almeno 6 caratteri.");           hasErrors = true; }
+      if (!consentCheck.checked)  { setConsentErr(true);                                              hasErrors = true; }
+      if (hasErrors) return;
 
       setLoading(signupBtn, true);
 
