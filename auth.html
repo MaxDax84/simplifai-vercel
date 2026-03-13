@@ -270,7 +270,7 @@
               and <a href="/dpa.html" target="_blank" rel="noopener">DPA</a>.
             </label>
           </div>
-          <button class="btn btn-primary btn-auth" type="submit" id="signupBtn" disabled aria-disabled="true">Crea account</button>
+          <button class="btn btn-primary btn-auth" type="submit" id="signupBtn">Crea account</button>
         </form>
 
         <div class="divider">oppure</div>
@@ -398,11 +398,6 @@
 
     /* Signup — checkbox consenso */
     const consentCheck = document.getElementById("consentCheck");
-    function updateSignupBtn() {
-      signupBtn.disabled = !consentCheck.checked;
-      signupBtn.setAttribute("aria-disabled", String(!consentCheck.checked));
-    }
-    consentCheck.addEventListener("change", updateSignupBtn);
 
     const signupBtn = document.getElementById("signupBtn");
     signupBtn.dataset.label = "Crea account";
@@ -457,7 +452,6 @@
 
         showMsg(friendlyMsg, "error");
         setLoading(signupBtn, false);
-        updateSignupBtn();
         return;
       }
 
@@ -486,7 +480,6 @@
       }
 
       setLoading(signupBtn, false);
-      updateSignupBtn();
     });
 
     /* Magic link */
