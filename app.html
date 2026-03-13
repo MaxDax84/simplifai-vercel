@@ -1136,22 +1136,68 @@
       pdfBtn.disabled = true;
       pdfBtn.textContent = "⏳ Preparazione…";
       loadHtml2pdf().then(async () => {
-        const pdfContent = document.getElementById('pdfContent');
         const t = selectedTargetIndex >= 0 ? TARGETS[selectedTargetIndex] : null;
         const l = selectedLenKey ? LENGTHS.find(x => x.key === selectedLenKey) : null;
-        let header = '<div style="font-size:12px;color:#888;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #eee;">';
-        header += '<strong style="color:#333;">Simplif-AI</strong> &nbsp;—&nbsp; ';
-        if(t) header += 'Target: <strong style="color:#333;">' + t.label + '</strong>';
-        if(t && l) header += ' &nbsp;•&nbsp; ';
-        if(l) header += 'Lunghezza: <strong style="color:#333;">' + l.label + '</strong>';
-        header += '</div>';
-        pdfContent.innerHTML = header + DOMPurify.sanitize(marked.parse(normalizeForDisplay(accumulatedText)));
+
+        /* Meta pill (target · lunghezza) */
+        const metaParts = [];
+        if(t) metaParts.push('Target: <b style="color:#333;">' + t.label + '</b>');
+        if(l) metaParts.push('Lunghezza: <b style="color:#333;">' + l.label + '</b>');
+        const metaHtml = metaParts.length
+          ? '<div style="margin-top:12px;">'
+            + '<span style="display:inline-block;font-size:11px;color:#555;background:#f3f1ff;'
+            + 'border:1px solid #d8d0ff;border-radius:999px;padding:4px 14px;">'
+            + metaParts.join(' &nbsp;·&nbsp; ') + '</span></div>'
+          : '';
+
+        const bodyHtml = DOMPurify.sanitize(marked.parse(normalizeForDisplay(accumulatedText)));
+        const now = new Date().toLocaleDateString('it-IT', { day:'2-digit', month:'long', year:'numeric' });
+
+        const pdfContent = document.getElementById('pdfContent');
+        pdfContent.innerHTML =
+          /* ── HEADER ── */
+          '<div style="text-align:center;padding-bottom:22px;margin-bottom:26px;'
+          + 'border-bottom:3px solid #7c5cff;">'
+          /* logo mark: cerchio sfumato */
+          + '<div style="display:inline-flex;align-items:center;justify-content:center;'
+          + 'gap:10px;margin-bottom:8px;">'
+          + '<div style="width:40px;height:40px;border-radius:50%;'
+          + 'background:linear-gradient(135deg,#7c5cff 0%,#26c6ff 100%);'
+          + 'flex-shrink:0;"></div>'
+          + '<span style="font-size:26px;font-weight:900;letter-spacing:-0.5px;color:#111;">'
+          + 'Simplif-AI</span></div>'
+          /* tagline */
+          + '<div style="font-size:12px;color:#999;">Concetti complessi spiegati in modo semplice</div>'
+          /* meta pill */
+          + metaHtml
+          + '</div>'
+          /* ── CONTENT ── */
+          + '<div>' + bodyHtml + '</div>'
+          /* ── FOOTER ── */
+          + '<div style="margin-top:40px;padding-top:14px;border-top:1px solid #eee;'
+          + 'display:flex;justify-content:space-between;align-items:center;'
+          + 'font-size:11px;color:#bbb;">'
+          + '<span><b style="color:#7c5cff;">Simplif-AI</b> &mdash; simplif-ai.it</span>'
+          + '<span>' + now + '</span>'
+          + '</div>';
+
         await html2pdf().set({
-          margin: [14, 16, 14, 16],
+          margin: [12, 14, 12, 14],
           filename: 'risposta-simplif-ai.pdf',
-          html2canvas: { scale: 2, useCORS: true, allowTaint: true, windowWidth: 720 },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#ffffff',
+            windowWidth: 720,
+            /* Sposta il clone in posizione visibile così html2canvas cattura il contenuto */
+            onclone: (clonedDoc) => {
+              const el = clonedDoc.getElementById('pdfContent');
+              if(el){ el.style.position = 'relative'; el.style.left = '0'; }
+            }
+          },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         }).from(pdfContent).save();
+
         pdfBtn.disabled = false;
         pdfBtn.textContent = "⬇ PDF";
       }).catch((err) => {
