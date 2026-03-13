@@ -1135,23 +1135,23 @@
       if(!accumulatedText.trim()) return;
       pdfBtn.disabled = true;
       pdfBtn.textContent = "⏳ Preparazione…";
-      loadHtml2pdf().then(() => {
+      loadHtml2pdf().then(async () => {
         const pdfContent = document.getElementById('pdfContent');
         const t = selectedTargetIndex >= 0 ? TARGETS[selectedTargetIndex] : null;
         const l = selectedLenKey ? LENGTHS.find(x => x.key === selectedLenKey) : null;
-      let header = '<div style="font-size:12px;color:#888;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #eee;">';
-      header += '<strong style="color:#333;">Simplif-AI</strong> &nbsp;—&nbsp; ';
-      if(t) header += 'Target: <strong style="color:#333;">' + t.label + '</strong>';
-      if(t && l) header += ' &nbsp;•&nbsp; ';
-      if(l) header += 'Lunghezza: <strong style="color:#333;">' + l.label + '</strong>';
-      header += '</div>';
-      pdfContent.innerHTML = header + DOMPurify.sanitize(marked.parse(normalizeForDisplay(accumulatedText)));
-      html2pdf().set({
-        margin: [14, 16, 14, 16],
-        filename: 'risposta-simplif-ai.pdf',
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      }).from(pdfContent).save();
+        let header = '<div style="font-size:12px;color:#888;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #eee;">';
+        header += '<strong style="color:#333;">Simplif-AI</strong> &nbsp;—&nbsp; ';
+        if(t) header += 'Target: <strong style="color:#333;">' + t.label + '</strong>';
+        if(t && l) header += ' &nbsp;•&nbsp; ';
+        if(l) header += 'Lunghezza: <strong style="color:#333;">' + l.label + '</strong>';
+        header += '</div>';
+        pdfContent.innerHTML = header + DOMPurify.sanitize(marked.parse(normalizeForDisplay(accumulatedText)));
+        await html2pdf().set({
+          margin: [14, 16, 14, 16],
+          filename: 'risposta-simplif-ai.pdf',
+          html2canvas: { scale: 2, useCORS: true, allowTaint: true, windowWidth: 720 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).from(pdfContent).save();
         pdfBtn.disabled = false;
         pdfBtn.textContent = "⬇ PDF";
       }).catch((err) => {
