@@ -640,6 +640,20 @@
         const { data: newCredits, error: rpcErr } = rpcResult;
         if (rpcErr) throw new Error("Impossibile aggiornare i crediti: " + rpcErr.message);
 
+        /* Log acquisto nella tabella purchases */
+        var bType = pkgKey.endsWith('-monthly') ? 'monthly' : pkgKey.endsWith('-yearly') ? 'yearly' : 'once';
+        var finalAmt = (promoCode && activePromoDiscount > 0)
+          ? +(pkg.priceNum * (1 - activePromoDiscount / 100)).toFixed(2)
+          : pkg.priceNum;
+        sb.from('purchases').insert({
+          user_id: currentUserId,
+          package_key: pkgKey,
+          package_name: pkg.label,
+          billing_type: bType,
+          credits_added: pkg.credits,
+          amount_eur: finalAmt
+        }).then(function(r){ if(r.error) console.warn('purchase log error:', r.error); });
+
         sendPurchaseEmail(pkg);
 
         /* 3. Nascondi "in corso", mostra successo */

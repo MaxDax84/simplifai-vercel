@@ -335,6 +335,18 @@
     html[data-theme="light"] .cost-badge.ok{ color:#1a8f5e; border-color:rgba(26,143,94,.30); background:rgba(26,143,94,.07); }
     html[data-theme="light"] .cost-badge.warn{ color:#b06a00; border-color:rgba(176,106,0,.30); background:rgba(176,106,0,.07); }
     html[data-theme="light"] .cost-badge.danger{ color:#c0392b; border-color:rgba(192,57,43,.30); background:rgba(192,57,43,.07); }
+
+    /* Toast notifica */
+    #saveToast{
+      position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+      background:rgba(30,30,40,.96); color:#fff; border:1px solid rgba(255,255,255,.12);
+      border-radius:12px; padding:10px 20px; font-size:14px; font-weight:600;
+      box-shadow:0 4px 24px rgba(0,0,0,.35); z-index:9999;
+      opacity:0; transition:opacity .25s ease, transform .25s ease;
+      pointer-events:none; white-space:nowrap;
+    }
+    #saveToast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+    html[data-theme="light"] #saveToast{ background:rgba(255,255,255,.97); color:#1a1a2e; border-color:rgba(0,0,0,.12); }
   </style>
 </head>
 
@@ -482,6 +494,7 @@
 
               <div style="display:flex;gap:10px;flex-wrap:wrap;">
                 <button class="btn" id="copyBtn" type="button" disabled>⧉ Copia</button>
+                <button class="btn" id="saveBtn" type="button" disabled>☆ Salva</button>
               </div>
             </div>
           </div>
@@ -642,6 +655,7 @@
     const spinner      = document.getElementById("spinner");
     const statusEl     = document.getElementById("status");
     const copyBtn      = document.getElementById("copyBtn");
+    const saveBtn      = document.getElementById("saveBtn");
 
     const chipTarget = document.getElementById("chipTarget");
     const chipLen = document.getElementById("chipLen");
@@ -689,6 +703,7 @@
 
     function updateButtons(){
       copyBtn.disabled = isGenerating || !accumulatedText.trim();
+      if(!isGenerating && accumulatedText.trim() && !saveBtn.dataset.saved) saveBtn.disabled = false;
       goLength.disabled = selectedTargetIndex < 0;
       const cost = computeCost();
       const canAfford = userCredits === null || userCredits >= cost;
@@ -912,6 +927,9 @@
       }
     
       isGenerating = true;
+      saveBtn.disabled = true;
+      saveBtn.textContent = '☆ Salva';
+      delete saveBtn.dataset.saved;
       updateButtons();
       updateChips();
     
@@ -1048,6 +1066,72 @@
       });
     });
 
+    /* ── Salva risposta (Libreria) ── */
+    function showToast(msg){
+      var t = document.getElementById('saveToast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(function(){ t.classList.remove('show'); }, 3000);
+    }
+
+    async function getUserTier(){
+      if(!currentUserId) return 'free';
+      var { data } = await sb.from('purchases').select('billing_type, created_at').eq('user_id', currentUserId);
+      if(!data || !data.length) return 'free';
+      var now = Date.now();
+      var hasSub = data.some(function(p){
+        if(p.billing_type === 'monthly'){
+          return (now - new Date(p.created_at).getTime()) <= 31*24*3600*1000;
+        }
+        if(p.billing_type === 'yearly'){
+          return (now - new Date(p.created_at).getTime()) <= 366*24*3600*1000;
+        }
+        return false;
+      });
+      if(hasSub) return 'subscriber';
+      return 'purchaser';
+    }
+
+    saveBtn.addEventListener("click", async function(){
+      if(!currentUserId){ showToast("Accedi per salvare risposte."); return; }
+      if(!accumulatedText.trim()){ return; }
+
+      saveBtn.disabled = true;
+
+      var tier = await getUserTier();
+      var limitMap = { free: 10, purchaser: 50, subscriber: Infinity };
+      var limit = limitMap[tier];
+
+      var { count } = await sb.from('saved_responses').select('id', { count: 'exact', head: true }).eq('user_id', currentUserId);
+      if(count >= limit){
+        var msgs = {
+          free: 'Limite raggiunto (10). Acquista crediti per salvare fino a 50 risposte.',
+          purchaser: 'Limite raggiunto (50). Abbonati per risposte illimitate.'
+        };
+        showToast(msgs[tier] || 'Limite raggiunto.');
+        saveBtn.disabled = false;
+        return;
+      }
+
+      var question = q.value.trim();
+      var title = question.slice(0, 120);
+      var { error } = await sb.from('saved_responses').insert({
+        user_id: currentUserId,
+        question: question,
+        response_text: accumulatedText,
+        title: title
+      });
+
+      if(error){
+        showToast('Errore nel salvataggio.');
+        saveBtn.disabled = false;
+      } else {
+        saveBtn.textContent = '★ Salvata';
+        saveBtn.dataset.saved = '1';
+        showToast('Risposta salvata nella Libreria!');
+      }
+    });
+
     /* ── History (localStorage) ── */
     function loadHistory(){
       try{ return JSON.parse(localStorage.getItem('sai_history') || '[]'); }
@@ -1132,6 +1216,7 @@
       setTimeout(function(){ banner.classList.remove('show'); }, 8000);
     })();
   </script>
+  <div id="saveToast"></div>
   <script src="/shared.js?v=2" defer></script>
 </body>
 </html>

@@ -297,6 +297,31 @@
     html[data-theme="light"] .tab-btn.active{ background:rgba(0,0,0,.07); }
     .tab-panel{ display:flex; flex-direction:column; gap:20px; margin-top:14px; }
 
+    /* Libreria — risposte salvate */
+    .saved-item{ border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:10px; }
+    .saved-item:last-child{ margin-bottom:0; }
+    .saved-item-header{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 14px; cursor:pointer; gap:10px;
+      background:rgba(255,255,255,.03);
+    }
+    html[data-theme="light"] .saved-item-header{ background:rgba(0,0,0,.02); }
+    .saved-item-header:hover{ background:rgba(255,255,255,.06); }
+    html[data-theme="light"] .saved-item-header:hover{ background:rgba(0,0,0,.05); }
+    .saved-item-title{ font-size:13px; font-weight:700; color:var(--text); flex:1; line-height:1.4; }
+    .saved-item-date{ font-size:11px; color:var(--muted2,var(--muted)); white-space:nowrap; }
+    .saved-item-del{ background:none; border:none; cursor:pointer; color:#ff6b6b; font-size:16px; padding:2px 4px; line-height:1; }
+    .saved-item-del:hover{ color:#ff3333; }
+    .saved-item-body{ display:none; padding:14px; border-top:1px solid var(--border); font-size:13px; color:var(--muted); line-height:1.7; }
+    .saved-item-body.open{ display:block; }
+
+    /* Acquisti */
+    .purchase-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); font-size:13px; }
+    .purchase-row:last-child{ border-bottom:none; }
+    .purchase-name{ font-weight:700; color:var(--text); }
+    .purchase-meta{ color:var(--muted); font-size:12px; }
+    .purchase-amt{ font-weight:700; color:var(--text); white-space:nowrap; }
+
   </style>
 </head>
 
@@ -365,6 +390,7 @@
     <div class="tab-nav" id="profileTabNav">
       <button class="tab-btn active" data-tab="account" type="button">👤 Account</button>
       <button class="tab-btn" data-tab="preferenze" type="button">🧠 Preferenze</button>
+      <button class="tab-btn" data-tab="libreria" type="button">⭐ Libreria</button>
       <button class="tab-btn" data-tab="avanzate" type="button">⚙️ Avanzate</button>
     </div>
 
@@ -577,6 +603,29 @@
     </div><!-- /tab-preferenze -->
 
     <!-- Tab: Avanzate (logout + elimina account) -->
+    <!-- Tab: Libreria + Acquisti -->
+    <div class="tab-panel" id="tab-libreria" style="display:none;">
+
+      <!-- Risposte salvate -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="section-title">⭐ Risposte salvate</div>
+          <p style="color:var(--muted);font-size:13px;margin:0 0 16px;">Le risposte che hai salvato dall'app. Clicca su un titolo per espanderla.</p>
+          <div id="savedList"><p style="color:var(--muted);font-size:13px;">Caricamento...</p></div>
+        </div>
+      </div>
+
+      <!-- Storico acquisti -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="section-title">🧾 I miei acquisti</div>
+          <p style="color:var(--muted);font-size:13px;margin:0 0 16px;">Storico dei pacchetti crediti acquistati.</p>
+          <div id="purchasesList"><p style="color:var(--muted);font-size:13px;">Caricamento...</p></div>
+        </div>
+      </div>
+
+    </div><!-- /tab-libreria -->
+
     <div class="tab-panel" id="tab-avanzate" style="display:none;">
 
       <!-- 4. ESCI -->
@@ -886,7 +935,7 @@
 
     /* ── Tab switching ── */
     (function(){
-      const panels = { account: 'tab-account', preferenze: 'tab-preferenze', avanzate: 'tab-avanzate' };
+      const panels = { account: 'tab-account', preferenze: 'tab-preferenze', libreria: 'tab-libreria', avanzate: 'tab-avanzate' };
       document.getElementById('profileTabNav').addEventListener('click', function(e){
         const btn = e.target.closest('.tab-btn');
         if(!btn) return;
@@ -895,8 +944,90 @@
         Object.values(panels).forEach(id => {
           document.getElementById(id).style.display = (id === panels[tab]) ? 'flex' : 'none';
         });
+        if(tab === 'libreria') loadLibreria();
       });
     })();
+
+    /* ── Libreria ── */
+    var _libreriaLoaded = false;
+    async function loadLibreria(){
+      if(!currentUserId) return;
+      await Promise.all([loadSavedResponses(), loadPurchases()]);
+    }
+
+    async function loadSavedResponses(){
+      var el = document.getElementById('savedList');
+      var { data, error } = await sb.from('saved_responses')
+        .select('id, title, response_text, created_at')
+        .eq('user_id', currentUserId)
+        .order('created_at', { ascending: false });
+
+      if(error || !data || !data.length){
+        el.innerHTML = '<p style="color:var(--muted);font-size:13px;">' + (error ? 'Errore caricamento.' : 'Nessuna risposta salvata.') + '</p>';
+        return;
+      }
+
+      el.innerHTML = data.map(function(item){
+        var date = new Date(item.created_at).toLocaleDateString('it-IT', { day:'2-digit', month:'short', year:'numeric' });
+        return '<div class="saved-item" data-id="' + item.id + '">' +
+          '<div class="saved-item-header">' +
+            '<span class="saved-item-title">' + escHtml(item.title) + '</span>' +
+            '<span class="saved-item-date">' + date + '</span>' +
+            '<button class="saved-item-del" data-del="' + item.id + '" title="Elimina" type="button">✕</button>' +
+          '</div>' +
+          '<div class="saved-item-body">' + escHtml(item.response_text) + '</div>' +
+        '</div>';
+      }).join('');
+
+      /* Espandi/collassa */
+      el.querySelectorAll('.saved-item-header').forEach(function(h){
+        h.addEventListener('click', function(e){
+          if(e.target.closest('[data-del]')) return;
+          var body = h.nextElementSibling;
+          body.classList.toggle('open');
+        });
+      });
+
+      /* Elimina */
+      el.querySelectorAll('[data-del]').forEach(function(btn){
+        btn.addEventListener('click', async function(e){
+          e.stopPropagation();
+          var id = btn.dataset.del;
+          await sb.from('saved_responses').delete().eq('id', id).eq('user_id', currentUserId);
+          btn.closest('.saved-item').remove();
+          if(!el.querySelector('.saved-item'))
+            el.innerHTML = '<p style="color:var(--muted);font-size:13px;">Nessuna risposta salvata.</p>';
+        });
+      });
+    }
+
+    async function loadPurchases(){
+      var el = document.getElementById('purchasesList');
+      var { data, error } = await sb.from('purchases')
+        .select('package_name, billing_type, credits_added, amount_eur, created_at')
+        .eq('user_id', currentUserId)
+        .order('created_at', { ascending: false });
+
+      if(error || !data || !data.length){
+        el.innerHTML = '<p style="color:var(--muted);font-size:13px;">' + (error ? 'Errore caricamento.' : 'Nessun acquisto ancora.') + '</p>';
+        return;
+      }
+
+      var typeLabel = { monthly: 'Mensile', yearly: 'Annuale', once: 'Una tantum' };
+      el.innerHTML = data.map(function(p){
+        var date = new Date(p.created_at).toLocaleDateString('it-IT', { day:'2-digit', month:'short', year:'numeric' });
+        var amt = p.amount_eur != null ? '€' + parseFloat(p.amount_eur).toFixed(2) : '—';
+        return '<div class="purchase-row">' +
+          '<div>' +
+            '<div class="purchase-name">' + escHtml(p.package_name) + '</div>' +
+            '<div class="purchase-meta">' + (typeLabel[p.billing_type] || p.billing_type) + ' · ' + date + ' · +' + p.credits_added + ' crediti</div>' +
+          '</div>' +
+          '<div class="purchase-amt">' + amt + '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
     /* Logout */
     document.getElementById("logoutBtn").addEventListener("click", async () => {
