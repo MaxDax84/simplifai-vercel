@@ -137,6 +137,34 @@
       padding: 0;
     }
     .forgot-link:hover{ color: var(--text); }
+    .consent-group{
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .consent-group input[type="checkbox"]{
+      width: 16px;
+      height: 16px;
+      min-width: 16px;
+      margin-top: 2px;
+      accent-color: rgba(124,92,255,.9);
+      cursor: pointer;
+    }
+    .consent-group label{
+      display: inline;
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0;
+      cursor: pointer;
+      line-height: 1.6;
+    }
+    .consent-group a{
+      color: rgba(124,92,255,.9);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .consent-group a:hover{ color: var(--text); }
   </style>
 </head>
 
@@ -233,7 +261,16 @@
             <label for="signupPassword">Password</label>
             <input type="password" id="signupPassword" placeholder="Almeno 6 caratteri" required minlength="6" />
           </div>
-          <button class="btn btn-primary btn-auth" type="submit" id="signupBtn">Crea account</button>
+          <div class="consent-group">
+            <input type="checkbox" id="consentCheck" aria-required="true" aria-describedby="consentDesc" />
+            <label for="consentCheck" id="consentDesc">
+              I agree to the
+              <a href="/terms-of-service.html" target="_blank" rel="noopener">Terms of Service</a>,
+              <a href="/privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a>,
+              and <a href="/dpa.html" target="_blank" rel="noopener">DPA</a>.
+            </label>
+          </div>
+          <button class="btn btn-primary btn-auth" type="submit" id="signupBtn" disabled aria-disabled="true">Crea account</button>
         </form>
 
         <div class="divider">oppure</div>
@@ -359,12 +396,24 @@
       }
     }
 
-    /* Signup */
+    /* Signup — checkbox consenso */
+    const consentCheck = document.getElementById("consentCheck");
+    function updateSignupBtn() {
+      signupBtn.disabled = !consentCheck.checked;
+      signupBtn.setAttribute("aria-disabled", String(!consentCheck.checked));
+    }
+    consentCheck.addEventListener("change", updateSignupBtn);
+
     const signupBtn = document.getElementById("signupBtn");
     signupBtn.dataset.label = "Crea account";
     signupForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       clearMsg();
+
+      if (!consentCheck.checked) {
+        showMsg("Devi accettare i Termini di Servizio, la Privacy Policy e il DPA per registrarti.", "error");
+        return;
+      }
 
       const email    = document.getElementById("signupEmail").value.trim();
       const password = document.getElementById("signupPassword").value;
@@ -408,6 +457,7 @@
 
         showMsg(friendlyMsg, "error");
         setLoading(signupBtn, false);
+        updateSignupBtn();
         return;
       }
 
@@ -436,6 +486,7 @@
       }
 
       setLoading(signupBtn, false);
+      updateSignupBtn();
     });
 
     /* Magic link */
