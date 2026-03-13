@@ -212,6 +212,20 @@
       font-size:26px; font-weight:950; margin:0 0 10px; letter-spacing:-.3px;
     }
     .processing-sub{ color:var(--muted); font-size:14px; margin:0; line-height:1.6; }
+    .processing-bar-wrap{
+      width:100%; max-width:260px; height:4px;
+      background:rgba(124,92,255,.15);
+      border-radius:999px;
+      margin:24px auto 0;
+      overflow:hidden;
+    }
+    .processing-bar{
+      height:100%; width:0%;
+      background:linear-gradient(90deg,#7c5cff,#26c6ff);
+      border-radius:999px;
+      animation:fill-bar 3s ease-in-out forwards;
+    }
+    @keyframes fill-bar{ from{ width:0% } to{ width:100% } }
 
     /* ── Success full ── */
     .success-full{ display:none; margin-top:16px; }
@@ -427,6 +441,9 @@
           <div class="spinner-ring"></div>
           <p class="processing-title">Acquisto in corso…</p>
           <p class="processing-sub">Stiamo elaborando il tuo pagamento.<br>Ci vorrà solo un momento, non chiudere la pagina.</p>
+          <div class="processing-bar-wrap">
+            <div class="processing-bar" id="processingBar"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -567,9 +584,9 @@
       } catch(e) { console.warn("sendPurchaseEmail error:", e); }
     }
 
-    /* Countdown redirect */
+    /* Countdown redirect (3s) */
     function startCountdown() {
-      let secs = 5;
+      let secs = 3;
       const el = document.getElementById('successCountdown');
       el.textContent = 'Verrai reindirizzato all\'app tra ' + secs + ' secondi…';
       const t = setInterval(() => {
@@ -582,6 +599,9 @@
         }
       }, 1000);
     }
+
+    function show(id, displayType){ document.getElementById(id).style.display = displayType || 'block'; }
+    function hide(id){ document.getElementById(id).style.display = 'none'; }
 
     /* Messaggi errore */
     const msgEl = document.getElementById("checkoutMsg");
@@ -596,19 +616,25 @@
       showMsg("");
 
       /* 1. Nascondi hero + form, mostra schermata "in corso" */
-      document.getElementById('heroCard').style.display   = 'none';
-      document.getElementById('mainShell').style.display  = 'none';
-      document.getElementById('processingSection').style.display = '';
+      hide('heroCard');
+      hide('mainShell');
+      show('processingSection');
+
+      /* Riavvia la progress bar (in caso di retry) */
+      const bar = document.getElementById('processingBar');
+      bar.style.animation = 'none';
+      bar.offsetHeight; /* force reflow */
+      bar.style.animation = 'fill-bar 3s ease-in-out forwards';
 
       try {
         const rpcCall = (promoCode && activePromoDiscount > 0)
           ? sb.rpc('apply_promo_and_add_credits', { p_code: promoCode, p_amount: pkg.credits })
           : sb.rpc('add_credits', { amount: pkg.credits });
 
-        /* 2. Attendi almeno 5 secondi E il completamento del pagamento */
+        /* 2. Attendi almeno 3 secondi E il completamento del pagamento */
         const [rpcResult] = await Promise.all([
           rpcCall,
-          new Promise(r => setTimeout(r, 5000))
+          new Promise(r => setTimeout(r, 3000))
         ]);
 
         const { data: newCredits, error: rpcErr } = rpcResult;
@@ -617,20 +643,20 @@
         sendPurchaseEmail(pkg);
 
         /* 3. Nascondi "in corso", mostra successo */
-        document.getElementById('processingSection').style.display = 'none';
-        document.getElementById('successSection').style.display    = '';
+        hide('processingSection');
+        show('successSection');
         document.getElementById('successCreditsAdded').textContent = '+' + pkg.credits + ' crediti aggiunti';
         document.getElementById('successSub').textContent   = 'Il tuo account è stato aggiornato con successo.';
         document.getElementById('successTotal').textContent = 'Crediti totali nel tuo account: ' + newCredits;
 
-        /* 4. Countdown 5s + redirect automatico */
+        /* 4. Countdown 3s + redirect automatico */
         startCountdown();
 
       } catch(e) {
         /* Errore: ripristina la pagina */
-        document.getElementById('processingSection').style.display = 'none';
-        document.getElementById('heroCard').style.display          = '';
-        document.getElementById('mainShell').style.display         = '';
+        hide('processingSection');
+        show('heroCard');
+        show('mainShell', 'grid');
         showMsg(e?.message || "Errore sconosciuto.", "error");
         confirmBtn.disabled = false;
         confirmBtn.innerHTML = '🔒 Completa acquisto';
