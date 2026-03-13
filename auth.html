@@ -8,6 +8,14 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="/theme.css?v=2">
 
+  <!-- FOUC prevention -->
+  <script>
+    (function(){
+      if(localStorage.getItem('sai_theme')==='light')
+        document.documentElement.setAttribute('data-theme','light');
+    })();
+  </script>
+
   <style>
     .auth-wrap{
       min-height: 80vh;
@@ -69,7 +77,8 @@
       margin-bottom: 6px;
     }
     input[type="email"],
-    input[type="password"]{
+    input[type="password"],
+    input[type="text"]{
       width: 100%;
       background: rgba(0,0,0,.22);
       border: 1px solid var(--border);
@@ -84,6 +93,37 @@
     input:focus{
       border-color: rgba(124,92,255,.55);
       box-shadow: 0 0 0 4px rgba(124,92,255,.12);
+    }
+    select{
+      width: 100%;
+      background: rgba(0,0,0,.22);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 36px 11px 14px;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      box-sizing: border-box;
+      transition: .15s;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      cursor: pointer;
+    }
+    select:focus{
+      border-color: rgba(124,92,255,.55);
+      box-shadow: 0 0 0 4px rgba(124,92,255,.12);
+    }
+    select option{
+      background: #111;
+      color: #eee;
+    }
+    .form-row{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
     }
     .btn-auth{
       width: 100%;
@@ -183,9 +223,12 @@
         <a href="/come-funziona.html" data-nav="how">Come funziona</a>
         <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
       </nav>
-      <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
-        <span></span><span></span><span></span>
-      </button>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema"><span class="icon-sun">☀️</span><span class="icon-moon">🌙</span></button>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </header>
 
     <div class="mobile-nav" id="mobileNav">
@@ -253,13 +296,82 @@
 
         <!-- Signup form (hidden by default) -->
         <form id="signupForm" style="display:none">
-          <div class="form-group">
-            <label for="signupEmail">Email</label>
-            <input type="email" id="signupEmail" placeholder="tua@email.com" required />
+          <div class="form-row">
+            <div class="form-group">
+              <label for="signupNome">Nome *</label>
+              <input type="text" id="signupNome" placeholder="Mario" required autocomplete="given-name" />
+            </div>
+            <div class="form-group">
+              <label for="signupCognome">Cognome *</label>
+              <input type="text" id="signupCognome" placeholder="Rossi" required autocomplete="family-name" />
+            </div>
           </div>
           <div class="form-group">
-            <label for="signupPassword">Password</label>
-            <input type="password" id="signupPassword" placeholder="Almeno 6 caratteri" required minlength="6" />
+            <label for="signupEmail">Email *</label>
+            <input type="email" id="signupEmail" placeholder="tua@email.com" required autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label for="signupPassword">Password *</label>
+            <input type="password" id="signupPassword" placeholder="Almeno 6 caratteri" required minlength="6" autocomplete="new-password" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="signupCitta">Città</label>
+              <input type="text" id="signupCitta" placeholder="Milano" autocomplete="address-level2" />
+            </div>
+            <div class="form-group">
+              <label for="signupNazione">Nazione</label>
+              <select id="signupNazione" autocomplete="country">
+                <option value="">Seleziona...</option>
+                <option value="IT">🇮🇹 Italia</option>
+                <optgroup label="Europa">
+                  <option value="AT">Austria</option>
+                  <option value="BE">Belgio</option>
+                  <option value="CH">Svizzera</option>
+                  <option value="DE">Germania</option>
+                  <option value="ES">Spagna</option>
+                  <option value="FR">Francia</option>
+                  <option value="GB">Regno Unito</option>
+                  <option value="GR">Grecia</option>
+                  <option value="HR">Croazia</option>
+                  <option value="NL">Paesi Bassi</option>
+                  <option value="PL">Polonia</option>
+                  <option value="PT">Portogallo</option>
+                  <option value="RO">Romania</option>
+                  <option value="SE">Svezia</option>
+                  <option value="SM">San Marino</option>
+                  <option value="VA">Città del Vaticano</option>
+                </optgroup>
+                <optgroup label="Resto del mondo">
+                  <option value="AR">Argentina</option>
+                  <option value="AU">Australia</option>
+                  <option value="BR">Brasile</option>
+                  <option value="CA">Canada</option>
+                  <option value="CN">Cina</option>
+                  <option value="IN">India</option>
+                  <option value="JP">Giappone</option>
+                  <option value="MX">Messico</option>
+                  <option value="US">Stati Uniti</option>
+                  <option value="ZZ">Altro</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="signupReferral">Come ci hai conosciuti?</label>
+            <select id="signupReferral">
+              <option value="">Seleziona un'opzione</option>
+              <option value="google">Google / Motore di ricerca</option>
+              <option value="social">Social media (Instagram, TikTok, ecc.)</option>
+              <option value="passaparola">Passaparola / Amico o collega</option>
+              <option value="linkedin">LinkedIn</option>
+              <option value="youtube">YouTube</option>
+              <option value="forum">Reddit / Forum / Community</option>
+              <option value="ads">Pubblicità online</option>
+              <option value="directory">Directory AI / Product Hunt</option>
+              <option value="scuola">Scuola / Università</option>
+              <option value="altro">Altro</option>
+            </select>
           </div>
           <div class="consent-group">
             <input type="checkbox" id="consentCheck" aria-required="true" aria-describedby="consentDesc" />
@@ -410,10 +522,18 @@
         return;
       }
 
+      const nome     = document.getElementById("signupNome").value.trim();
+      const cognome  = document.getElementById("signupCognome").value.trim();
       const email    = document.getElementById("signupEmail").value.trim();
       const password = document.getElementById("signupPassword").value;
+      const citta    = document.getElementById("signupCitta").value.trim();
+      const nazione  = document.getElementById("signupNazione").value;
+      const referral = document.getElementById("signupReferral").value;
 
       /* Validazione base */
+      if (!nome || !cognome) {
+        showMsg("Inserisci nome e cognome.", "error"); return;
+      }
       if (!email || !password) {
         showMsg("Inserisci email e password.", "error"); return;
       }
@@ -426,10 +546,15 @@
 
       setLoading(signupBtn, true);
 
+      const profilePayload = { nome, cognome, citta, nazione, referral_source: referral };
+
       const { data: signUpData, error } = await sb.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: window.location.origin + "/auth.html" }
+        options: {
+          emailRedirectTo: window.location.origin + "/auth.html",
+          data: profilePayload
+        }
       });
 
       if (error) {
@@ -460,7 +585,12 @@
          * CASO A – conferma email DISABILITATA:
          * Sessione attiva subito. Il trigger handle_new_user ha già assegnato
          * i 10 crediti al momento dell'INSERT in auth.users.
+         * Aggiorniamo subito il profilo con i dati aggiuntivi.
          */
+        sb.from('profiles').upsert(
+          Object.assign({ id: signUpData.session.user.id }, profilePayload),
+          { onConflict: 'id' }
+        ).catch(function(e) { console.warn("profile upsert error:", e); });
         sendEmailFireAndForget("welcome", { credits: 10 });
         showMsg("Benvenuto! Hai ricevuto 10 crediti gratuiti! Reindirizzo...", "success");
         setTimeout(() => window.location.replace("/app.html"), 1400);
@@ -469,10 +599,11 @@
         /*
          * CASO B – conferma email ABILITATA:
          * Il trigger ha già assegnato i crediti all'INSERT.
-         * Salviamo l'ID in localStorage solo per mostrare il banner
-         * di benvenuto dopo che l'utente clicca il link di conferma.
+         * Salviamo ID e dati profilo in localStorage: verranno applicati
+         * al profilo dopo che l'utente clicca il link di conferma.
          */
         localStorage.setItem('sai_pending_welcome', signUpData.user.id);
+        localStorage.setItem('sai_pending_profile', JSON.stringify(profilePayload));
         showMsg("Account creato! Controlla la tua email per confermare l'account. ✉️ Controlla anche nella cartella Spam se non la trovi entro qualche minuto.", "success");
       } else {
         /* Risposta anomala (es. utente già registrato ma non confermato) */
@@ -573,8 +704,20 @@
            * CASO B (continua): l'utente ha cliccato il link di conferma.
            * Verifichiamo se il trigger ha effettivamente assegnato crediti
            * (se l'email era già stata usata e poi eliminata, credits = 0).
+           * Applichiamo anche i dati profilo salvati al momento della registrazione.
            */
           localStorage.removeItem('sai_pending_welcome');
+          var pendingProfile = localStorage.getItem('sai_pending_profile');
+          if (pendingProfile) {
+            try {
+              var pd = JSON.parse(pendingProfile);
+              await sb.from('profiles').upsert(
+                Object.assign({ id: session.user.id }, pd),
+                { onConflict: 'id' }
+              );
+            } catch(e) { console.warn("pending profile upsert error:", e); }
+            localStorage.removeItem('sai_pending_profile');
+          }
           var profileRes = await sb.from('profiles')
             .select('credits')
             .eq('id', session.user.id)
