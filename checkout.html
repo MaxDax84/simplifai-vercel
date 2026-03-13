@@ -495,24 +495,21 @@
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    /* Piani */
+    /* Pacchetti */
     const PACKAGES = {
-      'light-monthly':    { label:'LIGHT',             billing:'Mensile',     price:'€2,99',  priceNum:2.99,  per:'al mese',         credits: 30   },
-      'light-yearly':     { label:'LIGHT',             billing:'Annuale',     price:'€28,70', priceNum:28.70, per:"all'anno",        credits: 360  },
-      'plus-monthly':     { label:'PLUS',              billing:'Mensile',     price:'€4,99',  priceNum:4.99,  per:'al mese',         credits: 60   },
-      'plus-yearly':      { label:'PLUS',              billing:'Annuale',     price:'€47,90', priceNum:47.90, per:"all'anno",        credits: 720  },
-      'pro-monthly':      { label:'PRO',               billing:'Mensile',     price:'€9,99',  priceNum:9.99,  per:'al mese',         credits: 150  },
-      'pro-yearly':       { label:'PRO',               billing:'Annuale',     price:'€95,90', priceNum:95.90, per:"all'anno",        credits: 1800 },
-      'mini-boost-once':  { label:'PACCHETTO BASE',    billing:'Una tantum',  price:'€1,99',  priceNum:1.99,  per:'pagamento unico',  credits: 18  },
-      'maxi-boost-once':  { label:'PACCHETTO PREMIUM', billing:'Una tantum',  price:'€3,99',  priceNum:3.99,  per:'pagamento unico',  credits: 45  },
+      'mini-once': { label:'Mini', billing:'Una tantum', price:'€1,99',  priceNum:1.99,  per:'pagamento unico', credits: 25   },
+      'base-once': { label:'Base', billing:'Una tantum', price:'€4,99',  priceNum:4.99,  per:'pagamento unico', credits: 80   },
+      'plus-once': { label:'Plus', billing:'Una tantum', price:'€7,99',  priceNum:7.99,  per:'pagamento unico', credits: 200  },
+      'pro-once':  { label:'Pro',  billing:'Una tantum', price:'€14,99', priceNum:14.99, per:'pagamento unico', credits: 500  },
+      'max-once':  { label:'Max',  billing:'Una tantum', price:'€34,99', priceNum:34.99, per:'pagamento unico', credits: 1400 },
     };
 
     /* Leggi params URL */
     const params    = new URLSearchParams(location.search);
-    const plan      = params.get('plan') || 'pro';
-    const billing   = params.get('billing') || 'monthly';
+    const plan      = params.get('plan') || 'plus';
+    const billing   = params.get('billing') || 'once';
     const pkgKey    = `${plan}-${billing}`;
-    const pkg       = PACKAGES[pkgKey] || PACKAGES['pro-monthly'];
+    const pkg       = PACKAGES[pkgKey] || PACKAGES['plus-once'];
     const promoCode = (params.get('promo') || '').trim().toUpperCase();
     let activePromoDiscount = 0;
 

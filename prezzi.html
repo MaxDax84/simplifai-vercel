@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Prezzi – Simplif-AI</title>
-  <meta name="description" content="Scegli il piano Simplif-AI più adatto a te: Light, Plus o Pro. 10 crediti gratuiti alla registrazione. Piani mensili e annuali disponibili." />
+  <meta name="description" content="Acquista crediti Simplif-AI senza abbonamento: 5 pacchetti una tantum da 25 a 1.400 crediti. Più compri, più risparmi. 10 crediti gratuiti alla registrazione." />
   <meta name="robots" content="index, follow" />
   <meta name="author" content="Simplif-AI" />
   <link rel="canonical" href="https://www.simplif-ai.it/prezzi.html" />
@@ -13,17 +13,17 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.simplif-ai.it/prezzi.html" />
   <meta property="og:title" content="Prezzi – Simplif-AI" />
-  <meta property="og:description" content="Piani Light, Plus e Pro. 10 crediti gratuiti alla registrazione." />
+  <meta property="og:description" content="5 pacchetti crediti senza abbonamento. Più compri, più risparmi. 10 crediti gratis alla registrazione." />
   <meta property="og:site_name" content="Simplif-AI" />
   <meta property="og:locale" content="it_IT" />
   <meta property="og:image" content="https://www.simplif-ai.it/og-image.png?v=2" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Prezzi Simplif-AI – Piani Light, Plus e Pro" />
+  <meta property="og:image:alt" content="Prezzi Simplif-AI – Pacchetti crediti" />
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Prezzi – Simplif-AI" />
-  <meta name="twitter:description" content="Piani Light, Plus e Pro. 10 crediti gratuiti alla registrazione." />
+  <meta name="twitter:description" content="5 pacchetti crediti senza abbonamento. Più compri, più risparmi." />
   <meta name="twitter:image" content="https://www.simplif-ai.it/og-image.png?v=2" />
   <!-- JSON-LD -->
   <script type="application/ld+json">
@@ -34,7 +34,7 @@
         "@type": "WebPage",
         "url": "https://www.simplif-ai.it/prezzi.html",
         "name": "Prezzi – Simplif-AI",
-        "description": "Scegli il piano Simplif-AI più adatto a te: Light, Plus o Pro. 10 crediti gratuiti alla registrazione.",
+        "description": "Acquista crediti Simplif-AI senza abbonamento: 5 pacchetti una tantum.",
         "isPartOf": { "@id": "https://www.simplif-ai.it/#website" },
         "inLanguage": "it-IT"
       },
@@ -46,7 +46,7 @@
             "name": "I crediti scadono?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "I crediti hanno una validità di 12 mesi. Ogni nuova ricarica estende la validità di tutti i tuoi crediti per altri 12 mesi. I 10 crediti di benvenuto scadono 12 mesi dopo la registrazione, salvo che tu non effettui una ricarica prima."
+              "text": "I crediti acquistati hanno una validità di 12 mesi dalla data di acquisto. I 10 crediti di benvenuto scadono 12 mesi dopo la registrazione."
             }
           },
           {
@@ -62,15 +62,7 @@
             "name": "Cosa succede se esaurisco i crediti?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Quando i crediti non sono sufficienti per la generazione richiesta, l'app mostra un avviso e ti reindirizza alla pagina prezzi per ricaricare."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Ricariche e abbonamenti si combinano?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Sì: i crediti dei pacchetti una tantum (Pacchetto Base / Pacchetto Premium) si sommano a quelli di un eventuale abbonamento attivo. Tutti i crediti si accumulano e ogni ricarica estende la scadenza dell'intero saldo a 12 mesi dalla data dell'acquisto."
+              "text": "Quando i crediti non sono sufficienti, l'app mostra un avviso e ti reindirizza alla pagina prezzi per ricaricare."
             }
           }
         ]
@@ -103,214 +95,83 @@
       font-size:14px;
     }
     .welcome-banner strong{ color:var(--text); font-weight:900; }
-    html[data-theme="light"] .welcome-banner{
-      border-color:rgba(124,92,255,.4);
-      background:rgba(124,92,255,.10);
-      color:rgba(13,17,51,.82);
-    }
+    html[data-theme="light"] .welcome-banner{ border-color:rgba(124,92,255,.4); background:rgba(124,92,255,.10); color:rgba(13,17,51,.82); }
     html[data-theme="light"] .welcome-banner strong{ color:#0d1133; }
 
-    /* Grid piani principali: 3 colonne */
-    .grid{
+    /* ── Griglia 5 pacchetti ── */
+    .pkg-grid{
       display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap:14px;
+      grid-template-columns:repeat(5,minmax(0,1fr));
+      gap:12px;
       margin-top:16px;
-      align-items:stretch;
     }
-    @media(max-width:900px){ .grid{ grid-template-columns: repeat(2, 1fr); } }
-    @media(max-width:560px){ .grid{ grid-template-columns: 1fr; } }
+    @media(max-width:960px){ .pkg-grid{ grid-template-columns:repeat(3,1fr); } }
+    @media(max-width:580px){ .pkg-grid{ grid-template-columns:1fr; } }
 
-    /* Toggle billing labels */
-    .billing-label{
-      font-size:13px; color:var(--muted);
-      transition:.15s ease; font-weight:500;
-    }
-    .billing-label.active{
-      color:var(--accent); font-weight:900;
-    }
-    html[data-theme="light"] .billing-label.active{ color:#5b36d1; }
-
-    .plan{ height:100%; display:flex; flex-direction:column; gap:10px; }
-
-    .plan-top{
-      display:flex; align-items:flex-start;
-      justify-content:space-between; gap:8px;
-    }
-    .plan-name{ font-weight:950; font-size:18px; letter-spacing:-.2px; margin:0; }
-    .plan-sub{ color:var(--muted); font-size:13px; line-height:1.45; margin:5px 0 0; }
-
-    .tag{
-      display:inline-flex; align-items:center; gap:6px;
-      padding:6px 10px; border-radius:999px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.03);
-      color:var(--muted); font-size:11px; white-space:nowrap;
+    .pkg{
+      display:flex; flex-direction:column; gap:12px;
+      height:100%;
     }
 
-    .price{ font-size:40px; font-weight:950; letter-spacing:-1px; line-height:1; margin-top:6px; }
-    .per{ color:var(--muted); font-size:13px; margin-top:5px; }
+    /* Card in evidenza (Pro) */
+    .pkg-highlight{
+      border:1px solid rgba(124,92,255,.45);
+      background:rgba(124,92,255,.08);
+    }
 
-    .credits-badge{
-      display:inline-flex; align-items:center; gap:6px;
-      padding:6px 10px; border-radius:999px;
-      border:1px solid rgba(124,92,255,.3);
-      background:rgba(124,92,255,.10);
-      font-size:12px; color:rgba(233,237,255,.85);
+    .pkg-name{
+      font-size:17px; font-weight:950; letter-spacing:-.2px; margin:0;
+    }
+    .pkg-desc{
+      font-size:12px; color:var(--muted); margin:3px 0 0; line-height:1.4;
+    }
+
+    /* Badge "Più scelto" */
+    .pkg-badge{
+      display:inline-flex; align-items:center;
+      padding:3px 9px; border-radius:999px;
+      font-size:10px; font-weight:800; letter-spacing:.04em;
+      border:1px solid rgba(124,92,255,.45);
+      background:rgba(124,92,255,.18);
+      color:rgba(210,200,255,.95);
       width:fit-content;
     }
+    html[data-theme="light"] .pkg-badge{ color:rgba(70,40,180,.9); background:rgba(124,92,255,.15); }
 
-    .ul{
-      list-style:none; padding:0; margin:6px 0 0;
-      display:flex; flex-direction:column; gap:8px;
-      color:var(--muted); font-size:13px; line-height:1.45;
+    .pkg-price{
+      font-size:34px; font-weight:950; letter-spacing:-1.5px; line-height:1;
     }
-    .ul li{ display:flex; gap:8px; align-items:flex-start; }
-    .ul .i{ width:16px; display:inline-flex; justify-content:center; flex:0 0 auto; opacity:.92; margin-top:1px; }
+    .pkg-per{
+      font-size:11px; color:var(--muted); margin-top:3px;
+    }
 
-    .plan-actions{ margin-top:auto; display:flex; flex-direction:column; gap:8px; }
-
-    /* Highlight PLUS */
-    .plus{
-      border:1px solid rgba(124,92,255,.4);
+    .pkg-credits{
+      display:inline-flex; align-items:center; gap:5px;
+      padding:5px 10px; border-radius:999px;
+      border:1px solid rgba(124,92,255,.3);
       background:rgba(124,92,255,.10);
+      font-size:12px; font-weight:700;
+      color:rgba(210,200,255,.9);
+      width:fit-content;
     }
-    .plus .tag{
-      border-color:rgba(124,92,255,.4);
-      background:rgba(124,92,255,.15);
-      color:rgba(233,237,255,.92);
+    html[data-theme="light"] .pkg-credits{ color:rgba(70,40,180,.9); background:rgba(124,92,255,.12); border-color:rgba(124,92,255,.35); }
+
+    .pkg-saving{
+      display:inline-flex; align-items:center;
+      padding:3px 9px; border-radius:999px;
+      font-size:11px; font-weight:800;
+      border:1px solid rgba(92,242,168,.28);
+      background:rgba(92,242,168,.08);
+      color:#5cf2a8;
+      width:fit-content;
+    }
+    html[data-theme="light"] .pkg-saving{ color:#1a8f5e; border-color:rgba(26,143,94,.3); background:rgba(26,143,94,.08); }
+
+    .pkg-per-cr{
+      font-size:11px; color:var(--muted2,var(--muted)); margin-top:2px;
     }
 
-    /* Enterprise card: full width */
-    .enterprise-card{
-      margin-top:14px;
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:20px;
-      align-items:center;
-    }
-    @media(max-width:700px){ .enterprise-card{ grid-template-columns:1fr; } }
-
-    .enterprise-left .plan-name{ font-size:22px; }
-    .enterprise-left p{ color:var(--muted); font-size:14px; line-height:1.5; margin:8px 0 0; }
-
-    .enterprise-features{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-    @media(max-width:500px){ .enterprise-features{ grid-template-columns:1fr; } }
-    .ef-item{
-      display:flex; gap:8px; align-items:flex-start;
-      font-size:13px; color:var(--muted); line-height:1.4;
-    }
-
-    /* ── Pacchetti una tantum ── */
-    .topup-section-label{
-      display:flex; align-items:center; gap:12px;
-      margin-top:20px; margin-bottom:4px;
-    }
-    .topup-section-label span{
-      color:var(--muted); font-size:12px; font-weight:700;
-      text-transform:uppercase; letter-spacing:.07em; white-space:nowrap;
-    }
-    .topup-section-label::before,
-    .topup-section-label::after{
-      content:""; flex:1; height:1px; background:var(--border);
-    }
-
-    .topup-grid{
-      display:grid;
-      grid-template-columns:repeat(2, minmax(0,1fr));
-      gap:14px;
-      margin-top:10px;
-    }
-    @media(max-width:600px){ .topup-grid{ grid-template-columns:1fr; } }
-
-    .topup{
-      border-color:rgba(255,190,50,.22);
-      background:rgba(255,185,40,.04);
-    }
-    .topup .tag{
-      border-color:rgba(255,185,40,.3);
-      background:rgba(255,185,40,.10);
-      color:rgba(255,225,130,.92);
-    }
-    .topup .credits-badge{
-      border-color:rgba(255,185,40,.3);
-      background:rgba(255,185,40,.08);
-    }
-    .topup .price{ font-size:36px; }
-
-    .fineprint{ margin-top:14px; color:var(--muted); font-size:12px; line-height:1.55; text-align:center; }
-    html[data-theme="light"] .fineprint{ color:rgba(13,17,51,.60); }
-
-    .credits-note{
-      margin-top:10px;
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:13px 18px;
-      font-size:13px; color:var(--muted); text-align:center; line-height:1.55;
-    }
-    html[data-theme="light"] .credits-note{ color:rgba(13,17,51,.68); }
-
-    .faq{
-      margin-top:16px; display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px;
-    }
-    @media(max-width:980px){ .faq{ grid-template-columns:1fr; } }
-    .q{ font-weight:900; margin:0 0 6px; font-size:14px; }
-    .a{ margin:0; color:var(--muted); font-size:13px; line-height:1.5; }
-
-    .kicker{ margin-top:8px; color:var(--muted); font-size:13px; }
-
-    /* ── Light mode: fix contrasti hardcoded ── */
-    html[data-theme="light"] .credits-badge{
-      color: rgba(70,40,180,.9);
-      background: rgba(124,92,255,.12);
-      border-color: rgba(124,92,255,.35);
-    }
-    html[data-theme="light"] .plus .tag{
-      color: rgba(70,40,180,.9);
-      background: rgba(124,92,255,.15);
-      border-color: rgba(124,92,255,.4);
-    }
-    html[data-theme="light"] .topup{
-      border-color: rgba(180,120,0,.3);
-      background: rgba(255,185,40,.06);
-    }
-    html[data-theme="light"] .topup .tag{
-      color: rgba(120,70,0,.9);
-      background: rgba(255,185,40,.18);
-      border-color: rgba(180,120,0,.4);
-    }
-    html[data-theme="light"] .topup .credits-badge{
-      color: rgba(120,70,0,.9);
-      background: rgba(255,185,40,.14);
-      border-color: rgba(180,120,0,.35);
-    }
-    html[data-theme="light"] .tag{
-      background: rgba(0,0,0,.05);
-      border-color: rgba(13,17,51,.18);
-    }
-    html[data-theme="light"] .switch{
-      background: rgba(0,0,0,.10);
-    }
-    html[data-theme="light"] .knob{
-      background: rgba(13,17,51,.8);
-    }
-
-    /* ── Light mode: fix testi piani ── */
-    html[data-theme="light"] .plan-sub{ color:rgba(13,17,51,.60); }
-    html[data-theme="light"] .ul{ color:rgba(13,17,51,.72); }
-    html[data-theme="light"] .per{ color:rgba(13,17,51,.60); }
-    html[data-theme="light"] .ef-item{ color:rgba(13,17,51,.72); }
-    html[data-theme="light"] .kicker{ color:rgba(13,17,51,.60); }
-    html[data-theme="light"] .q{ color:#0d1133; }
-    html[data-theme="light"] .a{ color:rgba(13,17,51,.72); }
-    html[data-theme="light"] .enterprise-left p{ color:rgba(13,17,51,.70); }
-    html[data-theme="light"] .topup-section-label span{ color:rgba(13,17,51,.60); }
-    html[data-theme="light"] .team-note{ color:rgba(13,17,51,.70); }
+    .pkg-actions{ margin-top:auto; }
 
     /* ── Promo Code ── */
     .promo-field{
@@ -330,6 +191,7 @@
     .promo-field::placeholder{ text-transform:none; letter-spacing:0; font-weight:400; }
     .promo-field:focus{ border-color:rgba(124,92,255,.5); box-shadow:0 0 0 4px rgba(124,92,255,.15); }
     html[data-theme="light"] .promo-field{ background:rgba(255,255,255,.80); border-color:rgba(13,17,51,.15); color:#0d1133; }
+
     .promo-badge{
       display:inline-flex; align-items:center; gap:8px;
       padding:8px 14px; border-radius:999px;
@@ -339,13 +201,36 @@
     }
     .promo-badge .promo-remove{
       background:none; border:none; cursor:pointer;
-      color:rgba(92,242,168,.55); font-size:15px; padding:0; line-height:1;
-      transition:.15s;
+      color:rgba(92,242,168,.55); font-size:15px; padding:0; line-height:1; transition:.15s;
     }
     .promo-badge .promo-remove:hover{ color:#5cf2a8; }
     html[data-theme="light"] .promo-badge{ color:#1a8f5e; border-color:rgba(26,143,94,.30); background:rgba(26,143,94,.08); }
     html[data-theme="light"] .promo-badge .promo-remove{ color:rgba(26,143,94,.55); }
     html[data-theme="light"] .promo-badge .promo-remove:hover{ color:#1a8f5e; }
+
+    /* ── FAQ ── */
+    .faq{
+      margin-top:16px; display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px;
+    }
+    @media(max-width:700px){ .faq{ grid-template-columns:1fr; } }
+    .q{ font-weight:900; margin:0 0 6px; font-size:14px; }
+    .a{ margin:0; color:var(--muted); font-size:13px; line-height:1.5; }
+
+    .fineprint{ margin-top:14px; color:var(--muted); font-size:12px; line-height:1.55; text-align:center; }
+    .credits-note{
+      margin-top:10px; border:1px solid var(--border); border-radius:14px;
+      padding:13px 18px; font-size:13px; color:var(--muted); text-align:center; line-height:1.55;
+    }
+
+    /* light mode tweaks */
+    html[data-theme="light"] .pkg-desc{ color:rgba(13,17,51,.60); }
+    html[data-theme="light"] .pkg-per{ color:rgba(13,17,51,.60); }
+    html[data-theme="light"] .pkg-per-cr{ color:rgba(13,17,51,.55); }
+    html[data-theme="light"] .q{ color:#0d1133; }
+    html[data-theme="light"] .a{ color:rgba(13,17,51,.72); }
+    html[data-theme="light"] .fineprint{ color:rgba(13,17,51,.60); }
+    html[data-theme="light"] .credits-note{ color:rgba(13,17,51,.68); }
   </style>
 </head>
 
@@ -392,21 +277,12 @@
     <div class="card">
       <div class="card-inner pricing-hero">
         <span class="pilltag">💎 PREZZI</span>
-        <div class="h1">Scegli il piano giusto per te</div>
-        <p class="sub">Scegli il piano più adatto a te. Nessun costo nascosto, crediti trasparenti.</p>
-        <div class="toggle" style="margin-top:14px;">
-          <span class="billing-label active" id="billingLabelMonthly">Mensile</span>
-          <div class="switch" id="billingSwitch" role="switch" aria-checked="false" tabindex="0">
-            <div class="knob"></div>
-          </div>
-          <span class="billing-label" id="billingLabelYearly">Annuale</span>
-          <span class="pilltag" style="margin-left:6px;">-20% (mock)</span>
-        </div>
-        <div class="kicker" id="billingHint">Prezzi mensili (mock).</div>
+        <div class="h1">Acquista crediti, senza abbonamento</div>
+        <p class="sub">Paghi una volta, usi quando vuoi. Nessun rinnovo automatico. Più compri, più risparmi.</p>
       </div>
     </div>
 
-    <!-- Banner benvenuto (nascosto via JS se l'utente è già loggato) -->
+    <!-- Banner benvenuto -->
     <div class="welcome-banner" id="welcomeBanner">
       🎁 <strong>Registrati ora per ricevere 10 crediti di benvenuto omaggio!</strong>
       <a href="/auth.html" class="btn btn-primary" style="margin-left:6px;min-height:36px;padding:8px 16px;font-size:13px;" id="welcomeCta">Crea account gratis</a>
@@ -430,150 +306,120 @@
       </div>
     </div>
 
-    <!-- PIANI -->
-    <div class="grid">
+    <!-- 5 PACCHETTI -->
+    <div class="pkg-grid">
 
-      <!-- LIGHT (BASE) -->
+      <!-- MINI -->
       <div class="card">
-        <div class="card-inner plan">
-          <div class="plan-top">
-            <div>
-              <p class="plan-name">LIGHT</p>
-              <p class="plan-sub">Per uso occasionale.</p>
-            </div>
-            <span class="tag">🌱 Essenziale</span>
+        <div class="card-inner pkg">
+          <div>
+            <p class="pkg-name">Mini</p>
+            <p class="pkg-desc">Per provare il servizio.</p>
           </div>
-          <div class="price" id="lightPrice">€2,99</div>
-          <div class="per" id="lightPer">al mese</div>
-          <div class="credits-badge" id="lightCredits">⚡ 30 crediti/mese</div>
-          <ul class="ul">
-            <li><span class="i">✅</span><span>30 crediti per ciclo</span></li>
-            <li><span class="i">✅</span><span>Tutti i 6 target</span></li>
-            <li><span class="i">✅</span><span>Tutte le lunghezze</span></li>
-            <li><span class="i">✅</span><span>Crediti si accumulano</span></li>
-          </ul>
-          <div class="plan-actions">
-            <a class="btn btn-primary" id="lightCta" href="/checkout.html?plan=light&billing=monthly">Upgrade (mock)</a>
+          <div>
+            <div class="pkg-price" id="miniPrice">€1,99</div>
+            <div class="pkg-per">pagamento unico</div>
+          </div>
+          <div class="pkg-credits">⚡ 25 crediti</div>
+          <div class="pkg-per-cr">€0,080 per credito</div>
+          <div class="pkg-actions">
+            <a class="btn btn-primary" id="miniCta" href="/checkout.html?plan=mini&billing=once" style="width:100%;text-align:center;">Acquista</a>
           </div>
         </div>
       </div>
 
-      <!-- PLUS (highlight) -->
-      <div class="card plus">
-        <div class="card-inner plan">
-          <div class="plan-top">
-            <div>
-              <p class="plan-name">PLUS</p>
-              <p class="plan-sub">Il miglior rapporto qualità/prezzo.</p>
-            </div>
-            <span class="tag">⭐ Consigliato</span>
+      <!-- BASE -->
+      <div class="card">
+        <div class="card-inner pkg">
+          <div>
+            <p class="pkg-name">Base</p>
+            <p class="pkg-desc">Per un uso regolare.</p>
           </div>
-          <div class="price" id="plusPrice">€4,99</div>
-          <div class="per" id="plusPer">al mese</div>
-          <div class="credits-badge" id="plusCredits">⚡ 60 crediti/mese</div>
-          <ul class="ul">
-            <li><span class="i">🚀</span><span>60 crediti per ciclo</span></li>
-            <li><span class="i">✅</span><span>Tutti i 6 target</span></li>
-            <li><span class="i">✅</span><span>Tutte le lunghezze</span></li>
-            <li><span class="i">✅</span><span>Crediti si accumulano</span></li>
-          </ul>
-          <div class="plan-actions">
-            <a class="btn btn-primary" id="plusCta" href="/checkout.html?plan=plus&billing=monthly">Upgrade (mock)</a>
+          <div>
+            <div class="pkg-price" id="basePrice">€4,99</div>
+            <div class="pkg-per">pagamento unico</div>
+          </div>
+          <div class="pkg-credits">⚡ 80 crediti</div>
+          <div class="pkg-per-cr">€0,062 per credito</div>
+          <div class="pkg-saving">−22% vs Mini</div>
+          <div class="pkg-actions">
+            <a class="btn btn-primary" id="baseCta" href="/checkout.html?plan=base&billing=once" style="width:100%;text-align:center;">Acquista</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLUS -->
+      <div class="card pkg-highlight">
+        <div class="card-inner pkg">
+          <div>
+            <p class="pkg-name">Plus</p>
+            <p class="pkg-desc">Il miglior rapporto qualità/prezzo.</p>
+          </div>
+          <div class="pkg-badge">⭐ Più scelto</div>
+          <div>
+            <div class="pkg-price" id="plusPrice">€7,99</div>
+            <div class="pkg-per">pagamento unico</div>
+          </div>
+          <div class="pkg-credits">⚡ 200 crediti</div>
+          <div class="pkg-per-cr">€0,040 per credito</div>
+          <div class="pkg-saving">−50% vs Mini</div>
+          <div class="pkg-actions">
+            <a class="btn btn-primary" id="plusCta" href="/checkout.html?plan=plus&billing=once" style="width:100%;text-align:center;">Acquista</a>
           </div>
         </div>
       </div>
 
       <!-- PRO -->
       <div class="card">
-        <div class="card-inner plan">
-          <div class="plan-top">
-            <div>
-              <p class="plan-name">PRO</p>
-              <p class="plan-sub">Per uso intensivo e professionale.</p>
-            </div>
-            <span class="tag">🔥 Massima potenza</span>
+        <div class="card-inner pkg">
+          <div>
+            <p class="pkg-name">Pro</p>
+            <p class="pkg-desc">Per uso intensivo.</p>
           </div>
-          <div class="price" id="proPrice">€9,99</div>
-          <div class="per" id="proPer">al mese</div>
-          <div class="credits-badge" id="proCredits">⚡ 150 crediti/mese</div>
-          <ul class="ul">
-            <li><span class="i">🔥</span><span>150 crediti per ciclo</span></li>
-            <li><span class="i">✅</span><span>Tutti i 6 target</span></li>
-            <li><span class="i">✅</span><span>Tutte le lunghezze</span></li>
-            <li><span class="i">✅</span><span>Crediti si accumulano</span></li>
-          </ul>
-          <div class="plan-actions">
-            <a class="btn btn-primary" id="proCta" href="/checkout.html?plan=pro&billing=monthly">Upgrade (mock)</a>
+          <div>
+            <div class="pkg-price" id="proPrice">€14,99</div>
+            <div class="pkg-per">pagamento unico</div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- RICARICHE UNA TANTUM -->
-    <div class="topup-section-label">
-      <span>⚡ Ricariche una tantum — senza abbonamento</span>
-    </div>
-
-    <div class="topup-grid">
-
-      <!-- PACCHETTO BASE -->
-      <div class="card topup">
-        <div class="card-inner plan">
-          <div class="plan-top">
-            <div>
-              <p class="plan-name">PACCHETTO BASE</p>
-              <p class="plan-sub">Una ricarica veloce, senza impegno.</p>
-            </div>
-            <span class="tag">⚡ Una tantum</span>
-          </div>
-          <div class="price" id="miniBoostPrice">€1,99</div>
-          <div class="per">pagamento unico</div>
-          <div class="credits-badge">⚡ 18 crediti</div>
-          <ul class="ul">
-            <li><span class="i">✅</span><span><strong>18 crediti</strong> subito sul tuo account</span></li>
-            <li><span class="i">✅</span><span>Validi 12 mesi dall'acquisto</span></li>
-            <li><span class="i">✅</span><span>Tutti i 6 target disponibili</span></li>
-            <li><span class="i">✅</span><span>Tutte le lunghezze</span></li>
-            <li><span class="i">❌</span><span>Nessun rinnovo automatico</span></li>
-          </ul>
-          <div class="plan-actions">
-            <a class="btn btn-primary" id="miniBoostCta" href="/checkout.html?plan=mini-boost&billing=once">Acquista (mock)</a>
+          <div class="pkg-credits">⚡ 500 crediti</div>
+          <div class="pkg-per-cr">€0,030 per credito</div>
+          <div class="pkg-saving">−63% vs Mini</div>
+          <div class="pkg-actions">
+            <a class="btn btn-primary" id="proCta" href="/checkout.html?plan=pro&billing=once" style="width:100%;text-align:center;">Acquista</a>
           </div>
         </div>
       </div>
 
-      <!-- PACCHETTO PREMIUM -->
-      <div class="card topup">
-        <div class="card-inner plan">
-          <div class="plan-top">
-            <div>
-              <p class="plan-name">PACCHETTO PREMIUM</p>
-              <p class="plan-sub">Una scorta generosa, sempre a portata.</p>
-            </div>
-            <span class="tag">⚡ Una tantum</span>
+      <!-- MAX -->
+      <div class="card">
+        <div class="card-inner pkg">
+          <div>
+            <p class="pkg-name">Max</p>
+            <p class="pkg-desc">Per chi non vuole mai fermarsi.</p>
           </div>
-          <div class="price" id="maxiBoostPrice">€3,99</div>
-          <div class="per">pagamento unico</div>
-          <div class="credits-badge">⚡ 45 crediti</div>
-          <ul class="ul">
-            <li><span class="i">✅</span><span><strong>45 crediti</strong> subito sul tuo account</span></li>
-            <li><span class="i">✅</span><span>Validi 12 mesi dall'acquisto</span></li>
-            <li><span class="i">✅</span><span>Tutti i 6 target disponibili</span></li>
-            <li><span class="i">✅</span><span>Tutte le lunghezze</span></li>
-            <li><span class="i">❌</span><span>Nessun rinnovo automatico</span></li>
-          </ul>
-          <div class="plan-actions">
-            <a class="btn btn-primary" id="maxiBoostCta" href="/checkout.html?plan=maxi-boost&billing=once">Acquista (mock)</a>
+          <div>
+            <div class="pkg-price" id="maxPrice">€34,99</div>
+            <div class="pkg-per">pagamento unico</div>
+          </div>
+          <div class="pkg-credits">⚡ 1.400 crediti</div>
+          <div class="pkg-per-cr">€0,025 per credito</div>
+          <div class="pkg-saving">−69% vs Mini</div>
+          <div class="pkg-actions">
+            <a class="btn btn-primary" id="maxCta" href="/checkout.html?plan=max&billing=once" style="width:100%;text-align:center;">Acquista</a>
           </div>
         </div>
       </div>
 
+    </div><!-- /pkg-grid -->
+
+    <!-- Note -->
+    <div class="credits-note">
+      ⏱ <strong>I crediti sono validi 12 mesi</strong> dalla data di acquisto. Nessun rinnovo automatico.
     </div>
 
-    <!-- TEAM / ENTERPRISE -->
+    <!-- TEAM -->
     <div class="card" style="margin-top:14px;">
       <div class="card-inner" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 22px;">
-        <p class="team-note" style="margin:0;font-size:14px;color:var(--muted);">
+        <p style="margin:0;font-size:14px;color:var(--muted);">
           👥 <strong style="color:var(--text);font-weight:900;">Hai bisogno di un pacchetto per il tuo team?</strong><br>
           <span style="font-size:13px;">Contattaci per scontistiche dedicate a gruppi e aziende.</span>
         </p>
@@ -582,42 +428,33 @@
     </div>
 
     <p class="fineprint">
-      Nota: i piani a pagamento sono una simulazione UI (mock). Nessun addebito reale viene effettuato. In produzione si integrerebbe Stripe.
+      Nota: il checkout è una simulazione UI (mock). Nessun addebito reale viene effettuato. In produzione si integrerà Stripe.
     </p>
-    <div class="credits-note">
-      ⏱ <strong>I crediti hanno una validità di 12 mesi</strong> dalla data di acquisto o dall'ultima ricarica effettuata.
-    </div>
 
     <!-- FAQ -->
     <div class="faq">
       <div class="card">
         <div class="card-inner">
           <p class="q">I crediti scadono?</p>
-          <p class="a">I crediti hanno una validità di 12 mesi. Ogni nuova ricarica estende la validità di tutti i tuoi crediti per altri 12 mesi. I 10 crediti di benvenuto scadono 12 mesi dopo la registrazione, salvo che tu non effettui una ricarica prima.</p>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-inner">
-          <p class="q">Posso passare da un piano all'altro?</p>
-          <p class="a">Sì (in produzione). Al momento il sistema è mock: il checkout aggiunge i crediti del piano scelto direttamente al tuo account.</p>
+          <p class="a">I crediti acquistati sono validi 12 mesi dalla data di acquisto. I 10 crediti di benvenuto scadono 12 mesi dopo la registrazione.</p>
         </div>
       </div>
       <div class="card">
         <div class="card-inner">
           <p class="q">Quanti crediti consuma ogni generazione?</p>
-          <p class="a">I crediti scalano da 1 a 4 in base alla complessità: 1 credito per Bambino/Ragazzo/Universitario, 2 per Adulto/Esperto, 3 per Scienziato. La risposta "Lunga" aggiunge +1 credito extra (massimo 4 in totale).</p>
+          <p class="a">Da 1 a 4 crediti in base alla complessità: 1 credito per Bambino/Ragazzo/Universitario, 2 per Adulto/Esperto, 3 per Scienziato. La risposta "Lunga" aggiunge +1 credito (max 4).</p>
         </div>
       </div>
       <div class="card">
         <div class="card-inner">
           <p class="q">Cosa succede se esaurisco i crediti?</p>
-          <p class="a">Quando i crediti non sono sufficienti per la generazione richiesta, l'app mostra un avviso e ti reindirizza qui per ricaricare.</p>
+          <p class="a">L'app mostra un avviso e ti reindirizza qui per ricaricare. I crediti non vengono scalati in caso di errore di generazione.</p>
         </div>
       </div>
       <div class="card">
         <div class="card-inner">
-          <p class="q">Ricariche e abbonamenti si combinano?</p>
-          <p class="a">Sì: i crediti dei pacchetti una tantum (Pacchetto Base / Pacchetto Premium) si sommano a quelli di un eventuale abbonamento attivo. Tutti i crediti si accumulano e ogni ricarica estende la scadenza dell'intero saldo a 12 mesi dalla data dell'acquisto.</p>
+          <p class="q">Posso acquistare più pacchetti?</p>
+          <p class="a">Sì, i crediti si accumulano sul tuo account. Ogni nuovo acquisto aggiunge crediti a quelli già presenti e aggiorna la scadenza a 12 mesi dal nuovo acquisto.</p>
         </div>
       </div>
     </div>
@@ -633,6 +470,8 @@
       <div class="footer-links">
         <a href="/privacy-policy.html">Privacy Policy</a>
         <a href="/cookies-policy.html">Cookie Policy</a>
+        <a href="/terms-of-service.html">Termini di Servizio</a>
+        <a href="/dpa.html">DPA</a>
         <a href="/contatti.html">Contatti</a>
       </div>
     </footer>
@@ -647,160 +486,92 @@
         if(banner) banner.style.display = "";
       }
     })();
+  </script>
 
-    // Billing toggle + promo discount
+  <script>
+    // Gestione sconto promo + aggiornamento prezzi
     (function(){
-      const sw         = document.getElementById("billingSwitch");
-      const hint       = document.getElementById("billingHint");
-      const lblMonthly = document.getElementById("billingLabelMonthly");
-      const lblYearly  = document.getElementById("billingLabelYearly");
-
-      const plans = [
-        {
-          priceEl:   document.getElementById("lightPrice"),
-          perEl:     document.getElementById("lightPer"),
-          creditsEl: document.getElementById("lightCredits"),
-          ctaEl:     document.getElementById("lightCta"),
-          monthly: { price:"€2,99",  per:"al mese",   credits:"⚡ 30 crediti/mese",  href:"/checkout.html?plan=light&billing=monthly" },
-          yearly:  { price:"€28,70", per:"all'anno",  credits:"⚡ 360 crediti/anno", href:"/checkout.html?plan=light&billing=yearly" }
-        },
-        {
-          priceEl:   document.getElementById("plusPrice"),
-          perEl:     document.getElementById("plusPer"),
-          creditsEl: document.getElementById("plusCredits"),
-          ctaEl:     document.getElementById("plusCta"),
-          monthly: { price:"€4,99",  per:"al mese",   credits:"⚡ 60 crediti/mese",   href:"/checkout.html?plan=plus&billing=monthly" },
-          yearly:  { price:"€47,90", per:"all'anno",  credits:"⚡ 720 crediti/anno",  href:"/checkout.html?plan=plus&billing=yearly" }
-        },
-        {
-          priceEl:   document.getElementById("proPrice"),
-          perEl:     document.getElementById("proPer"),
-          creditsEl: document.getElementById("proCredits"),
-          ctaEl:     document.getElementById("proCta"),
-          monthly: { price:"€9,99",  per:"al mese",   credits:"⚡ 150 crediti/mese",  href:"/checkout.html?plan=pro&billing=monthly" },
-          yearly:  { price:"€95,90", per:"all'anno",  credits:"⚡ 1800 crediti/anno", href:"/checkout.html?plan=pro&billing=yearly" }
-        }
+      const pkgs = [
+        { id:'mini',  basePrice:1.99,  ctaId:'miniCta',  priceId:'miniPrice',  href:'/checkout.html?plan=mini&billing=once'  },
+        { id:'base',  basePrice:4.99,  ctaId:'baseCta',  priceId:'basePrice',  href:'/checkout.html?plan=base&billing=once'  },
+        { id:'plus',  basePrice:7.99,  ctaId:'plusCta',  priceId:'plusPrice',  href:'/checkout.html?plan=plus&billing=once'  },
+        { id:'pro',   basePrice:14.99, ctaId:'proCta',   priceId:'proPrice',   href:'/checkout.html?plan=pro&billing=once'   },
+        { id:'max',   basePrice:34.99, ctaId:'maxCta',   priceId:'maxPrice',   href:'/checkout.html?plan=max&billing=once'   },
       ];
 
-      const topups = [
-        { priceEl: document.getElementById("miniBoostPrice"), ctaEl: document.getElementById("miniBoostCta"), price:"€1,99", href:"/checkout.html?plan=mini-boost&billing=once" },
-        { priceEl: document.getElementById("maxiBoostPrice"), ctaEl: document.getElementById("maxiBoostCta"), price:"€3,99", href:"/checkout.html?plan=maxi-boost&billing=once" }
-      ];
+      let activeDiscount  = 0;
+      let activePromoCode = "";
 
-      let yearly = false;
-      let activeDiscount   = 0;
-      let activePromoCode  = "";
+      function fmt(n){ return '€' + n.toFixed(2).replace('.', ','); }
 
-      function discountedHTML(original, pct) {
-        if (!pct) return original;
-        const n = parseFloat(original.replace("€","").replace(",","."));
-        if (isNaN(n)) return original;
-        const s = '<s style="opacity:.42;font-size:.60em;font-weight:500;">' + original + '</s>&thinsp;';
-        if (pct >= 100) return s + '<span style="color:#5cf2a8;font-size:.72em;">GRATIS</span>';
-        return s + '€' + (n * (1 - pct / 100)).toFixed(2).replace(".", ",");
+      function discountedHTML(basePrice, pct){
+        if(!pct) return fmt(basePrice);
+        const orig = '<s style="opacity:.42;font-size:.60em;font-weight:500;">' + fmt(basePrice) + '</s>&thinsp;';
+        if(pct >= 100) return orig + '<span style="color:#5cf2a8;font-size:.72em;">GRATIS</span>';
+        return orig + fmt(basePrice * (1 - pct / 100));
       }
 
-      function apply() {
-        const mode = yearly ? "yearly" : "monthly";
-        sw.classList.toggle("on", yearly);
-        sw.setAttribute("aria-checked", String(yearly));
-        hint.textContent = yearly ? "Prezzi annuali (mock) con -20%." : "Prezzi mensili (mock).";
-        lblMonthly.classList.toggle("active", !yearly);
-        lblYearly.classList.toggle("active", yearly);
-        plans.forEach(p => {
-          p.priceEl.innerHTML     = discountedHTML(p[mode].price, activeDiscount);
-          p.perEl.textContent     = p[mode].per;
-          p.creditsEl.textContent = p[mode].credits;
-          p.ctaEl.href            = p[mode].href + (activePromoCode ? "&promo=" + activePromoCode : "");
-        });
-        topups.forEach(t => {
-          if (t.priceEl) t.priceEl.innerHTML = discountedHTML(t.price, activeDiscount);
-          if (t.ctaEl)   t.ctaEl.href        = t.href + (activePromoCode ? "&promo=" + activePromoCode : "");
+      function applyPrices(){
+        pkgs.forEach(function(p){
+          var priceEl = document.getElementById(p.priceId);
+          var ctaEl   = document.getElementById(p.ctaId);
+          if(priceEl) priceEl.innerHTML = discountedHTML(p.basePrice, activeDiscount);
+          if(ctaEl)   ctaEl.href        = p.href + (activePromoCode ? '&promo=' + activePromoCode : '');
         });
       }
 
-      sw.addEventListener("click", () => { yearly = !yearly; apply(); });
-      sw.addEventListener("keydown", e => {
-        if(e.key === "Enter" || e.key === " "){ e.preventDefault(); yearly = !yearly; apply(); }
-      });
-
-      window._setPromoDiscount = function(pct, code) {
+      window._setPromoDiscount = function(pct, code){
         activeDiscount  = pct  || 0;
         activePromoCode = code || "";
-        apply();
+        applyPrices();
       };
 
-      apply();
+      applyPrices();
     })();
-
   </script>
-  <script src="/shared.js?v=2" defer></script>
 
+  <script src="/shared.js?v=2" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
   <script>
-    // ── Session check: banner benvenuto ──
+    // Session check: banner benvenuto
     (function(){
       const SUPABASE_URL  = "https://lmmiowagyqypdrdcemdo.supabase.co";
       const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
       const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-
-      const banner = document.getElementById("welcomeBanner");
-      const cta    = document.getElementById("welcomeCta");
-
       sb.auth.getSession().then(({ data }) => {
-        if (data.session) {
-          // Utente loggato: nascondi il banner
-          if (banner) banner.style.display = "none";
-        } else {
-          // Non loggato: banner visibile, CTA punta alla registrazione
-          if (cta) {
-            cta.textContent = "Crea account gratis";
-            cta.href = "/auth.html";
-          }
-        }
+        if(data.session) document.getElementById("welcomeBanner").style.display = "none";
       });
     })();
   </script>
 
   <script>
-    // ── Codici sconto ──
+    // Codici sconto
     (function(){
       const SUPABASE_URL  = "https://lmmiowagyqypdrdcemdo.supabase.co";
       const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
       const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-      const promoInput     = document.getElementById("promoInput");
-      const promoApplyBtn  = document.getElementById("promoApplyBtn");
-      const promoMsg       = document.getElementById("promoMsg");
-      const promoInputRow  = document.getElementById("promoInputRow");
-      const promoActiveRow = document.getElementById("promoActiveRow");
-      const promoActiveLabel = document.getElementById("promoActiveLabel");
-      const promoRemoveBtn = document.getElementById("promoRemoveBtn");
+      const promoInput      = document.getElementById("promoInput");
+      const promoApplyBtn   = document.getElementById("promoApplyBtn");
+      const promoMsg        = document.getElementById("promoMsg");
+      const promoInputRow   = document.getElementById("promoInputRow");
+      const promoActiveRow  = document.getElementById("promoActiveRow");
+      const promoActiveLabel= document.getElementById("promoActiveLabel");
+      const promoRemoveBtn  = document.getElementById("promoRemoveBtn");
 
-      function setMsg(text, ok) {
-        promoMsg.innerHTML = text;
-        promoMsg.style.color = ok ? "#5cf2a8" : "#ff6b6b";
-      }
+      function setMsg(text, ok){ promoMsg.innerHTML = text; promoMsg.style.color = ok ? "#5cf2a8" : "#ff6b6b"; }
 
-      async function applyPromo() {
+      async function applyPromo(){
         const code = promoInput.value.trim().toUpperCase();
-        if (!code) { setMsg("Inserisci un codice.", false); return; }
-
+        if(!code){ setMsg("Inserisci un codice.", false); return; }
         promoApplyBtn.disabled = true;
         promoApplyBtn.textContent = "…";
         setMsg("", false);
-
         const { data, error } = await sb.rpc("validate_promo_code", { p_code: code });
-
         promoApplyBtn.disabled = false;
         promoApplyBtn.textContent = "Applica";
-
-        if (error || !data || !data.valid) {
-          setMsg("❌ Codice non valido o scaduto.", false);
-          return;
-        }
-
-        // Codice valido
+        if(error || !data || !data.valid){ setMsg("❌ Codice non valido o scaduto.", false); return; }
         promoInputRow.style.display  = "none";
         promoActiveRow.style.display = "flex";
         promoActiveLabel.textContent = code + " – " + data.discount + "% di sconto";
@@ -809,8 +580,7 @@
       }
 
       promoApplyBtn.addEventListener("click", applyPromo);
-      promoInput.addEventListener("keydown", e => { if (e.key === "Enter") applyPromo(); });
-
+      promoInput.addEventListener("keydown", e => { if(e.key === "Enter") applyPromo(); });
       promoRemoveBtn.addEventListener("click", () => {
         promoInput.value             = "";
         promoInputRow.style.display  = "";
