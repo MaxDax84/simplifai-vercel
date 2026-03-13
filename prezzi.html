@@ -98,80 +98,117 @@
     html[data-theme="light"] .welcome-banner{ border-color:rgba(124,92,255,.4); background:rgba(124,92,255,.10); color:rgba(13,17,51,.82); }
     html[data-theme="light"] .welcome-banner strong{ color:#0d1133; }
 
-    /* ── Griglia 5 pacchetti ── */
-    .pkg-grid{
+    /* ── Griglie pacchetti ── */
+    .grid{
       display:grid;
-      grid-template-columns:repeat(5,minmax(0,1fr));
-      gap:12px;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:14px;
       margin-top:16px;
+      align-items:stretch;
     }
-    @media(max-width:960px){ .pkg-grid{ grid-template-columns:repeat(3,1fr); } }
-    @media(max-width:580px){ .pkg-grid{ grid-template-columns:1fr; } }
+    @media(max-width:860px){ .grid{ grid-template-columns:repeat(2,1fr); } }
+    @media(max-width:540px){ .grid{ grid-template-columns:1fr; } }
 
-    .pkg{
-      display:flex; flex-direction:column; gap:12px;
-      height:100%;
+    .strafare-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+      margin-top:10px;
+      align-items:stretch;
     }
+    @media(max-width:540px){ .strafare-grid{ grid-template-columns:1fr; } }
 
-    /* Card in evidenza (Pro) */
-    .pkg-highlight{
-      border:1px solid rgba(124,92,255,.45);
-      background:rgba(124,92,255,.08);
+    /* Separatore sezione */
+    .section-sep{
+      display:flex; align-items:center; gap:12px;
+      margin-top:22px; margin-bottom:4px;
     }
-
-    .pkg-name{
-      font-size:17px; font-weight:950; letter-spacing:-.2px; margin:0;
+    .section-sep span{
+      color:var(--muted); font-size:12px; font-weight:700;
+      text-transform:uppercase; letter-spacing:.07em; white-space:nowrap;
     }
-    .pkg-desc{
-      font-size:12px; color:var(--muted); margin:3px 0 0; line-height:1.4;
-    }
-
-    /* Badge "Più scelto" */
-    .pkg-badge{
-      display:inline-flex; align-items:center;
-      padding:3px 9px; border-radius:999px;
-      font-size:10px; font-weight:800; letter-spacing:.04em;
-      border:1px solid rgba(124,92,255,.45);
-      background:rgba(124,92,255,.18);
-      color:rgba(210,200,255,.95);
-      width:fit-content;
-    }
-    html[data-theme="light"] .pkg-badge{ color:rgba(70,40,180,.9); background:rgba(124,92,255,.15); }
-
-    .pkg-price{
-      font-size:34px; font-weight:950; letter-spacing:-1.5px; line-height:1;
-    }
-    .pkg-per{
-      font-size:11px; color:var(--muted); margin-top:3px;
+    .section-sep::before,.section-sep::after{
+      content:""; flex:1; height:1px; background:var(--border);
     }
 
-    .pkg-credits{
-      display:inline-flex; align-items:center; gap:5px;
-      padding:5px 10px; border-radius:999px;
+    /* Card contenuto */
+    .plan{ height:100%; display:flex; flex-direction:column; gap:10px; }
+    .plan-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+    .plan-name{ font-weight:950; font-size:18px; letter-spacing:-.2px; margin:0; }
+    .plan-sub{ color:var(--muted); font-size:13px; line-height:1.45; margin:5px 0 0; }
+
+    .tag{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      color:var(--muted); font-size:11px; white-space:nowrap;
+    }
+
+    .price{ font-size:40px; font-weight:950; letter-spacing:-1px; line-height:1; margin-top:6px; }
+    .per{ color:var(--muted); font-size:13px; margin-top:5px; }
+
+    .credits-badge{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 10px; border-radius:999px;
       border:1px solid rgba(124,92,255,.3);
       background:rgba(124,92,255,.10);
-      font-size:12px; font-weight:700;
-      color:rgba(210,200,255,.9);
+      font-size:12px; color:rgba(233,237,255,.85);
       width:fit-content;
     }
-    html[data-theme="light"] .pkg-credits{ color:rgba(70,40,180,.9); background:rgba(124,92,255,.12); border-color:rgba(124,92,255,.35); }
 
-    .pkg-saving{
-      display:inline-flex; align-items:center;
-      padding:3px 9px; border-radius:999px;
-      font-size:11px; font-weight:800;
-      border:1px solid rgba(92,242,168,.28);
-      background:rgba(92,242,168,.08);
-      color:#5cf2a8;
-      width:fit-content;
+    .ul{
+      list-style:none; padding:0; margin:6px 0 0;
+      display:flex; flex-direction:column; gap:8px;
+      color:var(--muted); font-size:13px; line-height:1.45;
     }
-    html[data-theme="light"] .pkg-saving{ color:#1a8f5e; border-color:rgba(26,143,94,.3); background:rgba(26,143,94,.08); }
+    .ul li{ display:flex; gap:8px; align-items:flex-start; }
+    .ul .i{ width:16px; display:inline-flex; justify-content:center; flex:0 0 auto; opacity:.92; margin-top:1px; }
 
-    .pkg-per-cr{
-      font-size:11px; color:var(--muted2,var(--muted)); margin-top:2px;
+    .plan-actions{ margin-top:auto; display:flex; flex-direction:column; gap:8px; }
+
+    /* Card Base — evidenziata */
+    .plus{
+      border:1px solid rgba(124,92,255,.4);
+      background:rgba(124,92,255,.10);
+    }
+    .plus .tag{
+      border-color:rgba(124,92,255,.4);
+      background:rgba(124,92,255,.15);
+      color:rgba(233,237,255,.92);
+    }
+    .plus .credits-badge{
+      border-color:rgba(124,92,255,.4);
+      background:rgba(124,92,255,.15);
     }
 
-    .pkg-actions{ margin-top:auto; }
+    /* Card Pro/Max — stile caldo */
+    .strafare{
+      border-color:rgba(255,190,50,.22);
+      background:rgba(255,185,40,.04);
+    }
+    .strafare .tag{
+      border-color:rgba(255,185,40,.3);
+      background:rgba(255,185,40,.10);
+      color:rgba(255,225,130,.92);
+    }
+    .strafare .credits-badge{
+      border-color:rgba(255,185,40,.3);
+      background:rgba(255,185,40,.08);
+    }
+    .strafare .price{ font-size:36px; }
+
+    /* light mode */
+    html[data-theme="light"] .plan-sub{ color:rgba(13,17,51,.60); }
+    html[data-theme="light"] .ul{ color:rgba(13,17,51,.72); }
+    html[data-theme="light"] .per{ color:rgba(13,17,51,.60); }
+    html[data-theme="light"] .credits-badge{ color:rgba(70,40,180,.9); background:rgba(124,92,255,.12); border-color:rgba(124,92,255,.35); }
+    html[data-theme="light"] .plus .tag{ color:rgba(70,40,180,.9); background:rgba(124,92,255,.15); border-color:rgba(124,92,255,.4); }
+    html[data-theme="light"] .plus .credits-badge{ color:rgba(70,40,180,.9); }
+    html[data-theme="light"] .tag{ background:rgba(0,0,0,.05); border-color:rgba(13,17,51,.18); }
+    html[data-theme="light"] .strafare{ border-color:rgba(180,120,0,.3); background:rgba(255,185,40,.06); }
+    html[data-theme="light"] .strafare .tag{ color:rgba(120,70,0,.9); background:rgba(255,185,40,.18); border-color:rgba(180,120,0,.4); }
+    html[data-theme="light"] .strafare .credits-badge{ color:rgba(120,70,0,.9); background:rgba(255,185,40,.14); border-color:rgba(180,120,0,.35); }
 
     /* ── Promo Code ── */
     .promo-field{
@@ -306,110 +343,154 @@
       </div>
     </div>
 
-    <!-- 5 PACCHETTI -->
-    <div class="pkg-grid">
+    <!-- RIGA 1: Mini · Base · Plus -->
+    <div class="grid">
 
       <!-- MINI -->
       <div class="card">
-        <div class="card-inner pkg">
-          <div>
-            <p class="pkg-name">Mini</p>
-            <p class="pkg-desc">Per provare il servizio.</p>
+        <div class="card-inner plan">
+          <div class="plan-top">
+            <div>
+              <p class="plan-name">MINI</p>
+              <p class="plan-sub">Per fare i primi passi con Simplif-AI.</p>
+            </div>
+            <span class="tag">🌱 Per iniziare</span>
           </div>
-          <div>
-            <div class="pkg-price" id="miniPrice">€1,99</div>
-            <div class="pkg-per">pagamento unico</div>
-          </div>
-          <div class="pkg-credits">⚡ 25 crediti</div>
-          <div class="pkg-per-cr">€0,080 per credito</div>
-          <div class="pkg-actions">
-            <a class="btn btn-primary" id="miniCta" href="/checkout.html?plan=mini&billing=once" style="width:100%;text-align:center;">Acquista</a>
+          <div class="price" id="miniPrice">€1,99</div>
+          <div class="per">pagamento unico</div>
+          <div class="credits-badge">⚡ 25 crediti</div>
+          <ul class="ul">
+            <li><span class="i">✅</span><span><strong>25 crediti</strong> subito sul tuo account</span></li>
+            <li><span class="i">✅</span><span>Tutti i 6 target disponibili</span></li>
+            <li><span class="i">✅</span><span>Tutte le lunghezze di risposta</span></li>
+            <li><span class="i">✅</span><span>Validi 12 mesi dall'acquisto</span></li>
+            <li><span class="i">❌</span><span>Nessun rinnovo automatico</span></li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" id="miniCta" href="/checkout.html?plan=mini&billing=once">Acquista</a>
           </div>
         </div>
       </div>
 
-      <!-- BASE -->
-      <div class="card">
-        <div class="card-inner pkg">
-          <div>
-            <p class="pkg-name">Base</p>
-            <p class="pkg-desc">Per un uso regolare.</p>
+      <!-- BASE — evidenziato -->
+      <div class="card plus">
+        <div class="card-inner plan">
+          <div class="plan-top">
+            <div>
+              <p class="plan-name">BASE</p>
+              <p class="plan-sub">Il punto di partenza ideale.</p>
+            </div>
+            <span class="tag">⭐ Più scelto</span>
           </div>
-          <div>
-            <div class="pkg-price" id="basePrice">€4,99</div>
-            <div class="pkg-per">pagamento unico</div>
-          </div>
-          <div class="pkg-credits">⚡ 80 crediti</div>
-          <div class="pkg-per-cr">€0,062 per credito</div>
-          <div class="pkg-saving">−22% vs Mini</div>
-          <div class="pkg-actions">
-            <a class="btn btn-primary" id="baseCta" href="/checkout.html?plan=base&billing=once" style="width:100%;text-align:center;">Acquista</a>
+          <div class="price" id="basePrice">€4,99</div>
+          <div class="per">pagamento unico</div>
+          <div class="credits-badge">⚡ 80 crediti</div>
+          <ul class="ul">
+            <li><span class="i">⚡</span><span><strong>80 crediti</strong> subito sul tuo account</span></li>
+            <li><span class="i">✅</span><span>Tutti i 6 target disponibili</span></li>
+            <li><span class="i">✅</span><span>Tutte le lunghezze di risposta</span></li>
+            <li><span class="i">✅</span><span>Validi 12 mesi dall'acquisto</span></li>
+            <li><span class="i">💚</span><span>Risparmio del 22% rispetto al Mini</span></li>
+            <li><span class="i">❌</span><span>Nessun rinnovo automatico</span></li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" id="baseCta" href="/checkout.html?plan=base&billing=once">Acquista</a>
           </div>
         </div>
       </div>
 
       <!-- PLUS -->
-      <div class="card pkg-highlight">
-        <div class="card-inner pkg">
-          <div>
-            <p class="pkg-name">Plus</p>
-            <p class="pkg-desc">Il miglior rapporto qualità/prezzo.</p>
+      <div class="card">
+        <div class="card-inner plan">
+          <div class="plan-top">
+            <div>
+              <p class="plan-name">PLUS</p>
+              <p class="plan-sub">Per chi usa Simplif-AI con frequenza.</p>
+            </div>
+            <span class="tag">🚀 Ottimo valore</span>
           </div>
-          <div class="pkg-badge">⭐ Più scelto</div>
-          <div>
-            <div class="pkg-price" id="plusPrice">€7,99</div>
-            <div class="pkg-per">pagamento unico</div>
-          </div>
-          <div class="pkg-credits">⚡ 200 crediti</div>
-          <div class="pkg-per-cr">€0,040 per credito</div>
-          <div class="pkg-saving">−50% vs Mini</div>
-          <div class="pkg-actions">
-            <a class="btn btn-primary" id="plusCta" href="/checkout.html?plan=plus&billing=once" style="width:100%;text-align:center;">Acquista</a>
+          <div class="price" id="plusPrice">€7,99</div>
+          <div class="per">pagamento unico</div>
+          <div class="credits-badge">⚡ 200 crediti</div>
+          <ul class="ul">
+            <li><span class="i">🚀</span><span><strong>200 crediti</strong> subito sul tuo account</span></li>
+            <li><span class="i">✅</span><span>Tutti i 6 target disponibili</span></li>
+            <li><span class="i">✅</span><span>Tutte le lunghezze di risposta</span></li>
+            <li><span class="i">✅</span><span>Validi 12 mesi dall'acquisto</span></li>
+            <li><span class="i">💚</span><span>Risparmio del 50% rispetto al Mini</span></li>
+            <li><span class="i">❌</span><span>Nessun rinnovo automatico</span></li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" id="plusCta" href="/checkout.html?plan=plus&billing=once">Acquista</a>
           </div>
         </div>
       </div>
 
+    </div><!-- /grid riga 1 -->
+
+    <!-- Separatore riga 2 -->
+    <div class="section-sep">
+      <span>🔥 Per chi vuole strafare</span>
+    </div>
+
+    <!-- RIGA 2: Pro · Max -->
+    <div class="strafare-grid">
+
       <!-- PRO -->
-      <div class="card">
-        <div class="card-inner pkg">
-          <div>
-            <p class="pkg-name">Pro</p>
-            <p class="pkg-desc">Per uso intensivo.</p>
+      <div class="card strafare">
+        <div class="card-inner plan">
+          <div class="plan-top">
+            <div>
+              <p class="plan-name">PRO</p>
+              <p class="plan-sub">Una scorta abbondante per uso intensivo.</p>
+            </div>
+            <span class="tag">🔥 Uso intensivo</span>
           </div>
-          <div>
-            <div class="pkg-price" id="proPrice">€14,99</div>
-            <div class="pkg-per">pagamento unico</div>
-          </div>
-          <div class="pkg-credits">⚡ 500 crediti</div>
-          <div class="pkg-per-cr">€0,030 per credito</div>
-          <div class="pkg-saving">−63% vs Mini</div>
-          <div class="pkg-actions">
-            <a class="btn btn-primary" id="proCta" href="/checkout.html?plan=pro&billing=once" style="width:100%;text-align:center;">Acquista</a>
+          <div class="price" id="proPrice">€14,99</div>
+          <div class="per">pagamento unico</div>
+          <div class="credits-badge">⚡ 500 crediti</div>
+          <ul class="ul">
+            <li><span class="i">🔥</span><span><strong>500 crediti</strong> subito sul tuo account</span></li>
+            <li><span class="i">✅</span><span>Tutti i 6 target disponibili</span></li>
+            <li><span class="i">✅</span><span>Tutte le lunghezze di risposta</span></li>
+            <li><span class="i">✅</span><span>Validi 12 mesi dall'acquisto</span></li>
+            <li><span class="i">💚</span><span>Risparmio del 63% rispetto al Mini</span></li>
+            <li><span class="i">❌</span><span>Nessun rinnovo automatico</span></li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" id="proCta" href="/checkout.html?plan=pro&billing=once">Acquista</a>
           </div>
         </div>
       </div>
 
       <!-- MAX -->
-      <div class="card">
-        <div class="card-inner pkg">
-          <div>
-            <p class="pkg-name">Max</p>
-            <p class="pkg-desc">Per chi non vuole mai fermarsi.</p>
+      <div class="card strafare">
+        <div class="card-inner plan">
+          <div class="plan-top">
+            <div>
+              <p class="plan-name">MAX</p>
+              <p class="plan-sub">Non resterai mai senza crediti.</p>
+            </div>
+            <span class="tag">💎 Massima scorta</span>
           </div>
-          <div>
-            <div class="pkg-price" id="maxPrice">€34,99</div>
-            <div class="pkg-per">pagamento unico</div>
-          </div>
-          <div class="pkg-credits">⚡ 1.400 crediti</div>
-          <div class="pkg-per-cr">€0,025 per credito</div>
-          <div class="pkg-saving">−69% vs Mini</div>
-          <div class="pkg-actions">
-            <a class="btn btn-primary" id="maxCta" href="/checkout.html?plan=max&billing=once" style="width:100%;text-align:center;">Acquista</a>
+          <div class="price" id="maxPrice">€34,99</div>
+          <div class="per">pagamento unico</div>
+          <div class="credits-badge">⚡ 1.400 crediti</div>
+          <ul class="ul">
+            <li><span class="i">💎</span><span><strong>1.400 crediti</strong> subito sul tuo account</span></li>
+            <li><span class="i">✅</span><span>Tutti i 6 target disponibili</span></li>
+            <li><span class="i">✅</span><span>Tutte le lunghezze di risposta</span></li>
+            <li><span class="i">✅</span><span>Validi 12 mesi dall'acquisto</span></li>
+            <li><span class="i">💚</span><span>Risparmio del 69% rispetto al Mini</span></li>
+            <li><span class="i">❌</span><span>Nessun rinnovo automatico</span></li>
+          </ul>
+          <div class="plan-actions">
+            <a class="btn btn-primary" id="maxCta" href="/checkout.html?plan=max&billing=once">Acquista</a>
           </div>
         </div>
       </div>
 
-    </div><!-- /pkg-grid -->
+    </div><!-- /strafare-grid -->
 
     <!-- Note -->
     <div class="credits-note">
