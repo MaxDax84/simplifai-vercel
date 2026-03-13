@@ -584,9 +584,9 @@
       } catch(e) { console.warn("sendPurchaseEmail error:", e); }
     }
 
-    /* Countdown redirect (3s) */
+    /* Countdown redirect (10s) */
     function startCountdown() {
-      let secs = 3;
+      let secs = 10;
       const el = document.getElementById('successCountdown');
       el.textContent = 'Verrai reindirizzato all\'app tra ' + secs + ' secondi…';
       const t = setInterval(() => {
