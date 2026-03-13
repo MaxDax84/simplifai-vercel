@@ -197,6 +197,22 @@
     .checkout-msg{ margin-top:10px; font-size:13px; min-height:16px; }
     .checkout-msg.error{ color:#ff6b6b; }
 
+    /* ── Processing screen ── */
+    .processing-full{ display:none; margin-top:16px; }
+    .processing-inner{ text-align:center; padding:64px 24px 56px; }
+    .spinner-ring{
+      width:72px; height:72px; border-radius:50%;
+      border:5px solid rgba(124,92,255,.15);
+      border-top-color:#7c5cff;
+      animation:spin 1s linear infinite;
+      margin:0 auto 30px;
+    }
+    @keyframes spin{ to{ transform:rotate(360deg); } }
+    .processing-title{
+      font-size:26px; font-weight:950; margin:0 0 10px; letter-spacing:-.3px;
+    }
+    .processing-sub{ color:var(--muted); font-size:14px; margin:0; line-height:1.6; }
+
     /* ── Success full ── */
     .success-full{ display:none; margin-top:16px; }
     .success-inner{ text-align:center; padding:52px 24px 44px; }
@@ -276,7 +292,7 @@
     </div>
 
     <!-- Hero -->
-    <div class="card" style="margin-top:16px;">
+    <div class="card" id="heroCard" style="margin-top:16px;">
       <div class="card-inner hero">
         <span class="pilltag">🧾 CHECKOUT</span>
         <div class="h1">Completa il tuo acquisto</div>
@@ -404,6 +420,17 @@
       </div>
     </div>
 
+    <!-- ── PROCESSING (mostrata subito dopo il click, per almeno 5s) ── -->
+    <div class="processing-full" id="processingSection">
+      <div class="card">
+        <div class="card-inner processing-inner">
+          <div class="spinner-ring"></div>
+          <p class="processing-title">Acquisto in corso…</p>
+          <p class="processing-sub">Stiamo elaborando il tuo pagamento.<br>Ci vorrà solo un momento, non chiudere la pagina.</p>
+        </div>
+      </div>
+    </div>
+
     <!-- ── SUCCESS (full width, sostituisce la shell) ── -->
     <div class="success-full" id="successSection">
       <div class="card">
@@ -415,7 +442,7 @@
             </svg>
           </div>
 
-          <p class="success-title">Acquisto completato! 🎉</p>
+          <p class="success-title">Ricarica effettuata, possiamo continuare a divertirci! 🎉</p>
 
           <div class="success-credits-pill">
             ⚡ <span id="successCreditsAdded">+150 crediti aggiunti</span>
@@ -566,31 +593,44 @@
       if (!currentUserId) { showMsg("Sessione non trovata. Ricarica la pagina.", "error"); return; }
 
       confirmBtn.disabled = true;
-      confirmBtn.innerHTML = '<span style="opacity:.7">⏳</span> Elaborazione…';
       showMsg("");
+
+      /* 1. Nascondi hero + form, mostra schermata "in corso" */
+      document.getElementById('heroCard').style.display   = 'none';
+      document.getElementById('mainShell').style.display  = 'none';
+      document.getElementById('processingSection').style.display = '';
 
       try {
         const rpcCall = (promoCode && activePromoDiscount > 0)
           ? sb.rpc('apply_promo_and_add_credits', { p_code: promoCode, p_amount: pkg.credits })
           : sb.rpc('add_credits', { amount: pkg.credits });
 
-        const { data: newCredits, error: rpcErr } = await rpcCall;
+        /* 2. Attendi almeno 5 secondi E il completamento del pagamento */
+        const [rpcResult] = await Promise.all([
+          rpcCall,
+          new Promise(r => setTimeout(r, 5000))
+        ]);
+
+        const { data: newCredits, error: rpcErr } = rpcResult;
         if (rpcErr) throw new Error("Impossibile aggiornare i crediti: " + rpcErr.message);
 
-        /* Email conferma */
         sendPurchaseEmail(pkg);
 
-        /* Mostra success */
-        document.getElementById('mainShell').style.display = 'none';
-        document.getElementById('successSection').style.display = '';
+        /* 3. Nascondi "in corso", mostra successo */
+        document.getElementById('processingSection').style.display = 'none';
+        document.getElementById('successSection').style.display    = '';
         document.getElementById('successCreditsAdded').textContent = '+' + pkg.credits + ' crediti aggiunti';
-        document.getElementById('successSub').textContent = 'Il tuo account è stato aggiornato con successo.';
+        document.getElementById('successSub').textContent   = 'Il tuo account è stato aggiornato con successo.';
         document.getElementById('successTotal').textContent = 'Crediti totali nel tuo account: ' + newCredits;
 
-        /* Countdown + redirect automatico */
+        /* 4. Countdown 5s + redirect automatico */
         startCountdown();
 
       } catch(e) {
+        /* Errore: ripristina la pagina */
+        document.getElementById('processingSection').style.display = 'none';
+        document.getElementById('heroCard').style.display          = '';
+        document.getElementById('mainShell').style.display         = '';
         showMsg(e?.message || "Errore sconosciuto.", "error");
         confirmBtn.disabled = false;
         confirmBtn.innerHTML = '🔒 Completa acquisto';
