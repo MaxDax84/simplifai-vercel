@@ -1,3 +1,7 @@
+/* Vercel Web Analytics */
+import { inject } from '@vercel/analytics';
+inject();
+
 /**
  * shared.js – Logica UI comune a tutte le pagine Simplif-AI.
  * Caricato con defer: si esegue dopo il parsing HTML, prima di DOMContentLoaded.
