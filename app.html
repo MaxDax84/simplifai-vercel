@@ -17,7 +17,6 @@
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <!-- html2pdf caricato lazily al primo click: non blocca il caricamento iniziale -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.11/dist/purify.min.js"></script>
 
@@ -483,7 +482,6 @@
 
               <div style="display:flex;gap:10px;flex-wrap:wrap;">
                 <button class="btn" id="copyBtn" type="button" disabled>⧉ Copia</button>
-                <button class="btn" id="pdfBtn" type="button" disabled>⬇ PDF</button>
               </div>
             </div>
           </div>
@@ -500,9 +498,6 @@
         </div>
       </div>
     </section>
-
-    <!-- PDF export container (invisible) -->
-    <div id="pdfContent" class="pdf-render"></div>
 
     <div style="height:26px;"></div>
 
@@ -647,7 +642,6 @@
     const spinner      = document.getElementById("spinner");
     const statusEl     = document.getElementById("status");
     const copyBtn      = document.getElementById("copyBtn");
-    const pdfBtn       = document.getElementById("pdfBtn");
 
     const chipTarget = document.getElementById("chipTarget");
     const chipLen = document.getElementById("chipLen");
@@ -695,7 +689,6 @@
 
     function updateButtons(){
       copyBtn.disabled = isGenerating || !accumulatedText.trim();
-      pdfBtn.disabled  = isGenerating || !accumulatedText.trim();
       goLength.disabled = selectedTargetIndex < 0;
       const cost = computeCost();
       const canAfford = userCredits === null || userCredits >= cost;
@@ -1116,138 +1109,6 @@
       }
     })();
 
-    /* ── PDF Download (html2pdf caricato lazily al primo click) ── */
-    const HTML2PDF_URL = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
-    let html2pdfLoaded = false;
-
-    function loadHtml2pdf(){
-      if(html2pdfLoaded) return Promise.resolve();
-      return new Promise((resolve, reject) => {
-        const s = document.createElement('script');
-        s.src = HTML2PDF_URL;
-        s.onload  = () => { html2pdfLoaded = true; resolve(); };
-        s.onerror = () => reject(new Error("Impossibile caricare html2pdf."));
-        document.head.appendChild(s);
-      });
-    }
-
-    pdfBtn.addEventListener('click', () => {
-      if(!accumulatedText.trim()) return;
-      pdfBtn.disabled = true;
-      pdfBtn.textContent = "⏳ Preparazione…";
-
-      loadHtml2pdf().then(async () => {
-        const t = selectedTargetIndex >= 0 ? TARGETS[selectedTargetIndex] : null;
-        const l = selectedLenKey ? LENGTHS.find(x => x.key === selectedLenKey) : null;
-
-        /* Meta pill */
-        const metaParts = [];
-        if(t) metaParts.push('Target: <b style="color:#333;">' + t.label + '</b>');
-        if(l) metaParts.push('Lunghezza: <b style="color:#333;">' + l.label + '</b>');
-        const metaHtml = metaParts.length
-          ? '<div style="margin-top:12px;"><span style="display:inline-block;font-size:11px;'
-            + 'color:#555;background:#f3f1ff;border:1px solid #d8d0ff;border-radius:999px;'
-            + 'padding:4px 14px;">' + metaParts.join(' &nbsp;·&nbsp; ') + '</span></div>'
-          : '';
-
-        const bodyHtml = DOMPurify.sanitize(marked.parse(normalizeForDisplay(accumulatedText)));
-        const now = new Date().toLocaleDateString('it-IT', { day:'2-digit', month:'long', year:'numeric' });
-
-        /* ── Inietta stili temporanei per il markdown nel <head> ── */
-        const tmpStyle = document.createElement('style');
-        tmpStyle.id = 'sai-pdf-style';
-        tmpStyle.textContent = [
-          '#sai-pdf-tmp h1{font-size:20px;font-weight:900;margin:20px 0 10px;color:#111;}',
-          '#sai-pdf-tmp h2{font-size:17px;font-weight:800;margin:18px 0 8px;color:#111;border-bottom:1px solid #eee;padding-bottom:6px;}',
-          '#sai-pdf-tmp h3{font-size:15px;font-weight:700;margin:14px 0 6px;color:#333;}',
-          '#sai-pdf-tmp p{margin:10px 0;line-height:1.7;font-size:14px;color:#111;}',
-          '#sai-pdf-tmp ul,#sai-pdf-tmp ol{margin:8px 0 8px 22px;}',
-          '#sai-pdf-tmp li{margin:5px 0;line-height:1.65;font-size:14px;color:#111;}',
-          '#sai-pdf-tmp strong,#sai-pdf-tmp b{font-weight:700;}',
-          '#sai-pdf-tmp em{font-style:italic;}',
-          '#sai-pdf-tmp code{background:#f0f2f5;border:1px solid #dde;padding:2px 5px;border-radius:4px;font-size:12px;font-family:monospace;}',
-          '#sai-pdf-tmp pre{background:#f5f7f9;border:1px solid #dde;padding:12px;border-radius:8px;overflow:hidden;margin:10px 0;}',
-          '#sai-pdf-tmp pre code{background:none;border:none;padding:0;}',
-          '#sai-pdf-tmp blockquote{margin:10px 0;padding:8px 14px;border-left:3px solid #7c5cff;background:#f5f3ff;border-radius:4px;}',
-          '#sai-pdf-tmp a{color:#5b36d1;}',
-          '#sai-pdf-tmp hr{border:none;border-top:1px solid #eee;margin:18px 0;}',
-        ].join('');
-        document.head.appendChild(tmpStyle);
-
-        /* ── Crea elemento temporaneo VISIBILE nel DOM ── */
-        /* position:fixed top:0 left:0 → html2canvas lo vede sempre, indipendentemente
-           dallo scroll. pointer-events:none → non blocca l'interazione utente. */
-        const tmp = document.createElement('div');
-        tmp.id = 'sai-pdf-tmp';
-        tmp.style.cssText = [
-          'position:fixed', 'top:0', 'left:0',
-          'width:720px', 'box-sizing:border-box', 'padding:28px 32px',
-          'background:#fff', 'color:#111',
-          'font-family:ui-sans-serif,system-ui,-apple-system,sans-serif',
-          'font-size:14px', 'line-height:1.75',
-          'z-index:99999', 'pointer-events:none',
-          'overflow:visible',
-        ].join(';');
-
-        tmp.innerHTML =
-          /* Header */
-          '<div style="text-align:center;padding-bottom:22px;margin-bottom:26px;border-bottom:3px solid #7c5cff;">'
-          + '<div style="display:inline-flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;">'
-          + '<div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#7c5cff 0%,#26c6ff 100%);flex-shrink:0;"></div>'
-          + '<span style="font-size:26px;font-weight:900;letter-spacing:-0.5px;color:#111;">Simplif-AI</span></div>'
-          + '<div style="font-size:12px;color:#999;">Concetti complessi spiegati in modo semplice</div>'
-          + metaHtml + '</div>'
-          /* Content */
-          + '<div>' + bodyHtml + '</div>'
-          /* Footer */
-          + '<div style="margin-top:40px;padding-top:14px;border-top:1px solid #eee;'
-          + 'display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#bbb;">'
-          + '<span><b style="color:#7c5cff;">Simplif-AI</b> &mdash; simplif-ai.it</span>'
-          + '<span>' + now + '</span></div>';
-
-        document.body.appendChild(tmp);
-
-        /* Aspetta 2 frame: il browser deve rendere l'elemento prima che html2canvas lo catturi */
-        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-
-        console.log('[PDF] tmp element size:', tmp.offsetWidth, 'x', tmp.offsetHeight);
-        console.log('[PDF] innerHTML length:', tmp.innerHTML.length);
-
-        await html2pdf().set({
-          margin: [12, 14, 12, 14],
-          filename: 'risposta-simplif-ai.pdf',
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            backgroundColor: '#ffffff',
-            windowWidth: 720,
-            scrollX: 0,
-            scrollY: 0,
-            logging: false,
-          },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        }).from(tmp).save();
-
-        console.log('[PDF] save() completed');
-
-        /* Cleanup */
-        document.body.removeChild(tmp);
-        document.head.removeChild(tmpStyle);
-        pdfBtn.disabled = false;
-        pdfBtn.textContent = "⬇ PDF";
-
-      }).catch((err) => {
-        /* Cleanup anche in caso di errore */
-        const s = document.getElementById('sai-pdf-style');
-        const e = document.getElementById('sai-pdf-tmp');
-        if(s) document.head.removeChild(s);
-        if(e) document.body.removeChild(e);
-        console.error('[PDF] export failed:', err);
-        setStatus("Errore durante la generazione del PDF. Riprova.", false);
-        pdfBtn.disabled = false;
-        pdfBtn.textContent = "⬇ PDF";
-      });
-    });
 
     // init
     renderTargets();

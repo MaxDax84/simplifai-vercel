@@ -8,7 +8,6 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="/theme.css">
 
-  <!-- FOUC prevention -->
   <script>
     (function(){
       if(localStorage.getItem('sai_theme')==='light')
@@ -17,137 +16,227 @@
   </script>
 
   <style>
-    .hero{
-      text-align:center;
-      padding: 22px 18px;
-    }
-
+    /* ── Layout ── */
+    .hero{ text-align:center; padding:22px 18px; }
     .shell{
       display:grid;
-      grid-template-columns: 1.05fr .95fr;
-      gap: 16px;
-      margin-top: 16px;
-      align-items:start;
+      grid-template-columns: 1.15fr .85fr;
+      gap:16px; margin-top:16px; align-items:start;
     }
-    @media(max-width: 980px){
-      .shell{ grid-template-columns: 1fr; }
-    }
+    @media(max-width:980px){ .shell{ grid-template-columns:1fr; } }
 
-    .h2{
-      font-size: 20px;
-      font-weight: 950;
-      margin:0;
-      letter-spacing:-.2px;
-    }
+    /* ── Headings / labels ── */
+    .section-title{ font-size:17px; font-weight:900; margin:0 0 18px; }
+    .label{ color:var(--muted); font-size:13px; margin:14px 0 5px; }
+    .label:first-child{ margin-top:0; }
 
-    .label{
-      color: var(--muted);
-      font-size: 13px;
-      margin: 12px 0 6px;
-    }
-
+    /* ── Form fields ── */
     .field{
-      width: 100%;
-      min-height: 44px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: rgba(0,0,0,.16);
-      color: var(--text);
-      padding: 10px 12px;
-      outline: none;
-      font-size: 14px;
-      box-sizing: border-box;
+      width:100%; min-height:44px;
+      border-radius:14px; border:1px solid var(--border);
+      background:rgba(0,0,0,.16); color:var(--text);
+      padding:10px 12px; outline:none; font-size:14px;
+      box-sizing:border-box; font-family:inherit;
+      transition:border-color .15s, box-shadow .15s;
     }
     .field:focus{
-      border-color: rgba(124,92,255,.50);
-      box-shadow: 0 0 0 4px rgba(124,92,255,.15);
+      border-color:rgba(124,92,255,.50);
+      box-shadow:0 0 0 4px rgba(124,92,255,.15);
+    }
+    html[data-theme="light"] .field{
+      background:rgba(255,255,255,.80);
+      border-color:rgba(13,17,51,.15);
+      color:#0d1133;
+    }
+    .field-wrap{ position:relative; }
+    .field-wrap .field{ padding-left:42px; }
+    .field-icon{
+      position:absolute; left:13px; top:50%;
+      transform:translateY(-50%); font-size:15px;
+      pointer-events:none; line-height:1;
+    }
+    .row2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media(max-width:520px){ .row2{ grid-template-columns:1fr; } }
+
+    /* ── Payment methods strip ── */
+    .payment-methods{
+      display:flex; align-items:center; gap:8px;
+      flex-wrap:wrap; margin-bottom:18px;
+    }
+    .payment-methods-label{ font-size:12px; color:var(--muted2); }
+    .pm-badge{
+      padding:4px 10px; border-radius:8px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      font-size:11px; font-weight:900;
+      letter-spacing:.6px; color:var(--muted);
+    }
+    .pm-badge.visa{
+      color:#1a1f71; background:#e8eaf6;
+      border-color:#c5cae9;
+    }
+    .pm-badge.mastercard{
+      background:linear-gradient(135deg,#eb001b 40%,#f79e1b);
+      color:#fff; border-color:transparent; letter-spacing:0;
+    }
+    .pm-badge.stripe{
+      color:#635bff;
+      background:rgba(99,91,255,.08);
+      border-color:rgba(99,91,255,.28);
     }
 
-    .row2{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+    /* ── Security badge ── */
+    .security-badge{
+      display:inline-flex; align-items:center; gap:7px;
+      font-size:12px; color:#5cf2a8;
+      background:rgba(92,242,168,.07);
+      border:1px solid rgba(92,242,168,.20);
+      border-radius:999px; padding:5px 13px;
+      margin-bottom:20px;
     }
-    @media(max-width: 520px){
-      .row2{ grid-template-columns: 1fr; }
-    }
+    html[data-theme="light"] .security-badge{ color:#1a8f5e; }
 
+    /* ── Plan box ── */
     .planbox{
-      border: 1px solid rgba(124,92,255,.35);
-      background: rgba(124,92,255,.10);
-      border-radius: 18px;
-      padding: 16px;
+      border:1px solid rgba(124,92,255,.35);
+      background:rgba(124,92,255,.10);
+      border-radius:16px; padding:16px 18px;
+      margin-bottom:18px;
     }
     .plan-top{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-bottom: 10px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; flex-wrap:wrap; margin-bottom:12px;
     }
+    .plan-name{ font-size:19px; font-weight:950; }
     .plan-pill{
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      color: var(--muted);
-      font-size: 12px;
-      white-space: nowrap;
+      padding:4px 11px; border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.05);
+      color:var(--muted); font-size:12px;
     }
-    .price{
-      font-size: 54px;
-      font-weight: 950;
-      letter-spacing: -1px;
-      margin: 10px 0 0;
-      line-height: 1;
+    .credits-badge{
+      display:inline-flex; align-items:center; gap:5px;
+      background:rgba(124,92,255,.15);
+      border:1px solid rgba(124,92,255,.30);
+      border-radius:999px; padding:5px 13px;
+      font-size:13px; font-weight:700; color:#a98bff;
     }
-    .per{
-      color: var(--muted);
-      margin-top: 6px;
-      font-size: 13px;
+    html[data-theme="light"] .credits-badge{ color:#5b36d1; }
+
+    /* ── Promo badge ── */
+    .promo-badge{
+      display:none; margin-top:10px;
+      padding:5px 13px; border-radius:999px;
+      border:1px solid rgba(92,242,168,.30);
+      background:rgba(92,242,168,.08);
+      font-size:12px; color:#5cf2a8; width:fit-content;
     }
-    .small{
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
-      margin-top: 10px;
+    html[data-theme="light"] .promo-badge{ color:#1a8f5e; }
+
+    /* ── Order breakdown ── */
+    .order-sep{ height:1px; background:var(--border); margin:14px 0; }
+    .order-row{
+      display:flex; justify-content:space-between; align-items:center;
+      font-size:14px; padding:3px 0;
+    }
+    .order-row .row-label{ color:var(--muted); }
+    .order-row .row-val{ font-weight:600; }
+    .order-row.strike .row-val{ text-decoration:line-through; opacity:.5; font-weight:400; }
+    .order-row.discount .row-label{ color:#5cf2a8; font-size:13px; font-weight:700; }
+    .order-row.discount .row-val{ color:#5cf2a8; font-weight:700; }
+    html[data-theme="light"] .order-row.discount .row-label,
+    html[data-theme="light"] .order-row.discount .row-val{ color:#1a8f5e; }
+    .order-row.total .row-label{ font-weight:900; font-size:15px; color:var(--text); }
+    .order-row.total .row-val{ font-size:22px; font-weight:950; letter-spacing:-.5px; }
+    .order-row.total .row-val.free{ color:#5cf2a8; }
+    html[data-theme="light"] .order-row.total .row-val.free{ color:#1a8f5e; }
+
+    /* ── Benefits ── */
+    .benefits{
+      list-style:none; padding:0; margin:18px 0 0;
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .benefits li{
+      display:flex; align-items:flex-start; gap:9px;
+      font-size:13px; color:var(--muted); line-height:1.4;
+    }
+    .benefits li .chk{ color:#5cf2a8; font-weight:900; flex-shrink:0; }
+    html[data-theme="light"] .benefits li .chk{ color:#1a8f5e; }
+
+    /* ── Stripe note ── */
+    .stripe-note{
+      margin-top:16px; padding:10px 13px;
+      background:rgba(99,91,255,.06);
+      border:1px solid rgba(99,91,255,.18);
+      border-radius:12px;
+      font-size:12px; color:var(--muted2); line-height:1.55;
     }
 
-    .cta{
-      margin-top: 14px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
+    /* ── CTA ── */
+    .cta{ margin-top:20px; }
+    .cta .btn-pay{
+      width:100%; padding:15px 20px; font-size:15px; font-weight:800;
+      border-radius:16px; border:none; cursor:pointer;
+      background:linear-gradient(135deg,#7c5cff 0%,#26c6ff 100%);
+      color:#fff; display:flex; align-items:center;
+      justify-content:center; gap:8px;
+      transition:opacity .15s, transform .1s;
     }
-    .cta .btn{
-      flex: 1 1 220px;
+    .cta .btn-pay:hover{ opacity:.9; }
+    .cta .btn-pay:active{ transform:scale(.98); }
+    .cta .btn-pay:disabled{ opacity:.5; cursor:not-allowed; }
+    .cta-back{
+      display:flex; align-items:center; justify-content:center;
+      gap:6px; margin-top:12px;
+    }
+    .cta-sub{
+      text-align:center; font-size:12px; color:var(--muted2); margin-top:10px;
     }
 
-    .note{
-      margin-top: 12px;
-      color: var(--muted2);
-      font-size: 12px;
-      line-height: 1.45;
+    /* ── Checkout message ── */
+    .checkout-msg{ margin-top:10px; font-size:13px; min-height:16px; }
+    .checkout-msg.error{ color:#ff6b6b; }
+
+    /* ── Success full ── */
+    .success-full{ display:none; margin-top:16px; }
+    .success-inner{ text-align:center; padding:52px 24px 44px; }
+
+    .check-circle{
+      width:84px; height:84px; border-radius:50%;
+      background:rgba(92,242,168,.10);
+      border:2px solid rgba(92,242,168,.35);
+      display:flex; align-items:center; justify-content:center;
+      margin:0 auto 26px;
+      animation:pop .45s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes pop{
+      from{ transform:scale(0); opacity:0; }
+      to{ transform:scale(1); opacity:1; }
     }
 
-    .success-box{
-      display:none;
-      text-align:center;
-      padding: 28px 20px;
+    .success-title{
+      font-size:30px; font-weight:950; margin:0 0 14px;
+      letter-spacing:-.4px;
     }
-    .success-icon{ font-size: 48px; margin-bottom: 12px; }
-    .success-title{ font-size: 22px; font-weight: 900; margin: 0 0 8px; }
-    .success-sub{ color: var(--muted); font-size: 14px; margin: 0 0 20px; }
-
-    .checkout-msg{
-      margin-top: 12px;
-      font-size: 13px;
-      min-height: 16px;
-      color: var(--muted);
+    .success-credits-pill{
+      display:inline-flex; align-items:center; gap:7px;
+      background:rgba(124,92,255,.12);
+      border:1px solid rgba(124,92,255,.28);
+      border-radius:999px; padding:8px 22px;
+      font-size:17px; font-weight:800; color:#a98bff;
+      margin-bottom:14px;
     }
-    .checkout-msg.error{ color: #ff6b6b; }
-    .checkout-msg.success{ color: #5cf2a8; }
+    html[data-theme="light"] .success-credits-pill{ color:#5b36d1; }
+    .success-sub{ color:var(--muted); font-size:14px; margin:0 0 8px; }
+    .success-total{ font-size:13px; color:var(--muted2); margin:0 0 24px; }
+    .success-countdown{ font-size:13px; color:var(--muted2); margin-bottom:22px; }
+    .success-cta .btn{
+      font-size:15px; padding:14px 36px;
+      background:linear-gradient(135deg,#7c5cff,#26c6ff);
+      border:none; color:#fff; border-radius:14px;
+      font-weight:800; cursor:pointer; display:inline-flex;
+      align-items:center; gap:8px;
+    }
   </style>
 </head>
 
@@ -186,105 +275,165 @@
       <a href="/profilo.html">Profilo</a>
     </div>
 
-    <div class="card">
+    <!-- Hero -->
+    <div class="card" style="margin-top:16px;">
       <div class="card-inner hero">
         <span class="pilltag">🧾 CHECKOUT</span>
-        <div class="h1">Ricarica i tuoi crediti</div>
-        <p class="sub">Pagamento simulato: inserisci dati fittizi. I crediti vengono aggiunti subito al tuo account.</p>
+        <div class="h1">Completa il tuo acquisto</div>
+        <p class="sub">I crediti vengono aggiunti istantaneamente al tuo account.</p>
       </div>
     </div>
 
-    <div class="shell">
-      <!-- Form -->
+    <!-- Main: form + riepilogo -->
+    <div class="shell" id="mainShell">
+
+      <!-- ── SINISTRA: Form di pagamento ── -->
       <div class="card">
-        <div class="card-inner">
-          <!-- Form visibile prima del pagamento -->
-          <div id="formSection">
-            <div class="h2">✉️ Dati di pagamento (mock)</div>
+        <div class="card-inner" id="formSection">
 
-            <div class="row2">
-              <div>
-                <div class="label">Nome</div>
-                <input class="field" id="fieldNome" value="Mario" />
-              </div>
-              <div>
-                <div class="label">Cognome</div>
-                <input class="field" id="fieldCognome" value="Rossi" />
-              </div>
-            </div>
+          <!-- Metodi di pagamento -->
+          <div class="payment-methods">
+            <span class="payment-methods-label">Accettiamo:</span>
+            <span class="pm-badge visa">VISA</span>
+            <span class="pm-badge mastercard">MC</span>
+            <span class="pm-badge stripe">stripe</span>
+          </div>
 
+          <div class="security-badge">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1L2 3v3.5c0 2.7 1.9 5.2 4.5 5.8C9.1 11.7 11 9.2 11 6.5V3L6.5 1Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M4.5 6.5l1.5 1.5 2.5-2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Pagamento sicuro e protetto (simulazione)
+          </div>
+
+          <div class="section-title">💳 Dati di pagamento</div>
+
+          <div class="row2">
             <div>
-              <div class="label">Email</div>
-              <input class="field" id="fieldEmail" value="mario@email.com" />
+              <div class="label">Nome</div>
+              <input class="field" id="fieldNome" placeholder="Mario" value="Mario" autocomplete="given-name" />
             </div>
-
             <div>
-              <div class="label">Numero carta (mock)</div>
-              <input class="field" id="fieldCarta" value="4242 4242 4242 4242" />
-            </div>
-
-            <div class="row2" style="margin-top:0;">
-              <div>
-                <div class="label">Scadenza</div>
-                <input class="field" value="12/28" />
-              </div>
-              <div>
-                <div class="label">CVV</div>
-                <input class="field" value="123" />
-              </div>
-            </div>
-
-            <div class="small" style="margin-top:12px;">
-              Nessun dato viene inviato o salvato. Simulazione UI.
-            </div>
-
-            <div class="checkout-msg" id="checkoutMsg"></div>
-
-            <div class="cta">
-              <button class="btn btn-primary" type="button" id="confirmBtn">✅ Conferma acquisto</button>
-              <a class="btn" href="/prezzi.html">← Torna ai prezzi</a>
+              <div class="label">Cognome</div>
+              <input class="field" id="fieldCognome" placeholder="Rossi" value="Rossi" autocomplete="family-name" />
             </div>
           </div>
 
-          <!-- Successo -->
-          <div class="success-box" id="successSection">
-            <div class="success-icon">🎉</div>
-            <p class="success-title">Acquisto completato!</p>
-            <p class="success-sub" id="successSub">I tuoi crediti sono stati aggiunti.</p>
-            <a class="btn btn-primary" href="/app.html">Chiedimi qualcosa →</a>
+          <div class="label">Email</div>
+          <div class="field-wrap">
+            <span class="field-icon">✉️</span>
+            <input class="field" id="fieldEmail" type="email" placeholder="mario@email.com" value="mario@email.com" autocomplete="email" />
           </div>
+
+          <div class="label">Numero carta</div>
+          <div class="field-wrap">
+            <span class="field-icon">💳</span>
+            <input class="field" id="fieldCarta" placeholder="4242 4242 4242 4242"
+              value="4242 4242 4242 4242" maxlength="19" inputmode="numeric" />
+          </div>
+
+          <div class="row2">
+            <div>
+              <div class="label">Scadenza</div>
+              <input class="field" id="fieldExp" placeholder="MM/AA" value="12/28" maxlength="5" inputmode="numeric" />
+            </div>
+            <div>
+              <div class="label">CVV</div>
+              <div class="field-wrap">
+                <span class="field-icon">🔐</span>
+                <input class="field" id="fieldCvv" placeholder="123" value="123" maxlength="4" inputmode="numeric" />
+              </div>
+            </div>
+          </div>
+
+          <div class="checkout-msg" id="checkoutMsg"></div>
+
+          <div class="cta">
+            <button class="btn-pay" type="button" id="confirmBtn">
+              🔒 Completa acquisto
+            </button>
+          </div>
+          <div class="cta-back">
+            <a class="btn" href="/prezzi.html" style="font-size:13px;">← Torna ai prezzi</a>
+          </div>
+          <div class="cta-sub">Nessun dato reale viene trasmesso. Simulazione UI.</div>
         </div>
       </div>
 
-      <!-- Riepilogo -->
+      <!-- ── DESTRA: Riepilogo ordine ── -->
       <div class="card">
         <div class="card-inner">
-          <div class="h2">📦 Riepilogo</div>
-          <div style="height:12px;"></div>
+          <div class="section-title">📦 Riepilogo ordine</div>
 
+          <!-- Planbox -->
           <div class="planbox">
             <div class="plan-top">
-              <div style="font-weight:950; font-size:18px;" id="planLabel">PRO</div>
+              <div class="plan-name" id="planLabel">PRO</div>
               <div class="plan-pill" id="planBilling">Mensile</div>
             </div>
-            <div class="price" id="planPrice">€9,99</div>
-            <div class="per" id="planPer">al mese</div>
-            <div class="small" id="planCredits">Aggiunge 100 crediti al tuo account.</div>
-            <div id="promoBadge" style="display:none;margin-top:10px;padding:7px 14px;border-radius:999px;border:1px solid rgba(92,242,168,.30);background:rgba(92,242,168,.08);font-size:12px;color:#5cf2a8;width:fit-content;">
+            <div class="credits-badge">⚡ <span id="planCreditsNum">150</span> crediti</div>
+            <div class="promo-badge" id="promoBadge">
               🏷️ <span id="promoBadgeLabel"></span>
             </div>
           </div>
 
-          <div class="note">
-            I crediti vengono aggiunti immediatamente dopo la conferma. In produzione qui si integrerebbe Stripe.
+          <!-- Breakdown prezzi -->
+          <div class="order-row" id="originalRow">
+            <span class="row-label">Prezzo di listino</span>
+            <span class="row-val" id="orderOriginal">€9,99</span>
+          </div>
+          <div class="order-row discount" id="discountRow" style="display:none;">
+            <span class="row-label">Sconto &nbsp;<span id="discountCode" style="opacity:.75;font-size:11px;"></span></span>
+            <span class="row-val" id="discountAmt"></span>
+          </div>
+          <div class="order-sep"></div>
+          <div class="order-row total">
+            <span class="row-label">Totale</span>
+            <span class="row-val" id="orderTotal">€9,99</span>
+          </div>
+
+          <!-- Benefits -->
+          <ul class="benefits">
+            <li><span class="chk">✓</span><span><b id="benefitCreditsNum">150</b> crediti disponibili subito</span></li>
+            <li><span class="chk">✓</span><span>Crediti validi per 12 mesi dall'acquisto</span></li>
+            <li><span class="chk">✓</span><span>Accesso completo a tutte le funzioni</span></li>
+          </ul>
+
+          <div class="stripe-note">
+            💡 In produzione il pagamento avviene via <strong>Stripe</strong> con crittografia end-to-end. Nessun dato carta viene mai memorizzato.
           </div>
         </div>
       </div>
     </div>
 
-    <div style="text-align:center; margin-bottom:16px;">
-      <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="font-size:13px;">↑ Torna su</button>
+    <!-- ── SUCCESS (full width, sostituisce la shell) ── -->
+    <div class="success-full" id="successSection">
+      <div class="card">
+        <div class="card-inner success-inner">
+          <!-- Checkmark animato -->
+          <div class="check-circle">
+            <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" width="44" height="44">
+              <path d="M11 22L19 30L33 14" stroke="#5cf2a8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+          <p class="success-title">Acquisto completato! 🎉</p>
+
+          <div class="success-credits-pill">
+            ⚡ <span id="successCreditsAdded">+150 crediti aggiunti</span>
+          </div>
+
+          <p class="success-sub" id="successSub">Il tuo account è stato aggiornato.</p>
+          <p class="success-total" id="successTotal"></p>
+
+          <p class="success-countdown" id="successCountdown"></p>
+
+          <div class="success-cta">
+            <a class="btn" href="/app.html">Chiedimi qualcosa &nbsp;→</a>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <div style="height:24px;"></div>
 
     <footer class="site-footer">
       <span>© 2025 Simplif-AI</span>
@@ -302,126 +451,149 @@
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    /* Piani disponibili */
+    /* Piani */
     const PACKAGES = {
-      'light-monthly':    { label:'LIGHT',             billing:'Mensile',     price:'€2,99',  per:'al mese',        credits: 30   },
-      'light-yearly':     { label:'LIGHT',             billing:'Annuale',     price:'€28,70', per:"all'anno",       credits: 360  },
-      'plus-monthly':     { label:'PLUS',              billing:'Mensile',     price:'€4,99',  per:'al mese',        credits: 60   },
-      'plus-yearly':      { label:'PLUS',              billing:'Annuale',     price:'€47,90', per:"all'anno",       credits: 720  },
-      'pro-monthly':      { label:'PRO',               billing:'Mensile',     price:'€9,99',  per:'al mese',        credits: 150  },
-      'pro-yearly':       { label:'PRO',               billing:'Annuale',     price:'€95,90', per:"all'anno",       credits: 1800 },
-      'mini-boost-once':  { label:'PACCHETTO BASE',    billing:'Una tantum',  price:'€1,99',  per:'pagamento unico', credits: 18  },
-      'maxi-boost-once':  { label:'PACCHETTO PREMIUM', billing:'Una tantum',  price:'€3,99',  per:'pagamento unico', credits: 45  },
+      'light-monthly':    { label:'LIGHT',             billing:'Mensile',     price:'€2,99',  priceNum:2.99,  per:'al mese',         credits: 30   },
+      'light-yearly':     { label:'LIGHT',             billing:'Annuale',     price:'€28,70', priceNum:28.70, per:"all'anno",        credits: 360  },
+      'plus-monthly':     { label:'PLUS',              billing:'Mensile',     price:'€4,99',  priceNum:4.99,  per:'al mese',         credits: 60   },
+      'plus-yearly':      { label:'PLUS',              billing:'Annuale',     price:'€47,90', priceNum:47.90, per:"all'anno",        credits: 720  },
+      'pro-monthly':      { label:'PRO',               billing:'Mensile',     price:'€9,99',  priceNum:9.99,  per:'al mese',         credits: 150  },
+      'pro-yearly':       { label:'PRO',               billing:'Annuale',     price:'€95,90', priceNum:95.90, per:"all'anno",        credits: 1800 },
+      'mini-boost-once':  { label:'PACCHETTO BASE',    billing:'Una tantum',  price:'€1,99',  priceNum:1.99,  per:'pagamento unico',  credits: 18  },
+      'maxi-boost-once':  { label:'PACCHETTO PREMIUM', billing:'Una tantum',  price:'€3,99',  priceNum:3.99,  per:'pagamento unico',  credits: 45  },
     };
 
     /* Leggi params URL */
-    const params  = new URLSearchParams(location.search);
-    const plan    = params.get('plan') || 'pro';
-    const billing = params.get('billing') || 'monthly';
-    const pkgKey  = `${plan}-${billing}`;
-    const pkg     = PACKAGES[pkgKey] || PACKAGES['pro-monthly'];
+    const params    = new URLSearchParams(location.search);
+    const plan      = params.get('plan') || 'pro';
+    const billing   = params.get('billing') || 'monthly';
+    const pkgKey    = `${plan}-${billing}`;
+    const pkg       = PACKAGES[pkgKey] || PACKAGES['pro-monthly'];
     const promoCode = (params.get('promo') || '').trim().toUpperCase();
     let activePromoDiscount = 0;
 
-    /* Popola riepilogo */
-    document.getElementById('planLabel').textContent   = pkg.label;
-    document.getElementById('planBilling').textContent = pkg.billing;
-    document.getElementById('planPrice').textContent   = pkg.price;
-    document.getElementById('planPer').textContent     = pkg.per;
-    document.getElementById('planCredits').textContent = `Aggiunge ${pkg.credits} crediti al tuo account.`;
+    /* Popola riepilogo statico */
+    document.getElementById('planLabel').textContent      = pkg.label;
+    document.getElementById('planBilling').textContent    = pkg.billing;
+    document.getElementById('planCreditsNum').textContent = pkg.credits;
+    document.getElementById('orderOriginal').textContent  = pkg.price;
+    document.getElementById('orderTotal').textContent     = pkg.price;
+    document.getElementById('benefitCreditsNum').textContent = pkg.credits;
+
+    function fmtPrice(n){ return '€' + n.toFixed(2).replace('.', ','); }
 
     /* Valida promo se presente nell'URL */
     if (promoCode) {
       sb.rpc('validate_promo_code', { p_code: promoCode }).then(({ data }) => {
         if (!data || !data.valid) return;
         activePromoDiscount = data.discount;
-        const n = parseFloat(pkg.price.replace('€','').replace(',','.'));
-        const priceEl = document.getElementById('planPrice');
-        const s = '<s style="opacity:.42;font-size:.70em;font-weight:500;">' + pkg.price + '</s>&thinsp;';
-        priceEl.innerHTML = data.discount >= 100
-          ? s + '<span style="color:#5cf2a8;">GRATIS</span>'
-          : s + '€' + (n * (1 - data.discount / 100)).toFixed(2).replace('.', ',');
-        const badge = document.getElementById('promoBadge');
-        document.getElementById('promoBadgeLabel').textContent = promoCode + ' – ' + data.discount + '% di sconto';
-        if (badge) badge.style.display = '';
+
+        const discounted = pkg.priceNum * (1 - data.discount / 100);
+        const isFree = data.discount >= 100;
+
+        /* Riga prezzo originale → barrata */
+        document.getElementById('originalRow').classList.add('strike');
+
+        /* Riga sconto */
+        document.getElementById('discountCode').textContent = promoCode;
+        document.getElementById('discountAmt').textContent  = '-' + data.discount + '%';
+        document.getElementById('discountRow').style.display = '';
+
+        /* Totale */
+        const totalEl = document.getElementById('orderTotal');
+        if (isFree) {
+          totalEl.textContent = 'GRATIS';
+          totalEl.classList.add('free');
+        } else {
+          totalEl.textContent = fmtPrice(discounted);
+        }
+
+        /* Badge promo */
+        document.getElementById('promoBadgeLabel').textContent =
+          promoCode + ' — ' + data.discount + '% di sconto';
+        document.getElementById('promoBadge').style.display = '';
       });
     }
 
     /* Auth check */
-    let currentUserId   = null;
-    let currentSession  = null;
+    let currentUserId  = null;
+    let currentSession = null;
     sb.auth.getSession().then(({ data }) => {
-      if(!data?.session){
-        window.location.replace("/auth.html");
-        return;
-      }
+      if (!data?.session) { window.location.replace("/auth.html"); return; }
       currentUserId  = data.session.user.id;
       currentSession = data.session;
     });
 
-    /* Fire-and-forget: invia email di conferma acquisto */
+    /* Email di conferma acquisto (fire-and-forget) */
     function sendPurchaseEmail(pkg) {
       try {
         var token = currentSession && currentSession.access_token;
         if (!token) return;
         fetch("/api/send-email", {
           method: "POST",
-          headers: {
-            "Content-Type":  "application/json",
-            "Authorization": "Bearer " + token,
-          },
+          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
           body: JSON.stringify({
             type: "purchase",
             pkg: { label: pkg.label, credits: pkg.credits, price: pkg.price },
           }),
-        }).catch(function(e) { console.warn("send-email failed:", e); });
-      } catch(e) {
-        console.warn("sendPurchaseEmail error:", e);
-      }
+        }).catch(function(e){ console.warn("send-email failed:", e); });
+      } catch(e) { console.warn("sendPurchaseEmail error:", e); }
     }
 
-    /* Messaggi */
-    const msgEl = document.getElementById("checkoutMsg");
-    function showMsg(text, type=""){
-      msgEl.textContent = text;
-      msgEl.className = "checkout-msg " + type;
+    /* Countdown redirect */
+    function startCountdown() {
+      let secs = 5;
+      const el = document.getElementById('successCountdown');
+      el.textContent = 'Verrai reindirizzato all\'app tra ' + secs + ' secondi…';
+      const t = setInterval(() => {
+        secs--;
+        if (secs <= 0) {
+          clearInterval(t);
+          window.location.href = '/app.html';
+        } else {
+          el.textContent = 'Verrai reindirizzato all\'app tra ' + secs + ' secondi…';
+        }
+      }, 1000);
     }
+
+    /* Messaggi errore */
+    const msgEl = document.getElementById("checkoutMsg");
+    function showMsg(text, type){ msgEl.textContent = text; msgEl.className = "checkout-msg " + (type || ''); }
 
     /* Conferma acquisto */
     const confirmBtn = document.getElementById("confirmBtn");
     confirmBtn.addEventListener("click", async () => {
-      if(!currentUserId){
-        showMsg("Sessione non trovata. Ricarica la pagina.", "error");
-        return;
-      }
+      if (!currentUserId) { showMsg("Sessione non trovata. Ricarica la pagina.", "error"); return; }
 
       confirmBtn.disabled = true;
-      confirmBtn.textContent = "Elaborazione...";
+      confirmBtn.innerHTML = '<span style="opacity:.7">⏳</span> Elaborazione…';
       showMsg("");
 
       try {
-        /* RPC: usa promo (incrementa usage_count + aggiunge crediti) se presente, altrimenti add_credits */
         const rpcCall = (promoCode && activePromoDiscount > 0)
           ? sb.rpc('apply_promo_and_add_credits', { p_code: promoCode, p_amount: pkg.credits })
           : sb.rpc('add_credits', { amount: pkg.credits });
+
         const { data: newCredits, error: rpcErr } = await rpcCall;
+        if (rpcErr) throw new Error("Impossibile aggiornare i crediti: " + rpcErr.message);
 
-        if(rpcErr) throw new Error("Impossibile aggiornare i crediti: " + rpcErr.message);
-
-        /* Mostra successo */
-        document.getElementById('formSection').style.display = 'none';
-        const successSection = document.getElementById('successSection');
-        successSection.style.display = '';
-        document.getElementById('successSub').textContent =
-          `+${pkg.credits} crediti aggiunti. Totale: ${newCredits} crediti.`;
-
-        /* Email di conferma acquisto (fire-and-forget, non blocca l'UI) */
+        /* Email conferma */
         sendPurchaseEmail(pkg);
+
+        /* Mostra success */
+        document.getElementById('mainShell').style.display = 'none';
+        document.getElementById('successSection').style.display = '';
+        document.getElementById('successCreditsAdded').textContent = '+' + pkg.credits + ' crediti aggiunti';
+        document.getElementById('successSub').textContent = 'Il tuo account è stato aggiornato con successo.';
+        document.getElementById('successTotal').textContent = 'Crediti totali nel tuo account: ' + newCredits;
+
+        /* Countdown + redirect automatico */
+        startCountdown();
 
       } catch(e) {
         showMsg(e?.message || "Errore sconosciuto.", "error");
         confirmBtn.disabled = false;
-        confirmBtn.textContent = "✅ Conferma acquisto";
+        confirmBtn.innerHTML = '🔒 Completa acquisto';
       }
     });
   </script>
