@@ -307,34 +307,6 @@
       height: auto;
     }
 
-    /* ── Badge costo risposta ── */
-    .cost-badge{
-      display:inline-flex; align-items:center; gap:6px;
-      padding:7px 14px; border-radius:999px;
-      font-size:12px; font-weight:700;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.04);
-      color:var(--muted);
-      transition:color .2s, border-color .2s, background .2s;
-    }
-    .cost-badge.ok{
-      border-color:rgba(92,242,168,.30);
-      background:rgba(92,242,168,.06);
-      color:#5cf2a8;
-    }
-    .cost-badge.warn{
-      border-color:rgba(255,176,74,.35);
-      background:rgba(255,176,74,.07);
-      color:#ffb04a;
-    }
-    .cost-badge.danger{
-      border-color:rgba(255,80,80,.35);
-      background:rgba(255,80,80,.07);
-      color:#ff6b6b;
-    }
-    html[data-theme="light"] .cost-badge.ok{ color:#1a8f5e; border-color:rgba(26,143,94,.30); background:rgba(26,143,94,.07); }
-    html[data-theme="light"] .cost-badge.warn{ color:#b06a00; border-color:rgba(176,106,0,.30); background:rgba(176,106,0,.07); }
-    html[data-theme="light"] .cost-badge.danger{ color:#c0392b; border-color:rgba(192,57,43,.30); background:rgba(192,57,43,.07); }
 
     /* Toast notifica */
     #saveToast{
@@ -452,10 +424,7 @@
           <div class="len-grid" id="lengths"></div>
           <div class="actions">
             <button class="btn" id="backToTargets" type="button">↑ Cambia target</button>
-            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
-              <div id="costBadge" class="cost-badge" style="display:none;"></div>
-              <button class="btn btn-primary" id="goAnswer" type="button" disabled>Genera la risposta ↓</button>
-            </div>
+            <button class="btn btn-primary" id="goAnswer" type="button" disabled>Genera la risposta ↓</button>
           </div>
         </div>
       </div>
@@ -471,6 +440,8 @@
             🎯 Target: <b id="chipTarget">—</b>
             <span style="opacity:.5">•</span>
             🧾 Lunghezza: <b id="chipLen">—</b>
+            <span style="opacity:.5" id="costBadgeSep">•</span>
+            <span id="costBadge" style="display:none;"></span>
           </div>
 
           <div class="response-shell" id="responseShell">
@@ -666,10 +637,12 @@
       setTimeout(()=>card.classList.remove("flash"), 420);
     }
     function scrollToSection(sec, card){
-      var headerH = (document.querySelector('header') || {}).offsetHeight || 60;
-      var top = sec.getBoundingClientRect().top + window.pageYOffset - headerH - 8;
-      window.scrollTo({ top: top, behavior: 'smooth' });
       flash(card);
+      requestAnimationFrame(function(){
+        var headerH = (document.querySelector('header') || {}).offsetHeight || 60;
+        var top = sec.getBoundingClientRect().top + window.pageYOffset - headerH - 12;
+        window.scrollTo({ top: top, behavior: 'smooth' });
+      });
     }
     function setStatus(text, loading=false){
       statusEl.textContent = text;
@@ -678,26 +651,29 @@
 
     function updateCostBadge(){
       const badge = document.getElementById('costBadge');
+      const sep   = document.getElementById('costBadgeSep');
       if (!badge) return;
-      if (selectedTargetIndex < 0 || !selectedLenKey) { badge.style.display = 'none'; return; }
+      function hide(){ badge.style.display = 'none'; if(sep) sep.style.display = 'none'; }
+      function show(){ badge.style.display = 'inline'; if(sep) sep.style.display = 'inline'; }
+      if (selectedTargetIndex < 0 || !selectedLenKey) { hide(); return; }
       const cost = computeCost();
-      badge.style.display = 'inline-flex';
+      show();
       if (userCredits === null) {
-        badge.textContent = '⚡ Costo: ' + cost + ' credit' + (cost !== 1 ? 'i' : 'o');
-        badge.className = 'cost-badge';
+        badge.textContent = '⚡ ' + cost + ' credit' + (cost !== 1 ? 'i' : 'o');
+        badge.style.color = '';
         return;
       }
       const after = userCredits - cost;
       const label = cost + ' credit' + (cost !== 1 ? 'i' : 'o');
       if (after < 0) {
-        badge.innerHTML = '⚡ Servono ' + cost + ' crediti &mdash; ne hai ' + userCredits;
-        badge.className = 'cost-badge danger';
+        badge.innerHTML = '⚡ Servono ' + cost + ' &mdash; ne hai ' + userCredits;
+        badge.style.color = 'var(--danger, #ff6b6b)';
       } else if (after <= 2) {
-        badge.innerHTML = '⚡ ' + label + ' &nbsp;·&nbsp; ti resteranno <b>' + after + '</b>';
-        badge.className = 'cost-badge warn';
+        badge.innerHTML = '⚡ ' + label + ', ti resteranno <b>' + after + '</b>';
+        badge.style.color = '#f0a500';
       } else {
-        badge.innerHTML = '⚡ ' + label + ' &nbsp;·&nbsp; ti resteranno <b>' + after + '</b>';
-        badge.className = 'cost-badge ok';
+        badge.innerHTML = '⚡ ' + label;
+        badge.style.color = 'var(--muted)';
       }
     }
 
