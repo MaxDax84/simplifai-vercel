@@ -321,6 +321,10 @@
     .purchase-name{ font-weight:700; color:var(--text); }
     .purchase-meta{ color:var(--muted); font-size:12px; }
     .purchase-amt{ font-weight:700; color:var(--text); white-space:nowrap; }
+    .sub-badge{ display:inline-block; font-size:10px; font-weight:800; padding:2px 7px; border-radius:20px; vertical-align:middle; margin-left:6px; }
+    .sub-badge.active{ background:rgba(52,199,89,.15); color:#34c759; border:1px solid rgba(52,199,89,.3); }
+    .sub-badge.cancelled{ background:rgba(255,107,107,.1); color:#ff6b6b; border:1px solid rgba(255,107,107,.25); }
+    .btn-cancel-sub{ font-size:11px; padding:4px 10px; border-color:rgba(255,107,107,.35); color:#ff6b6b; white-space:nowrap; }
 
   </style>
 </head>
@@ -1004,7 +1008,7 @@
     async function loadPurchases(){
       var el = document.getElementById('purchasesList');
       var { data, error } = await sb.from('purchases')
-        .select('package_name, billing_type, credits_added, amount_eur, created_at')
+        .select('id, package_name, billing_type, credits_added, amount_eur, created_at, cancelled_at')
         .eq('user_id', currentUserId)
         .order('created_at', { ascending: false });
 
@@ -1013,18 +1017,65 @@
         return;
       }
 
+      var now = Date.now();
       var typeLabel = { monthly: 'Mensile', yearly: 'Annuale', once: 'Una tantum' };
+
+      function isActiveSub(p){
+        if(p.cancelled_at) return false;
+        if(p.billing_type === 'monthly') return (now - new Date(p.created_at).getTime()) <= 31*24*3600*1000;
+        if(p.billing_type === 'yearly')  return (now - new Date(p.created_at).getTime()) <= 366*24*3600*1000;
+        return false;
+      }
+
       el.innerHTML = data.map(function(p){
         var date = new Date(p.created_at).toLocaleDateString('it-IT', { day:'2-digit', month:'short', year:'numeric' });
         var amt = p.amount_eur != null ? '€' + parseFloat(p.amount_eur).toFixed(2) : '—';
-        return '<div class="purchase-row">' +
+        var badge = '';
+        var cancelBtn = '';
+        if(p.cancelled_at){
+          badge = '<span class="sub-badge cancelled">Annullato</span>';
+        } else if(isActiveSub(p)){
+          badge = '<span class="sub-badge active">Attivo</span>';
+          cancelBtn = '<button class="btn btn-cancel-sub" data-cancel="' + p.id + '" type="button">Annulla</button>';
+        }
+        return '<div class="purchase-row" data-purchase-id="' + p.id + '">' +
           '<div>' +
-            '<div class="purchase-name">' + escHtml(p.package_name) + '</div>' +
+            '<div class="purchase-name">' + escHtml(p.package_name) + ' ' + badge + '</div>' +
             '<div class="purchase-meta">' + (typeLabel[p.billing_type] || p.billing_type) + ' · ' + date + ' · +' + p.credits_added + ' crediti</div>' +
           '</div>' +
-          '<div class="purchase-amt">' + amt + '</div>' +
+          '<div style="display:flex;align-items:center;gap:10px;">' +
+            '<div class="purchase-amt">' + amt + '</div>' +
+            cancelBtn +
+          '</div>' +
         '</div>';
       }).join('');
+
+      /* Gestione annullamento */
+      el.querySelectorAll('[data-cancel]').forEach(function(btn){
+        btn.addEventListener('click', async function(){
+          if(!confirm('Sei sicuro di voler annullare questo abbonamento? Potrai continuare a usare i crediti rimanenti ma il piano non si rinnoverà.')) return;
+          btn.disabled = true;
+          btn.textContent = '...';
+          var id = btn.dataset.cancel;
+          var { error } = await sb.from('purchases')
+            .update({ cancelled_at: new Date().toISOString() })
+            .eq('id', id)
+            .eq('user_id', currentUserId);
+          if(error){
+            btn.disabled = false;
+            btn.textContent = 'Annulla';
+            alert('Errore: ' + error.message);
+          } else {
+            /* Aggiorna UI senza ricaricare */
+            var row = el.querySelector('[data-purchase-id="' + id + '"]');
+            if(row){
+              row.querySelector('.sub-badge').className = 'sub-badge cancelled';
+              row.querySelector('.sub-badge').textContent = 'Annullato';
+              btn.remove();
+            }
+          }
+        });
+      });
     }
 
     function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
