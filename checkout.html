@@ -606,11 +606,17 @@
       document.getElementById('promoAppliedWrap').style.display = 'none';
     }
 
+    /* Controlla compatibilità 100% con pacchetto selezionato */
+    function checkFreePromoAllowed(discount){
+      return discount < 100 || pkgKey === 'mini-once';
+    }
+
     /* Pre-popola da URL e valida */
     if(activePromoCode){
       document.getElementById('promoInlineField').value = activePromoCode;
       sb.rpc('validate_promo_code', { p_code: activePromoCode }).then(({ data }) => {
-        if(data && data.valid) applyPromoUI(activePromoCode, data.discount);
+        if(data && data.valid && checkFreePromoAllowed(data.discount))
+          applyPromoUI(activePromoCode, data.discount);
       });
     }
 
@@ -628,6 +634,11 @@
       if(error || !data || !data.valid){
         msgEl.style.color = '#ff6b6b';
         msgEl.textContent = '❌ Codice non valido o scaduto.';
+        return;
+      }
+      if(!checkFreePromoAllowed(data.discount)){
+        msgEl.style.color = '#ff6b6b';
+        msgEl.textContent = '❌ Questo codice è valido solo per il pacchetto Mini. Selezionalo dalla pagina prezzi per applicarlo.';
         return;
       }
       applyPromoUI(code, data.discount);
