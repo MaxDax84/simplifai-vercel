@@ -210,41 +210,6 @@
     html[data-theme="light"] .strafare .tag{ color:rgba(120,70,0,.9); background:rgba(255,185,40,.18); border-color:rgba(180,120,0,.4); }
     html[data-theme="light"] .strafare .credits-badge{ color:rgba(120,70,0,.9); background:rgba(255,185,40,.14); border-color:rgba(180,120,0,.35); }
 
-    /* ── Promo Code ── */
-    .promo-field{
-      flex:1; min-height:42px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background:rgba(0,0,0,.16);
-      color:var(--text);
-      padding:10px 14px;
-      outline:none; font-size:14px;
-      box-sizing:border-box;
-      font-family:inherit;
-      text-transform:uppercase;
-      letter-spacing:1.5px;
-      font-weight:700;
-    }
-    .promo-field::placeholder{ text-transform:none; letter-spacing:0; font-weight:400; }
-    .promo-field:focus{ border-color:rgba(124,92,255,.5); box-shadow:0 0 0 4px rgba(124,92,255,.15); }
-    html[data-theme="light"] .promo-field{ background:rgba(255,255,255,.80); border-color:rgba(13,17,51,.15); color:#0d1133; }
-
-    .promo-badge{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 14px; border-radius:999px;
-      border:1px solid rgba(92,242,168,.30);
-      background:rgba(92,242,168,.08);
-      font-size:13px; color:#5cf2a8;
-    }
-    .promo-badge .promo-remove{
-      background:none; border:none; cursor:pointer;
-      color:rgba(92,242,168,.55); font-size:15px; padding:0; line-height:1; transition:.15s;
-    }
-    .promo-badge .promo-remove:hover{ color:#5cf2a8; }
-    html[data-theme="light"] .promo-badge{ color:#1a8f5e; border-color:rgba(26,143,94,.30); background:rgba(26,143,94,.08); }
-    html[data-theme="light"] .promo-badge .promo-remove{ color:rgba(26,143,94,.55); }
-    html[data-theme="light"] .promo-badge .promo-remove:hover{ color:#1a8f5e; }
-
     /* ── FAQ ── */
     .faq{
       margin-top:16px; display:grid;
@@ -323,24 +288,6 @@
     <div class="welcome-banner" id="welcomeBanner">
       🎁 <strong>Registrati ora per ricevere 10 crediti di benvenuto omaggio!</strong>
       <a href="/auth.html" class="btn btn-primary" style="margin-left:6px;min-height:36px;padding:8px 16px;font-size:13px;" id="welcomeCta">Crea account gratis</a>
-    </div>
-
-    <!-- CODICE SCONTO -->
-    <div class="card" style="margin-top:14px;">
-      <div class="card-inner">
-        <p style="margin:0 0 10px;font-size:14px;font-weight:700;">🏷️ Hai un codice sconto?</p>
-        <div id="promoInputRow" style="display:flex;gap:8px;flex-wrap:wrap;">
-          <input id="promoInput" class="promo-field" type="text" placeholder="es. Sconto50" autocomplete="off" spellcheck="false" maxlength="32" />
-          <button id="promoApplyBtn" class="btn btn-primary" type="button" style="white-space:nowrap;">Applica</button>
-        </div>
-        <div id="promoActiveRow" style="display:none;align-items:center;gap:10px;">
-          <div class="promo-badge">
-            🏷️ <span id="promoActiveLabel"></span>
-            <button class="promo-remove" id="promoRemoveBtn" type="button" title="Rimuovi codice">✕</button>
-          </div>
-        </div>
-        <div id="promoMsg" style="margin-top:8px;font-size:13px;min-height:16px;"></div>
-      </div>
     </div>
 
     <!-- RIGA 1: Mini · Base · Plus -->
@@ -570,47 +517,6 @@
   </script>
 
   <script>
-    // Gestione sconto promo + aggiornamento prezzi
-    (function(){
-      const pkgs = [
-        { id:'mini',  basePrice:1.99,  ctaId:'miniCta',  priceId:'miniPrice',  href:'/checkout.html?plan=mini&billing=once'  },
-        { id:'base',  basePrice:4.99,  ctaId:'baseCta',  priceId:'basePrice',  href:'/checkout.html?plan=base&billing=once'  },
-        { id:'plus',  basePrice:7.99,  ctaId:'plusCta',  priceId:'plusPrice',  href:'/checkout.html?plan=plus&billing=once'  },
-        { id:'pro',   basePrice:14.99, ctaId:'proCta',   priceId:'proPrice',   href:'/checkout.html?plan=pro&billing=once'   },
-        { id:'max',   basePrice:34.99, ctaId:'maxCta',   priceId:'maxPrice',   href:'/checkout.html?plan=max&billing=once'   },
-      ];
-
-      let activeDiscount  = 0;
-      let activePromoCode = "";
-
-      function fmt(n){ return '€' + n.toFixed(2).replace('.', ','); }
-
-      function discountedHTML(basePrice, pct){
-        if(!pct) return fmt(basePrice);
-        const orig = '<s style="opacity:.42;font-size:.60em;font-weight:500;">' + fmt(basePrice) + '</s>&thinsp;';
-        if(pct >= 100) return orig + '<span style="color:#5cf2a8;font-size:.72em;">GRATIS</span>';
-        return orig + fmt(basePrice * (1 - pct / 100));
-      }
-
-      function applyPrices(){
-        pkgs.forEach(function(p){
-          var priceEl = document.getElementById(p.priceId);
-          var ctaEl   = document.getElementById(p.ctaId);
-          if(priceEl) priceEl.innerHTML = discountedHTML(p.basePrice, activeDiscount);
-          if(ctaEl)   ctaEl.href        = p.href + (activePromoCode ? '&promo=' + activePromoCode : '');
-        });
-      }
-
-      window._setPromoDiscount = function(pct, code){
-        activeDiscount  = pct  || 0;
-        activePromoCode = code || "";
-        applyPrices();
-      };
-
-      applyPrices();
-    })();
-  </script>
-
   <script src="/shared.js?v=2" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 
@@ -622,53 +528,6 @@
       const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
       sb.auth.getSession().then(({ data }) => {
         if(data.session) document.getElementById("welcomeBanner").style.display = "none";
-      });
-    })();
-  </script>
-
-  <script>
-    // Codici sconto
-    (function(){
-      const SUPABASE_URL  = "https://lmmiowagyqypdrdcemdo.supabase.co";
-      const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
-      const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-
-      const promoInput      = document.getElementById("promoInput");
-      const promoApplyBtn   = document.getElementById("promoApplyBtn");
-      const promoMsg        = document.getElementById("promoMsg");
-      const promoInputRow   = document.getElementById("promoInputRow");
-      const promoActiveRow  = document.getElementById("promoActiveRow");
-      const promoActiveLabel= document.getElementById("promoActiveLabel");
-      const promoRemoveBtn  = document.getElementById("promoRemoveBtn");
-
-      function setMsg(text, ok){ promoMsg.innerHTML = text; promoMsg.style.color = ok ? "#5cf2a8" : "#ff6b6b"; }
-
-      async function applyPromo(){
-        const code = promoInput.value.trim().toUpperCase();
-        if(!code){ setMsg("Inserisci un codice.", false); return; }
-        promoApplyBtn.disabled = true;
-        promoApplyBtn.textContent = "…";
-        setMsg("", false);
-        const { data, error } = await sb.rpc("validate_promo_code", { p_code: code });
-        promoApplyBtn.disabled = false;
-        promoApplyBtn.textContent = "Applica";
-        if(error || !data || !data.valid){ setMsg("❌ Codice non valido o scaduto.", false); return; }
-        promoInputRow.style.display  = "none";
-        promoActiveRow.style.display = "flex";
-        promoActiveLabel.textContent = code + " – " + data.discount + "% di sconto";
-        setMsg("", false);
-        window._setPromoDiscount(data.discount, code);
-      }
-
-      promoApplyBtn.addEventListener("click", applyPromo);
-      promoInput.addEventListener("keydown", e => { if(e.key === "Enter") applyPromo(); });
-      promoRemoveBtn.addEventListener("click", () => {
-        promoInput.value             = "";
-        promoInputRow.style.display  = "";
-        promoActiveRow.style.display = "none";
-        promoActiveLabel.textContent = "";
-        setMsg("", false);
-        window._setPromoDiscount(0, "");
       });
     })();
   </script>

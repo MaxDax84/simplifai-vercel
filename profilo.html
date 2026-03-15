@@ -395,7 +395,6 @@
       <button class="tab-btn active" data-tab="account" type="button">👤 Account</button>
       <button class="tab-btn" data-tab="preferenze" type="button">🧠 Preferenze</button>
       <button class="tab-btn" data-tab="libreria" type="button">⭐ Libreria</button>
-      <button class="tab-btn" data-tab="avanzate" type="button">⚙️ Avanzate</button>
     </div>
 
     <!-- Tab: Account (dati personali + sicurezza) -->
@@ -630,9 +629,9 @@
 
     </div><!-- /tab-libreria -->
 
-    <div class="tab-panel" id="tab-avanzate" style="display:none;">
+    <!-- ── Sezione Avanzate: sempre visibile sotto i tab ── -->
+    <div style="display:flex;flex-direction:column;gap:14px;margin-top:20px;">
 
-      <!-- 4. ESCI -->
       <div class="card danger-zone">
         <div class="card-inner">
           <div class="section-title">🚪 Logout</div>
@@ -641,7 +640,6 @@
         </div>
       </div>
 
-      <!-- 5. ELIMINA ACCOUNT -->
       <div class="card danger-zone" style="border-color:rgba(255,60,60,.35);">
         <div class="card-inner">
           <div class="section-title">🗑️ Elimina account</div>
@@ -661,7 +659,7 @@
         </div>
       </div>
 
-    </div><!-- /tab-avanzate -->
+    </div><!-- /avanzate -->
     <div style="height:32px;"></div>
 
     <div style="text-align:center; margin-bottom:16px;">
@@ -939,7 +937,7 @@
 
     /* ── Tab switching ── */
     (function(){
-      const panels = { account: 'tab-account', preferenze: 'tab-preferenze', libreria: 'tab-libreria', avanzate: 'tab-avanzate' };
+      const panels = { account: 'tab-account', preferenze: 'tab-preferenze', libreria: 'tab-libreria' };
       document.getElementById('profileTabNav').addEventListener('click', function(e){
         const btn = e.target.closest('.tab-btn');
         if(!btn) return;

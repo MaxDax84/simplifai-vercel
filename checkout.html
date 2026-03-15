@@ -23,7 +23,34 @@
       grid-template-columns: 1.15fr .85fr;
       gap:16px; margin-top:16px; align-items:start;
     }
-    @media(max-width:980px){ .shell{ grid-template-columns:1fr; } }
+    @media(max-width:980px){
+      .shell{ grid-template-columns:1fr; }
+      .shell-summary{ order:-1; }  /* riepilogo prima del form su mobile */
+    }
+
+    /* Promo field inline nel checkout */
+    .promo-inline-wrap{ display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+    .promo-inline-field{
+      flex:1; min-width:0; min-height:40px;
+      border-radius:12px; border:1px solid var(--border);
+      background:rgba(0,0,0,.16); color:var(--text);
+      padding:9px 13px; outline:none; font-size:13px;
+      box-sizing:border-box; font-family:inherit;
+      text-transform:uppercase; letter-spacing:1.2px; font-weight:700;
+    }
+    .promo-inline-field::placeholder{ text-transform:none; letter-spacing:0; font-weight:400; }
+    .promo-inline-field:focus{ border-color:rgba(124,92,255,.5); box-shadow:0 0 0 3px rgba(124,92,255,.15); }
+    html[data-theme="light"] .promo-inline-field{ background:rgba(255,255,255,.80); border-color:rgba(13,17,51,.15); color:#0d1133; }
+    .promo-applied{
+      display:flex; align-items:center; gap:8px; margin-top:10px;
+      padding:8px 12px; border-radius:10px;
+      border:1px solid rgba(92,242,168,.28); background:rgba(92,242,168,.07);
+      font-size:13px; color:#5cf2a8;
+    }
+    html[data-theme="light"] .promo-applied{ color:#1a8f5e; border-color:rgba(26,143,94,.28); background:rgba(26,143,94,.07); }
+    .promo-remove-btn{ background:none; border:none; cursor:pointer; color:inherit; opacity:.6; font-size:15px; padding:0; line-height:1; margin-left:auto; }
+    .promo-remove-btn:hover{ opacity:1; }
+    .promo-inline-msg{ font-size:12px; margin-top:6px; min-height:14px; }
 
     /* ── Headings / labels ── */
     .section-title{ font-size:17px; font-weight:900; margin:0 0 18px; }
@@ -389,7 +416,7 @@
       </div>
 
       <!-- ── DESTRA: Riepilogo ordine ── -->
-      <div class="card">
+      <div class="card shell-summary">
         <div class="card-inner">
           <div class="section-title">📦 Riepilogo ordine</div>
 
@@ -418,6 +445,23 @@
           <div class="order-row total">
             <span class="row-label">Totale</span>
             <span class="row-val" id="orderTotal">€9,99</span>
+          </div>
+
+          <!-- Promo code inline -->
+          <div class="order-sep"></div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:2px;">🏷️ Hai un codice sconto?</div>
+          <div id="promoInputWrap">
+            <div class="promo-inline-wrap">
+              <input id="promoInlineField" class="promo-inline-field" type="text" placeholder="es. Sconto50" autocomplete="off" spellcheck="false" maxlength="32" />
+              <button id="promoInlineBtn" class="btn btn-primary" type="button" style="white-space:nowrap;padding:9px 14px;font-size:13px;">Applica</button>
+            </div>
+            <div id="promoInlineMsg" class="promo-inline-msg"></div>
+          </div>
+          <div id="promoAppliedWrap" style="display:none;">
+            <div class="promo-applied">
+              <span id="promoAppliedLabel"></span>
+              <button class="promo-remove-btn" id="promoRemoveInlineBtn" type="button" title="Rimuovi">✕</button>
+            </div>
           </div>
 
           <!-- Benefits -->
@@ -510,8 +554,8 @@
     const billing   = params.get('billing') || 'once';
     const pkgKey    = `${plan}-${billing}`;
     const pkg       = PACKAGES[pkgKey] || PACKAGES['plus-once'];
-    const promoCode = (params.get('promo') || '').trim().toUpperCase();
     let activePromoDiscount = 0;
+    let activePromoCode     = (params.get('promo') || '').trim().toUpperCase();
 
     /* Popola riepilogo statico */
     document.getElementById('planLabel').textContent      = pkg.label;
@@ -523,38 +567,75 @@
 
     function fmtPrice(n){ return '€' + n.toFixed(2).replace('.', ','); }
 
-    /* Valida promo se presente nell'URL */
-    if (promoCode) {
-      sb.rpc('validate_promo_code', { p_code: promoCode }).then(({ data }) => {
-        if (!data || !data.valid) return;
-        activePromoDiscount = data.discount;
+    function applyPromoUI(code, discount){
+      activePromoDiscount = discount;
+      activePromoCode     = code;
+      const discounted = pkg.priceNum * (1 - discount / 100);
+      const isFree = discount >= 100;
 
-        const discounted = pkg.priceNum * (1 - data.discount / 100);
-        const isFree = data.discount >= 100;
+      document.getElementById('originalRow').classList.add('strike');
+      document.getElementById('discountCode').textContent  = code;
+      document.getElementById('discountAmt').textContent   = '-' + discount + '%';
+      document.getElementById('discountRow').style.display = '';
 
-        /* Riga prezzo originale → barrata */
-        document.getElementById('originalRow').classList.add('strike');
+      const totalEl = document.getElementById('orderTotal');
+      if(isFree){ totalEl.textContent = 'GRATIS'; totalEl.classList.add('free'); }
+      else { totalEl.textContent = fmtPrice(discounted); totalEl.classList.remove('free'); }
 
-        /* Riga sconto */
-        document.getElementById('discountCode').textContent = promoCode;
-        document.getElementById('discountAmt').textContent  = '-' + data.discount + '%';
-        document.getElementById('discountRow').style.display = '';
+      document.getElementById('promoBadgeLabel').textContent = code + ' — ' + discount + '% di sconto';
+      document.getElementById('promoBadge').style.display = '';
 
-        /* Totale */
-        const totalEl = document.getElementById('orderTotal');
-        if (isFree) {
-          totalEl.textContent = 'GRATIS';
-          totalEl.classList.add('free');
-        } else {
-          totalEl.textContent = fmtPrice(discounted);
-        }
+      /* UI campo promo */
+      document.getElementById('promoInputWrap').style.display   = 'none';
+      document.getElementById('promoAppliedWrap').style.display = '';
+      document.getElementById('promoAppliedLabel').textContent  = '🏷️ ' + code + ' — −' + discount + '%';
+    }
 
-        /* Badge promo */
-        document.getElementById('promoBadgeLabel').textContent =
-          promoCode + ' — ' + data.discount + '% di sconto';
-        document.getElementById('promoBadge').style.display = '';
+    function removePromoUI(){
+      activePromoDiscount = 0;
+      activePromoCode     = '';
+      document.getElementById('originalRow').classList.remove('strike');
+      document.getElementById('discountRow').style.display = 'none';
+      const totalEl = document.getElementById('orderTotal');
+      totalEl.textContent = pkg.price;
+      totalEl.classList.remove('free');
+      document.getElementById('promoBadge').style.display = 'none';
+      document.getElementById('promoInlineField').value = '';
+      document.getElementById('promoInlineMsg').textContent = '';
+      document.getElementById('promoInputWrap').style.display   = '';
+      document.getElementById('promoAppliedWrap').style.display = 'none';
+    }
+
+    /* Pre-popola da URL e valida */
+    if(activePromoCode){
+      document.getElementById('promoInlineField').value = activePromoCode;
+      sb.rpc('validate_promo_code', { p_code: activePromoCode }).then(({ data }) => {
+        if(data && data.valid) applyPromoUI(activePromoCode, data.discount);
       });
     }
+
+    /* Applica codice dal campo inline */
+    async function handleApplyPromo(){
+      const code = document.getElementById('promoInlineField').value.trim().toUpperCase();
+      const msgEl = document.getElementById('promoInlineMsg');
+      if(!code){ msgEl.style.color = '#ff6b6b'; msgEl.textContent = 'Inserisci un codice.'; return; }
+      document.getElementById('promoInlineBtn').disabled = true;
+      document.getElementById('promoInlineBtn').textContent = '…';
+      msgEl.textContent = '';
+      const { data, error } = await sb.rpc('validate_promo_code', { p_code: code });
+      document.getElementById('promoInlineBtn').disabled = false;
+      document.getElementById('promoInlineBtn').textContent = 'Applica';
+      if(error || !data || !data.valid){
+        msgEl.style.color = '#ff6b6b';
+        msgEl.textContent = '❌ Codice non valido o scaduto.';
+        return;
+      }
+      applyPromoUI(code, data.discount);
+    }
+
+    document.getElementById('promoInlineBtn').addEventListener('click', handleApplyPromo);
+    document.getElementById('promoInlineField').addEventListener('keydown', e => { if(e.key === 'Enter') handleApplyPromo(); });
+    document.getElementById('promoRemoveInlineBtn').addEventListener('click', removePromoUI);
 
     /* Auth check */
     let currentUserId  = null;
