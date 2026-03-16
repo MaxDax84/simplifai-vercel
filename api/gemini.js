@@ -27,7 +27,7 @@ function clamp(n, min, max, fallback) {
   return Math.min(Math.max(x, min), max);
 }
 
-var ADULT_RE = /\b(porno|pornografi[a-z]*|sess(?:o|uale|ualit[aà])|rapporto\s+sessuale|rapporti\s+sessuali|orgasmo|masturbazion[a-z]*|masturbars[a-z]*|eiaculazion[a-z]*|pene\b|vagina|clitoride|vulva|erezione|genitali|prostituzion[a-z]*|prostitut[oa]|escort|bordello|squillo|stupro|violenza\s+sessuale|nudit[aà]|erotic[oa]|bdsm|bondage|feticismo|intercourse|porn\b|xxx)\b/i;
+var ADULT_RE = /\b(porno|pornografi[a-z]*|sess(?:o|uale|ualit[aà])|rapporto\s+sessuale|rapporti\s+sessuali|orgasmo|masturbazion[a-z]*|masturbars[a-z]*|eiaculazion[a-z]*|pene\b|vagina|clitoride|vulva|erezione|genitali|prostituzion[a-z]*|prostitut[oa]|escort|bordello|squillo|stupro|violenza\s+sessuale|nudit[aà]|erotic[oa]|bdsm|bondage|feticismo|intercourse|porn\b|xxx|pompino|sesso\s+orale|fellatio|cunnilingus|scopar[ei]|scopata|figa\b|cazzo\b|cazz[io]\b|fotter[ei]|fottersi|troi[ae]\b|puttana|puttane\b|sborra[a-z]*|inculat[oa]|culo\s+(?:nudo|in\s+vista)|nud[oi]\b|strip(?:tease)?|spogliarello|erotica\b|film\s+(?:porno|hard|sexy)|video\s+(?:porno|hard|sexy)|foto\s+(?:porno|hard|sexy|nude?)|sex\b|sext(?:ing)?|onlyfans|masturbat[a-z]*)\b/i;
 
 var MINOR_BLOCK_MSG = "## Mi dispiace, non posso aiutarti su questo 🙁\n\nPurtroppo questo argomento non può essere trattato con il tuo account.\nSe pensi ci sia un errore o hai bisogno di aiuto, scrivici a info@simplif-ai.it.";
 
