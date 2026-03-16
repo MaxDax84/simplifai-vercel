@@ -886,7 +886,14 @@
       }
 
       while(true){
-        const { value, done } = await reader.read();
+        let value, done;
+        try {
+          ({ value, done } = await reader.read());
+        } catch(readErr) {
+          // Se testo è già stato ricevuto, la connessione si è chiusa dopo la risposta: ok
+          if(receivedAny) break;
+          throw readErr;
+        }
         if(done) break;
 
         buffer += decoder.decode(value, { stream:true });
@@ -978,24 +985,9 @@
 
         accumulatedText = ensureEndsClean(accumulatedText);
         renderMarkdownSafe(accumulatedText);
-
         setStatus("Risposta generata.", false);
         saveToHistory(q.value.trim());
         renderHistory();
-
-        /* Auto-save in spiegazioni (pubblica) */
-        if (accumulatedText.trim()) {
-          const tgt = TARGETS[selectedTargetIndex];
-          sb.from('spiegazioni').insert({
-            user_id:        currentUserId || null,
-            query:          q.value.trim().slice(0, 500),
-            target_label:   tgt ? tgt.label : '',
-            target_icon:    tgt ? tgt.icon  : '',
-            length_key:     selectedLenKey,
-            response_chars: accumulatedText.length,
-            response_text:  accumulatedText,
-          }).catch(function(){});
-        }
 
         /* Aggiornamento post-generazione */
         if(userIsAnon){
@@ -1014,12 +1006,28 @@
 
       } catch(e){
         skeletonEl.style.display = "none";
-        setStatus("Ops! Il server è momentaneamente sovraccarico. I tuoi crediti non sono stati scalati — riprova tra qualche secondo 🔄", false);
+        if(!accumulatedText.trim()){
+          setStatus("Ops! Il server è momentaneamente sovraccarico. I tuoi crediti non sono stati scalati — riprova tra qualche secondo 🔄", false);
+        }
 
       } finally{
         skeletonEl.style.display = "none";
         isGenerating = false;
         updateButtons();
+
+        /* Auto-save in spiegazioni — gira sempre se c'è testo */
+        if(accumulatedText.trim()){
+          const tgt = TARGETS[selectedTargetIndex];
+          sb.from('spiegazioni').insert({
+            user_id:        currentUserId || null,
+            query:          q.value.trim().slice(0, 500),
+            target_label:   tgt ? tgt.label : '',
+            target_icon:    tgt ? tgt.icon  : '',
+            length_key:     selectedLenKey,
+            response_chars: accumulatedText.length,
+            response_text:  accumulatedText,
+          }).catch(function(){});
+        }
       }
     }
     /* Rendering UI */
