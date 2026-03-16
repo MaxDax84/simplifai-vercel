@@ -983,16 +983,17 @@
         saveToHistory(q.value.trim());
         renderHistory();
 
-        /* Auto-save in spiegazioni */
-        if (currentUserId && accumulatedText.trim()) {
+        /* Auto-save in spiegazioni (pubblica) */
+        if (accumulatedText.trim()) {
           const tgt = TARGETS[selectedTargetIndex];
           sb.from('spiegazioni').insert({
-            user_id: currentUserId,
-            query: q.value.trim().slice(0, 500),
-            target_label: tgt ? tgt.label : '',
-            target_icon:  tgt ? tgt.icon  : '',
-            length_key:   selectedLenKey,
+            user_id:        currentUserId || null,
+            query:          q.value.trim().slice(0, 500),
+            target_label:   tgt ? tgt.label : '',
+            target_icon:    tgt ? tgt.icon  : '',
+            length_key:     selectedLenKey,
             response_chars: accumulatedText.length,
+            response_text:  accumulatedText,
           }).catch(function(){});
         }
 

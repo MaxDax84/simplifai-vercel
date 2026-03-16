@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Spiegazioni – Simplif-AI</title>
-  <meta name="robots" content="noindex, nofollow" />
+  <meta name="description" content="Esplora le spiegazioni generate dalla community di Simplif-AI. Clicca su una domanda per leggere la risposta completa." />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="/theme.css?v=2">
 
@@ -16,116 +16,137 @@
   </script>
 
   <style>
-    .page-title {
-      font-size: 24px; font-weight: 900;
-      margin: 0 0 4px;
-    }
-    .page-subtitle {
-      color: var(--muted); font-size: 14px;
-      margin: 0 0 28px;
-    }
-
-    .spieg-list {
-      display: flex; flex-direction: column; gap: 12px;
-    }
+    .spieg-list { display: flex; flex-direction: column; gap: 10px; }
 
     .spieg-card {
       background: rgba(255,255,255,.03);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px 18px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px 16px;
-      align-items: start;
+      border-radius: 14px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+    }
+    .spieg-card:hover {
+      border-color: rgba(124,92,255,.45);
+      background: rgba(124,92,255,.06);
     }
 
     .spieg-query {
       font-size: 15px; font-weight: 600;
-      line-height: 1.4;
-      word-break: break-word;
+      line-height: 1.4; word-break: break-word;
+      margin-bottom: 10px;
     }
 
     .spieg-meta {
-      display: flex; flex-wrap: wrap; gap: 8px;
+      display: flex; flex-wrap: wrap; gap: 6px;
       align-items: center;
-      margin-top: 8px;
     }
 
     .badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 4px 10px; border-radius: 999px;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 9px; border-radius: 999px;
       font-size: 12px; font-weight: 600;
       border: 1px solid var(--border);
       background: rgba(124,92,255,.12);
       color: var(--text);
     }
-    .badge-len {
-      background: rgba(38,198,255,.10);
-    }
-    .badge-date {
-      background: transparent;
-      color: var(--muted);
-      font-weight: 400;
-    }
-    .badge-chars {
-      background: rgba(255,255,255,.05);
-      color: var(--muted);
-      font-weight: 400;
-    }
+    .badge-len  { background: rgba(38,198,255,.10); }
+    .badge-date { background: transparent; color: var(--muted); font-weight: 400; border-color: transparent; }
 
-    .spieg-actions {
-      grid-row: 1 / 3;
-      grid-column: 2;
-      display: flex; align-items: flex-start;
+    /* Modal */
+    dialog.spieg-modal {
+      background: var(--card-bg, #1a1a2e);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 0;
+      width: min(720px, 94vw);
+      max-height: 88vh;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      color: var(--text);
     }
-
-    .btn-delete {
+    dialog.spieg-modal::backdrop {
+      background: rgba(0,0,0,.65);
+      backdrop-filter: blur(4px);
+    }
+    .modal-header {
+      padding: 20px 22px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .modal-header-text { flex: 1; }
+    .modal-question {
+      font-size: 16px; font-weight: 700;
+      line-height: 1.4; margin: 0 0 8px;
+      word-break: break-word;
+    }
+    .modal-close {
       background: none; border: none;
-      color: var(--muted); font-size: 18px;
-      cursor: pointer; padding: 2px 6px;
-      border-radius: 8px; line-height: 1;
-      transition: color .15s, background .15s;
+      color: var(--muted); font-size: 22px;
+      cursor: pointer; padding: 0 4px; line-height: 1;
+      flex-shrink: 0; margin-top: -2px;
     }
-    .btn-delete:hover { color: #ff5f5f; background: rgba(255,95,95,.1); }
-
-    .empty-state {
-      text-align: center; padding: 60px 20px;
-      color: var(--muted);
+    .modal-close:hover { color: var(--text); }
+    .modal-body {
+      padding: 20px 22px;
+      overflow-y: auto;
+      flex: 1;
     }
-    .empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; }
-    .empty-state p { font-size: 15px; margin: 0 0 20px; }
+    /* Markdown response styling inside modal */
+    .modal-body h1,.modal-body h2,.modal-body h3 {
+      margin: 1em 0 .4em; font-weight: 700;
+    }
+    .modal-body h2 { font-size: 17px; }
+    .modal-body h3 { font-size: 15px; }
+    .modal-body p  { margin: 0 0 .8em; line-height: 1.65; }
+    .modal-body ul,.modal-body ol { padding-left: 20px; margin: 0 0 .8em; }
+    .modal-body li { margin-bottom: .3em; line-height: 1.55; }
+    .modal-body code {
+      background: rgba(255,255,255,.08);
+      padding: 1px 5px; border-radius: 4px; font-size: .9em;
+    }
+    .modal-body strong { font-weight: 700; }
 
-    .load-more-wrap { text-align: center; margin-top: 20px; }
-
+    /* Skeleton */
     .skeleton-card {
       background: rgba(255,255,255,.03);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px 18px;
+      border-radius: 14px; padding: 14px 16px;
       animation: pulse 1.4s ease-in-out infinite;
     }
     .sk-line {
       border-radius: 6px;
       background: rgba(255,255,255,.07);
-      height: 14px; margin-bottom: 10px;
+      height: 13px; margin-bottom: 9px;
     }
-    @keyframes pulse {
-      0%,100% { opacity: 1; }
-      50%      { opacity: .45; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+
+    .empty-state {
+      text-align: center; padding: 50px 20px;
+      color: var(--muted);
     }
+    .empty-state .empty-icon { font-size: 44px; margin-bottom: 14px; }
+    .empty-state p { font-size: 15px; margin: 0 0 18px; }
+
+    .load-more-wrap { text-align: center; margin-top: 16px; }
 
     @media(max-width:480px){
       .spieg-query { font-size: 14px; }
+      .modal-question { font-size: 15px; }
     }
   </style>
 </head>
 <body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo"><img src="/logo-icon.png" alt="Simplif-AI" width="38" height="38" /></div>
+        <div>
+          <h1>Simplif-AI</h1>
+          <span>Concetti complessi spiegati in modo semplice. Scegli tu quanto.</span>
+        </div>
+      </div>
 
-  <!-- HEADER -->
-  <header>
-    <div class="nav-inner">
-      <a class="logo" href="/index.html">Simplif<span>AI</span></a>
       <nav id="mainNav">
         <a href="/index.html" data-nav="home">Home</a>
         <a href="/app.html" data-nav="app">Chiedimi qualcosa</a>
@@ -134,53 +155,59 @@
         <a href="/profilo.html" data-nav="profile">Profilo</a>
         <a href="/spiegazioni.html" data-nav="spiegazioni">Spiegazioni</a>
       </nav>
-      <div class="nav-actions">
-        <button id="themeBtn" class="theme-btn" aria-label="Cambia tema"></button>
-        <button class="hamburger" id="navToggle" aria-label="Menu">
+
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema"><span class="icon-sun">☀️</span><span class="icon-moon">🌙</span></button>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
           <span></span><span></span><span></span>
         </button>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <div class="mobile-nav" id="mobileNav">
-    <a href="/index.html">Home</a>
-    <a href="/app.html">Chiedimi qualcosa</a>
-    <a href="/come-funziona.html">Come funziona</a>
-    <a href="/prezzi.html">Prezzi</a>
-    <a href="/profilo.html">Profilo</a>
-    <a href="/spiegazioni.html">Spiegazioni</a>
+    <div class="mobile-nav" id="mobileNav">
+      <a href="/index.html">Home</a>
+      <a href="/app.html">Chiedimi qualcosa</a>
+      <a href="/come-funziona.html">Come funziona</a>
+      <a href="/prezzi.html">Prezzi</a>
+      <a href="/profilo.html">Profilo</a>
+      <a href="/spiegazioni.html">Spiegazioni</a>
+    </div>
+
+    <div style="margin-top:28px; padding-bottom:60px;">
+      <div class="card">
+        <div class="card-inner">
+          <div class="section-title">📚 Spiegazioni della community</div>
+          <p style="color:var(--muted);font-size:14px;margin:0 0 20px;">Esplora le risposte generate dagli utenti. Clicca su una domanda per leggere la risposta completa.</p>
+
+          <div id="listWrap" class="spieg-list">
+            <div class="skeleton-card" id="sk1"><div class="sk-line" style="width:72%"></div><div class="sk-line" style="width:42%"></div></div>
+            <div class="skeleton-card" id="sk2"><div class="sk-line" style="width:58%"></div><div class="sk-line" style="width:38%"></div></div>
+            <div class="skeleton-card" id="sk3"><div class="sk-line" style="width:80%"></div><div class="sk-line" style="width:48%"></div></div>
+          </div>
+
+          <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
+            <button class="btn" id="loadMoreBtn" type="button">Carica altro</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- MAIN -->
-  <main class="container" style="max-width:720px; padding-top:32px; padding-bottom:60px;">
-
-    <h1 class="page-title">📚 Spiegazioni</h1>
-    <p class="page-subtitle">Tutte le risposte generate con Simplif-AI, in ordine cronologico.</p>
-
-    <div id="listWrap" class="spieg-list">
-      <!-- skeleton -->
-      <div class="skeleton-card" id="sk1">
-        <div class="sk-line" style="width:75%;"></div>
-        <div class="sk-line" style="width:45%;"></div>
+  <!-- Modal risposta -->
+  <dialog class="spieg-modal" id="spiegModal">
+    <div class="modal-header">
+      <div class="modal-header-text">
+        <p class="modal-question" id="modalQuestion"></p>
+        <div class="spieg-meta" id="modalMeta"></div>
       </div>
-      <div class="skeleton-card" id="sk2">
-        <div class="sk-line" style="width:60%;"></div>
-        <div class="sk-line" style="width:40%;"></div>
-      </div>
-      <div class="skeleton-card" id="sk3">
-        <div class="sk-line" style="width:80%;"></div>
-        <div class="sk-line" style="width:50%;"></div>
-      </div>
+      <button class="modal-close" id="modalClose" aria-label="Chiudi">✕</button>
     </div>
-
-    <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
-      <button class="btn" id="loadMoreBtn" type="button">Carica altro</button>
-    </div>
-
-  </main>
+    <div class="modal-body" id="modalBody"></div>
+  </dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
   <script src="/shared.js?v=2" defer></script>
   <script>
     const SUPABASE_URL  = 'https://lmmiowagyqypdrdcemdo.supabase.co';
@@ -189,125 +216,92 @@
 
     const PAGE_SIZE = 20;
     let offset = 0;
-    let currentUserId = null;
 
     const listWrap    = document.getElementById('listWrap');
     const loadMoreWrap = document.getElementById('loadMoreWrap');
     const loadMoreBtn  = document.getElementById('loadMoreBtn');
+    const modal        = document.getElementById('spiegModal');
+    const modalClose   = document.getElementById('modalClose');
+    const modalQuestion = document.getElementById('modalQuestion');
+    const modalMeta    = document.getElementById('modalMeta');
+    const modalBody    = document.getElementById('modalBody');
 
     const LENGTH_LABELS = { breve: 'Breve', medio: 'Medio', lungo: 'Lungo' };
 
     function formatDate(isoStr) {
       const d = new Date(isoStr);
-      const now = new Date();
-      const diffDays = Math.floor((now - d) / 86400000);
+      const diffDays = Math.floor((new Date() - d) / 86400000);
       if (diffDays === 0) return 'Oggi';
       if (diffDays === 1) return 'Ieri';
       if (diffDays < 7)  return diffDays + ' giorni fa';
       return d.toLocaleDateString('it-IT', { day:'2-digit', month:'short', year:'numeric' });
     }
 
-    function formatChars(n) {
-      if (n < 1000) return n + ' car.';
-      return (n / 1000).toFixed(1) + 'k car.';
+    function escHtml(str) {
+      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
+    function metaHtml(row) {
+      const lenLabel = LENGTH_LABELS[row.length_key] || row.length_key || '';
+      let h = '';
+      if (row.target_label) h += `<span class="badge">${escHtml(row.target_icon)} ${escHtml(row.target_label)}</span>`;
+      if (lenLabel)         h += `<span class="badge badge-len">${escHtml(lenLabel)}</span>`;
+      h += `<span class="badge badge-date">${formatDate(row.created_at)}</span>`;
+      return h;
+    }
+
+    function openModal(row) {
+      modalQuestion.textContent = row.query;
+      modalMeta.innerHTML = metaHtml(row);
+      modalBody.innerHTML = DOMPurify.sanitize(marked.parse(row.response_text || ''));
+      modal.showModal();
+    }
+
+    modalClose.addEventListener('click', () => modal.close());
+    modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
+
     function removeSkeletons() {
-      ['sk1','sk2','sk3'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.remove();
-      });
+      ['sk1','sk2','sk3'].forEach(id => { const el = document.getElementById(id); if (el) el.remove(); });
     }
 
     function renderCard(row) {
       const card = document.createElement('div');
       card.className = 'spieg-card';
-      card.dataset.id = row.id;
-
-      const lenLabel = LENGTH_LABELS[row.length_key] || row.length_key || '—';
-
       card.innerHTML = `
-        <div>
-          <div class="spieg-query">${escHtml(row.query)}</div>
-          <div class="spieg-meta">
-            <span class="badge">${escHtml(row.target_icon)} ${escHtml(row.target_label)}</span>
-            <span class="badge badge-len">${escHtml(lenLabel)}</span>
-            <span class="badge badge-chars">${formatChars(row.response_chars)}</span>
-            <span class="badge badge-date">${formatDate(row.created_at)}</span>
-          </div>
-        </div>
-        <div class="spieg-actions">
-          <button class="btn-delete" title="Elimina" data-id="${escHtml(row.id)}">✕</button>
-        </div>
+        <div class="spieg-query">${escHtml(row.query)}</div>
+        <div class="spieg-meta">${metaHtml(row)}</div>
       `;
-
-      card.querySelector('.btn-delete').addEventListener('click', async function() {
-        const id = this.dataset.id;
-        const { error } = await sb.from('spiegazioni').delete().eq('id', id).eq('user_id', currentUserId);
-        if (!error) card.remove();
-        checkEmpty();
-      });
-
+      card.addEventListener('click', () => openModal(row));
       return card;
-    }
-
-    function escHtml(str) {
-      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    function checkEmpty() {
-      const cards = listWrap.querySelectorAll('.spieg-card');
-      if (cards.length === 0) showEmpty();
-    }
-
-    function showEmpty() {
-      listWrap.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-icon">📭</div>
-          <p>Non hai ancora generato nessuna spiegazione.</p>
-          <a href="/app.html" class="btn btn-primary">Genera la prima risposta</a>
-        </div>
-      `;
     }
 
     async function loadPage() {
       const { data, error } = await sb
         .from('spiegazioni')
-        .select('id, query, target_label, target_icon, length_key, response_chars, created_at')
-        .eq('user_id', currentUserId)
+        .select('id, query, target_label, target_icon, length_key, response_chars, response_text, created_at')
         .order('created_at', { ascending: false })
         .range(offset, offset + PAGE_SIZE - 1);
 
-      if (error) { console.error(error); return; }
-
       removeSkeletons();
 
+      if (error) { console.error(error); return; }
+
       if (offset === 0 && (!data || data.length === 0)) {
-        showEmpty();
+        listWrap.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <p>Nessuna spiegazione ancora. Sii il primo a generarne una!</p>
+            <a href="/app.html" class="btn btn-primary">Genera una risposta</a>
+          </div>`;
         return;
       }
 
       data.forEach(row => listWrap.appendChild(renderCard(row)));
       offset += data.length;
-
       loadMoreWrap.style.display = data.length === PAGE_SIZE ? '' : 'none';
     }
 
-    sb.auth.getSession().then(({ data }) => {
-      removeSkeletons();
-      if (!data?.session) {
-        listWrap.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">🔒</div>
-            <p>Accedi per vedere le tue spiegazioni salvate.</p>
-            <a href="/auth.html" class="btn btn-primary">Accedi o registrati</a>
-          </div>
-        `;
-        return;
-      }
-      currentUserId = data.session.user.id;
-      loadPage();
-    });
+    loadPage();
 
     loadMoreBtn.addEventListener('click', function() {
       loadMoreBtn.disabled = true;
