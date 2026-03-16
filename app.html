@@ -513,7 +513,6 @@
 
     let userCredits   = null;
     let currentUserId = null;
-    let userIsMinor   = false;
     let userIsAnon    = false;
 
     const ANON_LIMIT = 2;
@@ -533,7 +532,6 @@
       document.getElementById('anonBanner').style.display = 'flex';
     }
 
-    /* Regex contenuti sensibili — usata per bloccare risposte a utenti minorenni */
     /* Controlla sessione e carica crediti */
     sb.auth.getSession().then(async ({ data }) => {
       if (!data?.session) {
@@ -546,36 +544,12 @@
 
       const { data: rows } = await sb
         .from('profiles')
-        .select('credits, credits_expiry, data_nascita')
+        .select('credits, credits_expiry')
         .eq('id', currentUserId)
         .limit(1);
       userCredits = rows?.[0]?.credits ?? 0;
       creditsValueEl.textContent = userCredits;
       updateCostBadge();
-
-      /* Calcola se l'utente è minorenne.
-       * Se data_nascita manca nel profilo (es. link di conferma aperto su browser
-       * diverso da quello di registrazione → localStorage vuoto), la recupera da
-       * user_metadata (sempre presente nella sessione Supabase) e salva nel DB. */
-      let nascitaStr = rows?.[0]?.data_nascita;
-      if (!nascitaStr) {
-        const metaNascita = data.session.user.user_metadata?.data_nascita;
-        if (metaNascita) {
-          nascitaStr = metaNascita;
-          sb.from('profiles')
-            .update({ data_nascita: metaNascita, updated_at: new Date().toISOString() })
-            .eq('id', currentUserId)
-            .catch(function(){});
-        }
-      }
-      if (nascitaStr) {
-        const today = new Date();
-        const birth = new Date(nascitaStr);
-        let age = today.getFullYear() - birth.getFullYear();
-        const m = today.getMonth() - birth.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
-        userIsMinor = age < 18;
-      }
 
       /* Verifica scadenza crediti */
       var expiry = rows?.[0]?.credits_expiry;
@@ -989,7 +963,6 @@
           previousText: "",
           maxTokens,
           maxChars,
-          isMinor: userIsMinor
         };
     
         accumulatedText = "";

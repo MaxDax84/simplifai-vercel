@@ -27,36 +27,6 @@ function clamp(n, min, max, fallback) {
   return Math.min(Math.max(x, min), max);
 }
 
-var MINOR_BLOCK_MSG = "## Mi dispiace, non posso aiutarti su questo 🙁\n\nPurtroppo questo argomento non può essere trattato con il tuo account.\nSe pensi ci sia un errore o hai bisogno di aiuto, scrivici a info@simplif-ai.it.";
-
-async function isAdultContent(apiKey, query) {
-  var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent" +
-    "?key=" + apiKey;
-  try {
-    var res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text:
-          "Rispondi SOLO con YES o NO, senza altri testi.\n" +
-          "L'argomento seguente è legato a contenuti sessuali, pornografici o erotici per adulti?\n\n" +
-          "Argomento: " + query
-        }] }],
-        generationConfig: { temperature: 0, maxOutputTokens: 5 },
-      }),
-    });
-    if (!res.ok) return false;
-    var json = await res.json();
-    var text = (json && json.candidates && json.candidates[0] &&
-                json.candidates[0].content && json.candidates[0].content.parts &&
-                json.candidates[0].content.parts[0] &&
-                json.candidates[0].content.parts[0].text) || "";
-    return text.trim().toUpperCase().startsWith("YES");
-  } catch(e) {
-    return false; // in caso di errore di rete, lascia passare
-  }
-}
-
 function buildPrompt(query, targetPrompt, mode, previousText, maxChars) {
   var safeMode = mode === "continue" ? "continue" : "start";
   var prev = String(previousText || "").slice(0, 24000);
@@ -175,33 +145,8 @@ export default async function handler(req) {
     var targetPrompt = String((body && body.targetPrompt) || "").trim();
     var mode = body && body.mode;
     var previousText = (body && body.previousText) || "";
-    var isMinor = body && body.isMinor === true;
 
     if (!query || !targetPrompt) return jsonError("Parametri mancanti: query/targetPrompt.", 400);
-
-    /* Blocco contenuti sensibili per utenti minorenni (classificazione via Gemini) */
-    if (isMinor) {
-      var adult = await isAdultContent(apiKey, query);
-      if (adult) {
-        var encoder0 = new TextEncoder();
-        var ts0 = new TransformStream();
-        var writer0 = ts0.writable.getWriter();
-        (async function() {
-          var json0 = { candidates: [{ content: { parts: [{ text: MINOR_BLOCK_MSG }] } }] };
-          await writer0.write(encoder0.encode("data: " + JSON.stringify(json0) + "\n\n"));
-          await writer0.write(encoder0.encode("data: [DONE]\n\n"));
-          try { await writer0.close(); } catch(e) {}
-        })();
-        return new Response(ts0.readable, {
-          status: 200,
-          headers: corsHeaders({
-            "Content-Type": "text/event-stream; charset=utf-8",
-            "Cache-Control": "no-cache, no-transform",
-            "X-SimplifAI-API": "gemini-proxy",
-          }),
-        });
-      }
-    }
 
     var maxTokens = clamp(body && body.maxTokens, 512, 20000, 3500);
     var maxChars = clamp(body && body.maxChars, 500, 50000, 6000);
