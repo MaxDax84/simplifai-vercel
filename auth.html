@@ -650,6 +650,14 @@
         return;
       }
 
+      /* Supabase con conferma email abilitata non restituisce errore per email duplicate:
+       * restituisce un utente con identities vuoto. Intercettiamo questo caso. */
+      if (signUpData?.user && Array.isArray(signUpData.user.identities) && signUpData.user.identities.length === 0) {
+        showMsg("Questa email è già registrata. Prova ad accedere o usa 'Hai dimenticato la password?'.", "error");
+        setLoading(signupBtn, false);
+        return;
+      }
+
       if (signUpData?.session) {
         /*
          * CASO A – conferma email DISABILITATA:
