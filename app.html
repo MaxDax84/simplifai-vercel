@@ -1026,7 +1026,7 @@
             length_key:     selectedLenKey,
             response_chars: accumulatedText.length,
             response_text:  accumulatedText,
-          }).catch(function(){});
+          }).then(({ error }) => { if(error) console.error('spiegazioni insert error:', error.message, error.details); });
         }
       }
     }
