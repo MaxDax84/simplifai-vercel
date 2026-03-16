@@ -529,8 +529,21 @@
       creditsValueEl.textContent = userCredits;
       updateCostBadge();
 
-      /* Calcola se l'utente è minorenne */
-      const nascitaStr = rows?.[0]?.data_nascita;
+      /* Calcola se l'utente è minorenne.
+       * Se data_nascita manca nel profilo (es. link di conferma aperto su browser
+       * diverso da quello di registrazione → localStorage vuoto), la recupera da
+       * user_metadata (sempre presente nella sessione Supabase) e salva nel DB. */
+      let nascitaStr = rows?.[0]?.data_nascita;
+      if (!nascitaStr) {
+        const metaNascita = data.session.user.user_metadata?.data_nascita;
+        if (metaNascita) {
+          nascitaStr = metaNascita;
+          sb.from('profiles')
+            .update({ data_nascita: metaNascita, updated_at: new Date().toISOString() })
+            .eq('id', currentUserId)
+            .catch(function(){});
+        }
+      }
       if (nascitaStr) {
         const today = new Date();
         const birth = new Date(nascitaStr);

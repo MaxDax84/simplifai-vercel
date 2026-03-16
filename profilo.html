@@ -841,7 +841,23 @@
         .eq('id', currentUserId)
         .limit(1);
 
-      fillUI(rows?.[0] || {}, email);
+      const profile = rows?.[0] || {};
+
+      /* Backfill data_nascita da user_metadata se mancante nel profilo
+       * (accade quando il link di conferma email viene aperto su un browser
+       * diverso da quello di registrazione, svuotando il localStorage). */
+      if (!profile.data_nascita) {
+        const metaNascita = data.session.user.user_metadata?.data_nascita;
+        if (metaNascita) {
+          profile.data_nascita = metaNascita;
+          sb.from('profiles')
+            .update({ data_nascita: metaNascita, updated_at: new Date().toISOString() })
+            .eq('id', currentUserId)
+            .catch(function(){});
+        }
+      }
+
+      fillUI(profile, email);
 
       /* Aggiorna il contatore crediti in tempo reale tramite realtime subscription */
       sb.channel('profile-credits-' + currentUserId)
