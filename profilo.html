@@ -432,9 +432,48 @@
 
           <div style="height:12px;"></div>
 
-          <div>
-            <div class="label">Professione</div>
-            <input class="field" id="fProfessione" placeholder="es. Insegnante, Ingegnere, Studente..." />
+          <div class="row2">
+            <div>
+              <div class="label">Professione</div>
+              <input class="field" id="fProfessione" placeholder="es. Insegnante, Ingegnere, Studente..." />
+            </div>
+            <div>
+              <div class="label">Nazione</div>
+              <select class="field" id="fNazione">
+                <option value="">Seleziona...</option>
+                <option value="IT">🇮🇹 Italia</option>
+                <optgroup label="Europa">
+                  <option value="AT">Austria</option>
+                  <option value="BE">Belgio</option>
+                  <option value="CH">Svizzera</option>
+                  <option value="DE">Germania</option>
+                  <option value="ES">Spagna</option>
+                  <option value="FR">Francia</option>
+                  <option value="GB">Regno Unito</option>
+                  <option value="GR">Grecia</option>
+                  <option value="HR">Croazia</option>
+                  <option value="NL">Paesi Bassi</option>
+                  <option value="PL">Polonia</option>
+                  <option value="PT">Portogallo</option>
+                  <option value="RO">Romania</option>
+                  <option value="SE">Svezia</option>
+                  <option value="SM">San Marino</option>
+                  <option value="VA">Città del Vaticano</option>
+                </optgroup>
+                <optgroup label="Resto del mondo">
+                  <option value="AR">Argentina</option>
+                  <option value="AU">Australia</option>
+                  <option value="BR">Brasile</option>
+                  <option value="CA">Canada</option>
+                  <option value="CN">Cina</option>
+                  <option value="IN">India</option>
+                  <option value="JP">Giappone</option>
+                  <option value="MX">Messico</option>
+                  <option value="US">Stati Uniti</option>
+                  <option value="ZZ">Altro</option>
+                </optgroup>
+              </select>
+            </div>
           </div>
 
           <div style="height:16px;"></div>
@@ -791,6 +830,7 @@
       document.getElementById("fNascita").value     = profile.data_nascita || "";
       document.getElementById("fCitta").value       = profile.citta || "";
       document.getElementById("fProfessione").value = profile.professione || "";
+      document.getElementById("fNazione").value     = profile.nazione || "";
       document.getElementById("fEmail").value       = email || "";
 
       /* Profilazione select */
@@ -886,6 +926,7 @@
         data_nascita:document.getElementById("fNascita").value || null,
         citta:       document.getElementById("fCitta").value.trim(),
         professione: document.getElementById("fProfessione").value.trim(),
+        nazione:     document.getElementById("fNazione").value || null,
         updated_at:  new Date().toISOString()
       });
       btn.disabled = false;
