@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Spiegazioni – Simplif-AI</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/theme.css?v=2">
+
+  <script>
+    (function(){
+      if(localStorage.getItem('sai_theme')==='light')
+        document.documentElement.setAttribute('data-theme','light');
+    })();
+  </script>
+
+  <style>
+    .page-title {
+      font-size: 24px; font-weight: 900;
+      margin: 0 0 4px;
+    }
+    .page-subtitle {
+      color: var(--muted); font-size: 14px;
+      margin: 0 0 28px;
+    }
+
+    .spieg-list {
+      display: flex; flex-direction: column; gap: 12px;
+    }
+
+    .spieg-card {
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 18px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px 16px;
+      align-items: start;
+    }
+
+    .spieg-query {
+      font-size: 15px; font-weight: 600;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .spieg-meta {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 999px;
+      font-size: 12px; font-weight: 600;
+      border: 1px solid var(--border);
+      background: rgba(124,92,255,.12);
+      color: var(--text);
+    }
+    .badge-len {
+      background: rgba(38,198,255,.10);
+    }
+    .badge-date {
+      background: transparent;
+      color: var(--muted);
+      font-weight: 400;
+    }
+    .badge-chars {
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .spieg-actions {
+      grid-row: 1 / 3;
+      grid-column: 2;
+      display: flex; align-items: flex-start;
+    }
+
+    .btn-delete {
+      background: none; border: none;
+      color: var(--muted); font-size: 18px;
+      cursor: pointer; padding: 2px 6px;
+      border-radius: 8px; line-height: 1;
+      transition: color .15s, background .15s;
+    }
+    .btn-delete:hover { color: #ff5f5f; background: rgba(255,95,95,.1); }
+
+    .empty-state {
+      text-align: center; padding: 60px 20px;
+      color: var(--muted);
+    }
+    .empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state p { font-size: 15px; margin: 0 0 20px; }
+
+    .load-more-wrap { text-align: center; margin-top: 20px; }
+
+    .skeleton-card {
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 18px;
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    .sk-line {
+      border-radius: 6px;
+      background: rgba(255,255,255,.07);
+      height: 14px; margin-bottom: 10px;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50%      { opacity: .45; }
+    }
+
+    @media(max-width:480px){
+      .spieg-query { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="nav-inner">
+      <a class="logo" href="/index.html">Simplif<span>AI</span></a>
+      <nav id="mainNav">
+        <a href="/index.html" data-nav="home">Home</a>
+        <a href="/app.html" data-nav="app">Chiedimi qualcosa</a>
+        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
+        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
+        <a href="/profilo.html" data-nav="profile">Profilo</a>
+        <a href="/spiegazioni.html" data-nav="spiegazioni">Spiegazioni</a>
+      </nav>
+      <div class="nav-actions">
+        <button id="themeBtn" class="theme-btn" aria-label="Cambia tema"></button>
+        <button class="hamburger" id="navToggle" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="/index.html">Home</a>
+    <a href="/app.html">Chiedimi qualcosa</a>
+    <a href="/come-funziona.html">Come funziona</a>
+    <a href="/prezzi.html">Prezzi</a>
+    <a href="/profilo.html">Profilo</a>
+    <a href="/spiegazioni.html">Spiegazioni</a>
+  </div>
+
+  <!-- MAIN -->
+  <main class="container" style="max-width:720px; padding-top:32px; padding-bottom:60px;">
+
+    <h1 class="page-title">📚 Spiegazioni</h1>
+    <p class="page-subtitle">Tutte le risposte generate con Simplif-AI, in ordine cronologico.</p>
+
+    <div id="listWrap" class="spieg-list">
+      <!-- skeleton -->
+      <div class="skeleton-card" id="sk1">
+        <div class="sk-line" style="width:75%;"></div>
+        <div class="sk-line" style="width:45%;"></div>
+      </div>
+      <div class="skeleton-card" id="sk2">
+        <div class="sk-line" style="width:60%;"></div>
+        <div class="sk-line" style="width:40%;"></div>
+      </div>
+      <div class="skeleton-card" id="sk3">
+        <div class="sk-line" style="width:80%;"></div>
+        <div class="sk-line" style="width:50%;"></div>
+      </div>
+    </div>
+
+    <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
+      <button class="btn" id="loadMoreBtn" type="button">Carica altro</button>
+    </div>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/shared.js?v=2" defer></script>
+  <script>
+    const SUPABASE_URL  = 'https://lmmiowagyqypdrdcemdo.supabase.co';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMzMxMzMsImV4cCI6MjA1NzcwOTEzM30.KYSNqTlFfZhFYJLkKLOFElgfBr7GBNXR0wl6cXzRids';
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    const PAGE_SIZE = 20;
+    let offset = 0;
+    let currentUserId = null;
+
+    const listWrap    = document.getElementById('listWrap');
+    const loadMoreWrap = document.getElementById('loadMoreWrap');
+    const loadMoreBtn  = document.getElementById('loadMoreBtn');
+
+    const LENGTH_LABELS = { breve: 'Breve', medio: 'Medio', lungo: 'Lungo' };
+
+    function formatDate(isoStr) {
+      const d = new Date(isoStr);
+      const now = new Date();
+      const diffDays = Math.floor((now - d) / 86400000);
+      if (diffDays === 0) return 'Oggi';
+      if (diffDays === 1) return 'Ieri';
+      if (diffDays < 7)  return diffDays + ' giorni fa';
+      return d.toLocaleDateString('it-IT', { day:'2-digit', month:'short', year:'numeric' });
+    }
+
+    function formatChars(n) {
+      if (n < 1000) return n + ' car.';
+      return (n / 1000).toFixed(1) + 'k car.';
+    }
+
+    function removeSkeletons() {
+      ['sk1','sk2','sk3'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+      });
+    }
+
+    function renderCard(row) {
+      const card = document.createElement('div');
+      card.className = 'spieg-card';
+      card.dataset.id = row.id;
+
+      const lenLabel = LENGTH_LABELS[row.length_key] || row.length_key || '—';
+
+      card.innerHTML = `
+        <div>
+          <div class="spieg-query">${escHtml(row.query)}</div>
+          <div class="spieg-meta">
+            <span class="badge">${escHtml(row.target_icon)} ${escHtml(row.target_label)}</span>
+            <span class="badge badge-len">${escHtml(lenLabel)}</span>
+            <span class="badge badge-chars">${formatChars(row.response_chars)}</span>
+            <span class="badge badge-date">${formatDate(row.created_at)}</span>
+          </div>
+        </div>
+        <div class="spieg-actions">
+          <button class="btn-delete" title="Elimina" data-id="${escHtml(row.id)}">✕</button>
+        </div>
+      `;
+
+      card.querySelector('.btn-delete').addEventListener('click', async function() {
+        const id = this.dataset.id;
+        const { error } = await sb.from('spiegazioni').delete().eq('id', id).eq('user_id', currentUserId);
+        if (!error) card.remove();
+        checkEmpty();
+      });
+
+      return card;
+    }
+
+    function escHtml(str) {
+      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function checkEmpty() {
+      const cards = listWrap.querySelectorAll('.spieg-card');
+      if (cards.length === 0) showEmpty();
+    }
+
+    function showEmpty() {
+      listWrap.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <p>Non hai ancora generato nessuna spiegazione.</p>
+          <a href="/app.html" class="btn btn-primary">Genera la prima risposta</a>
+        </div>
+      `;
+    }
+
+    async function loadPage() {
+      const { data, error } = await sb
+        .from('spiegazioni')
+        .select('id, query, target_label, target_icon, length_key, response_chars, created_at')
+        .eq('user_id', currentUserId)
+        .order('created_at', { ascending: false })
+        .range(offset, offset + PAGE_SIZE - 1);
+
+      if (error) { console.error(error); return; }
+
+      removeSkeletons();
+
+      if (offset === 0 && (!data || data.length === 0)) {
+        showEmpty();
+        return;
+      }
+
+      data.forEach(row => listWrap.appendChild(renderCard(row)));
+      offset += data.length;
+
+      loadMoreWrap.style.display = data.length === PAGE_SIZE ? '' : 'none';
+    }
+
+    sb.auth.getSession().then(({ data }) => {
+      if (!data?.session) {
+        window.location.replace('/auth.html');
+        return;
+      }
+      currentUserId = data.session.user.id;
+      loadPage();
+    });
+
+    loadMoreBtn.addEventListener('click', function() {
+      loadMoreBtn.disabled = true;
+      loadPage().then(() => { loadMoreBtn.disabled = false; });
+    });
+  </script>
+</body>
+</html>

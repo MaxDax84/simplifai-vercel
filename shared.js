@@ -59,6 +59,7 @@
   else if (path.includes('prezzi'))         key = 'pricing';
   else if (path.includes('checkout'))       key = 'pricing';
   else if (path.includes('profilo'))        key = 'profile';
+  else if (path.includes('spiegazioni'))    key = 'spiegazioni';
   else if (path.includes('contatti'))       key = 'contact';
   document.querySelectorAll('#mainNav a').forEach(function (a) {
     if (a.dataset.nav === key) a.classList.add('nav-active');
