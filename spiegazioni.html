@@ -302,7 +302,9 @@
   <script>
     const SUPABASE_URL  = 'https://lmmiowagyqypdrdcemdo.supabase.co';
     const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMzMxMzMsImV4cCI6MjA1NzcwOTEzM30.KYSNqTlFfZhFYJLkKLOFElgfBr7GBNXR0wl6cXzRids';
-    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
+      auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false }
+    });
 
     const PAGE_SIZE = 20;
     let offset = 0;
