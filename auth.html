@@ -452,18 +452,6 @@
       }
     })();
 
-    /* Auto-seleziona tab Registrati se arriva da ?tab=signup (es. dopo prova anonima) */
-    (function(){
-      if(new URLSearchParams(location.search).get("tab") === "signup"){
-        tabSignup.classList.add("active"); tabLogin.classList.remove("active");
-        signupForm.style.display = ""; loginForm.style.display = "none";
-        const msgEl = document.getElementById("authMsg");
-        if(msgEl){
-          msgEl.textContent = "Crea un account gratuito per continuare a usare Simplif-AI.";
-          msgEl.className = "auth-msg";
-        }
-      }
-    })();
 
     /* Tabs */
     const tabLogin  = document.getElementById("tabLogin");
@@ -481,6 +469,12 @@
       signupForm.style.display = ""; loginForm.style.display = "none";
       clearMsg();
     });
+
+    /* Auto-seleziona tab Registrati se arriva da ?tab=signup (es. dopo prova anonima) */
+    if(new URLSearchParams(location.search).get("tab") === "signup"){
+      tabSignup.classList.add("active"); tabLogin.classList.remove("active");
+      signupForm.style.display = ""; loginForm.style.display = "none";
+    }
 
     /* Magic link toggle */
     const magicBtn  = document.getElementById("magicBtn");
@@ -513,7 +507,18 @@
       const password = document.getElementById("loginPassword").value;
       const { error } = await sb.auth.signInWithPassword({ email, password });
       if (error) {
-        showMsg(error.message, "error");
+        const raw = (error.message || "").toLowerCase();
+        let msg = error.message;
+        if (raw.includes("invalid login credentials") || raw.includes("invalid credentials")) {
+          msg = "Email o password non corretti. Riprova oppure usa 'Hai dimenticato la password?'.";
+        } else if (raw.includes("email not confirmed")) {
+          msg = "Email non ancora confermata. Controlla la tua casella e clicca il link di verifica.";
+        } else if (raw.includes("too many requests") || raw.includes("rate limit")) {
+          msg = "Troppi tentativi. Attendi qualche minuto prima di riprovare.";
+        } else if (raw.includes("user not found") || raw.includes("no user")) {
+          msg = "Nessun account trovato con questa email. Prova a registrarti.";
+        }
+        showMsg(msg, "error");
         setLoading(loginBtn, false);
       } else {
         showMsg("Accesso effettuato. Reindirizzo...", "success");
