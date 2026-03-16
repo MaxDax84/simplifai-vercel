@@ -21,29 +21,16 @@
       background: linear-gradient(135deg, rgba(124,92,255,.15) 0%, rgba(38,198,255,.08) 100%);
       border: 1px solid rgba(124,92,255,.2);
       border-radius: 20px;
-      padding: 28px 28px 24px;
+      padding: 32px 28px 28px;
       margin-bottom: 20px;
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 16px; flex-wrap: wrap;
+      text-align: center;
     }
     .spieg-hero h2 {
-      font-size: 22px; font-weight: 900; margin: 0 0 6px;
+      font-size: 24px; font-weight: 900;
+      line-height: 1.5; margin: 0 0 8px;
     }
     .spieg-hero p {
       color: var(--muted); font-size: 14px; margin: 0;
-    }
-    .spieg-count {
-      font-size: 36px; font-weight: 900;
-      background: linear-gradient(135deg, #7c5cff, #26c6ff);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-      white-space: nowrap;
-      line-height: 1;
-    }
-    .spieg-count span {
-      display: block; font-size: 12px; font-weight: 600;
-      color: var(--muted); -webkit-text-fill-color: var(--muted);
-      margin-top: 4px; text-align: center;
     }
 
     /* ── Filter bar ── */
@@ -260,11 +247,9 @@
 
       <!-- Hero -->
       <div class="spieg-hero">
-        <div>
-          <h2>📚 Spiegazioni della community</h2>
-          <p>Esplora le risposte generate dagli utenti.<br>Clicca su una domanda per leggere la risposta completa.</p>
-        </div>
-        <div class="spieg-count" id="totalCount">—<span>spiegazioni</span></div>
+        <h2>📚 Spiegazioni della community</h2>
+        <p>Esplora le risposte generate dagli utenti. Clicca su una domanda per leggere la risposta completa.</p>
+        <div id="totalCount" style="margin-top:18px; font-size:36px; font-weight:900; background:linear-gradient(135deg,#7c5cff,#26c6ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1;">—<span style="display:block; font-size:12px; font-weight:600; color:var(--muted); -webkit-text-fill-color:var(--muted); margin-top:5px;">spiegazioni generate</span></div>
       </div>
 
       <!-- Filtri target -->
@@ -327,7 +312,7 @@
     const listWrap     = document.getElementById('listWrap');
     const loadMoreWrap = document.getElementById('loadMoreWrap');
     const loadMoreBtn  = document.getElementById('loadMoreBtn');
-    const totalCountEl = document.getElementById('totalCount');
+
     const modal        = document.getElementById('spiegModal');
     const modalClose   = document.getElementById('modalClose');
     const modalQuestion = document.getElementById('modalQuestion');
@@ -457,13 +442,6 @@
       loadMoreWrap.style.display = data.length === PAGE_SIZE ? '' : 'none';
     }
 
-    /* Conta totale */
-    sb.from('spiegazioni').select('id', { count: 'exact', head: true }).then(({ count }) => {
-      if (count !== null) {
-        const el = document.getElementById('totalCount');
-        el.innerHTML = `${count.toLocaleString('it-IT')}<span>spiegazioni</span>`;
-      }
-    });
 
     /* Filtri */
     document.getElementById('filterBar').addEventListener('click', e => {
@@ -473,6 +451,14 @@
       pill.classList.add('active');
       activeFilter = pill.dataset.filter;
       loadPage(true);
+    });
+
+    /* Conta totale */
+    sb.from('spiegazioni').select('id', { count: 'exact', head: true }).then(({ count }) => {
+      if (count !== null) {
+        const el = document.getElementById('totalCount');
+        el.innerHTML = `${count.toLocaleString('it-IT')}<span style="display:block;font-size:12px;font-weight:600;color:var(--muted);-webkit-text-fill-color:var(--muted);margin-top:5px;">spiegazioni generate</span>`;
+      }
     });
 
     loadPage(false);
