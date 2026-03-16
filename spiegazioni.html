@@ -294,8 +294,15 @@
     }
 
     sb.auth.getSession().then(({ data }) => {
+      removeSkeletons();
       if (!data?.session) {
-        window.location.replace('/auth.html');
+        listWrap.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🔒</div>
+            <p>Accedi per vedere le tue spiegazioni salvate.</p>
+            <a href="/auth.html" class="btn btn-primary">Accedi o registrati</a>
+          </div>
+        `;
         return;
       }
       currentUserId = data.session.user.id;
