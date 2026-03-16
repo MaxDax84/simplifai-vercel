@@ -27,6 +27,10 @@ function clamp(n, min, max, fallback) {
   return Math.min(Math.max(x, min), max);
 }
 
+var ADULT_RE = /\b(porno|pornografi[a-z]*|sess(?:o|uale|ualit[aà])|rapporto\s+sessuale|rapporti\s+sessuali|orgasmo|masturbazion[a-z]*|masturbars[a-z]*|eiaculazion[a-z]*|pene\b|vagina|clitoride|vulva|erezione|genitali|prostituzion[a-z]*|prostitut[oa]|escort|bordello|squillo|stupro|violenza\s+sessuale|nudit[aà]|erotic[oa]|bdsm|bondage|feticismo|intercourse|porn\b|xxx)\b/i;
+
+var MINOR_BLOCK_MSG = "## Contenuto non disponibile\n\nQuesto argomento non è accessibile per gli account under 18.\nSe hai domande puoi contattarci all'indirizzo info@simplif-ai.it.";
+
 function buildPrompt(query, targetPrompt, mode, previousText, maxChars) {
   var safeMode = mode === "continue" ? "continue" : "start";
   var prev = String(previousText || "").slice(0, 24000);
@@ -145,8 +149,30 @@ export default async function handler(req) {
     var targetPrompt = String((body && body.targetPrompt) || "").trim();
     var mode = body && body.mode;
     var previousText = (body && body.previousText) || "";
+    var isMinor = body && body.isMinor === true;
 
     if (!query || !targetPrompt) return jsonError("Parametri mancanti: query/targetPrompt.", 400);
+
+    /* Blocco contenuti sensibili per utenti minorenni */
+    if (isMinor && ADULT_RE.test(query)) {
+      var encoder0 = new TextEncoder();
+      var ts0 = new TransformStream();
+      var writer0 = ts0.writable.getWriter();
+      (async function() {
+        var json0 = { candidates: [{ content: { parts: [{ text: MINOR_BLOCK_MSG }] } }] };
+        await writer0.write(encoder0.encode("data: " + JSON.stringify(json0) + "\n\n"));
+        await writer0.write(encoder0.encode("data: [DONE]\n\n"));
+        try { await writer0.close(); } catch(e) {}
+      })();
+      return new Response(ts0.readable, {
+        status: 200,
+        headers: corsHeaders({
+          "Content-Type": "text/event-stream; charset=utf-8",
+          "Cache-Control": "no-cache, no-transform",
+          "X-SimplifAI-API": "gemini-proxy",
+        }),
+      });
+    }
 
     var maxTokens = clamp(body && body.maxTokens, 512, 20000, 3500);
     var maxChars = clamp(body && body.maxChars, 500, 50000, 6000);

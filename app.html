@@ -505,8 +505,12 @@
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    let userCredits  = null;
+    let userCredits   = null;
     let currentUserId = null;
+    let userIsMinor   = false;
+
+    /* Regex contenuti sensibili — usata per bloccare risposte a utenti minorenni */
+    const ADULT_RE = /\b(porno|pornografi[a-z]*|sess(?:o|uale|ualità)|rapporto\s+sessuale|rapporti\s+sessuali|orgasmo|masturbazion[a-z]*|masturbars[a-z]*|eiaculazion[a-z]*|pene\b|vagina|clitoride|vulva|erezione|genitali|prostituzion[a-z]*|prostitut[oa]|escort|bordello|squillo|stupro|violenza\s+sessuale|nudità|erotic[oa]|bdsm|bondage|feticismo|intercourse|porn\b|xxx)\b/i;
 
     /* Controlla sessione e carica crediti */
     sb.auth.getSession().then(async ({ data }) => {
@@ -518,12 +522,23 @@
 
       const { data: rows } = await sb
         .from('profiles')
-        .select('credits, credits_expiry')
+        .select('credits, credits_expiry, data_nascita')
         .eq('id', currentUserId)
         .limit(1);
       userCredits = rows?.[0]?.credits ?? 0;
       creditsValueEl.textContent = userCredits;
       updateCostBadge();
+
+      /* Calcola se l'utente è minorenne */
+      const nascitaStr = rows?.[0]?.data_nascita;
+      if (nascitaStr) {
+        const today = new Date();
+        const birth = new Date(nascitaStr);
+        let age = today.getFullYear() - birth.getFullYear();
+        const m = today.getMonth() - birth.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+        userIsMinor = age < 18;
+      }
 
       /* Verifica scadenza crediti */
       var expiry = rows?.[0]?.credits_expiry;
@@ -901,7 +916,19 @@
         setStatus("Seleziona una lunghezza.", false);
         return;
       }
-    
+
+      /* Blocco contenuti per minorenni */
+      if(userIsMinor && ADULT_RE.test(q.value)){
+        responseEl.innerHTML = DOMPurify.sanitize(marked.parse(
+          "## Contenuto non disponibile\n\n" +
+          "Questo argomento non è accessibile per gli account under 18. " +
+          "Se hai domande, puoi contattarci all'indirizzo **info@simplif-ai.it**."
+        ));
+        responseEl.closest?.(".section")?.style && (responseEl.closest(".section").style.display = "");
+        setStatus("", false);
+        return;
+      }
+
       isGenerating = true;
       saveBtn.disabled = true;
       saveBtn.textContent = '☆ Salva';
@@ -930,7 +957,8 @@
           mode: "start",
           previousText: "",
           maxTokens,
-          maxChars
+          maxChars,
+          isMinor: userIsMinor
         };
     
         accumulatedText = "";
