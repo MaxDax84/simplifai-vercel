@@ -452,6 +452,19 @@
       }
     })();
 
+    /* Auto-seleziona tab Registrati se arriva da ?tab=signup (es. dopo prova anonima) */
+    (function(){
+      if(new URLSearchParams(location.search).get("tab") === "signup"){
+        tabSignup.classList.add("active"); tabLogin.classList.remove("active");
+        signupForm.style.display = ""; loginForm.style.display = "none";
+        const msgEl = document.getElementById("authMsg");
+        if(msgEl){
+          msgEl.textContent = "Crea un account gratuito per continuare a usare Simplif-AI.";
+          msgEl.className = "auth-msg";
+        }
+      }
+    })();
+
     /* Tabs */
     const tabLogin  = document.getElementById("tabLogin");
     const tabSignup = document.getElementById("tabSignup");

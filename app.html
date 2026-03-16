@@ -369,6 +369,12 @@
       <a class="credit-pill" href="/prezzi.html" style="text-decoration:none;">⚡ Crediti disponibili: <b id="creditsValue">—</b></a>
     </div>
 
+    <!-- Banner utenti anonimi (mostrato solo senza sessione) -->
+    <div id="anonBanner" style="display:none; border:1px solid rgba(124,92,255,.30); background:rgba(124,92,255,.08); border-radius:16px; padding:14px 20px; margin-top:16px; align-items:center; gap:14px; flex-wrap:wrap;">
+      <span id="anonMsg" style="flex:1; min-width:0; font-size:14px; line-height:1.5;"></span>
+      <a href="/auth.html?tab=signup" class="btn btn-primary" style="font-size:13px; padding:8px 20px; white-space:nowrap; flex-shrink:0;">Registrati gratis</a>
+    </div>
+
     <!-- ── Ultime Ricerche ── -->
     <section id="historySection" style="display:none; margin-bottom:0;">
       <div class="card" style="margin-top:16px;">
@@ -508,6 +514,24 @@
     let userCredits   = null;
     let currentUserId = null;
     let userIsMinor   = false;
+    let userIsAnon    = false;
+
+    const ANON_LIMIT = 2;
+    function getAnonCount() { return parseInt(localStorage.getItem('sai_anon_count') || '0', 10); }
+    function incAnonCount()  { localStorage.setItem('sai_anon_count', String(getAnonCount() + 1)); }
+    function updateAnonUI() {
+      const remaining = Math.max(0, ANON_LIMIT - getAnonCount());
+      creditsValueEl.textContent = remaining + '/2';
+      const msg = document.getElementById('anonMsg');
+      if (remaining === 0) {
+        msg.innerHTML = 'Hai esaurito le domande gratuite. <strong>Registrati</strong> per continuare con Simplif-AI!';
+      } else if (remaining === 1) {
+        msg.innerHTML = 'Stai esplorando Simplif-AI senza account — ti rimane <strong>1 domanda gratuita</strong>.';
+      } else {
+        msg.innerHTML = 'Stai esplorando Simplif-AI senza account — hai <strong>' + remaining + ' domande gratuite</strong> disponibili.';
+      }
+      document.getElementById('anonBanner').style.display = 'flex';
+    }
 
     /* Regex contenuti sensibili — usata per bloccare risposte a utenti minorenni */
     const ADULT_RE = /\b(porno|pornografi[a-z]*|sess(?:o|uale|ualità)|rapporto\s+sessuale|rapporti\s+sessuali|orgasmo|masturbazion[a-z]*|masturbars[a-z]*|eiaculazion[a-z]*|pene\b|vagina|clitoride|vulva|erezione|genitali|prostituzion[a-z]*|prostitut[oa]|escort|bordello|squillo|stupro|violenza\s+sessuale|nudità|erotic[oa]|bdsm|bondage|feticismo|intercourse|porn\b|xxx)\b/i;
@@ -515,7 +539,9 @@
     /* Controlla sessione e carica crediti */
     sb.auth.getSession().then(async ({ data }) => {
       if (!data?.session) {
-        window.location.replace("/auth.html");
+        userIsAnon = true;
+        saveBtn.style.display = 'none';
+        updateAnonUI();
         return;
       }
       currentUserId = data.session.user.id;
@@ -909,9 +935,15 @@
     async function run(mode){
       if(isGenerating) return;
 
-      /* Controllo crediti */
+      /* Utente anonimo: al 3° tentativo redirect alla registrazione */
+      if(userIsAnon && getAnonCount() >= ANON_LIMIT){
+        window.location.replace('/auth.html?tab=signup');
+        return;
+      }
+
+      /* Controllo crediti (solo utenti registrati) */
       const cost = computeCost();
-      if(userCredits !== null && userCredits < cost){
+      if(!userIsAnon && userCredits !== null && userCredits < cost){
         setStatus(`Crediti insufficienti (servono ${cost}, hai ${userCredits}). Ricarica per continuare.`, false);
         setTimeout(() => window.location.replace("/prezzi.html?reason=no_credits"), 2000);
         return;
@@ -990,8 +1022,11 @@
         saveToHistory(q.value.trim());
         renderHistory();
 
-        /* Decrementa crediti */
-        if(currentUserId && userCredits !== null){
+        /* Aggiornamento post-generazione */
+        if(userIsAnon){
+          incAnonCount();
+          updateAnonUI();
+        } else if(currentUserId && userCredits !== null){
           const cost = computeCost();
           userCredits = Math.max(0, userCredits - cost);
           creditsValueEl.textContent = userCredits;
