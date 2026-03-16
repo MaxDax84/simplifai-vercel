@@ -27,9 +27,35 @@ function clamp(n, min, max, fallback) {
   return Math.min(Math.max(x, min), max);
 }
 
-var ADULT_RE = /\b(porno|pornografi[a-z]*|sess(?:o|uale|ualit[aà])|rapporto\s+sessuale|rapporti\s+sessuali|orgasmo|masturbazion[a-z]*|masturbars[a-z]*|eiaculazion[a-z]*|pene\b|vagina|clitoride|vulva|erezione|genitali|prostituzion[a-z]*|prostitut[oa]|escort|bordello|squillo|stupro|violenza\s+sessuale|nudit[aà]|erotic[oa]|bdsm|bondage|feticismo|intercourse|porn\b|xxx|pompino|sesso\s+orale|fellatio|cunnilingus|scopar[ei]|scopata|figa\b|cazzo\b|cazz[io]\b|fotter[ei]|fottersi|troi[ae]\b|puttana|puttane\b|sborra[a-z]*|inculat[oa]|culo\s+(?:nudo|in\s+vista)|nud[oi]\b|strip(?:tease)?|spogliarello|erotica\b|film\s+(?:porno|hard|sexy)|video\s+(?:porno|hard|sexy)|foto\s+(?:porno|hard|sexy|nude?)|sex\b|sext(?:ing)?|onlyfans|masturbat[a-z]*)\b/i;
-
 var MINOR_BLOCK_MSG = "## Mi dispiace, non posso aiutarti su questo 🙁\n\nPurtroppo questo argomento non può essere trattato con il tuo account.\nSe pensi ci sia un errore o hai bisogno di aiuto, scrivici a info@simplif-ai.it.";
+
+async function isAdultContent(apiKey, query) {
+  var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent" +
+    "?key=" + apiKey;
+  try {
+    var res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text:
+          "Rispondi SOLO con YES o NO, senza altri testi.\n" +
+          "L'argomento seguente è legato a contenuti sessuali, pornografici o erotici per adulti?\n\n" +
+          "Argomento: " + query
+        }] }],
+        generationConfig: { temperature: 0, maxOutputTokens: 5 },
+      }),
+    });
+    if (!res.ok) return false;
+    var json = await res.json();
+    var text = (json && json.candidates && json.candidates[0] &&
+                json.candidates[0].content && json.candidates[0].content.parts &&
+                json.candidates[0].content.parts[0] &&
+                json.candidates[0].content.parts[0].text) || "";
+    return text.trim().toUpperCase().startsWith("YES");
+  } catch(e) {
+    return false; // in caso di errore di rete, lascia passare
+  }
+}
 
 function buildPrompt(query, targetPrompt, mode, previousText, maxChars) {
   var safeMode = mode === "continue" ? "continue" : "start";
@@ -153,25 +179,28 @@ export default async function handler(req) {
 
     if (!query || !targetPrompt) return jsonError("Parametri mancanti: query/targetPrompt.", 400);
 
-    /* Blocco contenuti sensibili per utenti minorenni */
-    if (isMinor && ADULT_RE.test(query)) {
-      var encoder0 = new TextEncoder();
-      var ts0 = new TransformStream();
-      var writer0 = ts0.writable.getWriter();
-      (async function() {
-        var json0 = { candidates: [{ content: { parts: [{ text: MINOR_BLOCK_MSG }] } }] };
-        await writer0.write(encoder0.encode("data: " + JSON.stringify(json0) + "\n\n"));
-        await writer0.write(encoder0.encode("data: [DONE]\n\n"));
-        try { await writer0.close(); } catch(e) {}
-      })();
-      return new Response(ts0.readable, {
-        status: 200,
-        headers: corsHeaders({
-          "Content-Type": "text/event-stream; charset=utf-8",
-          "Cache-Control": "no-cache, no-transform",
-          "X-SimplifAI-API": "gemini-proxy",
-        }),
-      });
+    /* Blocco contenuti sensibili per utenti minorenni (classificazione via Gemini) */
+    if (isMinor) {
+      var adult = await isAdultContent(apiKey, query);
+      if (adult) {
+        var encoder0 = new TextEncoder();
+        var ts0 = new TransformStream();
+        var writer0 = ts0.writable.getWriter();
+        (async function() {
+          var json0 = { candidates: [{ content: { parts: [{ text: MINOR_BLOCK_MSG }] } }] };
+          await writer0.write(encoder0.encode("data: " + JSON.stringify(json0) + "\n\n"));
+          await writer0.write(encoder0.encode("data: [DONE]\n\n"));
+          try { await writer0.close(); } catch(e) {}
+        })();
+        return new Response(ts0.readable, {
+          status: 200,
+          headers: corsHeaders({
+            "Content-Type": "text/event-stream; charset=utf-8",
+            "Cache-Control": "no-cache, no-transform",
+            "X-SimplifAI-API": "gemini-proxy",
+          }),
+        });
+      }
     }
 
     var maxTokens = clamp(body && body.maxTokens, 512, 20000, 3500);
