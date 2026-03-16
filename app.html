@@ -965,9 +965,9 @@
       /* Blocco contenuti per minorenni */
       if(userIsMinor && ADULT_RE.test(q.value)){
         responseEl.innerHTML = DOMPurify.sanitize(marked.parse(
-          "## Contenuto non disponibile\n\n" +
-          "Questo argomento non è accessibile per gli account under 18. " +
-          "Se hai domande, puoi contattarci all'indirizzo **info@simplif-ai.it**."
+          "## Mi dispiace, non posso aiutarti su questo 🙁\n\n" +
+          "Purtroppo questo argomento non può essere trattato con il tuo account. " +
+          "Se pensi ci sia un errore o hai bisogno di aiuto, scrivici a **info@simplif-ai.it**."
         ));
         responseEl.closest?.(".section")?.style && (responseEl.closest(".section").style.display = "");
         setStatus("", false);

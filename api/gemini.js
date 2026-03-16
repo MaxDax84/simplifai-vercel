@@ -29,7 +29,7 @@ function clamp(n, min, max, fallback) {
 
 var ADULT_RE = /\b(porno|pornografi[a-z]*|sess(?:o|uale|ualit[aà])|rapporto\s+sessuale|rapporti\s+sessuali|orgasmo|masturbazion[a-z]*|masturbars[a-z]*|eiaculazion[a-z]*|pene\b|vagina|clitoride|vulva|erezione|genitali|prostituzion[a-z]*|prostitut[oa]|escort|bordello|squillo|stupro|violenza\s+sessuale|nudit[aà]|erotic[oa]|bdsm|bondage|feticismo|intercourse|porn\b|xxx)\b/i;
 
-var MINOR_BLOCK_MSG = "## Contenuto non disponibile\n\nQuesto argomento non è accessibile per gli account under 18.\nSe hai domande puoi contattarci all'indirizzo info@simplif-ai.it.";
+var MINOR_BLOCK_MSG = "## Mi dispiace, non posso aiutarti su questo 🙁\n\nPurtroppo questo argomento non può essere trattato con il tuo account.\nSe pensi ci sia un errore o hai bisogno di aiuto, scrivici a info@simplif-ai.it.";
 
 function buildPrompt(query, targetPrompt, mode, previousText, maxChars) {
   var safeMode = mode === "continue" ? "continue" : "start";
