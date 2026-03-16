@@ -16,123 +16,208 @@
   </script>
 
   <style>
+    /* ── Hero intro ── */
+    .spieg-hero {
+      background: linear-gradient(135deg, rgba(124,92,255,.15) 0%, rgba(38,198,255,.08) 100%);
+      border: 1px solid rgba(124,92,255,.2);
+      border-radius: 20px;
+      padding: 28px 28px 24px;
+      margin-bottom: 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+    }
+    .spieg-hero h2 {
+      font-size: 22px; font-weight: 900; margin: 0 0 6px;
+    }
+    .spieg-hero p {
+      color: var(--muted); font-size: 14px; margin: 0;
+    }
+    .spieg-count {
+      font-size: 36px; font-weight: 900;
+      background: linear-gradient(135deg, #7c5cff, #26c6ff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      white-space: nowrap;
+      line-height: 1;
+    }
+    .spieg-count span {
+      display: block; font-size: 12px; font-weight: 600;
+      color: var(--muted); -webkit-text-fill-color: var(--muted);
+      margin-top: 4px; text-align: center;
+    }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .filter-pill {
+      padding: 6px 14px; border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--muted); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: .15s; user-select: none;
+    }
+    .filter-pill:hover { background: rgba(255,255,255,.07); }
+    .filter-pill.active {
+      border-color: rgba(124,92,255,.6);
+      background: rgba(124,92,255,.18);
+      color: var(--text);
+    }
+
+    /* ── Cards ── */
     .spieg-list { display: flex; flex-direction: column; gap: 10px; }
 
     .spieg-card {
       background: rgba(255,255,255,.03);
       border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-color, rgba(124,92,255,.5));
       border-radius: 14px;
-      padding: 14px 16px;
+      padding: 16px 18px;
       cursor: pointer;
-      transition: border-color .15s, background .15s;
-    }
-    .spieg-card:hover {
-      border-color: rgba(124,92,255,.45);
-      background: rgba(124,92,255,.06);
-    }
-
-    .spieg-query {
-      font-size: 15px; font-weight: 600;
-      line-height: 1.4; word-break: break-word;
-      margin-bottom: 10px;
-    }
-
-    .spieg-meta {
-      display: flex; flex-wrap: wrap; gap: 6px;
+      transition: border-color .15s, background .15s, transform .12s;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 4px 12px;
       align-items: center;
     }
+    .spieg-card:hover {
+      background: rgba(124,92,255,.06);
+      transform: translateY(-1px);
+    }
+    .spieg-card-main { min-width: 0; }
 
+    .spieg-query {
+      font-size: 15px; font-weight: 700;
+      line-height: 1.4; word-break: break-word;
+      margin-bottom: 6px;
+    }
+    .spieg-preview {
+      font-size: 13px; color: var(--muted);
+      line-height: 1.5; margin-bottom: 10px;
+      display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .spieg-meta {
+      display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+    }
+    .spieg-arrow {
+      color: var(--muted); font-size: 18px;
+      transition: transform .15s, color .15s;
+      flex-shrink: 0;
+    }
+    .spieg-card:hover .spieg-arrow {
+      transform: translateX(3px);
+      color: var(--text);
+    }
+
+    /* ── Badges ── */
     .badge {
       display: inline-flex; align-items: center; gap: 4px;
       padding: 3px 9px; border-radius: 999px;
       font-size: 12px; font-weight: 600;
       border: 1px solid var(--border);
-      background: rgba(124,92,255,.12);
+    }
+    .badge-target {
+      background: rgba(var(--badge-rgb, 124,92,255), .14);
+      border-color: rgba(var(--badge-rgb, 124,92,255), .3);
       color: var(--text);
     }
-    .badge-len  { background: rgba(38,198,255,.10); }
-    .badge-date { background: transparent; color: var(--muted); font-weight: 400; border-color: transparent; }
+    .badge-len  {
+      background: rgba(38,198,255,.10);
+      border-color: rgba(38,198,255,.25);
+      color: var(--text);
+    }
+    .badge-date {
+      background: transparent; border-color: transparent;
+      color: var(--muted); font-weight: 400;
+    }
 
-    /* Modal */
+    /* ── Modal ── */
     dialog.spieg-modal {
-      background: var(--card-bg, #1a1a2e);
+      background: var(--bg, #0f0f1a);
       border: 1px solid var(--border);
-      border-radius: 20px;
+      border-radius: 22px;
       padding: 0;
-      width: min(720px, 94vw);
-      max-height: 88vh;
+      width: min(740px, 95vw);
+      max-height: 90vh;
       overflow: hidden;
       display: flex; flex-direction: column;
       color: var(--text);
+      box-shadow: 0 24px 80px rgba(0,0,0,.5);
     }
     dialog.spieg-modal::backdrop {
-      background: rgba(0,0,0,.65);
-      backdrop-filter: blur(4px);
+      background: rgba(0,0,0,.7);
+      backdrop-filter: blur(6px);
     }
     .modal-header {
-      padding: 20px 22px 16px;
+      padding: 22px 24px 18px;
       border-bottom: 1px solid var(--border);
-      display: flex; align-items: flex-start; gap: 12px;
+      background: linear-gradient(135deg, rgba(124,92,255,.08), rgba(38,198,255,.04));
     }
-    .modal-header-text { flex: 1; }
+    .modal-header-top {
+      display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px;
+    }
     .modal-question {
-      font-size: 16px; font-weight: 700;
-      line-height: 1.4; margin: 0 0 8px;
-      word-break: break-word;
+      font-size: 17px; font-weight: 800;
+      line-height: 1.4; margin: 0;
+      word-break: break-word; flex: 1;
     }
     .modal-close {
-      background: none; border: none;
-      color: var(--muted); font-size: 22px;
-      cursor: pointer; padding: 0 4px; line-height: 1;
-      flex-shrink: 0; margin-top: -2px;
+      background: rgba(255,255,255,.07); border: 1px solid var(--border);
+      color: var(--muted); font-size: 16px;
+      cursor: pointer; padding: 4px 9px;
+      border-radius: 8px; line-height: 1;
+      flex-shrink: 0; transition: .15s;
     }
-    .modal-close:hover { color: var(--text); }
+    .modal-close:hover { background: rgba(255,255,255,.12); color: var(--text); }
     .modal-body {
-      padding: 20px 22px;
-      overflow-y: auto;
-      flex: 1;
+      padding: 22px 24px;
+      overflow-y: auto; flex: 1;
+      font-size: 15px; line-height: 1.7;
     }
-    /* Markdown response styling inside modal */
-    .modal-body h1,.modal-body h2,.modal-body h3 {
-      margin: 1em 0 .4em; font-weight: 700;
-    }
+    .modal-body h1,.modal-body h2,.modal-body h3 { margin: 1.1em 0 .4em; font-weight: 700; }
     .modal-body h2 { font-size: 17px; }
     .modal-body h3 { font-size: 15px; }
-    .modal-body p  { margin: 0 0 .8em; line-height: 1.65; }
-    .modal-body ul,.modal-body ol { padding-left: 20px; margin: 0 0 .8em; }
-    .modal-body li { margin-bottom: .3em; line-height: 1.55; }
+    .modal-body p  { margin: 0 0 .85em; }
+    .modal-body ul,.modal-body ol { padding-left: 22px; margin: 0 0 .85em; }
+    .modal-body li { margin-bottom: .35em; }
     .modal-body code {
-      background: rgba(255,255,255,.08);
-      padding: 1px 5px; border-radius: 4px; font-size: .9em;
+      background: rgba(255,255,255,.08); padding: 2px 6px;
+      border-radius: 5px; font-size: .88em;
     }
     .modal-body strong { font-weight: 700; }
+    .modal-footer {
+      padding: 14px 24px;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    }
 
-    /* Skeleton */
+    /* ── Skeleton ── */
     .skeleton-card {
       background: rgba(255,255,255,.03);
       border: 1px solid var(--border);
-      border-radius: 14px; padding: 14px 16px;
+      border-radius: 14px; padding: 16px 18px;
       animation: pulse 1.4s ease-in-out infinite;
     }
     .sk-line {
-      border-radius: 6px;
-      background: rgba(255,255,255,.07);
+      border-radius: 6px; background: rgba(255,255,255,.07);
       height: 13px; margin-bottom: 9px;
     }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
 
     .empty-state {
-      text-align: center; padding: 50px 20px;
-      color: var(--muted);
+      text-align: center; padding: 50px 20px; color: var(--muted);
     }
     .empty-state .empty-icon { font-size: 44px; margin-bottom: 14px; }
     .empty-state p { font-size: 15px; margin: 0 0 18px; }
+    .load-more-wrap { text-align: center; margin-top: 18px; }
 
-    .load-more-wrap { text-align: center; margin-top: 16px; }
-
-    @media(max-width:480px){
+    @media(max-width:520px){
       .spieg-query { font-size: 14px; }
       .modal-question { font-size: 15px; }
+      .spieg-hero { padding: 20px; }
+      .spieg-hero h2 { font-size: 18px; }
     }
   </style>
 </head>
@@ -146,7 +231,6 @@
           <span>Concetti complessi spiegati in modo semplice. Scegli tu quanto.</span>
         </div>
       </div>
-
       <nav id="mainNav">
         <a href="/index.html" data-nav="home">Home</a>
         <a href="/app.html" data-nav="app">Chiedimi qualcosa</a>
@@ -155,7 +239,6 @@
         <a href="/profilo.html" data-nav="profile">Profilo</a>
         <a href="/spiegazioni.html" data-nav="spiegazioni">Spiegazioni</a>
       </nav>
-
       <div style="display:flex;align-items:center;gap:8px;">
         <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema"><span class="icon-sun">☀️</span><span class="icon-moon">🌙</span></button>
         <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
@@ -173,36 +256,58 @@
       <a href="/spiegazioni.html">Spiegazioni</a>
     </div>
 
-    <div style="margin-top:28px; padding-bottom:60px;">
+    <div style="margin-top:24px; padding-bottom:60px;">
+
+      <!-- Hero -->
+      <div class="spieg-hero">
+        <div>
+          <h2>📚 Spiegazioni della community</h2>
+          <p>Esplora le risposte generate dagli utenti.<br>Clicca su una domanda per leggere la risposta completa.</p>
+        </div>
+        <div class="spieg-count" id="totalCount">—<span>spiegazioni</span></div>
+      </div>
+
+      <!-- Filtri target -->
+      <div class="filter-bar" id="filterBar">
+        <div class="filter-pill active" data-filter="">Tutte</div>
+        <div class="filter-pill" data-filter="Bambino">🧒 Bambino</div>
+        <div class="filter-pill" data-filter="Ragazzo">👦 Ragazzo</div>
+        <div class="filter-pill" data-filter="Studente universitario">🎓 Studente</div>
+        <div class="filter-pill" data-filter="Adulto">👤 Adulto</div>
+        <div class="filter-pill" data-filter="Esperto">🧠 Esperto</div>
+        <div class="filter-pill" data-filter="Scienziato">🧪 Scienziato</div>
+      </div>
+
       <div class="card">
         <div class="card-inner">
-          <div class="section-title">📚 Spiegazioni della community</div>
-          <p style="color:var(--muted);font-size:14px;margin:0 0 20px;">Esplora le risposte generate dagli utenti. Clicca su una domanda per leggere la risposta completa.</p>
-
           <div id="listWrap" class="spieg-list">
-            <div class="skeleton-card" id="sk1"><div class="sk-line" style="width:72%"></div><div class="sk-line" style="width:42%"></div></div>
-            <div class="skeleton-card" id="sk2"><div class="sk-line" style="width:58%"></div><div class="sk-line" style="width:38%"></div></div>
-            <div class="skeleton-card" id="sk3"><div class="sk-line" style="width:80%"></div><div class="sk-line" style="width:48%"></div></div>
+            <div class="skeleton-card" id="sk1"><div class="sk-line" style="width:72%"></div><div class="sk-line" style="width:90%"></div><div class="sk-line" style="width:42%"></div></div>
+            <div class="skeleton-card" id="sk2"><div class="sk-line" style="width:58%"></div><div class="sk-line" style="width:85%"></div><div class="sk-line" style="width:38%"></div></div>
+            <div class="skeleton-card" id="sk3"><div class="sk-line" style="width:80%"></div><div class="sk-line" style="width:75%"></div><div class="sk-line" style="width:48%"></div></div>
           </div>
-
           <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
             <button class="btn" id="loadMoreBtn" type="button">Carica altro</button>
           </div>
         </div>
       </div>
+
     </div>
   </div>
 
   <!-- Modal risposta -->
   <dialog class="spieg-modal" id="spiegModal">
     <div class="modal-header">
-      <div class="modal-header-text">
+      <div class="modal-header-top">
         <p class="modal-question" id="modalQuestion"></p>
-        <div class="spieg-meta" id="modalMeta"></div>
+        <button class="modal-close" id="modalClose" aria-label="Chiudi">✕</button>
       </div>
-      <button class="modal-close" id="modalClose" aria-label="Chiudi">✕</button>
+      <div class="spieg-meta" id="modalMeta"></div>
     </div>
     <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <span id="modalChars" style="color:var(--muted);font-size:13px;"></span>
+      <button class="btn" id="modalCopy" type="button">⧉ Copia risposta</button>
+    </div>
   </dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -216,17 +321,35 @@
 
     const PAGE_SIZE = 20;
     let offset = 0;
+    let activeFilter = '';
+    let currentModalText = '';
 
-    const listWrap    = document.getElementById('listWrap');
+    const listWrap     = document.getElementById('listWrap');
     const loadMoreWrap = document.getElementById('loadMoreWrap');
     const loadMoreBtn  = document.getElementById('loadMoreBtn');
+    const totalCountEl = document.getElementById('totalCount');
     const modal        = document.getElementById('spiegModal');
     const modalClose   = document.getElementById('modalClose');
     const modalQuestion = document.getElementById('modalQuestion');
     const modalMeta    = document.getElementById('modalMeta');
     const modalBody    = document.getElementById('modalBody');
+    const modalChars   = document.getElementById('modalChars');
+    const modalCopy    = document.getElementById('modalCopy');
 
     const LENGTH_LABELS = { breve: 'Breve', medio: 'Medio', lungo: 'Lungo' };
+
+    /* Colore accent per target */
+    const TARGET_COLORS = {
+      'Bambino':                  { rgb: '255,159,67',  hex: '#ff9f43' },
+      'Ragazzo':                  { rgb: '46,204,113',  hex: '#2ecc71' },
+      'Studente universitario':   { rgb: '38,198,255',  hex: '#26c6ff' },
+      'Adulto':                   { rgb: '124,92,255',  hex: '#7c5cff' },
+      'Esperto':                  { rgb: '255,107,107', hex: '#ff6b6b' },
+      'Scienziato':               { rgb: '0,210,211',   hex: '#00d2d3' },
+    };
+    function targetColor(label) {
+      return TARGET_COLORS[label] || { rgb: '124,92,255', hex: '#7c5cff' };
+    }
 
     function formatDate(isoStr) {
       const d = new Date(isoStr);
@@ -241,58 +364,91 @@
       return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
+    function stripMd(text) {
+      return String(text || '')
+        .replace(/#+\s/g, '').replace(/\*{1,2}([^*]+)\*{1,2}/g, '$1')
+        .replace(/_{1,2}([^_]+)_{1,2}/g, '$1').replace(/`[^`]+`/g, '')
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/\n+/g, ' ').trim();
+    }
+
     function metaHtml(row) {
+      const c = targetColor(row.target_label);
       const lenLabel = LENGTH_LABELS[row.length_key] || row.length_key || '';
       let h = '';
-      if (row.target_label) h += `<span class="badge">${escHtml(row.target_icon)} ${escHtml(row.target_label)}</span>`;
+      if (row.target_label) h += `<span class="badge badge-target" style="--badge-rgb:${c.rgb}">${escHtml(row.target_icon)} ${escHtml(row.target_label)}</span>`;
       if (lenLabel)         h += `<span class="badge badge-len">${escHtml(lenLabel)}</span>`;
       h += `<span class="badge badge-date">${formatDate(row.created_at)}</span>`;
       return h;
     }
 
     function openModal(row) {
+      currentModalText = row.response_text || '';
       modalQuestion.textContent = row.query;
       modalMeta.innerHTML = metaHtml(row);
-      modalBody.innerHTML = DOMPurify.sanitize(marked.parse(row.response_text || ''));
+      modalBody.innerHTML = DOMPurify.sanitize(marked.parse(currentModalText));
+      const words = currentModalText.split(/\s+/).filter(Boolean).length;
+      modalChars.textContent = `~${words} parole`;
+      modalCopy.textContent = '⧉ Copia risposta';
       modal.showModal();
+      modalBody.scrollTop = 0;
     }
 
     modalClose.addEventListener('click', () => modal.close());
     modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
+    modalCopy.addEventListener('click', () => {
+      navigator.clipboard.writeText(currentModalText).then(() => {
+        modalCopy.textContent = '✓ Copiato!';
+        setTimeout(() => { modalCopy.textContent = '⧉ Copia risposta'; }, 2000);
+      });
+    });
 
     function removeSkeletons() {
       ['sk1','sk2','sk3'].forEach(id => { const el = document.getElementById(id); if (el) el.remove(); });
     }
 
     function renderCard(row) {
+      const c = targetColor(row.target_label);
+      const preview = stripMd(row.response_text).slice(0, 140);
       const card = document.createElement('div');
       card.className = 'spieg-card';
+      card.style.setProperty('--accent-color', c.hex);
       card.innerHTML = `
-        <div class="spieg-query">${escHtml(row.query)}</div>
-        <div class="spieg-meta">${metaHtml(row)}</div>
+        <div class="spieg-card-main">
+          <div class="spieg-query">${escHtml(row.query)}</div>
+          ${preview ? `<div class="spieg-preview">${escHtml(preview)}…</div>` : ''}
+          <div class="spieg-meta">${metaHtml(row)}</div>
+        </div>
+        <div class="spieg-arrow">›</div>
       `;
       card.addEventListener('click', () => openModal(row));
       return card;
     }
 
-    async function loadPage() {
-      const { data, error } = await sb
-        .from('spiegazioni')
+    async function loadPage(reset) {
+      if (reset) {
+        offset = 0;
+        listWrap.innerHTML = '';
+      }
+
+      let q = sb.from('spiegazioni')
         .select('id, query, target_label, target_icon, length_key, response_chars, response_text, created_at')
         .order('created_at', { ascending: false })
         .range(offset, offset + PAGE_SIZE - 1);
 
-      removeSkeletons();
+      if (activeFilter) q = q.eq('target_label', activeFilter);
 
+      const { data, error } = await q;
+      removeSkeletons();
       if (error) { console.error(error); return; }
 
       if (offset === 0 && (!data || data.length === 0)) {
         listWrap.innerHTML = `
           <div class="empty-state">
             <div class="empty-icon">📭</div>
-            <p>Nessuna spiegazione ancora. Sii il primo a generarne una!</p>
+            <p>Nessuna spiegazione ancora. Sii il primo!</p>
             <a href="/app.html" class="btn btn-primary">Genera una risposta</a>
           </div>`;
+        loadMoreWrap.style.display = 'none';
         return;
       }
 
@@ -301,11 +457,29 @@
       loadMoreWrap.style.display = data.length === PAGE_SIZE ? '' : 'none';
     }
 
-    loadPage();
+    /* Conta totale */
+    sb.from('spiegazioni').select('id', { count: 'exact', head: true }).then(({ count }) => {
+      if (count !== null) {
+        const el = document.getElementById('totalCount');
+        el.innerHTML = `${count.toLocaleString('it-IT')}<span>spiegazioni</span>`;
+      }
+    });
+
+    /* Filtri */
+    document.getElementById('filterBar').addEventListener('click', e => {
+      const pill = e.target.closest('.filter-pill');
+      if (!pill) return;
+      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      activeFilter = pill.dataset.filter;
+      loadPage(true);
+    });
+
+    loadPage(false);
 
     loadMoreBtn.addEventListener('click', function() {
       loadMoreBtn.disabled = true;
-      loadPage().then(() => { loadMoreBtn.disabled = false; });
+      loadPage(false).then(() => { loadMoreBtn.disabled = false; });
     });
   </script>
 </body>
