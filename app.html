@@ -1016,10 +1016,10 @@
         updateButtons();
 
         /* Auto-save in spiegazioni — gira sempre se c'è testo */
-        console.log('[spieg] finally reached, accumulatedText length:', accumulatedText.length, 'userId:', currentUserId);
+        console.error('[spieg] finally reached, accumulatedText length:', accumulatedText.length, 'userId:', currentUserId);
         if(accumulatedText.trim()){
           const tgt = TARGETS[selectedTargetIndex];
-          console.log('[spieg] inserting...', tgt?.label, selectedLenKey);
+          console.error('[spieg] inserting...', tgt?.label, selectedLenKey);
           sb.from('spiegazioni').insert({
             user_id:        currentUserId || null,
             query:          q.value.trim().slice(0, 500),
