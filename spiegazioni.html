@@ -425,6 +425,7 @@
       if (activeFilter) q = q.eq('target_label', activeFilter);
 
       const { data, error } = await q;
+      console.error('[spieg page] rows:', data?.length, 'error:', error?.message, error?.code);
       removeSkeletons();
       if (error) { console.error(error); return; }
 
