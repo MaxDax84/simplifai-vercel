@@ -1016,10 +1016,8 @@
         updateButtons();
 
         /* Auto-save in spiegazioni — gira sempre se c'è testo */
-        console.error('[spieg] finally reached, accumulatedText length:', accumulatedText.length, 'userId:', currentUserId);
         if(accumulatedText.trim()){
           const tgt = TARGETS[selectedTargetIndex];
-          console.error('[spieg] inserting...', tgt?.label, selectedLenKey);
           sb.from('spiegazioni').insert({
             user_id:        currentUserId || null,
             query:          q.value.trim().slice(0, 500),
@@ -1028,10 +1026,7 @@
             length_key:     selectedLenKey,
             response_chars: accumulatedText.length,
             response_text:  accumulatedText,
-          }).then(({ data, error }) => {
-            if(error) console.error('spiegazioni insert error:', error.message, error.code, error.details);
-            else console.error('[spieg] insert OK, data:', JSON.stringify(data));
-          }).catch(err => console.error('spiegazioni insert REJECT:', err));
+          }).catch(function(){});
         }
       }
     }

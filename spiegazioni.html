@@ -301,7 +301,7 @@
   <script src="/shared.js?v=2" defer></script>
   <script>
     const SUPABASE_URL  = 'https://lmmiowagyqypdrdcemdo.supabase.co';
-    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIxMzMxMzMsImV4cCI6MjA1NzcwOTEzM30.KYSNqTlFfZhFYJLkKLOFElgfBr7GBNXR0wl6cXzRids';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc';
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false }
     });
@@ -425,7 +425,6 @@
       if (activeFilter) q = q.eq('target_label', activeFilter);
 
       const { data, error } = await q;
-      console.error('[spieg page] rows:', data?.length, 'error:', error?.message, error?.code);
       removeSkeletons();
       if (error) { console.error(error); return; }
 
