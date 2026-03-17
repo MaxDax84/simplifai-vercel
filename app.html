@@ -472,6 +472,7 @@
               </div>
 
               <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <button class="btn" id="stopBtn" type="button" style="display:none;border-color:rgba(255,107,107,.4);color:#ff6b6b;">⏹ Stop</button>
                 <button class="btn" id="copyBtn" type="button" disabled>⧉ Copia</button>
                 <button class="btn" id="saveBtn" type="button" disabled>☆ Salva</button>
               </div>
@@ -623,6 +624,7 @@
     let selectedLenKey = "";
     let accumulatedText = "";
     let isGenerating = false;
+    let activeController = null;
     
     /* DOM */
     const q = document.getElementById("query");
@@ -655,6 +657,7 @@
     const statusEl     = document.getElementById("status");
     const copyBtn      = document.getElementById("copyBtn");
     const saveBtn      = document.getElementById("saveBtn");
+    const stopBtn      = document.getElementById("stopBtn");
 
     const chipTarget = document.getElementById("chipTarget");
     const chipLen = document.getElementById("chipLen");
@@ -706,6 +709,7 @@
     }
 
     function updateButtons(){
+      stopBtn.style.display = isGenerating ? '' : 'none';
       copyBtn.disabled = isGenerating || !accumulatedText.trim();
       if(!isGenerating && accumulatedText.trim() && !saveBtn.dataset.saved) saveBtn.disabled = false;
       goLength.disabled = selectedTargetIndex < 0;
@@ -826,7 +830,8 @@
     
     // SSE robusto: eventi separati da riga vuota, multi data:, CRLF ok
     async function streamGemini(payload, onTextChunk){
-      const controller = new AbortController();
+      activeController = new AbortController();
+      const controller = activeController;
       const timeoutId  = setTimeout(() => controller.abort(), 60000); // 60s timeout
       let res;
       try {
@@ -1086,6 +1091,10 @@
     goAnswer.addEventListener("click", () => {
       scrollToSection(sec3, card3);
       run();
+    });
+
+    stopBtn.addEventListener("click", () => {
+      if(activeController) activeController.abort();
     });
 
     copyBtn.addEventListener("click", () => {

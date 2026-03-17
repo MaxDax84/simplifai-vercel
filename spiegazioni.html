@@ -33,9 +33,38 @@
       color: var(--muted); font-size: 14px; margin: 0;
     }
 
+    /* ── Search bar ── */
+    .search-wrap {
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .search-input {
+      width: 100%; box-sizing: border-box;
+      padding: 11px 16px 11px 42px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text); font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .search-input::placeholder { color: var(--muted); }
+    .search-input:focus {
+      border-color: rgba(124,92,255,.5);
+      box-shadow: 0 0 0 3px rgba(124,92,255,.12);
+    }
+    .search-icon {
+      position: absolute; left: 14px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted); font-size: 16px;
+      pointer-events: none;
+    }
+
     /* ── Filter bar ── */
     .filter-bar {
       display: flex; gap: 8px; flex-wrap: wrap;
+      justify-content: center;
       margin-bottom: 16px;
     }
     .filter-pill {
@@ -129,9 +158,11 @@
       width: min(740px, 95vw);
       max-height: 90vh;
       overflow: hidden;
-      display: flex; flex-direction: column;
       color: var(--text);
       box-shadow: 0 24px 80px rgba(0,0,0,.5);
+    }
+    dialog.spieg-modal[open] {
+      display: flex; flex-direction: column;
     }
     dialog.spieg-modal::backdrop {
       background: rgba(0,0,0,.7);
@@ -252,6 +283,12 @@
         <div id="totalCount" style="margin-top:18px; font-size:36px; font-weight:900; background:linear-gradient(135deg,#7c5cff,#26c6ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1;">—<span style="display:block; font-size:12px; font-weight:600; color:var(--muted); -webkit-text-fill-color:var(--muted); margin-top:5px;">spiegazioni generate</span></div>
       </div>
 
+      <!-- Ricerca -->
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" id="searchInput" type="search" placeholder="Cerca una parola nelle domande..." autocomplete="off" />
+      </div>
+
       <!-- Filtri target -->
       <div class="filter-bar" id="filterBar">
         <div class="filter-pill active" data-filter="">Tutte</div>
@@ -309,6 +346,8 @@
     const PAGE_SIZE = 20;
     let offset = 0;
     let activeFilter = '';
+    let searchQuery = '';
+    let searchTimer = null;
     let currentModalText = '';
 
     const listWrap     = document.getElementById('listWrap');
@@ -423,6 +462,7 @@
         .range(offset, offset + PAGE_SIZE - 1);
 
       if (activeFilter) q = q.eq('target_label', activeFilter);
+      if (searchQuery)  q = q.ilike('query', '%' + searchQuery + '%');
 
       const { data, error } = await q;
       removeSkeletons();
@@ -468,6 +508,14 @@
     loadMoreBtn.addEventListener('click', function() {
       loadMoreBtn.disabled = true;
       loadPage(false).then(() => { loadMoreBtn.disabled = false; });
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        searchQuery = this.value.trim();
+        loadPage(true);
+      }, 350);
     });
   </script>
 </body>
