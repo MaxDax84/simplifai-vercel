@@ -184,14 +184,18 @@
     .modal-close {
       background: rgba(255,255,255,.07); border: 1px solid var(--border);
       color: var(--muted); font-size: 16px;
-      cursor: pointer; padding: 4px 9px;
+      cursor: pointer; padding: 0;
       border-radius: 8px; line-height: 1;
       flex-shrink: 0; transition: .15s;
+      min-width: 44px; min-height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      touch-action: manipulation;
     }
     .modal-close:hover { background: rgba(255,255,255,.12); color: var(--text); }
     .modal-body {
       padding: 22px 24px;
       overflow-y: auto; flex: 1;
+      min-height: 0;
       font-size: 15px; line-height: 1.7;
     }
     .modal-body h1,.modal-body h2,.modal-body h3 { margin: 1.1em 0 .4em; font-weight: 700; }
@@ -236,6 +240,14 @@
       .modal-question { font-size: 15px; }
       .spieg-hero { padding: 20px; }
       .spieg-hero h2 { font-size: 18px; }
+      dialog.spieg-modal {
+        width: 100vw;
+        max-height: 88vh;
+        height: 88vh;
+        border-radius: 20px 20px 0 0;
+        margin: auto auto 0;
+        align-self: flex-end;
+      }
     }
   </style>
 </head>
@@ -420,6 +432,7 @@
     }
 
     modalClose.addEventListener('click', () => modal.close());
+    modalClose.addEventListener('touchend', (e) => { e.preventDefault(); modal.close(); });
     modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
     modalCopy.addEventListener('click', () => {
       navigator.clipboard.writeText(currentModalText).then(() => {
