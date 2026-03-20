@@ -473,7 +473,7 @@
 
               <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
                 <button class="btn" id="copyBtn" type="button" disabled>⧉ Copia</button>
-                <button class="btn" id="saveBtn" type="button" disabled>☆ Salva</button>
+                <button class="btn" id="saveBtn" type="button" style="display:none;">☆ Salva risposta</button>
               </div>
               <div style="margin-top:8px;">
                 <button class="btn" id="stopBtn" type="button" style="display:none;border-color:rgba(255,107,107,.4);color:#ff6b6b;">⏹ Ferma generazione</button>
@@ -713,7 +713,11 @@
     function updateButtons(){
       stopBtn.style.display = isGenerating ? '' : 'none';
       copyBtn.disabled = isGenerating || !accumulatedText.trim();
-      if(!isGenerating && accumulatedText.trim() && !saveBtn.dataset.saved) saveBtn.disabled = false;
+      if(!userIsAnon){
+        const hasText = !isGenerating && accumulatedText.trim();
+        saveBtn.style.display = hasText ? '' : 'none';
+        if(hasText && !saveBtn.dataset.saved) saveBtn.disabled = false;
+      }
       goLength.disabled = selectedTargetIndex < 0;
       const cost = computeCost();
       const canAfford = userCredits === null || userCredits >= cost;
