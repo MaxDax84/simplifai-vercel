@@ -1,10 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <defs>
-    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#7c5cff"/>
-      <stop offset="100%" stop-color="#26c6ff"/>
-    </linearGradient>
-  </defs>
-  <rect width="32" height="32" rx="8" fill="url(#g)"/>
-  <text x="16" y="22" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="900" font-size="18" fill="white">S</text>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="96" fill="#0F1530"/>
+
+  <!-- S, stessa geometria del logo esteso ma tratto piu spesso per leggibilita a piccole dimensioni -->
+  <path d="M 293.5 146.0 C 188.5 146.0, 188.5 238.4, 256.0 256.0 C 323.5 273.6, 323.5 366.0, 218.5 366.0"
+        fill="none" stroke="#4DD9F0" stroke-width="42" stroke-linecap="round"/>
+
+  <!-- Solo i 3 nodi principali, ingranditi -->
+  <circle cx="293.5" cy="146" r="17" fill="#7CE8FA"/>
+  <circle cx="256" cy="256" r="20" fill="#7CE8FA"/>
+  <circle cx="218.5" cy="366" r="17" fill="#7CE8FA"/>
 </svg>

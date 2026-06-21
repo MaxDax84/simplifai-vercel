@@ -1,4 +1,10 @@
+// NOTA: questo file usa Groq (llama-3.3-70b-versatile) ma mantiene il nome
+// "gemini.js" per non cambiare i riferimenti nell'HTML. Chiave env: GROQ_API_KEY.
+
 export const config = { runtime: "edge" };
+
+const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+const GROQ_MODEL = "llama-3.3-70b-versatile";
 
 function corsHeaders(extra) {
   extra = extra || {};
@@ -16,7 +22,7 @@ function jsonError(message, status, extra) {
     status: status,
     headers: corsHeaders(Object.assign({
       "Content-Type": "application/json; charset=utf-8",
-      "X-SimplifAI-API": "gemini-proxy",
+      "X-SimplifAI-API": "groq-proxy",
     }, extra)),
   });
 }
@@ -76,21 +82,24 @@ function buildPrompt(query, targetPrompt, mode, previousText, maxChars) {
   ].join("\n");
 }
 
-async function callGeminiSSE(apiKey, prompt, maxTokens) {
-  var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent" +
-    "?alt=sse&key=" + apiKey;
-
-  return fetch(url, {
+async function callGroqSSE(apiKey, prompt, maxTokens) {
+  return fetch(GROQ_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + apiKey,
+    },
     body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.6, maxOutputTokens: maxTokens },
+      model: GROQ_MODEL,
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.6,
+      max_tokens: maxTokens,
+      stream: true,
     }),
   });
 }
 
-async function callGeminiWithRetry(apiKey, prompt, maxTokens) {
+async function callGroqWithRetry(apiKey, prompt, maxTokens) {
   var MAX_ATTEMPTS = 3;
   var lastError = new Error("Errore sconosciuto");
 
@@ -99,7 +108,7 @@ async function callGeminiWithRetry(apiKey, prompt, maxTokens) {
       await new Promise(function(resolve) { setTimeout(resolve, 2500 * attempt); });
     }
 
-    var res = await callGeminiSSE(apiKey, prompt, maxTokens);
+    var res = await callGroqSSE(apiKey, prompt, maxTokens);
     if (res.ok) return res;
 
     var errBody = "";
@@ -116,7 +125,7 @@ async function callGeminiWithRetry(apiKey, prompt, maxTokens) {
 
     var lower = msg.toLowerCase();
     var retryable = res.status === 429 || res.status >= 500 ||
-      lower.indexOf("high demand") !== -1 ||
+      lower.indexOf("rate limit") !== -1 ||
       lower.indexOf("overloaded") !== -1 ||
       lower.indexOf("quota") !== -1;
 
@@ -128,15 +137,15 @@ async function callGeminiWithRetry(apiKey, prompt, maxTokens) {
 
 export default async function handler(req) {
   if (req.method === "OPTIONS") {
-    return new Response(null, { status: 200, headers: corsHeaders({ "X-SimplifAI-API": "gemini-proxy" }) });
+    return new Response(null, { status: 200, headers: corsHeaders({ "X-SimplifAI-API": "groq-proxy" }) });
   }
   if (req.method !== "POST") {
     return jsonError("Metodo non consentito. Usa POST.", 405);
   }
 
   try {
-    var apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) return jsonError("GEMINI_API_KEY mancante su Vercel.", 500);
+    var apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) return jsonError("GROQ_API_KEY mancante su Vercel.", 500);
 
     var body;
     try { body = await req.json(); } catch(e) { return jsonError("Body JSON non valido.", 400); }
@@ -148,7 +157,7 @@ export default async function handler(req) {
 
     if (!query || !targetPrompt) return jsonError("Parametri mancanti: query/targetPrompt.", 400);
 
-    var maxTokens = clamp(body && body.maxTokens, 512, 20000, 3500);
+    var maxTokens = clamp(body && body.maxTokens, 512, 8000, 3500);
     var maxChars = clamp(body && body.maxChars, 500, 50000, 6000);
 
     var encoder = new TextEncoder();
@@ -161,6 +170,7 @@ export default async function handler(req) {
     async function emitText(text) {
       var t = String(text || "");
       if (!t) return;
+      // Emette nel formato Gemini che app.html si aspetta
       var json = { candidates: [{ content: { parts: [{ text: t }] } }] };
       await writer.write(encoder.encode("data: " + JSON.stringify(json) + "\n\n"));
     }
@@ -172,7 +182,7 @@ export default async function handler(req) {
 
     async function runRound(roundMode, currentText) {
       var prompt = buildPrompt(query, targetPrompt, roundMode, currentText, maxChars);
-      var upstream = await callGeminiWithRetry(apiKey, prompt, maxTokens);
+      var upstream = await callGroqWithRetry(apiKey, prompt, maxTokens);
 
       if (!upstream.body) throw new Error("Upstream body nullo.");
 
@@ -182,25 +192,22 @@ export default async function handler(req) {
 
       async function processBlock(block) {
         var lines = block.split(/\r?\n/);
-        var dataLines = lines.filter(function(l) { return l.startsWith("data:"); })
-                             .map(function(l) { return l.slice(5).trim(); });
-        if (!dataLines.length) return;
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i];
+          if (!line.startsWith("data:")) continue;
+          var data = line.slice(5).trim();
+          if (!data || data === "[DONE]") continue;
 
-        var data = dataLines.join("\n");
-        if (!data || data === "[DONE]") return;
+          var parsed;
+          try { parsed = JSON.parse(data); } catch(e) { continue; }
 
-        var parsed;
-        try { parsed = JSON.parse(data); } catch(e) { return; }
+          var delta = parsed && parsed.choices && parsed.choices[0] && parsed.choices[0].delta;
+          var chunk = (delta && delta.content) ? String(delta.content) : "";
+          if (!chunk) continue;
 
-        var candidates = parsed && parsed.candidates;
-        var parts = candidates && candidates[0] && candidates[0].content && candidates[0].content.parts;
-        if (!Array.isArray(parts)) return;
-
-        var chunk = parts.map(function(p) { return (p && p.text) ? String(p.text) : ""; }).join("");
-        if (!chunk) return;
-
-        roundText += chunk;
-        await emitText(chunk);
+          roundText += chunk;
+          await emitText(chunk);
+        }
       }
 
       while (true) {
@@ -236,7 +243,7 @@ export default async function handler(req) {
         "Content-Type": "text/event-stream; charset=utf-8",
         "Cache-Control": "no-cache, no-transform",
         "Connection": "keep-alive",
-        "X-SimplifAI-API": "gemini-proxy",
+        "X-SimplifAI-API": "groq-proxy",
       }),
     });
   } catch(e) {

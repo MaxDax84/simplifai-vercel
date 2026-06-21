@@ -1,0 +1,19 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="96" fill="#0F1530"/>
+
+  <!-- S costruita con due archi geometricamente corretti (cerchio superiore + cerchio inferiore) -->
+  <!-- S costruita con un'unica curva di Bezier cubica continua: geometricamente affidabile -->
+  <path d="M 293.5 146.0 C 188.5 146.0, 188.5 238.4, 256.0 256.0 C 323.5 273.6, 323.5 366.0, 218.5 366.0"
+        fill="none" stroke="#4DD9F0" stroke-width="34" stroke-linecap="round"/>
+
+  <!-- Nodi decorativi sui punti chiave del tracciato -->
+  <circle cx="293.5" cy="146" r="13" fill="#7CE8FA"/>
+  <circle cx="256" cy="256" r="16" fill="#7CE8FA"/>
+  <circle cx="218.5" cy="366" r="13" fill="#7CE8FA"/>
+
+  <!-- Nodi satellite, sparsi ma radi, eco del logo originale a rete -->
+  <circle cx="365" cy="175" r="7" fill="#7CE8FA" opacity="0.85"/>
+  <circle cx="150" cy="200" r="6" fill="#7CE8FA" opacity="0.85"/>
+  <circle cx="362" cy="340" r="6" fill="#7CE8FA" opacity="0.85"/>
+  <circle cx="148" cy="365" r="7" fill="#7CE8FA" opacity="0.85"/>
+</svg>
