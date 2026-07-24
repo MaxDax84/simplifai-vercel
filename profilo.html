@@ -900,7 +900,7 @@
           sb.from('profiles')
             .update({ data_nascita: metaNascita, updated_at: new Date().toISOString() })
             .eq('id', currentUserId)
-            .catch(function(){});
+            .then(function(){}, function(e){ console.error("Errore backfill data_nascita:", e); });
         }
       }
 

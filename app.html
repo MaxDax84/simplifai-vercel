@@ -1030,15 +1030,20 @@
         /* Auto-save in spiegazioni — gira sempre se c'è testo */
         if(accumulatedText.trim()){
           const tgt = TARGETS[selectedTargetIndex];
-          sb.from('spiegazioni').insert({
-            user_id:        currentUserId || null,
-            query:          q.value.trim().slice(0, 500),
-            target_label:   tgt ? tgt.label : '',
-            target_icon:    tgt ? tgt.icon  : '',
-            length_key:     selectedLenKey,
-            response_chars: accumulatedText.length,
-            response_text:  accumulatedText,
-          }).catch(function(){});
+          try {
+            const { error: saveErr } = await sb.from('spiegazioni').insert({
+              user_id:        currentUserId || null,
+              query:          q.value.trim().slice(0, 500),
+              target_label:   tgt ? tgt.label : '',
+              target_icon:    tgt ? tgt.icon  : '',
+              length_key:     selectedLenKey,
+              response_chars: accumulatedText.length,
+              response_text:  accumulatedText,
+            });
+            if(saveErr) console.error("Errore salvataggio spiegazioni:", saveErr.message);
+          } catch(saveEx) {
+            console.error("Errore salvataggio spiegazioni:", saveEx);
+          }
         }
       }
     }
