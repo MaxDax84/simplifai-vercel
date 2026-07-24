@@ -20,6 +20,20 @@
     })();
   </script>
 
+  <!-- Lingua: helper disponibili subito (il form JS li usa già durante il parsing) -->
+  <script>
+    window.saiLang = function () {
+      try { return localStorage.getItem('sai_lang') || 'it'; } catch (_) { return 'it'; }
+    };
+    window.saiT = function (key, fallback) {
+      if (window.saiLang() === 'en') {
+        var d = window.SAI_I18N_EN || {};
+        if (d[key] !== undefined) return d[key];
+      }
+      return fallback !== undefined ? fallback : key;
+    };
+  </script>
+
   <style>
     .auth-wrap{
       min-height: 80vh;
@@ -242,162 +256,163 @@
         </div>
       </a>
       <nav id="mainNav">
-        <a href="/index.html" data-nav="home">Home</a>
-        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
-        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
+        <a href="/index.html" data-nav="home" data-i18n="nav.home">Home</a>
+        <a href="/come-funziona.html" data-nav="how" data-i18n="nav.how">Come funziona</a>
+        <a href="/prezzi.html" data-nav="pricing" data-i18n="nav.pricing">Prezzi</a>
       </nav>
       <div style="display:flex;align-items:center;gap:8px;">
         <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema"><span class="icon-sun">☀️</span><span class="icon-moon">🌙</span></button>
-        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+        <button id="langBtn" class="theme-btn" type="button" aria-label="Cambia lingua / Switch language"><span class="icon-lang-it">🇮🇹</span><span class="icon-lang-en">🇬🇧</span></button>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu" data-i18n-aria="nav.menu">
           <span></span><span></span><span></span>
         </button>
       </div>
     </header>
 
     <div class="mobile-nav" id="mobileNav">
-      <a href="/index.html">Home</a>
-      <a href="/come-funziona.html">Come funziona</a>
-      <a href="/prezzi.html">Prezzi</a>
+      <a href="/index.html" data-i18n="nav.home">Home</a>
+      <a href="/come-funziona.html" data-i18n="nav.how">Come funziona</a>
+      <a href="/prezzi.html" data-i18n="nav.pricing">Prezzi</a>
     </div>
 
     <div class="auth-wrap">
       <div class="auth-card">
         <div class="auth-logo">
-          <h1>Benvenuto</h1>
-          <p>Accedi o crea il tuo account per usare Simplif-AI</p>
+          <h1 data-i18n="auth.welcome">Benvenuto</h1>
+          <p data-i18n="auth.welcomeSub">Accedi o crea il tuo account per usare Simplif-AI</p>
         </div>
 
         <div class="tabs">
-          <button class="tab-btn active" id="tabLogin" type="button">Accedi</button>
-          <button class="tab-btn" id="tabSignup" type="button">Registrati</button>
+          <button class="tab-btn active" id="tabLogin" type="button" data-i18n="auth.login">Accedi</button>
+          <button class="tab-btn" id="tabSignup" type="button" data-i18n="auth.signup">Registrati</button>
         </div>
 
         <!-- Login form -->
         <form id="loginForm">
           <div class="form-group">
-            <label for="loginEmail">Email</label>
+            <label for="loginEmail" data-i18n="auth.email">Email</label>
             <input type="email" id="loginEmail" placeholder="tua@email.com" required />
           </div>
           <div class="form-group">
-            <label for="loginPassword">Password</label>
+            <label for="loginPassword" data-i18n="auth.password">Password</label>
             <input type="password" id="loginPassword" placeholder="••••••••" required />
           </div>
-          <button type="button" class="forgot-link" id="forgotLink">Hai dimenticato la password?</button>
-          <button class="btn btn-primary btn-auth" type="submit" id="loginBtn">Accedi</button>
+          <button type="button" class="forgot-link" id="forgotLink" data-i18n="auth.forgotPassword">Hai dimenticato la password?</button>
+          <button class="btn btn-primary btn-auth" type="submit" id="loginBtn" data-i18n="auth.login">Accedi</button>
         </form>
 
         <!-- Reset password: inserisci email -->
         <form id="resetForm" style="display:none;">
           <div class="auth-logo" style="margin-bottom:16px;">
-            <h1 style="font-size:18px;">Reset password</h1>
-            <p>Inserisci la tua email: ti mandiamo un link per impostare una nuova password.</p>
+            <h1 style="font-size:18px;" data-i18n="auth.resetTitle">Reset password</h1>
+            <p data-i18n="auth.resetSub">Inserisci la tua email: ti mandiamo un link per impostare una nuova password.</p>
           </div>
           <div class="form-group">
-            <label for="resetEmail">Email account</label>
+            <label for="resetEmail" data-i18n="auth.accountEmail">Email account</label>
             <input type="email" id="resetEmail" placeholder="tua@email.com" required />
           </div>
-          <button class="btn btn-primary btn-auth" type="submit" id="resetBtn">Invia link di reset</button>
-          <button type="button" class="forgot-link" id="backToLogin" style="text-align:center; margin-top:10px;">← Torna al login</button>
+          <button class="btn btn-primary btn-auth" type="submit" id="resetBtn" data-i18n="auth.sendResetLink">Invia link di reset</button>
+          <button type="button" class="forgot-link" id="backToLogin" style="text-align:center; margin-top:10px;" data-i18n="auth.backToLogin">← Torna al login</button>
         </form>
 
         <!-- Nuova password (dopo click sul link nell'email) -->
         <form id="newPwdForm" style="display:none;">
           <div class="auth-logo" style="margin-bottom:16px;">
-            <h1 style="font-size:18px;">Nuova password</h1>
-            <p>Scegli la tua nuova password per accedere a Simplif-AI.</p>
+            <h1 style="font-size:18px;" data-i18n="auth.newPwdTitle">Nuova password</h1>
+            <p data-i18n="auth.newPwdSub">Scegli la tua nuova password per accedere a Simplif-AI.</p>
           </div>
           <div class="form-group">
-            <label for="newPwd1">Nuova password</label>
-            <input type="password" id="newPwd1" placeholder="Almeno 6 caratteri" required minlength="6" />
+            <label for="newPwd1" data-i18n="auth.newPassword">Nuova password</label>
+            <input type="password" id="newPwd1" placeholder="Almeno 6 caratteri" required minlength="6" data-i18n-placeholder="auth.atLeast6" />
           </div>
           <div class="form-group">
-            <label for="newPwd2">Conferma password</label>
-            <input type="password" id="newPwd2" placeholder="Ripeti la password" required minlength="6" />
+            <label for="newPwd2" data-i18n="auth.confirmPassword">Conferma password</label>
+            <input type="password" id="newPwd2" placeholder="Ripeti la password" required minlength="6" data-i18n-placeholder="auth.repeatPassword" />
           </div>
-          <button class="btn btn-primary btn-auth" type="submit" id="newPwdBtn">Salva nuova password</button>
+          <button class="btn btn-primary btn-auth" type="submit" id="newPwdBtn" data-i18n="auth.saveNewPassword">Salva nuova password</button>
         </form>
 
         <!-- Signup form (hidden by default) -->
         <form id="signupForm" style="display:none">
           <div class="form-row">
             <div class="form-group">
-              <label for="signupNome">Nome *</label>
+              <label for="signupNome" data-i18n="auth.firstName">Nome *</label>
               <input type="text" id="signupNome" placeholder="Mario" required autocomplete="given-name" />
             </div>
             <div class="form-group">
-              <label for="signupCognome">Cognome *</label>
+              <label for="signupCognome" data-i18n="auth.lastName">Cognome *</label>
               <input type="text" id="signupCognome" placeholder="Rossi" required autocomplete="family-name" />
             </div>
           </div>
           <div class="form-group">
-            <label for="signupEmail">Email *</label>
+            <label for="signupEmail" data-i18n="auth.emailRequired">Email *</label>
             <input type="email" id="signupEmail" placeholder="tua@email.com" required autocomplete="email" />
           </div>
           <div class="form-group">
-            <label for="signupPassword">Password *</label>
-            <input type="password" id="signupPassword" placeholder="Almeno 6 caratteri" required minlength="6" autocomplete="new-password" />
+            <label for="signupPassword" data-i18n="auth.passwordRequired">Password *</label>
+            <input type="password" id="signupPassword" placeholder="Almeno 6 caratteri" required minlength="6" autocomplete="new-password" data-i18n-placeholder="auth.atLeast6" />
           </div>
           <div class="form-group">
-            <label for="signupNascita">Data di nascita *</label>
+            <label for="signupNascita" data-i18n="auth.birthDate">Data di nascita *</label>
             <input type="date" id="signupNascita" autocomplete="bday" required />
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label for="signupCitta">Città</label>
+              <label for="signupCitta" data-i18n="auth.city">Città</label>
               <input type="text" id="signupCitta" placeholder="Milano" autocomplete="address-level2" />
             </div>
             <div class="form-group">
-              <label for="signupNazione">Nazione</label>
+              <label for="signupNazione" data-i18n="auth.country">Nazione</label>
               <select id="signupNazione" autocomplete="country">
-                <option value="">Seleziona...</option>
-                <option value="IT">🇮🇹 Italia</option>
-                <optgroup label="Europa">
-                  <option value="AT">Austria</option>
-                  <option value="BE">Belgio</option>
-                  <option value="CH">Svizzera</option>
-                  <option value="DE">Germania</option>
-                  <option value="ES">Spagna</option>
-                  <option value="FR">Francia</option>
-                  <option value="GB">Regno Unito</option>
-                  <option value="GR">Grecia</option>
-                  <option value="HR">Croazia</option>
-                  <option value="NL">Paesi Bassi</option>
-                  <option value="PL">Polonia</option>
-                  <option value="PT">Portogallo</option>
-                  <option value="RO">Romania</option>
-                  <option value="SE">Svezia</option>
-                  <option value="SM">San Marino</option>
-                  <option value="VA">Città del Vaticano</option>
+                <option value="" data-i18n="auth.select">Seleziona...</option>
+                <option value="IT" data-i18n="auth.country.IT">🇮🇹 Italia</option>
+                <optgroup label="Europa" data-i18n-label="auth.europe">
+                  <option value="AT" data-i18n="auth.country.AT">Austria</option>
+                  <option value="BE" data-i18n="auth.country.BE">Belgio</option>
+                  <option value="CH" data-i18n="auth.country.CH">Svizzera</option>
+                  <option value="DE" data-i18n="auth.country.DE">Germania</option>
+                  <option value="ES" data-i18n="auth.country.ES">Spagna</option>
+                  <option value="FR" data-i18n="auth.country.FR">Francia</option>
+                  <option value="GB" data-i18n="auth.country.GB">Regno Unito</option>
+                  <option value="GR" data-i18n="auth.country.GR">Grecia</option>
+                  <option value="HR" data-i18n="auth.country.HR">Croazia</option>
+                  <option value="NL" data-i18n="auth.country.NL">Paesi Bassi</option>
+                  <option value="PL" data-i18n="auth.country.PL">Polonia</option>
+                  <option value="PT" data-i18n="auth.country.PT">Portogallo</option>
+                  <option value="RO" data-i18n="auth.country.RO">Romania</option>
+                  <option value="SE" data-i18n="auth.country.SE">Svezia</option>
+                  <option value="SM" data-i18n="auth.country.SM">San Marino</option>
+                  <option value="VA" data-i18n="auth.country.VA">Città del Vaticano</option>
                 </optgroup>
-                <optgroup label="Resto del mondo">
-                  <option value="AR">Argentina</option>
-                  <option value="AU">Australia</option>
-                  <option value="BR">Brasile</option>
-                  <option value="CA">Canada</option>
-                  <option value="CN">Cina</option>
-                  <option value="IN">India</option>
-                  <option value="JP">Giappone</option>
-                  <option value="MX">Messico</option>
-                  <option value="US">Stati Uniti</option>
-                  <option value="ZZ">Altro</option>
+                <optgroup label="Resto del mondo" data-i18n-label="auth.restOfWorld">
+                  <option value="AR" data-i18n="auth.country.AR">Argentina</option>
+                  <option value="AU" data-i18n="auth.country.AU">Australia</option>
+                  <option value="BR" data-i18n="auth.country.BR">Brasile</option>
+                  <option value="CA" data-i18n="auth.country.CA">Canada</option>
+                  <option value="CN" data-i18n="auth.country.CN">Cina</option>
+                  <option value="IN" data-i18n="auth.country.IN">India</option>
+                  <option value="JP" data-i18n="auth.country.JP">Giappone</option>
+                  <option value="MX" data-i18n="auth.country.MX">Messico</option>
+                  <option value="US" data-i18n="auth.country.US">Stati Uniti</option>
+                  <option value="ZZ" data-i18n="auth.country.ZZ">Altro</option>
                 </optgroup>
               </select>
             </div>
           </div>
           <div class="form-group">
-            <label for="signupReferral">Come ci hai conosciuti?</label>
+            <label for="signupReferral" data-i18n="auth.referral">Come ci hai conosciuti?</label>
             <select id="signupReferral">
-              <option value="">Seleziona un'opzione</option>
-              <option value="google">Google / Motore di ricerca</option>
-              <option value="social">Social media (Instagram, TikTok, ecc.)</option>
-              <option value="passaparola">Passaparola / Amico o collega</option>
+              <option value="" data-i18n="auth.referral.select">Seleziona un'opzione</option>
+              <option value="google" data-i18n="auth.referral.google">Google / Motore di ricerca</option>
+              <option value="social" data-i18n="auth.referral.social">Social media (Instagram, TikTok, ecc.)</option>
+              <option value="passaparola" data-i18n="auth.referral.wom">Passaparola / Amico o collega</option>
               <option value="linkedin">LinkedIn</option>
               <option value="youtube">YouTube</option>
-              <option value="forum">Reddit / Forum / Community</option>
-              <option value="ads">Pubblicità online</option>
-              <option value="directory">Directory AI / Product Hunt</option>
-              <option value="scuola">Scuola / Università</option>
-              <option value="altro">Altro</option>
+              <option value="forum" data-i18n="auth.referral.forum">Reddit / Forum / Community</option>
+              <option value="ads" data-i18n="auth.referral.ads">Pubblicità online</option>
+              <option value="directory" data-i18n="auth.referral.directory">Directory AI / Product Hunt</option>
+              <option value="scuola" data-i18n="auth.referral.school">Scuola / Università</option>
+              <option value="altro" data-i18n="auth.referral.other">Altro</option>
             </select>
           </div>
           <div class="consent-group">
@@ -409,18 +424,18 @@
               and <a href="/dpa.html" target="_blank" rel="noopener">DPA</a>.
             </label>
           </div>
-          <button class="btn btn-primary btn-auth" type="submit" id="signupBtn">Crea account</button>
+          <button class="btn btn-primary btn-auth" type="submit" id="signupBtn" data-i18n="auth.createAccount">Crea account</button>
         </form>
 
-        <div class="divider">oppure</div>
+        <div class="divider" data-i18n="auth.or">oppure</div>
 
-        <button class="btn btn-magic" id="magicBtn" type="button">✉ Ricevi link magico via email</button>
+        <button class="btn btn-magic" id="magicBtn" type="button" data-i18n="auth.magicLink">✉ Ricevi link magico via email</button>
         <form id="magicForm" style="display:none; margin-top:12px;">
           <div class="form-group">
-            <label for="magicEmail">Email</label>
+            <label for="magicEmail" data-i18n="auth.email">Email</label>
             <input type="email" id="magicEmail" placeholder="tua@email.com" required />
           </div>
-          <button class="btn btn-primary btn-auth" type="submit">Invia link</button>
+          <button class="btn btn-primary btn-auth" type="submit" data-i18n="auth.sendLink">Invia link</button>
         </form>
 
         <div class="auth-msg" id="authMsg"></div>
@@ -430,6 +445,88 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script>
+    window.SAI_I18N_EN = {
+      'nav.home': 'Home', 'nav.how': 'How it works', 'nav.pricing': 'Pricing', 'nav.menu': 'Open menu',
+      'auth.welcome': 'Welcome',
+      'auth.welcomeSub': 'Sign in or create your account to use Simplif-AI',
+      'auth.login': 'Sign in',
+      'auth.signup': 'Sign up',
+      'auth.email': 'Email',
+      'auth.password': 'Password',
+      'auth.forgotPassword': 'Forgot your password?',
+      'auth.resetTitle': 'Reset password',
+      'auth.resetSub': "Enter your email: we'll send you a link to set a new password.",
+      'auth.accountEmail': 'Account email',
+      'auth.sendResetLink': 'Send reset link',
+      'auth.backToLogin': '← Back to login',
+      'auth.newPwdTitle': 'New password',
+      'auth.newPwdSub': 'Choose your new password to sign in to Simplif-AI.',
+      'auth.newPassword': 'New password',
+      'auth.confirmPassword': 'Confirm password',
+      'auth.atLeast6': 'At least 6 characters',
+      'auth.repeatPassword': 'Repeat the password',
+      'auth.saveNewPassword': 'Save new password',
+      'auth.firstName': 'First name *',
+      'auth.lastName': 'Last name *',
+      'auth.emailRequired': 'Email *',
+      'auth.passwordRequired': 'Password *',
+      'auth.birthDate': 'Date of birth *',
+      'auth.city': 'City',
+      'auth.country': 'Country',
+      'auth.select': 'Select...',
+      'auth.europe': 'Europe',
+      'auth.restOfWorld': 'Rest of the world',
+      'auth.country.IT': '🇮🇹 Italy', 'auth.country.AT': 'Austria', 'auth.country.BE': 'Belgium',
+      'auth.country.CH': 'Switzerland', 'auth.country.DE': 'Germany', 'auth.country.ES': 'Spain',
+      'auth.country.FR': 'France', 'auth.country.GB': 'United Kingdom', 'auth.country.GR': 'Greece',
+      'auth.country.HR': 'Croatia', 'auth.country.NL': 'Netherlands', 'auth.country.PL': 'Poland',
+      'auth.country.PT': 'Portugal', 'auth.country.RO': 'Romania', 'auth.country.SE': 'Sweden',
+      'auth.country.SM': 'San Marino', 'auth.country.VA': 'Vatican City',
+      'auth.country.AR': 'Argentina', 'auth.country.AU': 'Australia', 'auth.country.BR': 'Brazil',
+      'auth.country.CA': 'Canada', 'auth.country.CN': 'China', 'auth.country.IN': 'India',
+      'auth.country.JP': 'Japan', 'auth.country.MX': 'Mexico', 'auth.country.US': 'United States',
+      'auth.country.ZZ': 'Other',
+      'auth.referral': 'How did you hear about us?',
+      'auth.referral.select': 'Select an option',
+      'auth.referral.google': 'Google / Search engine',
+      'auth.referral.social': 'Social media (Instagram, TikTok, etc.)',
+      'auth.referral.wom': 'Word of mouth / Friend or colleague',
+      'auth.referral.forum': 'Reddit / Forum / Community',
+      'auth.referral.ads': 'Online ads',
+      'auth.referral.directory': 'AI directory / Product Hunt',
+      'auth.referral.school': 'School / University',
+      'auth.referral.other': 'Other',
+      'auth.createAccount': 'Create account',
+      'auth.or': 'or',
+      'auth.magicLink': '✉ Get a magic link by email',
+      'auth.sendLink': 'Send link',
+      'auth.err.name': 'Enter your first name.',
+      'auth.err.lastName': 'Enter your last name.',
+      'auth.err.email': 'Enter your email.',
+      'auth.err.emailInvalid': 'Invalid email address.',
+      'auth.err.password': 'Enter a password.',
+      'auth.err.passwordShort': 'At least 6 characters.',
+      'auth.err.birthDate': 'Enter your date of birth.',
+      'auth.msg.accountDeleted': "Your account has been permanently deleted. Sorry to see you go!",
+      'auth.msg.badCredentials': "Incorrect email or password. Try again or use 'Forgot your password?'.",
+      'auth.msg.emailNotConfirmed': 'Email not yet confirmed. Check your inbox and click the verification link.',
+      'auth.msg.tooManyRequests': 'Too many attempts. Please wait a few minutes before trying again.',
+      'auth.msg.userNotFound': 'No account found with this email. Try signing up.',
+      'auth.msg.loginSuccess': 'Signed in. Redirecting...',
+      'auth.msg.emailSendIssue': 'Temporary issue sending the confirmation email. Try again in a few minutes or use the magic link below.',
+      'auth.msg.alreadyRegistered': "This email is already registered. Try signing in or use 'Forgot your password?'.",
+      'auth.msg.passwordMin6': 'The password must be at least 6 characters.',
+      'auth.msg.welcomeCredits': 'Welcome! You received 10 free credits! Redirecting...',
+      'auth.msg.accountCreated': 'Account created! Check your email to confirm your account. ✉️ Also check your Spam folder if you don\'t see it within a few minutes.',
+      'auth.msg.signupSent': "Signup submitted. If you don't receive the email, check your spam folder.",
+      'auth.msg.emailServiceDown': 'The email service is temporarily unavailable. Try again in a few minutes or sign in with email and password.',
+      'auth.msg.linkSent': "Link sent! Check your email. Also check your Spam folder if you don't find it.",
+      'auth.msg.resetEmailSent': 'Email sent! Check your inbox (including spam) and click the link.',
+      'auth.msg.emailConfirmed': '✅ Email confirmed! We added 10 welcome credits to your account.',
+      'auth.msg.passwordMismatch': "Passwords don't match.",
+      'auth.msg.passwordUpdated': 'Password updated! Redirecting...'
+    };
+
     const SUPABASE_URL  = "https://lmmiowagyqypdrdcemdo.supabase.co";
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -450,7 +547,7 @@
       if(new URLSearchParams(location.search).get("deleted") === "1"){
         const msgEl = document.getElementById("authMsg");
         if(msgEl){
-          msgEl.textContent = "Il tuo account è stato eliminato definitivamente. Ci dispiace vederti andare!";
+          msgEl.textContent = window.saiT('auth.msg.accountDeleted', 'Il tuo account è stato eliminato definitivamente. Ci dispiace vederti andare!');
           msgEl.className = "auth-msg ok";
         }
       }
@@ -502,7 +599,7 @@
 
     /* Login */
     const loginBtn = document.getElementById("loginBtn");
-    loginBtn.dataset.label = "Accedi";
+    loginBtn.dataset.label = window.saiT('auth.login', 'Accedi');
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       setLoading(loginBtn, true);
@@ -514,18 +611,18 @@
         const raw = (error.message || "").toLowerCase();
         let msg = error.message;
         if (raw.includes("invalid login credentials") || raw.includes("invalid credentials")) {
-          msg = "Email o password non corretti. Riprova oppure usa 'Hai dimenticato la password?'.";
+          msg = window.saiT('auth.msg.badCredentials', "Email o password non corretti. Riprova oppure usa 'Hai dimenticato la password?'.");
         } else if (raw.includes("email not confirmed")) {
-          msg = "Email non ancora confermata. Controlla la tua casella e clicca il link di verifica.";
+          msg = window.saiT('auth.msg.emailNotConfirmed', 'Email non ancora confermata. Controlla la tua casella e clicca il link di verifica.');
         } else if (raw.includes("too many requests") || raw.includes("rate limit")) {
-          msg = "Troppi tentativi. Attendi qualche minuto prima di riprovare.";
+          msg = window.saiT('auth.msg.tooManyRequests', 'Troppi tentativi. Attendi qualche minuto prima di riprovare.');
         } else if (raw.includes("user not found") || raw.includes("no user")) {
-          msg = "Nessun account trovato con questa email. Prova a registrarti.";
+          msg = window.saiT('auth.msg.userNotFound', 'Nessun account trovato con questa email. Prova a registrarti.');
         }
         showMsg(msg, "error");
         setLoading(loginBtn, false);
       } else {
-        showMsg("Accesso effettuato. Reindirizzo...", "success");
+        showMsg(window.saiT('auth.msg.loginSuccess', 'Accesso effettuato. Reindirizzo...'), "success");
         setTimeout(() => window.location.replace("/app.html"), 800);
       }
     });
@@ -591,7 +688,7 @@
     }
 
     const signupBtn = document.getElementById("signupBtn");
-    signupBtn.dataset.label = "Crea account";
+    signupBtn.dataset.label = window.saiT('auth.createAccount', 'Crea account');
     signupForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       clearMsg();
@@ -608,13 +705,13 @@
 
       /* Validazione — mostra tutti gli errori insieme */
       var hasErrors = false;
-      if (!nome)    { setFieldErr("signupNome",     "Inserisci il tuo nome.");        hasErrors = true; }
-      if (!cognome) { setFieldErr("signupCognome",  "Inserisci il tuo cognome.");     hasErrors = true; }
-      if (!email)                                        { setFieldErr("signupEmail",    "Inserisci la tua email.");         hasErrors = true; }
-      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { setFieldErr("signupEmail", "Indirizzo email non valido.");  hasErrors = true; }
-      if (!password)              { setFieldErr("signupPassword", "Inserisci la password.");          hasErrors = true; }
-      else if (password.length < 6) { setFieldErr("signupPassword", "Almeno 6 caratteri.");           hasErrors = true; }
-      if (!nascita)               { setFieldErr("signupNascita",  "Inserisci la tua data di nascita."); hasErrors = true; }
+      if (!nome)    { setFieldErr("signupNome",     window.saiT('auth.err.name', 'Inserisci il tuo nome.'));        hasErrors = true; }
+      if (!cognome) { setFieldErr("signupCognome",  window.saiT('auth.err.lastName', 'Inserisci il tuo cognome.'));     hasErrors = true; }
+      if (!email)                                        { setFieldErr("signupEmail",    window.saiT('auth.err.email', 'Inserisci la tua email.'));         hasErrors = true; }
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { setFieldErr("signupEmail", window.saiT('auth.err.emailInvalid', 'Indirizzo email non valido.'));  hasErrors = true; }
+      if (!password)              { setFieldErr("signupPassword", window.saiT('auth.err.password', 'Inserisci la password.'));          hasErrors = true; }
+      else if (password.length < 6) { setFieldErr("signupPassword", window.saiT('auth.err.passwordShort', 'Almeno 6 caratteri.'));           hasErrors = true; }
+      if (!nascita)               { setFieldErr("signupNascita",  window.saiT('auth.err.birthDate', 'Inserisci la tua data di nascita.')); hasErrors = true; }
       if (!consentCheck.checked)  { setConsentErr(true);                                              hasErrors = true; }
       if (hasErrors) return;
 
@@ -639,14 +736,13 @@
             rawMsg.includes("email rate limit") ||
             rawMsg.includes("unable to send") ||
             rawMsg.includes("smtp")) {
-          friendlyMsg = "Problema temporaneo nell'invio dell'email di conferma. "
-                      + "Riprova tra qualche minuto oppure usa il link magico qui sotto.";
+          friendlyMsg = window.saiT('auth.msg.emailSendIssue', "Problema temporaneo nell'invio dell'email di conferma. Riprova tra qualche minuto oppure usa il link magico qui sotto.");
         } else if (rawMsg.includes("already registered") || rawMsg.includes("user already exists")) {
-          friendlyMsg = "Questa email è già registrata. Prova ad accedere o usa 'Hai dimenticato la password?'.";
+          friendlyMsg = window.saiT('auth.msg.alreadyRegistered', "Questa email è già registrata. Prova ad accedere o usa 'Hai dimenticato la password?'.");
         } else if (rawMsg.includes("invalid email")) {
-          friendlyMsg = "Indirizzo email non valido.";
+          friendlyMsg = window.saiT('auth.err.emailInvalid', 'Indirizzo email non valido.');
         } else if (rawMsg.includes("password")) {
-          friendlyMsg = "La password deve avere almeno 6 caratteri.";
+          friendlyMsg = window.saiT('auth.msg.passwordMin6', 'La password deve avere almeno 6 caratteri.');
         }
 
         showMsg(friendlyMsg, "error");
@@ -657,7 +753,7 @@
       /* Supabase con conferma email abilitata non restituisce errore per email duplicate:
        * restituisce un utente con identities vuoto. Intercettiamo questo caso. */
       if (signUpData?.user && Array.isArray(signUpData.user.identities) && signUpData.user.identities.length === 0) {
-        showMsg("Questa email è già registrata. Prova ad accedere o usa 'Hai dimenticato la password?'.", "error");
+        showMsg(window.saiT('auth.msg.alreadyRegistered', "Questa email è già registrata. Prova ad accedere o usa 'Hai dimenticato la password?'."), "error");
         setLoading(signupBtn, false);
         return;
       }
@@ -674,7 +770,7 @@
           { onConflict: 'id' }
         ).catch(function(e) { console.warn("profile upsert error:", e); });
         sendEmailFireAndForget("welcome", { credits: 10 });
-        showMsg("Benvenuto! Hai ricevuto 10 crediti gratuiti! Reindirizzo...", "success");
+        showMsg(window.saiT('auth.msg.welcomeCredits', 'Benvenuto! Hai ricevuto 10 crediti gratuiti! Reindirizzo...'), "success");
         setTimeout(() => window.location.replace("/app.html"), 1400);
 
       } else if (signUpData?.user?.id) {
@@ -686,10 +782,10 @@
          */
         localStorage.setItem('sai_pending_welcome', signUpData.user.id);
         localStorage.setItem('sai_pending_profile', JSON.stringify(profilePayload));
-        showMsg("Account creato! Controlla la tua email per confermare l'account. ✉️ Controlla anche nella cartella Spam se non la trovi entro qualche minuto.", "success");
+        showMsg(window.saiT('auth.msg.accountCreated', 'Account creato! Controlla la tua email per confermare l\'account. ✉️ Controlla anche nella cartella Spam se non la trovi entro qualche minuto.'), "success");
       } else {
         /* Risposta anomala (es. utente già registrato ma non confermato) */
-        showMsg("Registrazione inviata. Se non ricevi l'email, controlla la cartella spam.", "success");
+        showMsg(window.saiT('auth.msg.signupSent', 'Registrazione inviata. Se non ricevi l\'email, controlla la cartella spam.'), "success");
       }
 
       setLoading(signupBtn, false);
@@ -710,15 +806,14 @@
             rawMagicMsg.includes("email rate limit") ||
             rawMagicMsg.includes("unable to send") ||
             rawMagicMsg.includes("smtp")) {
-          friendlyMagicMsg = "Il servizio email è temporaneamente non disponibile. "
-                           + "Riprova tra qualche minuto o accedi con email e password.";
+          friendlyMagicMsg = window.saiT('auth.msg.emailServiceDown', 'Il servizio email è temporaneamente non disponibile. Riprova tra qualche minuto o accedi con email e password.');
         }
         showMsg(friendlyMagicMsg, "error");
       } else {
-        showMsg("Link inviato! Controlla la tua email. Controlla anche nella cartella Spam se non lo trovi.", "success");
+        showMsg(window.saiT('auth.msg.linkSent', 'Link inviato! Controlla la tua email. Controlla anche nella cartella Spam se non lo trovi.'), "success");
         magicForm.style.display = "none";
       }
-      btn.disabled = false; btn.textContent = "Invia link";
+      btn.disabled = false; btn.textContent = window.saiT('auth.sendLink', 'Invia link');
     });
 
     /* ── RESET PASSWORD ── */
@@ -754,7 +849,7 @@
 
     /* Invia email di reset */
     const resetBtn = document.getElementById("resetBtn");
-    resetBtn.dataset.label = "Invia link di reset";
+    resetBtn.dataset.label = window.saiT('auth.sendResetLink', 'Invia link di reset');
     resetForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = document.getElementById("resetEmail").value.trim();
@@ -767,7 +862,7 @@
       if (error) {
         showMsg(error.message, "error");
       } else {
-        showMsg("Email inviata! Controlla la casella (anche spam) e clicca il link.", "success");
+        showMsg(window.saiT('auth.msg.resetEmailSent', 'Email inviata! Controlla la casella (anche spam) e clicca il link.'), "success");
       }
     });
 
@@ -808,7 +903,7 @@
           if (gotCredits) {
             sendEmailFireAndForget("welcome", { credits: 10 });
             localStorage.setItem('sai_welcome_msg',
-              "✅ Email confermata! Abbiamo aggiunto 10 crediti di benvenuto al tuo account.");
+              window.saiT('auth.msg.emailConfirmed', '✅ Email confermata! Abbiamo aggiunto 10 crediti di benvenuto al tuo account.'));
           }
           window.location.replace("/app.html");
           return;
@@ -826,12 +921,12 @@
 
     /* Salva nuova password */
     const newPwdBtn = document.getElementById("newPwdBtn");
-    newPwdBtn.dataset.label = "Salva nuova password";
+    newPwdBtn.dataset.label = window.saiT('auth.saveNewPassword', 'Salva nuova password');
     newPwdForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const p1 = document.getElementById("newPwd1").value;
       const p2 = document.getElementById("newPwd2").value;
-      if (p1 !== p2) { showMsg("Le password non coincidono.", "error"); return; }
+      if (p1 !== p2) { showMsg(window.saiT('auth.msg.passwordMismatch', 'Le password non coincidono.'), "error"); return; }
       setLoading(newPwdBtn, true);
       clearMsg();
       const { error } = await sb.auth.updateUser({ password: p1 });
@@ -839,7 +934,7 @@
       if (error) {
         showMsg(error.message, "error");
       } else {
-        showMsg("Password aggiornata! Reindirizzo...", "success");
+        showMsg(window.saiT('auth.msg.passwordUpdated', 'Password aggiornata! Reindirizzo...'), "success");
         setTimeout(() => window.location.replace("/app.html"), 1200);
       }
     });

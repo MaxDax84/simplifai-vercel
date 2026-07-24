@@ -260,49 +260,50 @@
         </div>
       </a>
       <nav id="mainNav">
-        <a href="/index.html" data-nav="home">Home</a>
-        <a href="/app.html" data-nav="app">Chiedimi qualcosa</a>
-        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
-        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
-        <a href="/profilo.html" data-nav="profile">Profilo</a>
-        <a href="/spiegazioni.html" data-nav="spiegazioni">Spiegazioni</a>
+        <a href="/index.html" data-nav="home" data-i18n="nav.home">Home</a>
+        <a href="/app.html" data-nav="app" data-i18n="nav.app">Chiedimi qualcosa</a>
+        <a href="/come-funziona.html" data-nav="how" data-i18n="nav.how">Come funziona</a>
+        <a href="/prezzi.html" data-nav="pricing" data-i18n="nav.pricing">Prezzi</a>
+        <a href="/profilo.html" data-nav="profile" data-i18n="nav.profile">Profilo</a>
+        <a href="/spiegazioni.html" data-nav="spiegazioni" data-i18n="nav.spiegazioni">Spiegazioni</a>
       </nav>
       <div style="display:flex;align-items:center;gap:8px;">
         <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema"><span class="icon-sun">☀️</span><span class="icon-moon">🌙</span></button>
-        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+        <button id="langBtn" class="theme-btn" type="button" aria-label="Cambia lingua / Switch language"><span class="icon-lang-it">🇮🇹</span><span class="icon-lang-en">🇬🇧</span></button>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu" data-i18n-aria="nav.menu">
           <span></span><span></span><span></span>
         </button>
       </div>
     </header>
 
     <div class="mobile-nav" id="mobileNav">
-      <a href="/index.html">Home</a>
-      <a href="/app.html">Chiedimi qualcosa</a>
-      <a href="/come-funziona.html">Come funziona</a>
-      <a href="/prezzi.html">Prezzi</a>
-      <a href="/profilo.html">Profilo</a>
-      <a href="/spiegazioni.html">Spiegazioni</a>
+      <a href="/index.html" data-i18n="nav.home">Home</a>
+      <a href="/app.html" data-i18n="nav.app">Chiedimi qualcosa</a>
+      <a href="/come-funziona.html" data-i18n="nav.how">Come funziona</a>
+      <a href="/prezzi.html" data-i18n="nav.pricing">Prezzi</a>
+      <a href="/profilo.html" data-i18n="nav.profile">Profilo</a>
+      <a href="/spiegazioni.html" data-i18n="nav.spiegazioni">Spiegazioni</a>
     </div>
 
     <!-- Banner crediti esauriti -->
     <div id="noCreditsBanner" style="display:none; border:1px solid rgba(255,100,100,.35); background:rgba(255,60,60,.10); border-radius:16px; padding:16px 20px; margin-top:16px; text-align:center;">
-      <strong style="color:#ff8080;">Hai esaurito i tuoi crediti.</strong>
-      <span style="color:var(--muted); font-size:14px;"> Scegli un pacchetto qui sotto per ricaricare e continuare a usare Simplif-AI.</span>
+      <strong style="color:#ff8080;" data-i18n="pricing.noCreditsStrong">Hai esaurito i tuoi crediti.</strong>
+      <span style="color:var(--muted); font-size:14px;" data-i18n="pricing.noCreditsMsg"> Scegli un pacchetto qui sotto per ricaricare e continuare a usare Simplif-AI.</span>
     </div>
 
     <!-- HERO -->
     <div class="card">
       <div class="card-inner pricing-hero">
-        <span class="pilltag">💎 PREZZI</span>
-        <div class="h1">Acquista crediti, senza abbonamento</div>
-        <p class="sub">Paghi una volta, usi quando vuoi. Nessun rinnovo automatico. Più compri, più risparmi.</p>
+        <span class="pilltag" data-i18n="pricing.pill">💎 PREZZI</span>
+        <div class="h1" data-i18n="pricing.heroTitle">Acquista crediti, senza abbonamento</div>
+        <p class="sub" data-i18n="pricing.heroSub">Paghi una volta, usi quando vuoi. Nessun rinnovo automatico. Più compri, più risparmi.</p>
       </div>
     </div>
 
     <!-- Banner benvenuto -->
     <div class="welcome-banner" id="welcomeBanner">
-      🎁 <strong>Registrati ora per ricevere 10 crediti di benvenuto omaggio!</strong>
-      <a href="/auth.html" class="btn btn-primary" style="margin-left:6px;min-height:36px;padding:8px 16px;font-size:13px;" id="welcomeCta">Crea account gratis</a>
+      🎁 <strong data-i18n="pricing.welcomeBanner">Registrati ora per ricevere 10 crediti di benvenuto omaggio!</strong>
+      <a href="/auth.html" class="btn btn-primary" style="margin-left:6px;min-height:36px;padding:8px 16px;font-size:13px;" id="welcomeCta" data-i18n="pricing.createFreeAccount">Crea account gratis</a>
     </div>
 
     <!-- RIGA 1: Mini · Base · Plus -->
@@ -314,22 +315,22 @@
           <div class="plan-top">
             <div>
               <p class="plan-name">MINI</p>
-              <p class="plan-sub">Per fare i primi passi con Simplif-AI.</p>
+              <p class="plan-sub" data-i18n="pricing.mini.sub">Per fare i primi passi con Simplif-AI.</p>
             </div>
-            <span class="tag">🌱 Per iniziare</span>
+            <span class="tag" data-i18n="pricing.mini.tag">🌱 Per iniziare</span>
           </div>
           <div class="price" id="miniPrice">€1,99</div>
-          <div class="per">pagamento unico</div>
-          <div class="credits-badge">⚡ 25 crediti</div>
+          <div class="per" data-i18n="pricing.oneTime">pagamento unico</div>
+          <div class="credits-badge"><span>⚡ 25</span> <span data-i18n="app.credits.plural">crediti</span></div>
           <ul class="ul">
-            <li><span class="i">✅</span><span><strong>25 crediti</strong> subito sul tuo account</span></li>
-            <li><span class="i">✅</span><span>Tutti i 6 target disponibili</span></li>
-            <li><span class="i">✅</span><span>Tutte le lunghezze di risposta</span></li>
-            <li><span class="i">✅</span><span>Validi 12 mesi dall'acquisto</span></li>
-            <li><span class="i">❌</span><span>Nessun rinnovo automatico</span></li>
+            <li><span class="i">✅</span><span data-i18n-html="pricing.mini.f1"><strong>25 crediti</strong> subito sul tuo account</span></li>
+            <li><span class="i">✅</span><span data-i18n="pricing.f.targets">Tutti i 6 target disponibili</span></li>
+            <li><span class="i">✅</span><span data-i18n="pricing.f.lengths">Tutte le lunghezze di risposta</span></li>
+            <li><span class="i">✅</span><span data-i18n="pricing.f.valid12">Validi 12 mesi dall'acquisto</span></li>
+            <li><span class="i">❌</span><span data-i18n="pricing.f.noRenew">Nessun rinnovo automatico</span></li>
           </ul>
           <div class="plan-actions">
-            <a class="btn btn-primary" id="miniCta" href="/checkout.html?plan=mini&billing=once">Acquista</a>
+            <a class="btn btn-primary" id="miniCta" href="/checkout.html?plan=mini&billing=once" data-i18n="pricing.buy">Acquista</a>
           </div>
         </div>
       </div>
@@ -340,23 +341,23 @@
           <div class="plan-top">
             <div>
               <p class="plan-name">BASE</p>
-              <p class="plan-sub">Il punto di partenza ideale.</p>
+              <p class="plan-sub" data-i18n="pricing.base.sub">Il punto di partenza ideale.</p>
             </div>
-            <span class="tag">⭐ Più scelto</span>
+            <span class="tag" data-i18n="pricing.base.tag">⭐ Più scelto</span>
           </div>
           <div class="price" id="basePrice">€4,99</div>
-          <div class="per">pagamento unico</div>
-          <div class="credits-badge">⚡ 80 crediti</div>
+          <div class="per" data-i18n="pricing.oneTime">pagamento unico</div>
+          <div class="credits-badge"><span>⚡ 80</span> <span data-i18n="app.credits.plural">crediti</span></div>
           <ul class="ul">
-            <li><span class="i">⚡</span><span><strong>80 crediti</strong> subito sul tuo account</span></li>
-            <li><span class="i">✅</span><span>Tutti i 6 target disponibili</span></li>
-            <li><span class="i">✅</span><span>Tutte le lunghezze di risposta</span></li>
-            <li><span class="i">✅</span><span>Validi 12 mesi dall'acquisto</span></li>
-            <li><span class="i">💚</span><span>Risparmio del 22% rispetto al Mini</span></li>
-            <li><span class="i">❌</span><span>Nessun rinnovo automatico</span></li>
+            <li><span class="i">⚡</span><span data-i18n-html="pricing.base.f1"><strong>80 crediti</strong> subito sul tuo account</span></li>
+            <li><span class="i">✅</span><span data-i18n="pricing.f.targets">Tutti i 6 target disponibili</span></li>
+            <li><span class="i">✅</span><span data-i18n="pricing.f.lengths">Tutte le lunghezze di risposta</span></li>
+            <li><span class="i">✅</span><span data-i18n="pricing.f.valid12">Validi 12 mesi dall'acquisto</span></li>
+            <li><span class="i">💚</span><span data-i18n="pricing.base.save">Risparmio del 22% rispetto al Mini</span></li>
+            <li><span class="i">❌</span><span data-i18n="pricing.f.noRenew">Nessun rinnovo automatico</span></li>
           </ul>
           <div class="plan-actions">
-            <a class="btn btn-primary" id="baseCta" href="/checkout.html?plan=base&billing=once">Acquista</a>
+            <a class="btn btn-primary" id="baseCta" href="/checkout.html?plan=base&billing=once" data-i18n="pricing.buy">Acquista</a>
           </div>
         </div>
       </div>
@@ -367,23 +368,23 @@
           <div class="plan-top">
             <div>
               <p class="plan-name">PLUS</p>
-              <p class="plan-sub">Per chi usa Simplif-AI con frequenza.</p>
+              <p class="plan-sub" data-i18n="pricing.plus.sub">Per chi usa Simplif-AI con frequenza.</p>
             </div>
-            <span class="tag">🚀 Ottimo valore</span>
+            <span class="tag" data-i18n="pricing.plus.tag">🚀 Ottimo valore</span>
           </div>
           <div class="price" id="plusPrice">€7,99</div>
-          <div class="per">pagamento unico</div>
-          <div class="credits-badge">⚡ 200 crediti</div>
+          <div class="per" data-i18n="pricing.oneTime">pagamento unico</div>
+          <div class="credits-badge"><span>⚡ 200</span> <span data-i18n="app.credits.plural">crediti</span></div>
           <ul class="ul">
-            <li><span class="i">🚀</span><span><strong>200 crediti</strong> subito sul tuo account</span></li>
-            <li><span class="i">✅</span><span>Tutti i 6 target disponibili</span></li>
-            <li><span class="i">✅</span><span>Tutte le lunghezze di risposta</span></li>
-            <li><span class="i">✅</span><span>Validi 12 mesi dall'acquisto</span></li>
-            <li><span class="i">💚</span><span>Risparmio del 50% rispetto al Mini</span></li>
-            <li><span class="i">❌</span><span>Nessun rinnovo automatico</span></li>
+            <li><span class="i">🚀</span><span data-i18n-html="pricing.plus.f1"><strong>200 crediti</strong> subito sul tuo account</span></li>
+            <li><span class="i">✅</span><span data-i18n="pricing.f.targets">Tutti i 6 target disponibili</span></li>
+            <li><span class="i">✅</span><span data-i18n="pricing.f.lengths">Tutte le lunghezze di risposta</span></li>
+            <li><span class="i">✅</span><span data-i18n="pricing.f.valid12">Validi 12 mesi dall'acquisto</span></li>
+            <li><span class="i">💚</span><span data-i18n="pricing.plus.save">Risparmio del 50% rispetto al Mini</span></li>
+            <li><span class="i">❌</span><span data-i18n="pricing.f.noRenew">Nessun rinnovo automatico</span></li>
           </ul>
           <div class="plan-actions">
-            <a class="btn btn-primary" id="plusCta" href="/checkout.html?plan=plus&billing=once">Acquista</a>
+            <a class="btn btn-primary" id="plusCta" href="/checkout.html?plan=plus&billing=once" data-i18n="pricing.buy">Acquista</a>
           </div>
         </div>
       </div>
@@ -392,7 +393,7 @@
 
     <!-- Separatore riga 2 -->
     <div class="section-sep">
-      <span>🔥 Per chi vuole strafare</span>
+      <span data-i18n="pricing.sectionSep">🔥 Per chi vuole strafare</span>
     </div>
 
     <!-- RIGA 2: Pro · Max -->
@@ -404,23 +405,23 @@
           <div class="plan-top">
             <div>
               <p class="plan-name">PRO</p>
-              <p class="plan-sub">Una scorta abbondante per uso intensivo.</p>
+              <p class="plan-sub" data-i18n="pricing.pro.sub">Una scorta abbondante per uso intensivo.</p>
             </div>
-            <span class="tag">🔥 Uso intensivo</span>
+            <span class="tag" data-i18n="pricing.pro.tag">🔥 Uso intensivo</span>
           </div>
           <div class="price" id="proPrice">€14,99</div>
-          <div class="per">pagamento unico</div>
-          <div class="credits-badge">⚡ 500 crediti</div>
+          <div class="per" data-i18n="pricing.oneTime">pagamento unico</div>
+          <div class="credits-badge"><span>⚡ 500</span> <span data-i18n="app.credits.plural">crediti</span></div>
           <ul class="ul">
-            <li><span class="i">🔥</span><span><strong>500 crediti</strong> subito sul tuo account</span></li>
-            <li><span class="i">✅</span><span>Tutti i 6 target disponibili</span></li>
-            <li><span class="i">✅</span><span>Tutte le lunghezze di risposta</span></li>
-            <li><span class="i">✅</span><span>Validi 12 mesi dall'acquisto</span></li>
-            <li><span class="i">💚</span><span>Risparmio del 63% rispetto al Mini</span></li>
-            <li><span class="i">❌</span><span>Nessun rinnovo automatico</span></li>
+            <li><span class="i">🔥</span><span data-i18n-html="pricing.pro.f1"><strong>500 crediti</strong> subito sul tuo account</span></li>
+            <li><span class="i">✅</span><span data-i18n="pricing.f.targets">Tutti i 6 target disponibili</span></li>
+            <li><span class="i">✅</span><span data-i18n="pricing.f.lengths">Tutte le lunghezze di risposta</span></li>
+            <li><span class="i">✅</span><span data-i18n="pricing.f.valid12">Validi 12 mesi dall'acquisto</span></li>
+            <li><span class="i">💚</span><span data-i18n="pricing.pro.save">Risparmio del 63% rispetto al Mini</span></li>
+            <li><span class="i">❌</span><span data-i18n="pricing.f.noRenew">Nessun rinnovo automatico</span></li>
           </ul>
           <div class="plan-actions">
-            <a class="btn btn-primary" id="proCta" href="/checkout.html?plan=pro&billing=once">Acquista</a>
+            <a class="btn btn-primary" id="proCta" href="/checkout.html?plan=pro&billing=once" data-i18n="pricing.buy">Acquista</a>
           </div>
         </div>
       </div>
@@ -431,23 +432,23 @@
           <div class="plan-top">
             <div>
               <p class="plan-name">MAX</p>
-              <p class="plan-sub">Non resterai mai senza crediti.</p>
+              <p class="plan-sub" data-i18n="pricing.max.sub">Non resterai mai senza crediti.</p>
             </div>
-            <span class="tag">💎 Massima scorta</span>
+            <span class="tag" data-i18n="pricing.max.tag">💎 Massima scorta</span>
           </div>
           <div class="price" id="maxPrice">€34,99</div>
-          <div class="per">pagamento unico</div>
-          <div class="credits-badge">⚡ 1.400 crediti</div>
+          <div class="per" data-i18n="pricing.oneTime">pagamento unico</div>
+          <div class="credits-badge"><span>⚡ 1.400</span> <span data-i18n="app.credits.plural">crediti</span></div>
           <ul class="ul">
-            <li><span class="i">💎</span><span><strong>1.400 crediti</strong> subito sul tuo account</span></li>
-            <li><span class="i">✅</span><span>Tutti i 6 target disponibili</span></li>
-            <li><span class="i">✅</span><span>Tutte le lunghezze di risposta</span></li>
-            <li><span class="i">✅</span><span>Validi 12 mesi dall'acquisto</span></li>
-            <li><span class="i">💚</span><span>Risparmio del 69% rispetto al Mini</span></li>
-            <li><span class="i">❌</span><span>Nessun rinnovo automatico</span></li>
+            <li><span class="i">💎</span><span data-i18n-html="pricing.max.f1"><strong>1.400 crediti</strong> subito sul tuo account</span></li>
+            <li><span class="i">✅</span><span data-i18n="pricing.f.targets">Tutti i 6 target disponibili</span></li>
+            <li><span class="i">✅</span><span data-i18n="pricing.f.lengths">Tutte le lunghezze di risposta</span></li>
+            <li><span class="i">✅</span><span data-i18n="pricing.f.valid12">Validi 12 mesi dall'acquisto</span></li>
+            <li><span class="i">💚</span><span data-i18n="pricing.max.save">Risparmio del 69% rispetto al Mini</span></li>
+            <li><span class="i">❌</span><span data-i18n="pricing.f.noRenew">Nessun rinnovo automatico</span></li>
           </ul>
           <div class="plan-actions">
-            <a class="btn btn-primary" id="maxCta" href="/checkout.html?plan=max&billing=once">Acquista</a>
+            <a class="btn btn-primary" id="maxCta" href="/checkout.html?plan=max&billing=once" data-i18n="pricing.buy">Acquista</a>
           </div>
         </div>
       </div>
@@ -455,22 +456,22 @@
     </div><!-- /strafare-grid -->
 
     <!-- Note -->
-    <div class="credits-note">
+    <div class="credits-note" data-i18n-html="pricing.creditsNote">
       ⏱ <strong>I crediti sono validi 12 mesi</strong> dalla data di acquisto. Nessun rinnovo automatico.
     </div>
 
     <!-- TEAM -->
     <div class="card" style="margin-top:14px;">
       <div class="card-inner" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 22px;">
-        <p style="margin:0;font-size:14px;color:var(--muted);">
+        <p style="margin:0;font-size:14px;color:var(--muted);" data-i18n-html="pricing.teamText">
           👥 <strong style="color:var(--text);font-weight:900;">Hai bisogno di un pacchetto per il tuo team?</strong><br>
           <span style="font-size:13px;">Contattaci per scontistiche dedicate a gruppi e aziende.</span>
         </p>
-        <a href="mailto:sales@simplif-ai.it" class="btn btn-primary" style="white-space:nowrap;flex-shrink:0;">Contattaci →</a>
+        <a href="mailto:sales@simplif-ai.it" class="btn btn-primary" style="white-space:nowrap;flex-shrink:0;" data-i18n="pricing.contactUs">Contattaci →</a>
       </div>
     </div>
 
-    <p class="fineprint">
+    <p class="fineprint" data-i18n="pricing.fineprint">
       Nota: il checkout è una simulazione UI (mock). Nessun addebito reale viene effettuato. In produzione si integrerà Stripe.
     </p>
 
@@ -478,26 +479,26 @@
     <div class="faq">
       <div class="card">
         <div class="card-inner">
-          <p class="q">I crediti scadono?</p>
-          <p class="a">I crediti acquistati sono validi 12 mesi dalla data di acquisto. I 10 crediti di benvenuto scadono 12 mesi dopo la registrazione.</p>
+          <p class="q" data-i18n="pricing.faq.q1">I crediti scadono?</p>
+          <p class="a" data-i18n="pricing.faq.a1">I crediti acquistati sono validi 12 mesi dalla data di acquisto. I 10 crediti di benvenuto scadono 12 mesi dopo la registrazione.</p>
         </div>
       </div>
       <div class="card">
         <div class="card-inner">
-          <p class="q">Quanti crediti consuma ogni generazione?</p>
-          <p class="a">Da 1 a 4 crediti in base alla complessità: 1 credito per Bambino/Ragazzo/Universitario, 2 per Adulto/Esperto, 3 per Scienziato. La risposta "Lunga" aggiunge +1 credito (max 4).</p>
+          <p class="q" data-i18n="pricing.faq.q2">Quanti crediti consuma ogni generazione?</p>
+          <p class="a" data-i18n="pricing.faq.a2">Da 1 a 4 crediti in base alla complessità: 1 credito per Bambino/Ragazzo/Universitario, 2 per Adulto/Esperto, 3 per Scienziato. La risposta "Lunga" aggiunge +1 credito (max 4).</p>
         </div>
       </div>
       <div class="card">
         <div class="card-inner">
-          <p class="q">Cosa succede se esaurisco i crediti?</p>
-          <p class="a">L'app mostra un avviso e ti reindirizza qui per ricaricare. I crediti non vengono scalati in caso di errore di generazione.</p>
+          <p class="q" data-i18n="pricing.faq.q3">Cosa succede se esaurisco i crediti?</p>
+          <p class="a" data-i18n="pricing.faq.a3">L'app mostra un avviso e ti reindirizza qui per ricaricare. I crediti non vengono scalati in caso di errore di generazione.</p>
         </div>
       </div>
       <div class="card">
         <div class="card-inner">
-          <p class="q">Posso acquistare più pacchetti?</p>
-          <p class="a">Sì, i crediti si accumulano sul tuo account. Ogni nuovo acquisto aggiunge crediti a quelli già presenti e aggiorna la scadenza a 12 mesi dal nuovo acquisto.</p>
+          <p class="q" data-i18n="pricing.faq.q4">Posso acquistare più pacchetti?</p>
+          <p class="a" data-i18n="pricing.faq.a4">Sì, i crediti si accumulano sul tuo account. Ogni nuovo acquisto aggiunge crediti a quelli già presenti e aggiorna la scadenza a 12 mesi dal nuovo acquisto.</p>
         </div>
       </div>
     </div>
@@ -505,7 +506,7 @@
     <div style="height:32px;"></div>
 
     <div style="text-align:center; margin-bottom:16px;">
-      <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="font-size:13px;">↑ Torna su</button>
+      <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="font-size:13px;" data-i18n="back.top">↑ Torna su</button>
     </div>
 
     <footer class="site-footer">
@@ -513,15 +514,67 @@
       <div class="footer-links">
         <a href="/privacy-policy.html">Privacy Policy</a>
         <a href="/cookies-policy.html">Cookie Policy</a>
-        <a href="/terms-of-service.html">Termini di Servizio</a>
+        <a href="/terms-of-service.html" data-i18n="footer.terms">Termini di Servizio</a>
         <a href="/dpa.html">DPA</a>
-        <a href="/contatti.html">Contatti</a>
+        <a href="/contatti.html" data-i18n="footer.contact">Contatti</a>
       </div>
-      <span style="width:100%;text-align:center;font-size:11px;opacity:.6;">Creato da <a href="https://massimodassano.it" target="_blank" rel="noopener">Massimo Dassano</a></span>
+      <span style="width:100%;text-align:center;font-size:11px;opacity:.6;"><span data-i18n="footer.credit">Creato da</span> <a href="https://massimodassano.it" target="_blank" rel="noopener">Massimo Dassano</a></span>
     </footer>
   </div>
 
   <script>
+    window.SAI_I18N_EN = {
+      'nav.home': 'Home', 'nav.app': 'Ask something', 'nav.how': 'How it works', 'nav.pricing': 'Pricing',
+      'nav.profile': 'Profile', 'nav.spiegazioni': 'Explanations', 'nav.menu': 'Open menu',
+      'footer.contact': 'Contact', 'footer.terms': 'Terms of Service', 'footer.credit': 'Created by', 'back.top': '↑ Back to top',
+      'app.credits.plural': 'credits',
+      'pricing.noCreditsStrong': "You've run out of credits.",
+      'pricing.noCreditsMsg': ' Choose a package below to top up and keep using Simplif-AI.',
+      'pricing.pill': '💎 PRICING',
+      'pricing.heroTitle': 'Buy credits, no subscription',
+      'pricing.heroSub': "Pay once, use whenever you want. No auto-renewal. The more you buy, the more you save.",
+      'pricing.welcomeBanner': 'Sign up now to get 10 free welcome credits!',
+      'pricing.createFreeAccount': 'Create free account',
+      'pricing.oneTime': 'one-time payment',
+      'pricing.buy': 'Buy',
+      'pricing.sectionSep': '🔥 For power users',
+      'pricing.f.targets': 'All 6 targets available',
+      'pricing.f.lengths': 'All answer lengths',
+      'pricing.f.valid12': 'Valid 12 months from purchase',
+      'pricing.f.noRenew': 'No auto-renewal',
+      'pricing.mini.sub': 'To take your first steps with Simplif-AI.',
+      'pricing.mini.tag': '🌱 To get started',
+      'pricing.mini.f1': '<strong>25 credits</strong> added to your account instantly',
+      'pricing.base.sub': 'The ideal starting point.',
+      'pricing.base.tag': '⭐ Most chosen',
+      'pricing.base.f1': '<strong>80 credits</strong> added to your account instantly',
+      'pricing.base.save': '22% savings compared to Mini',
+      'pricing.plus.sub': 'For frequent Simplif-AI users.',
+      'pricing.plus.tag': '🚀 Great value',
+      'pricing.plus.f1': '<strong>200 credits</strong> added to your account instantly',
+      'pricing.plus.save': '50% savings compared to Mini',
+      'pricing.pro.sub': 'A generous supply for heavy use.',
+      'pricing.pro.tag': '🔥 Heavy use',
+      'pricing.pro.f1': '<strong>500 credits</strong> added to your account instantly',
+      'pricing.pro.save': '63% savings compared to Mini',
+      'pricing.max.sub': "You'll never run out of credits.",
+      'pricing.max.tag': '💎 Maximum supply',
+      'pricing.max.f1': '<strong>1,400 credits</strong> added to your account instantly',
+      'pricing.max.save': '69% savings compared to Mini',
+      'pricing.creditsNote': '⏱ <strong>Credits are valid for 12 months</strong> from the purchase date. No auto-renewal.',
+      'pricing.teamText': '👥 <strong style="color:var(--text);font-weight:900;">Need a package for your team?</strong><br><span style="font-size:13px;">Contact us for dedicated discounts for groups and companies.</span>',
+      'pricing.contactUs': 'Contact us →',
+      'pricing.fineprint': 'Note: checkout is a UI simulation (mock). No real charge is made. Stripe will be integrated in production.',
+      'pricing.faq.q1': 'Do credits expire?',
+      'pricing.faq.a1': 'Purchased credits are valid for 12 months from the purchase date. The 10 welcome credits expire 12 months after signup.',
+      'pricing.faq.q2': 'How many credits does each generation use?',
+      'pricing.faq.a2': '1 to 4 credits depending on complexity: 1 credit for Child/Teen/University student, 2 for Adult/Expert, 3 for Scientist. The "Long" answer adds +1 credit (max 4).',
+      'pricing.faq.q3': "What happens if I run out of credits?",
+      'pricing.faq.a3': 'The app shows a warning and redirects you here to top up. Credits are not deducted in case of a generation error.',
+      'pricing.faq.q4': 'Can I buy multiple packages?',
+      'pricing.faq.a4': 'Yes, credits accumulate on your account. Every new purchase adds credits to your existing balance and updates the expiry to 12 months from the new purchase.'
+    };
+
     // Banner crediti esauriti
     (function(){
       const params = new URLSearchParams(location.search);

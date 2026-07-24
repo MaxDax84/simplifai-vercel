@@ -172,17 +172,18 @@
       </a>
 
       <nav id="mainNav">
-        <a href="/index.html" data-nav="home">Home</a>
-        <a href="/app.html" data-nav="app">Chiedimi qualcosa</a>
-        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
-        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
-        <a href="/profilo.html" data-nav="profile">Profilo</a>
-        <a href="/spiegazioni.html" data-nav="spiegazioni">Spiegazioni</a>
+        <a href="/index.html" data-nav="home" data-i18n="nav.home">Home</a>
+        <a href="/app.html" data-nav="app" data-i18n="nav.app">Chiedimi qualcosa</a>
+        <a href="/come-funziona.html" data-nav="how" data-i18n="nav.how">Come funziona</a>
+        <a href="/prezzi.html" data-nav="pricing" data-i18n="nav.pricing">Prezzi</a>
+        <a href="/profilo.html" data-nav="profile" data-i18n="nav.profile">Profilo</a>
+        <a href="/spiegazioni.html" data-nav="spiegazioni" data-i18n="nav.spiegazioni">Spiegazioni</a>
       </nav>
 
       <div style="display:flex;align-items:center;gap:8px;">
         <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema"><span class="icon-sun">☀️</span><span class="icon-moon">🌙</span></button>
-        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+        <button id="langBtn" class="theme-btn" type="button" aria-label="Cambia lingua / Switch language"><span class="icon-lang-it">🇮🇹</span><span class="icon-lang-en">🇬🇧</span></button>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu" data-i18n-aria="nav.menu">
           <span></span><span></span><span></span>
         </button>
       </div>
@@ -190,79 +191,79 @@
 
     <!-- Mobile overlay menu -->
     <div class="mobile-nav" id="mobileNav">
-      <a href="/index.html">Home</a>
-      <a href="/app.html">Chiedimi qualcosa</a>
-      <a href="/come-funziona.html">Come funziona</a>
-      <a href="/prezzi.html">Prezzi</a>
-      <a href="/profilo.html">Profilo</a>
-      <a href="/spiegazioni.html">Spiegazioni</a>
+      <a href="/index.html" data-i18n="nav.home">Home</a>
+      <a href="/app.html" data-i18n="nav.app">Chiedimi qualcosa</a>
+      <a href="/come-funziona.html" data-i18n="nav.how">Come funziona</a>
+      <a href="/prezzi.html" data-i18n="nav.pricing">Prezzi</a>
+      <a href="/profilo.html" data-i18n="nav.profile">Profilo</a>
+      <a href="/spiegazioni.html" data-i18n="nav.spiegazioni">Spiegazioni</a>
     </div>
 
     <section class="landing">
       <div class="hero">
         <div class="big">Simplif-AI</div>
-        <p class="tag">
+        <p class="tag" data-i18n-html="home.tagline">
           Concetti complessi spiegati in modo semplice.<br>
           <strong>Scegli tu quanto.</strong>
         </p>
 
         <div class="cta">
-          <a class="btn btn-primary" href="/app.html">🚀 Vuoi provare? Clicca qui!</a>
+          <a class="btn btn-primary" href="/app.html" data-i18n="home.cta">🚀 Vuoi provare? Clicca qui!</a>
         </div>
 
         <!-- ── One-tap suggestions ── -->
         <div class="chips-row">
-          <a class="chip-suggest" href="/app.html?q=Cos%27%C3%A8+l%27inflazione%3F">💰 Cos'è l'inflazione?</a>
-          <a class="chip-suggest" href="/app.html?q=Com%27%C3%A8+fatto+un+motore+a+scoppio%3F">⚙️ Com'è fatto un motore?</a>
-          <a class="chip-suggest" href="/app.html?q=Cosa+sono+i+geni+e+il+DNA%3F">🧬 Geni e DNA</a>
-          <a class="chip-suggest" href="/app.html?q=Perch%C3%A9+il+cielo+%C3%A8+blu%3F">🌤️ Perché il cielo è blu?</a>
+          <a class="chip-suggest" href="/app.html?q=Cos%27%C3%A8+l%27inflazione%3F" data-i18n="home.chip1">💰 Cos'è l'inflazione?</a>
+          <a class="chip-suggest" href="/app.html?q=Com%27%C3%A8+fatto+un+motore+a+scoppio%3F" data-i18n="home.chip2">⚙️ Com'è fatto un motore?</a>
+          <a class="chip-suggest" href="/app.html?q=Cosa+sono+i+geni+e+il+DNA%3F" data-i18n="home.chip3">🧬 Geni e DNA</a>
+          <a class="chip-suggest" href="/app.html?q=Perch%C3%A9+il+cielo+%C3%A8+blu%3F" data-i18n="home.chip4">🌤️ Perché il cielo è blu?</a>
         </div>
       </div>
     </section>
 
     <!-- ══════════════════ FAQ ══════════════════ -->
     <section class="faq-section">
-      <p class="faq-section-title">Domande frequenti</p>
+      <p class="faq-section-title" data-i18n="faq.title">Domande frequenti</p>
       <div class="faq-list">
 
         <details class="faq-item">
-          <summary>Come funziona Simplif-AI?</summary>
-          <div class="faq-body">
+          <summary data-i18n="faq.q1">Come funziona Simplif-AI?</summary>
+          <div class="faq-body" data-i18n-html="faq.a1">
             Simplif-AI è un servizio che spiega qualsiasi concetto nel modo giusto per te. Scrivi una domanda o un argomento, scegli il <strong>livello di semplicità</strong> e la <strong>lunghezza</strong> della risposta, e leggi la spiegazione su misura. Per generare le risposte si utilizza un sistema a <strong>crediti</strong>: ogni nuova registrazione include 10 crediti omaggio, e pacchetti aggiuntivi sono disponibili in qualsiasi momento dalla sezione Prezzi.
           </div>
         </details>
 
         <details class="faq-item">
-          <summary>Quanto costa generare una risposta?</summary>
-          <div class="faq-body">
+          <summary data-i18n="faq.q2">Quanto costa generare una risposta?</summary>
+          <div class="faq-body" data-i18n-html="faq.a2">
             Ogni richiesta consuma da <strong>1 a 4 crediti</strong>, a seconda della complessità dell'argomento e della profondità della spiegazione richiesta.
           </div>
         </details>
 
         <details class="faq-item">
-          <summary>I crediti hanno una scadenza?</summary>
-          <div class="faq-body">
+          <summary data-i18n="faq.q3">I crediti hanno una scadenza?</summary>
+          <div class="faq-body" data-i18n-html="faq.a3">
             Sì, i crediti hanno una validità di <strong>12 mesi</strong>. Tuttavia, ogni nuova ricarica estende la validità di tutto il tuo saldo residuo per altri 12 mesi.
           </div>
         </details>
 
         <details class="faq-item">
-          <summary>Posso provare Simplif-AI gratuitamente?</summary>
-          <div class="faq-body">
+          <summary data-i18n="faq.q4">Posso provare Simplif-AI gratuitamente?</summary>
+          <div class="faq-body" data-i18n-html="faq.a4">
             Certamente! Ogni nuovo utente riceve <strong>10 crediti di benvenuto</strong> subito dopo la conferma dell'email per testare il servizio.
           </div>
         </details>
 
         <details class="faq-item">
-          <summary>Come posso acquistare altri crediti?</summary>
-          <div class="faq-body">
+          <summary data-i18n="faq.q5">Come posso acquistare altri crediti?</summary>
+          <div class="faq-body" data-i18n-html="faq.a5">
             Puoi aggiungere crediti in qualsiasi momento dalla sezione <strong>"Aggiungi Crediti"</strong> nel tuo profilo, scegliendo il pacchetto più adatto alle tue esigenze.
           </div>
         </details>
 
         <details class="faq-item">
-          <summary>Posso richiedere un pacchetto personalizzato per la mia azienda?</summary>
-          <div class="faq-body">
+          <summary data-i18n="faq.q6">Posso richiedere un pacchetto personalizzato per la mia azienda?</summary>
+          <div class="faq-body" data-i18n-html="faq.a6">
             Assolutamente sì. Per scontistiche dedicate a gruppi o aziende, contattaci all'indirizzo <a href="mailto:info@simplif-ai.it">info@simplif-ai.it</a>.
           </div>
         </details>
@@ -273,7 +274,7 @@
     <div style="height:32px;"></div>
 
     <div style="text-align:center; margin-bottom:16px;">
-      <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="font-size:13px;">↑ Torna su</button>
+      <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="font-size:13px;" data-i18n="back.top">↑ Torna su</button>
     </div>
 
     <footer class="site-footer">
@@ -281,12 +282,45 @@
       <div class="footer-links">
         <a href="/privacy-policy.html">Privacy Policy</a>
         <a href="/cookies-policy.html">Cookie Policy</a>
-        <a href="/contatti.html">Contatti</a>
+        <a href="/contatti.html" data-i18n="footer.contact">Contatti</a>
       </div>
-      <span style="width:100%;text-align:center;font-size:11px;opacity:.6;">Creato da <a href="https://massimodassano.it" target="_blank" rel="noopener">Massimo Dassano</a></span>
+      <span style="width:100%;text-align:center;font-size:11px;opacity:.6;"><span data-i18n="footer.credit">Creato da</span> <a href="https://massimodassano.it" target="_blank" rel="noopener">Massimo Dassano</a></span>
     </footer>
   </div>
 
+  <script>
+    window.SAI_I18N_EN = {
+      'nav.home': 'Home',
+      'nav.app': 'Ask something',
+      'nav.how': 'How it works',
+      'nav.pricing': 'Pricing',
+      'nav.profile': 'Profile',
+      'nav.spiegazioni': 'Explanations',
+      'nav.menu': 'Open menu',
+      'home.tagline': 'Complex concepts explained simply.<br><strong>You choose how much.</strong>',
+      'home.cta': '🚀 Want to try? Click here!',
+      'home.chip1': "💰 What is inflation?",
+      'home.chip2': '⚙️ How does an engine work?',
+      'home.chip3': '🧬 Genes and DNA',
+      'home.chip4': '🌤️ Why is the sky blue?',
+      'faq.title': 'Frequently asked questions',
+      'faq.q1': 'How does Simplif-AI work?',
+      'faq.a1': 'Simplif-AI is a service that explains any concept the right way for you. Write a question or a topic, choose the <strong>simplicity level</strong> and the <strong>length</strong> of the answer, and read a tailor-made explanation. Generating answers uses a <strong>credit</strong> system: every new signup includes 10 free credits, and extra packages are available anytime from the Pricing section.',
+      'faq.q2': 'How much does it cost to generate an answer?',
+      'faq.a2': 'Each request uses between <strong>1 and 4 credits</strong>, depending on the complexity of the topic and the depth of the requested explanation.',
+      'faq.q3': 'Do credits expire?',
+      'faq.a3': "Yes, credits are valid for <strong>12 months</strong>. However, every new top-up extends the validity of your whole remaining balance for another 12 months.",
+      'faq.q4': 'Can I try Simplif-AI for free?',
+      'faq.a4': 'Of course! Every new user receives <strong>10 welcome credits</strong> right after email confirmation to try the service.',
+      'faq.q5': 'How can I buy more credits?',
+      'faq.a5': 'You can add credits anytime from the <strong>"Add Credits"</strong> section in your profile, choosing the package that best suits your needs.',
+      'faq.q6': 'Can I request a custom package for my company?',
+      'faq.a6': 'Absolutely. For dedicated discounts for groups or companies, contact us at <a href="mailto:info@simplif-ai.it">info@simplif-ai.it</a>.',
+      'back.top': '↑ Back to top',
+      'footer.contact': 'Contact',
+      'footer.credit': 'Created by'
+    };
+  </script>
   <script src="/shared.js?v=2" defer></script>
 </body>
 </html>

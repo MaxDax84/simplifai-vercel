@@ -20,6 +20,20 @@
     })();
   </script>
 
+  <!-- Lingua: helper disponibili subito (prima ancora del rendering delle card target/lunghezza) -->
+  <script>
+    window.saiLang = function () {
+      try { return localStorage.getItem('sai_lang') || 'it'; } catch (_) { return 'it'; }
+    };
+    window.saiT = function (key, fallback) {
+      if (window.saiLang() === 'en') {
+        var d = window.SAI_I18N_EN || {};
+        if (d[key] !== undefined) return d[key];
+      }
+      return fallback !== undefined ? fallback : key;
+    };
+  </script>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.11/dist/purify.min.js"></script>
@@ -339,29 +353,30 @@
       </a>
 
       <nav id="mainNav">
-        <a href="/index.html" data-nav="home">Home</a>
-        <a href="/app.html" data-nav="app">Chiedimi qualcosa</a>
-        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
-        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
-        <a href="/profilo.html" data-nav="profile">Profilo</a>
-        <a href="/spiegazioni.html" data-nav="spiegazioni">Spiegazioni</a>
+        <a href="/index.html" data-nav="home" data-i18n="nav.home">Home</a>
+        <a href="/app.html" data-nav="app" data-i18n="nav.app">Chiedimi qualcosa</a>
+        <a href="/come-funziona.html" data-nav="how" data-i18n="nav.how">Come funziona</a>
+        <a href="/prezzi.html" data-nav="pricing" data-i18n="nav.pricing">Prezzi</a>
+        <a href="/profilo.html" data-nav="profile" data-i18n="nav.profile">Profilo</a>
+        <a href="/spiegazioni.html" data-nav="spiegazioni" data-i18n="nav.spiegazioni">Spiegazioni</a>
       </nav>
 
       <div style="display:flex;align-items:center;gap:8px;">
         <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema"><span class="icon-sun">☀️</span><span class="icon-moon">🌙</span></button>
-        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+        <button id="langBtn" class="theme-btn" type="button" aria-label="Cambia lingua / Switch language"><span class="icon-lang-it">🇮🇹</span><span class="icon-lang-en">🇬🇧</span></button>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu" data-i18n-aria="nav.menu">
           <span></span><span></span><span></span>
         </button>
       </div>
     </header>
 
     <div class="mobile-nav" id="mobileNav">
-      <a href="/index.html">Home</a>
-      <a href="/app.html">Chiedimi qualcosa</a>
-      <a href="/come-funziona.html">Come funziona</a>
-      <a href="/prezzi.html">Prezzi</a>
-      <a href="/profilo.html">Profilo</a>
-      <a href="/spiegazioni.html">Spiegazioni</a>
+      <a href="/index.html" data-i18n="nav.home">Home</a>
+      <a href="/app.html" data-i18n="nav.app">Chiedimi qualcosa</a>
+      <a href="/come-funziona.html" data-i18n="nav.how">Come funziona</a>
+      <a href="/prezzi.html" data-i18n="nav.pricing">Prezzi</a>
+      <a href="/profilo.html" data-i18n="nav.profile">Profilo</a>
+      <a href="/spiegazioni.html" data-i18n="nav.spiegazioni">Spiegazioni</a>
     </div>
 
     <!-- Banner benvenuto post-conferma email -->
@@ -372,13 +387,13 @@
     </div>
 
     <div class="hero-row">
-      <a class="credit-pill" href="/prezzi.html" style="text-decoration:none;">⚡ Crediti disponibili: <b id="creditsValue">—</b></a>
+      <a class="credit-pill" href="/prezzi.html" style="text-decoration:none;"><span data-i18n="app.creditsAvail">⚡ Crediti disponibili:</span> <b id="creditsValue">—</b></a>
     </div>
 
     <!-- Banner utenti anonimi (mostrato solo senza sessione) -->
     <div id="anonBanner" style="display:none; border:1px solid rgba(124,92,255,.30); background:rgba(124,92,255,.08); border-radius:16px; padding:14px 20px; margin-top:16px; align-items:center; gap:14px; flex-wrap:wrap;">
       <span id="anonMsg" style="flex:1; min-width:0; font-size:14px; line-height:1.5;"></span>
-      <a href="/auth.html?tab=signup" class="btn btn-primary" style="font-size:13px; padding:8px 20px; white-space:nowrap; flex-shrink:0;">Registrati gratis</a>
+      <a href="/auth.html?tab=signup" class="btn btn-primary" style="font-size:13px; padding:8px 20px; white-space:nowrap; flex-shrink:0;" data-i18n="app.signupFree">Registrati gratis</a>
     </div>
 
     <!-- ── Ultime Ricerche ── -->
@@ -386,8 +401,8 @@
       <div class="card" style="margin-top:16px;">
         <div class="card-inner">
           <div class="history-header">
-            <p class="history-title">🕐 Ultime Ricerche</p>
-            <button class="history-clear" id="historyClear" type="button">Cancella</button>
+            <p class="history-title" data-i18n="app.recentSearches">🕐 Ultime Ricerche</p>
+            <button class="history-clear" id="historyClear" type="button" data-i18n="app.clear">Cancella</button>
           </div>
           <div class="history-chips" id="historyList"></div>
         </div>
@@ -397,20 +412,20 @@
     <section class="section" id="sec1">
       <div class="card" id="card1">
         <div class="card-inner">
-          <h2 class="title">✦ Scrivi la domanda</h2>
-          <textarea id="query" placeholder="Esempio: Cos'è il DNA e a cosa serve?"></textarea>
+          <h2 class="title" data-i18n="app.step1.title">✦ Scrivi la domanda</h2>
+          <textarea id="query" placeholder="Esempio: Cos'è il DNA e a cosa serve?" data-i18n-placeholder="app.step1.placeholder"></textarea>
 
           <!-- suggestion chips -->
           <div class="chips-row-app">
-            <button class="chip-suggest" type="button" data-q="Cos'è l'inflazione?">💰 Cos'è l'inflazione?</button>
-            <button class="chip-suggest" type="button" data-q="Com'è fatto un motore a scoppio?">⚙️ Motore a scoppio</button>
-            <button class="chip-suggest" type="button" data-q="Cosa sono i geni e il DNA?">🧬 Geni e DNA</button>
-            <button class="chip-suggest" type="button" data-q="Perché il cielo è blu?">🌤️ Cielo blu</button>
+            <button class="chip-suggest" type="button" data-q="Cos'è l'inflazione?" data-i18n="home.chip1">💰 Cos'è l'inflazione?</button>
+            <button class="chip-suggest" type="button" data-q="Com'è fatto un motore a scoppio?" data-i18n="app.chip2">⚙️ Motore a scoppio</button>
+            <button class="chip-suggest" type="button" data-q="Cosa sono i geni e il DNA?" data-i18n="home.chip3">🧬 Geni e DNA</button>
+            <button class="chip-suggest" type="button" data-q="Perché il cielo è blu?" data-i18n="app.chip4">🌤️ Cielo blu</button>
           </div>
 
           <div class="actions">
-            <span class="hint">💡 Suggerimento: aggiungi “con esempi”</span>
-            <button class="btn btn-primary" id="goTargets" type="button">Scegli target ↓</button>
+            <span class="hint" data-i18n="app.hint">💡 Suggerimento: aggiungi “con esempi”</span>
+            <button class="btn btn-primary" id="goTargets" type="button" data-i18n="app.chooseTarget">Scegli target ↓</button>
           </div>
         </div>
       </div>
@@ -419,11 +434,11 @@
     <section class="section" id="sec2">
       <div class="card" id="card2">
         <div class="card-inner">
-          <h2 class="title">🎯 Seleziona il target</h2>
+          <h2 class="title" data-i18n="app.step2.title">🎯 Seleziona il target</h2>
           <div class="targets-grid" id="targets"></div>
           <div class="actions">
-            <button class="btn" id="backToQ" type="button">↑ Torna alla domanda</button>
-            <button class="btn btn-primary" id="goLength" type="button" disabled>Vai alla lunghezza ↓</button>
+            <button class="btn" id="backToQ" type="button" data-i18n="app.backToQuestion">↑ Torna alla domanda</button>
+            <button class="btn btn-primary" id="goLength" type="button" disabled data-i18n="app.goLength">Vai alla lunghezza ↓</button>
           </div>
         </div>
       </div>
@@ -432,11 +447,11 @@
     <section class="section" id="secLen">
       <div class="card" id="cardLen">
         <div class="card-inner">
-          <h2 class="title">🧾 Quanto vuoi lunga la risposta?</h2>
+          <h2 class="title" data-i18n="app.step3.title">🧾 Quanto vuoi lunga la risposta?</h2>
           <div class="len-grid" id="lengths"></div>
           <div class="actions">
-            <button class="btn" id="backToTargets" type="button">↑ Cambia target</button>
-            <button class="btn btn-primary" id="goAnswer" type="button" disabled>Genera la risposta ↓</button>
+            <button class="btn" id="backToTargets" type="button" data-i18n="app.changeTarget">↑ Cambia target</button>
+            <button class="btn btn-primary" id="goAnswer" type="button" disabled data-i18n="app.generate">Genera la risposta ↓</button>
           </div>
         </div>
       </div>
@@ -445,13 +460,13 @@
     <section class="section" id="sec3">
       <div class="card card-dark" id="card3">
         <div class="card-inner">
-          <h2 class="title">💬 Risposta</h2>
+          <h2 class="title" data-i18n="app.step4.title">💬 Risposta</h2>
 
           <!-- Chip sempre visibile: non sparisce mai -->
           <div class="chip" id="chips">
-            🎯 Target: <b id="chipTarget">—</b>
+            <span data-i18n="app.chipTargetLabel">🎯 Target:</span> <b id="chipTarget">—</b>
             <span style="opacity:.5">•</span>
-            🧾 Lunghezza: <b id="chipLen">—</b>
+            <span data-i18n="app.chipLenLabel">🧾 Lunghezza:</span> <b id="chipLen">—</b>
             <span style="opacity:.5" id="costBadgeSep">•</span>
             <span id="costBadge" style="display:none;"></span>
           </div>
@@ -472,27 +487,27 @@
             <div class="actions" style="margin-top:0;">
               <div class="status">
                 <span id="spinner" class="spinner" style="display:none"></span>
-                <span id="status">Scrivi una domanda, scegli target e lunghezza.</span>
+                <span id="status" data-i18n="app.statusDefault">Scrivi una domanda, scegli target e lunghezza.</span>
               </div>
 
               <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-                <button class="btn" id="copyBtn" type="button" disabled>⧉ Copia</button>
-                <button class="btn" id="saveBtn" type="button" disabled>☆ Salva risposta</button>
+                <button class="btn" id="copyBtn" type="button" disabled data-i18n="app.copy">⧉ Copia</button>
+                <button class="btn" id="saveBtn" type="button" disabled data-i18n="app.saveResponse">☆ Salva risposta</button>
               </div>
               <div style="margin-top:8px;">
-                <button class="btn" id="stopBtn" type="button" style="display:none;border-color:rgba(255,107,107,.4);color:#ff6b6b;">⏹ Ferma generazione</button>
+                <button class="btn" id="stopBtn" type="button" style="display:none;border-color:rgba(255,107,107,.4);color:#ff6b6b;" data-i18n="app.stop">⏹ Ferma generazione</button>
               </div>
             </div>
           </div>
 
           <div class="actions">
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
-              <button class="btn" id="backToLen" type="button">↑ Cambia lunghezza</button>
-              <button class="btn" id="backToTargetsFinal" type="button">↑ Cambia target</button>
-              <button class="btn" id="backToQuestion" type="button">↑ Cambia domanda</button>
+              <button class="btn" id="backToLen" type="button" data-i18n="app.changeLength">↑ Cambia lunghezza</button>
+              <button class="btn" id="backToTargetsFinal" type="button" data-i18n="app.changeTarget">↑ Cambia target</button>
+              <button class="btn" id="backToQuestion" type="button" data-i18n="app.changeQuestion">↑ Cambia domanda</button>
             </div>
 
-            <a class="btn" href="/prezzi.html" style="margin-left:auto;">Aggiungi crediti</a>
+            <a class="btn" href="/prezzi.html" style="margin-left:auto;" data-i18n="app.addCredits">Aggiungi crediti</a>
           </div>
         </div>
       </div>
@@ -501,7 +516,7 @@
     <div style="height:26px;"></div>
 
     <div style="text-align:center; margin-bottom:16px;">
-      <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="font-size:13px;">↑ Torna su</button>
+      <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="font-size:13px;" data-i18n="back.top">↑ Torna su</button>
     </div>
 
     <footer class="site-footer">
@@ -509,13 +524,92 @@
       <div class="footer-links">
         <a href="/privacy-policy.html">Privacy Policy</a>
         <a href="/cookies-policy.html">Cookie Policy</a>
-        <a href="/contatti.html">Contatti</a>
+        <a href="/contatti.html" data-i18n="footer.contact">Contatti</a>
       </div>
-      <span style="width:100%;text-align:center;font-size:11px;opacity:.6;">Creato da <a href="https://massimodassano.it" target="_blank" rel="noopener">Massimo Dassano</a></span>
+      <span style="width:100%;text-align:center;font-size:11px;opacity:.6;"><span data-i18n="footer.credit">Creato da</span> <a href="https://massimodassano.it" target="_blank" rel="noopener">Massimo Dassano</a></span>
     </footer>
   </div>
 
   <script>
+    window.SAI_I18N_EN = {
+      'nav.home': 'Home',
+      'nav.app': 'Ask something',
+      'nav.how': 'How it works',
+      'nav.pricing': 'Pricing',
+      'nav.profile': 'Profile',
+      'nav.spiegazioni': 'Explanations',
+      'nav.menu': 'Open menu',
+      'footer.contact': 'Contact',
+      'footer.credit': 'Created by',
+      'back.top': '↑ Back to top',
+      'home.chip1': '💰 What is inflation?',
+      'home.chip3': '🧬 Genes and DNA',
+      'app.creditsAvail': '⚡ Credits available:',
+      'app.signupFree': 'Sign up for free',
+      'app.recentSearches': '🕐 Recent searches',
+      'app.clear': 'Clear',
+      'app.step1.title': '✦ Write your question',
+      'app.step1.placeholder': "Example: What is DNA and what is it for?",
+      'app.chip2': '⚙️ Combustion engine',
+      'app.chip4': '🌤️ Blue sky',
+      'app.hint': '💡 Tip: add “with examples”',
+      'app.chooseTarget': 'Choose target ↓',
+      'app.step2.title': '🎯 Select the target',
+      'app.backToQuestion': '↑ Back to question',
+      'app.goLength': 'Go to length ↓',
+      'app.step3.title': '🧾 How long do you want the answer?',
+      'app.changeTarget': '↑ Change target',
+      'app.generate': 'Generate answer ↓',
+      'app.step4.title': '💬 Answer',
+      'app.chipTargetLabel': '🎯 Target:',
+      'app.chipLenLabel': '🧾 Length:',
+      'app.statusDefault': 'Write a question, choose target and length.',
+      'app.copy': '⧉ Copy',
+      'app.saveResponse': '☆ Save answer',
+      'app.stop': '⏹ Stop generating',
+      'app.changeLength': '↑ Change length',
+      'app.changeQuestion': '↑ Change question',
+      'app.addCredits': 'Add credits',
+      'target.child.label': 'Child', 'target.child.desc': 'Simple, analogies and short sentences.',
+      'target.teen.label': 'Teen', 'target.teen.desc': 'Clear, modern, with practical examples.',
+      'target.student.label': 'University student', 'target.student.desc': 'Academic structure and key concepts.',
+      'target.adult.label': 'Adult', 'target.adult.desc': 'Direct, concrete and no fluff.',
+      'target.expert.label': 'Expert', 'target.expert.desc': 'Technical details and deep dives.',
+      'target.scientist.label': 'Scientist', 'target.scientist.desc': 'Rigor, limitations and precise definitions.',
+      'len.short.label': 'Short', 'len.short.desc': 'Quick, essential answer.', 'len.short.pill': '~1 min',
+      'len.medium.label': 'Medium', 'len.medium.desc': 'Balanced, with examples.', 'len.medium.pill': '~2–3 min',
+      'len.long.label': 'Long', 'len.long.desc': 'Complete and well structured.', 'len.long.pill': '~5–8 min',
+      'app.credits.singular': 'credit',
+      'app.credits.plural': 'credits',
+      'app.extraCredit': 'extra credit',
+      'app.noExtra': 'no extra cost',
+      'app.costNeeded': 'You need',
+      'app.costHave': 'you have',
+      'app.costRemaining': "you'll have left",
+      'app.anon.none': 'You have used all your free questions. <strong>Sign up</strong> to keep using Simplif-AI!',
+      'app.anon.one': "You're exploring Simplif-AI without an account — you have <strong>1 free question</strong> left.",
+      'app.anon.many': "You're exploring Simplif-AI without an account — you have <strong>{n} free questions</strong> left.",
+      'app.status.noCredits': 'Not enough credits (you need {cost}, you have {have}). Top up to continue.',
+      'app.status.writeQuestion': 'Write a question to generate an answer.',
+      'app.status.pickTarget': 'Select a target.',
+      'app.status.pickLength': 'Select a length.',
+      'app.status.generating': 'Generating...',
+      'app.status.done': 'Answer generated.',
+      'app.status.overload': 'Oops! The server is temporarily overloaded. Your credits were not deducted — try again in a few seconds 🔄',
+      'app.status.copied': 'Text copied to clipboard.',
+      'app.status.doneShort': 'Done.',
+      'app.status.copyFail': 'Could not copy. Please select the text manually.',
+      'app.copied': '✓ Copied',
+      'app.saveShort': '☆ Save',
+      'app.saved': '★ Saved',
+      'app.toast.loginToSave': 'Sign in to save answers.',
+      'app.toast.limitFree': 'Limit reached (10). Buy credits to save up to 50 answers.',
+      'app.toast.limitPurchaser': 'Limit reached (50). Subscribe for unlimited answers.',
+      'app.toast.limitGeneric': 'Limit reached.',
+      'app.toast.saveError': 'Error while saving.',
+      'app.toast.saved': 'Answer saved to your Library!'
+    };
+
     /* Supabase Auth */
     const SUPABASE_URL  = "https://lmmiowagyqypdrdcemdo.supabase.co";
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
@@ -533,11 +627,11 @@
       creditsValueEl.textContent = remaining + '/2';
       const msg = document.getElementById('anonMsg');
       if (remaining === 0) {
-        msg.innerHTML = 'Hai esaurito le domande gratuite. <strong>Registrati</strong> per continuare con Simplif-AI!';
+        msg.innerHTML = window.saiT('app.anon.none', 'Hai esaurito le domande gratuite. <strong>Registrati</strong> per continuare con Simplif-AI!');
       } else if (remaining === 1) {
-        msg.innerHTML = 'Stai esplorando Simplif-AI senza account — ti rimane <strong>1 domanda gratuita</strong>.';
+        msg.innerHTML = window.saiT('app.anon.one', 'Stai esplorando Simplif-AI senza account — ti rimane <strong>1 domanda gratuita</strong>.');
       } else {
-        msg.innerHTML = 'Stai esplorando Simplif-AI senza account — hai <strong>' + remaining + ' domande gratuite</strong> disponibili.';
+        msg.innerHTML = window.saiT('app.anon.many', 'Stai esplorando Simplif-AI senza account — hai <strong>{n} domande gratuite</strong> disponibili.').replace('{n}', remaining);
       }
       document.getElementById('anonBanner').style.display = 'flex';
     }
@@ -589,37 +683,44 @@
 
     /* Targets & Lengths */
     const TARGETS = [
-      { label:"Bambino", icon:"🧒", desc:"Semplice, analogie e frasi brevi.", cost:1,
+      { i18nKey:"child", label:"Bambino", icon:"🧒", desc:"Semplice, analogie e frasi brevi.", cost:1,
         prompt:"Spiega come a un bambino di 8 anni: usa un linguaggio molto semplice, fai paragoni con oggetti quotidiani (es. il DNA è come un libro di ricette) e mantieni le frasi brevi.",
         baseTokens:3500, baseChars:6000
       },
-      { label:"Ragazzo", icon:"👨", desc:"Chiaro, moderno e con esempi pratici.", cost:1,
+      { i18nKey:"teen", label:"Ragazzo", icon:"👨", desc:"Chiaro, moderno e con esempi pratici.", cost:1,
         prompt:"Spiega come a un adolescente: usa un tono colloquiale ma corretto, evita termini troppo infantili, usa esempi tratti dalla tecnologia o dalla vita quotidiana dei giovani.",
         baseTokens:3500, baseChars:7000
       },
-      { label:"Universitario", icon:"🎓", desc:"Struttura accademica e concetti chiave.", cost:1,
+      { i18nKey:"student", label:"Universitario", icon:"🎓", desc:"Struttura accademica e concetti chiave.", cost:1,
         prompt:"Spiega come a uno studente universitario: usa un linguaggio formale, organizza la spiegazione per punti logici, approfondisci i concetti fondamentali senza dare nulla per scontato.",
         baseTokens:4000, baseChars:9000
       },
-      { label:"Adulto", icon:"👤", desc:"Diretto, concreto e senza fronzoli.", cost:2,
+      { i18nKey:"adult", label:"Adulto", icon:"👤", desc:"Diretto, concreto e senza fronzoli.", cost:2,
         prompt:"Spiega come a un adulto: vai dritto al punto, usa un tono serio e pragmatico, spiega l'utilità pratica del concetto e non perdere tempo in spiegazioni superflue.",
         baseTokens:5000, baseChars:12000
       },
-      { label:"Esperto", icon:"🧠", desc:"Dettagli tecnici e approfondimenti.", cost:2,
+      { i18nKey:"expert", label:"Esperto", icon:"🧠", desc:"Dettagli tecnici e approfondimenti.", cost:2,
         prompt:"Spiega come a un professionista del settore: dai per scontate le basi, approfondisci i meccanismi tecnici, usa la terminologia corretta e spiega i 'perché' dietro ai fenomeni.",
         baseTokens:6500, baseChars:16000
       },
-      { label:"Scienziato", icon:"🧪", desc:"Rigore, limiti e definizioni precise.", cost:3,
+      { i18nKey:"scientist", label:"Scienziato", icon:"🧪", desc:"Rigore, limiti e definizioni precise.", cost:3,
         prompt:"Spiega come a un ricercatore/scienziato: usa il massimo rigore scientifico, cita limiti delle attuali conoscenze, usa terminologia specialistica e mantieni una struttura logica rigorosa.",
         baseTokens:8000, baseChars:20000
       }
     ];
 
     const LENGTHS = [
-      { key:"breve", label:"Breve", desc:"Risposta rapida, essenziale.", pill:"~1 min", costExtra:0, multiplier:0.60, minWords: 80, instruction:"Rispondi in modo BREVE: massimo 4 frasi. Una sola analogia. Niente titoli, niente elenchi. Chiudi con una frase completa. Metti un punto finale alla fine." },
-      { key:"medio", label:"Medio", desc:"Equilibrata, con esempi.", pill:"~2–3 min", costExtra:0, multiplier:1.00, minWords: 250, instruction:"Rispondi in modo MEDIO: chiaro, con qualche esempio, senza diventare troppo lungo. Concludi con un paragrafo di riepilogo." },
-      { key:"lungo", label:"Lungo", desc:"Completa, ben strutturata.", pill:"~5–8 min", costExtra:1, multiplier:1.60, minWords: 700, instruction:"Rispondi in modo LUNGO e approfondito: usa titoli, paragrafi, esempi. Concludi SEMPRE con un paragrafo di sintesi finale completo. Non interrompere frasi a metà." }
+      { key:"breve", i18nKey:"short", label:"Breve", desc:"Risposta rapida, essenziale.", pill:"~1 min", costExtra:0, multiplier:0.60, minWords: 80, instruction:"Rispondi in modo BREVE: massimo 4 frasi. Una sola analogia. Niente titoli, niente elenchi. Chiudi con una frase completa. Metti un punto finale alla fine." },
+      { key:"medio", i18nKey:"medium", label:"Medio", desc:"Equilibrata, con esempi.", pill:"~2–3 min", costExtra:0, multiplier:1.00, minWords: 250, instruction:"Rispondi in modo MEDIO: chiaro, con qualche esempio, senza diventare troppo lungo. Concludi con un paragrafo di riepilogo." },
+      { key:"lungo", i18nKey:"long", label:"Lungo", desc:"Completa, ben strutturata.", pill:"~5–8 min", costExtra:1, multiplier:1.60, minWords: 700, instruction:"Rispondi in modo LUNGO e approfondito: usa titoli, paragrafi, esempi. Concludi SEMPRE con un paragrafo di sintesi finale completo. Non interrompere frasi a metà." }
     ];
+
+    function tTargetLabel(t){ return window.saiT('target.' + t.i18nKey + '.label', t.label); }
+    function tTargetDesc(t){ return window.saiT('target.' + t.i18nKey + '.desc', t.desc); }
+    function tLenLabel(l){ return window.saiT('len.' + l.i18nKey + '.label', l.label); }
+    function tLenDesc(l){ return window.saiT('len.' + l.i18nKey + '.desc', l.desc); }
+    function tLenPill(l){ return window.saiT('len.' + l.i18nKey + '.pill', l.pill); }
+    function tCreditWord(n){ return n !== 1 ? window.saiT('app.credits.plural','crediti') : window.saiT('app.credits.singular','credito'); }
 
     function computeCost(){
       const t = selectedTargetIndex >= 0 ? TARGETS[selectedTargetIndex] : null;
@@ -697,17 +798,17 @@
       const cost = computeCost();
       show();
       if (userCredits === null) {
-        badge.textContent = '⚡ ' + cost + ' credit' + (cost !== 1 ? 'i' : 'o');
+        badge.textContent = '⚡ ' + cost + ' ' + tCreditWord(cost);
         badge.style.color = '';
         return;
       }
       const after = userCredits - cost;
-      const label = cost + ' credit' + (cost !== 1 ? 'i' : 'o');
+      const label = cost + ' ' + tCreditWord(cost);
       if (after < 0) {
-        badge.innerHTML = '⚡ Servono ' + cost + ' &mdash; ne hai ' + userCredits;
+        badge.innerHTML = '⚡ ' + window.saiT('app.costNeeded','Servono') + ' ' + cost + ' &mdash; ' + window.saiT('app.costHave','ne hai') + ' ' + userCredits;
         badge.style.color = 'var(--danger, #ff6b6b)';
       } else if (after <= 2) {
-        badge.innerHTML = '⚡ ' + label + ', ti resteranno <b>' + after + '</b>';
+        badge.innerHTML = '⚡ ' + label + ', ' + window.saiT('app.costRemaining','ti resteranno') + ' <b>' + after + '</b>';
         badge.style.color = '#f0a500';
       } else {
         badge.innerHTML = '⚡ ' + label;
@@ -729,8 +830,8 @@
     function updateChips(){
       const t = (selectedTargetIndex >= 0) ? TARGETS[selectedTargetIndex] : null;
       const l = selectedLenKey ? LENGTHS.find(x=>x.key===selectedLenKey) : null;
-      chipTarget.textContent = t ? t.label : "—";
-      chipLen.textContent = l ? l.label : "—";
+      chipTarget.textContent = t ? tTargetLabel(t) : "—";
+      chipLen.textContent = l ? tLenLabel(l) : "—";
     }
 
     function computeLimits(){
@@ -937,27 +1038,27 @@
       /* Controllo crediti (solo utenti registrati) */
       const cost = computeCost();
       if(!userIsAnon && userCredits !== null && userCredits < cost){
-        setStatus(`Crediti insufficienti (servono ${cost}, hai ${userCredits}). Ricarica per continuare.`, false);
+        setStatus(window.saiT('app.status.noCredits', 'Crediti insufficienti (servono {cost}, hai {have}). Ricarica per continuare.').replace('{cost}', cost).replace('{have}', userCredits), false);
         setTimeout(() => window.location.replace("/prezzi.html?reason=no_credits"), 2000);
         return;
       }
 
       if(!q.value.trim()){
-        setStatus("Scrivi una domanda per generare.", false);
+        setStatus(window.saiT('app.status.writeQuestion', 'Scrivi una domanda per generare.'), false);
         return;
       }
       if(selectedTargetIndex < 0){
-        setStatus("Seleziona un target.", false);
+        setStatus(window.saiT('app.status.pickTarget', 'Seleziona un target.'), false);
         return;
       }
       if(!selectedLenKey){
-        setStatus("Seleziona una lunghezza.", false);
+        setStatus(window.saiT('app.status.pickLength', 'Seleziona una lunghezza.'), false);
         return;
       }
 
       isGenerating = true;
       saveBtn.disabled = true;
-      saveBtn.textContent = '☆ Salva';
+      saveBtn.textContent = window.saiT('app.saveShort', '☆ Salva');
       delete saveBtn.dataset.saved;
       updateButtons();
       updateChips();
@@ -965,7 +1066,7 @@
       const t = TARGETS[selectedTargetIndex];
       const l = LENGTHS.find(x=>x.key===selectedLenKey);
     
-      setStatus("Sto generando...", true);
+      setStatus(window.saiT('app.status.generating', 'Sto generando...'), true);
     
       try{
         const { maxTokens, maxChars } = computeLimits();
@@ -997,7 +1098,7 @@
 
         accumulatedText = ensureEndsClean(accumulatedText);
         renderMarkdownSafe(accumulatedText);
-        setStatus("Risposta generata.", false);
+        setStatus(window.saiT('app.status.done', 'Risposta generata.'), false);
         saveToHistory(q.value.trim());
         renderHistory();
 
@@ -1019,7 +1120,7 @@
       } catch(e){
         skeletonEl.style.display = "none";
         if(!accumulatedText.trim()){
-          setStatus("Ops! Il server è momentaneamente sovraccarico. I tuoi crediti non sono stati scalati — riprova tra qualche secondo 🔄", false);
+          setStatus(window.saiT('app.status.overload', 'Ops! Il server è momentaneamente sovraccarico. I tuoi crediti non sono stati scalati — riprova tra qualche secondo 🔄'), false);
         }
 
       } finally{
@@ -1053,7 +1154,7 @@
       TARGETS.forEach((t, i) => {
         const el = document.createElement("div");
         el.className = "target-card" + (i === selectedTargetIndex ? " active" : "");
-        el.innerHTML = `<div class="ticon">${t.icon}</div><div><p class="tname">${t.label}</p><p class="tdesc">${t.desc}</p><p style="margin:4px 0 0;font-size:11px;color:var(--muted);">⚡ ${t.cost} credit${t.cost > 1 ? "i" : "o"}</p></div>`;
+        el.innerHTML = `<div class="ticon">${t.icon}</div><div><p class="tname">${tTargetLabel(t)}</p><p class="tdesc">${tTargetDesc(t)}</p><p style="margin:4px 0 0;font-size:11px;color:var(--muted);">⚡ ${t.cost} ${tCreditWord(t.cost)}</p></div>`;
         el.addEventListener("click", () => {
           selectedTargetIndex = i;
           renderTargets();
@@ -1076,8 +1177,8 @@
       LENGTHS.forEach((l) => {
         const el = document.createElement("div");
         el.className = "len-card" + (l.key === selectedLenKey ? " active" : "");
-        const extraLabel = l.costExtra > 0 ? `<span style="font-size:11px;color:var(--muted);">+${l.costExtra} credito extra</span>` : `<span style="font-size:11px;color:var(--muted);">nessun extra</span>`;
-        el.innerHTML = `<div class="len-left"><div class="len-name">${l.label}</div><div class="len-desc">${l.desc}</div>${extraLabel}</div><div class="len-pill">${l.pill}</div>`;
+        const extraLabel = l.costExtra > 0 ? `<span style="font-size:11px;color:var(--muted);">+${l.costExtra} ${window.saiT('app.extraCredit','credito extra')}</span>` : `<span style="font-size:11px;color:var(--muted);">${window.saiT('app.noExtra','nessun extra')}</span>`;
+        el.innerHTML = `<div class="len-left"><div class="len-name">${tLenLabel(l)}</div><div class="len-desc">${tLenDesc(l)}</div>${extraLabel}</div><div class="len-pill">${tLenPill(l)}</div>`;
         el.addEventListener("click", () => {
           selectedLenKey = l.key;
           renderLengths();
@@ -1111,14 +1212,14 @@
 
     copyBtn.addEventListener("click", () => {
       navigator.clipboard.writeText(accumulatedText).then(() => {
-        copyBtn.textContent = "✓ Copiato";
-        setStatus("Testo copiato negli appunti.", false);
+        copyBtn.textContent = window.saiT('app.copied', '✓ Copiato');
+        setStatus(window.saiT('app.status.copied', 'Testo copiato negli appunti.'), false);
         setTimeout(() => {
-          copyBtn.textContent = "⧉ Copia";
-          setStatus("Fatto.", false);
+          copyBtn.textContent = window.saiT('app.copy', '⧉ Copia');
+          setStatus(window.saiT('app.status.doneShort', 'Fatto.'), false);
         }, 2000);
       }).catch(() => {
-        setStatus("Impossibile copiare. Seleziona il testo manualmente.", false);
+        setStatus(window.saiT('app.status.copyFail', 'Impossibile copiare. Seleziona il testo manualmente.'), false);
       });
     });
 
@@ -1150,7 +1251,7 @@
     }
 
     saveBtn.addEventListener("click", async function(){
-      if(!currentUserId){ showToast("Accedi per salvare risposte."); return; }
+      if(!currentUserId){ showToast(window.saiT('app.toast.loginToSave', 'Accedi per salvare risposte.')); return; }
       if(!accumulatedText.trim()){ return; }
 
       saveBtn.disabled = true;
@@ -1162,10 +1263,10 @@
       var { count } = await sb.from('saved_responses').select('id', { count: 'exact', head: true }).eq('user_id', currentUserId);
       if(count >= limit){
         var msgs = {
-          free: 'Limite raggiunto (10). Acquista crediti per salvare fino a 50 risposte.',
-          purchaser: 'Limite raggiunto (50). Abbonati per risposte illimitate.'
+          free: window.saiT('app.toast.limitFree', 'Limite raggiunto (10). Acquista crediti per salvare fino a 50 risposte.'),
+          purchaser: window.saiT('app.toast.limitPurchaser', 'Limite raggiunto (50). Abbonati per risposte illimitate.')
         };
-        showToast(msgs[tier] || 'Limite raggiunto.');
+        showToast(msgs[tier] || window.saiT('app.toast.limitGeneric', 'Limite raggiunto.'));
         saveBtn.disabled = false;
         return;
       }
@@ -1180,12 +1281,12 @@
       });
 
       if(error){
-        showToast('Errore nel salvataggio.');
+        showToast(window.saiT('app.toast.saveError', 'Errore nel salvataggio.'));
         saveBtn.disabled = false;
       } else {
-        saveBtn.textContent = '★ Salvata';
+        saveBtn.textContent = window.saiT('app.saved', '★ Salvata');
         saveBtn.dataset.saved = '1';
-        showToast('Risposta salvata nella Libreria!');
+        showToast(window.saiT('app.toast.saved', 'Risposta salvata nella Libreria!'));
       }
     });
 
@@ -1257,6 +1358,22 @@
     updateChips();
     updateButtons();
     renderHistory();
+
+    /* Ridisegna le parti generate via JS quando l'utente cambia lingua */
+    document.addEventListener('sai:langchange', function(){
+      renderTargets();
+      renderLengths();
+      updateChips();
+      updateButtons();
+      if(userIsAnon) updateAnonUI();
+      if(!isGenerating){
+        statusEl.textContent = accumulatedText.trim()
+          ? window.saiT('app.status.done', 'Risposta generata.')
+          : window.saiT('app.statusDefault', 'Scrivi una domanda, scegli target e lunghezza.');
+        if(!saveBtn.dataset.saved) saveBtn.textContent = window.saiT('app.saveResponse', '☆ Salva risposta');
+        copyBtn.textContent = window.saiT('app.copy', '⧉ Copia');
+      }
+    });
 
     /* ── Banner benvenuto post-conferma email ── */
     (function(){

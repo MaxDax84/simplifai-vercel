@@ -506,6 +506,22 @@ html[data-theme="light"] .theme-btn:hover{ background:rgba(0,0,0,.08); }
 html[data-theme="light"] .theme-btn .icon-sun  { opacity:0; }
 html[data-theme="light"] .theme-btn .icon-moon { opacity:1; }
 
+/* Language toggle (riusa lo stile di .theme-btn) */
+.theme-btn .icon-lang-it,
+.theme-btn .icon-lang-en{
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  transition:opacity .2s ease;
+  line-height:1;
+  pointer-events:none;
+  user-select:none;
+}
+.theme-btn .icon-lang-it { opacity:1; }
+.theme-btn .icon-lang-en { opacity:0; }
+html[data-lang="en"] .theme-btn .icon-lang-it { opacity:0; }
+html[data-lang="en"] .theme-btn .icon-lang-en { opacity:1; }
+
 /* =====================================================
    SKELETON LOADER
    ===================================================== */

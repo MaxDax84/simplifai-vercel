@@ -267,39 +267,40 @@
       </a>
 
       <nav id="mainNav">
-        <a href="/index.html" data-nav="home">Home</a>
-        <a href="/app.html" data-nav="app">Chiedimi qualcosa</a>
-        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
-        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
-        <a href="/profilo.html" data-nav="profile">Profilo</a>
-        <a href="/spiegazioni.html" data-nav="spiegazioni">Spiegazioni</a>
+        <a href="/index.html" data-nav="home" data-i18n="nav.home">Home</a>
+        <a href="/app.html" data-nav="app" data-i18n="nav.app">Chiedimi qualcosa</a>
+        <a href="/come-funziona.html" data-nav="how" data-i18n="nav.how">Come funziona</a>
+        <a href="/prezzi.html" data-nav="pricing" data-i18n="nav.pricing">Prezzi</a>
+        <a href="/profilo.html" data-nav="profile" data-i18n="nav.profile">Profilo</a>
+        <a href="/spiegazioni.html" data-nav="spiegazioni" data-i18n="nav.spiegazioni">Spiegazioni</a>
       </nav>
 
       <div style="display:flex;align-items:center;gap:8px;">
         <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema"><span class="icon-sun">☀️</span><span class="icon-moon">🌙</span></button>
-        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+        <button id="langBtn" class="theme-btn" type="button" aria-label="Cambia lingua / Switch language"><span class="icon-lang-it">🇮🇹</span><span class="icon-lang-en">🇬🇧</span></button>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu" data-i18n-aria="nav.menu">
           <span></span><span></span><span></span>
         </button>
       </div>
     </header>
 
     <div class="mobile-nav" id="mobileNav">
-      <a href="/index.html">Home</a>
-      <a href="/app.html">Chiedimi qualcosa</a>
-      <a href="/come-funziona.html">Come funziona</a>
-      <a href="/prezzi.html">Prezzi</a>
-      <a href="/profilo.html">Profilo</a>
-      <a href="/spiegazioni.html">Spiegazioni</a>
+      <a href="/index.html" data-i18n="nav.home">Home</a>
+      <a href="/app.html" data-i18n="nav.app">Chiedimi qualcosa</a>
+      <a href="/come-funziona.html" data-i18n="nav.how">Come funziona</a>
+      <a href="/prezzi.html" data-i18n="nav.pricing">Prezzi</a>
+      <a href="/profilo.html" data-i18n="nav.profile">Profilo</a>
+      <a href="/spiegazioni.html" data-i18n="nav.spiegazioni">Spiegazioni</a>
     </div>
 
     <!-- HERO -->
     <div class="card">
       <div class="card-inner how-hero reveal">
-        <span class="pilltag">🧭 COME FUNZIONA</span>
-        <div class="h1">Tutto quello che devi sapere</div>
-        <p class="sub">Dalla domanda alla risposta in 3 passi. Scopri i target, le lunghezze, i crediti e come personalizzare la tua esperienza.</p>
+        <span class="pilltag" data-i18n="how.pill">🧭 COME FUNZIONA</span>
+        <div class="h1" data-i18n="how.heroTitle">Tutto quello che devi sapere</div>
+        <p class="sub" data-i18n="how.heroSub">Dalla domanda alla risposta in 3 passi. Scopri i target, le lunghezze, i crediti e come personalizzare la tua esperienza.</p>
         <div style="height:12px;"></div>
-        <a class="btn btn-primary" href="#step-1">Vedi i passaggi ↓</a>
+        <a class="btn btn-primary" href="#step-1" data-i18n="how.seeSteps">Vedi i passaggi ↓</a>
       </div>
     </div>
 
@@ -309,15 +310,15 @@
       <div class="sticky">
         <div class="card">
           <div class="card-inner">
-            <div style="font-weight:900; margin-bottom:10px; font-size:14px;">📍 Indice</div>
+            <div style="font-weight:900; margin-bottom:10px; font-size:14px;" data-i18n="how.index">📍 Indice</div>
             <div class="mini-nav" id="miniNav">
-              <a href="#step-1" data-step="1"><span class="mini-dot">1</span> Scrivi la domanda</a>
-              <a href="#step-2" data-step="2"><span class="mini-dot">2</span> Scegli il target</a>
-              <a href="#step-3" data-step="3"><span class="mini-dot">3</span> Scegli la lunghezza</a>
-              <a href="#step-4" data-step="4"><span class="mini-dot">4</span> Leggi e copia</a>
-              <a href="#step-5" data-step="5"><span class="mini-dot">⚡</span> Crediti</a>
-              <a href="#step-6" data-step="6"><span class="mini-dot">👤</span> Profilo</a>
-              <a href="#step-7" data-step="7"><span class="mini-dot">?</span> FAQ</a>
+              <a href="#step-1" data-step="1"><span class="mini-dot">1</span> <span data-i18n="how.nav1">Scrivi la domanda</span></a>
+              <a href="#step-2" data-step="2"><span class="mini-dot">2</span> <span data-i18n="how.nav2">Scegli il target</span></a>
+              <a href="#step-3" data-step="3"><span class="mini-dot">3</span> <span data-i18n="how.nav3">Scegli la lunghezza</span></a>
+              <a href="#step-4" data-step="4"><span class="mini-dot">4</span> <span data-i18n="how.nav4">Leggi e copia</span></a>
+              <a href="#step-5" data-step="5"><span class="mini-dot">⚡</span> <span data-i18n="how.nav5">Crediti</span></a>
+              <a href="#step-6" data-step="6"><span class="mini-dot">👤</span> <span data-i18n="how.nav6">Profilo</span></a>
+              <a href="#step-7" data-step="7"><span class="mini-dot">?</span> <span data-i18n="how.nav7">FAQ</span></a>
             </div>
           </div>
         </div>
@@ -326,8 +327,8 @@
 
         <div class="card">
           <div class="card-inner">
-            <div style="font-weight:900; margin-bottom:6px; font-size:14px;">💡 Tip</div>
-            <p class="sub" style="margin:0; font-size:13px;">
+            <div style="font-weight:900; margin-bottom:6px; font-size:14px;" data-i18n="how.tipTitle">💡 Tip</div>
+            <p class="sub" style="margin:0; font-size:13px;" data-i18n-html="how.tipBody">
               Aggiungi contesto alla domanda: <em>"sto studiando per un esame"</em>, <em>"mi serve un esempio pratico"</em>, <em>"spiegami passo passo"</em>. La qualità della risposta migliora molto.
             </p>
           </div>
@@ -337,8 +338,8 @@
 
         <div class="card">
           <div class="card-inner" style="text-align:center;">
-            <p style="margin:0 0 10px; font-size:13px; color:var(--muted);">Pronto a provare?</p>
-            <a class="btn btn-primary" href="/app.html" style="width:100%; display:block;">Chiedimi qualcosa →</a>
+            <p style="margin:0 0 10px; font-size:13px; color:var(--muted);" data-i18n="how.readyQ">Pronto a provare?</p>
+            <a class="btn btn-primary" href="/app.html" style="width:100%; display:block;" data-i18n="how.askSomething">Chiedimi qualcosa →</a>
           </div>
         </div>
       </div>
@@ -351,15 +352,15 @@
           <div class="step-top">
             <div class="step-num">1</div>
             <div>
-              <p class="step-title">Scrivi la domanda</p>
-              <p class="step-sub">Inserisci qualsiasi concetto, tema o domanda. Può essere una parola sola ("fotosintesi") o una frase articolata. Più contesto dai, più la risposta sarà pertinente.</p>
+              <p class="step-title" data-i18n="how.s1.title">Scrivi la domanda</p>
+              <p class="step-sub" data-i18n="how.s1.sub">Inserisci qualsiasi concetto, tema o domanda. Può essere una parola sola ("fotosintesi") o una frase articolata. Più contesto dai, più la risposta sarà pertinente.</p>
             </div>
           </div>
           <ul class="step-points">
-            <li><span class="icon">✍️</span><span>Puoi scrivere anche domande lunghe e articolate su più righe.</span></li>
-            <li><span class="icon">🎯</span><span>Aggiungi un obiettivo: "con esempi pratici", "in 5 punti", "confrontando A e B".</span></li>
-            <li><span class="icon">🧩</span><span>Per argomenti tecnici, specifica il contesto: esame universitario, curiosità personale, presentazione lavoro.</span></li>
-            <li><span class="icon">🌍</span><span>Puoi scrivere in italiano o in un'altra lingua: la risposta sarà nella stessa lingua della domanda.</span></li>
+            <li><span class="icon">✍️</span><span data-i18n="how.s1.p1">Puoi scrivere anche domande lunghe e articolate su più righe.</span></li>
+            <li><span class="icon">🎯</span><span data-i18n="how.s1.p2">Aggiungi un obiettivo: "con esempi pratici", "in 5 punti", "confrontando A e B".</span></li>
+            <li><span class="icon">🧩</span><span data-i18n="how.s1.p3">Per argomenti tecnici, specifica il contesto: esame universitario, curiosità personale, presentazione lavoro.</span></li>
+            <li><span class="icon">🌍</span><span data-i18n="how.s1.p4">Puoi scrivere in italiano o in un'altra lingua: la risposta sarà nella stessa lingua della domanda.</span></li>
           </ul>
         </div>
 
@@ -368,53 +369,53 @@
           <div class="step-top">
             <div class="step-num">2</div>
             <div>
-              <p class="step-title">Scegli il target</p>
-              <p class="step-sub">Il target determina tono, profondità e lessico della risposta. Scegli il livello a cui vuoi essere spiegato il concetto. Ogni target ha un costo diverso in crediti.</p>
+              <p class="step-title" data-i18n="how.s2.title">Scegli il target</p>
+              <p class="step-sub" data-i18n="how.s2.sub">Il target determina tono, profondità e lessico della risposta. Scegli il livello a cui vuoi essere spiegato il concetto. Ogni target ha un costo diverso in crediti.</p>
             </div>
           </div>
 
           <div class="target-grid">
             <div class="tg-card">
               <div class="tg-icon">🧒</div>
-              <p class="tg-name">Bambino</p>
-              <p class="tg-desc">Linguaggio semplicissimo, analogie con oggetti quotidiani, frasi brevi.</p>
-              <div class="tg-cost">⚡ 1 credito</div>
+              <p class="tg-name" data-i18n="target.child.label">Bambino</p>
+              <p class="tg-desc" data-i18n="how.tg.child">Linguaggio semplicissimo, analogie con oggetti quotidiani, frasi brevi.</p>
+              <div class="tg-cost"><span>⚡ 1</span> <span data-i18n="app.credits.singular">credito</span></div>
             </div>
             <div class="tg-card">
               <div class="tg-icon">👨</div>
-              <p class="tg-name">Ragazzo</p>
-              <p class="tg-desc">Tono colloquiale e moderno, esempi dalla vita quotidiana e dalla tecnologia.</p>
-              <div class="tg-cost">⚡ 1 credito</div>
+              <p class="tg-name" data-i18n="target.teen.label">Ragazzo</p>
+              <p class="tg-desc" data-i18n="how.tg.teen">Tono colloquiale e moderno, esempi dalla vita quotidiana e dalla tecnologia.</p>
+              <div class="tg-cost"><span>⚡ 1</span> <span data-i18n="app.credits.singular">credito</span></div>
             </div>
             <div class="tg-card">
               <div class="tg-icon">🎓</div>
-              <p class="tg-name">Universitario</p>
-              <p class="tg-desc">Linguaggio formale, struttura logica, definizioni e passaggi accademici.</p>
-              <div class="tg-cost">⚡ 1 credito</div>
+              <p class="tg-name" data-i18n="target.student.label">Universitario</p>
+              <p class="tg-desc" data-i18n="how.tg.student">Linguaggio formale, struttura logica, definizioni e passaggi accademici.</p>
+              <div class="tg-cost"><span>⚡ 1</span> <span data-i18n="app.credits.singular">credito</span></div>
             </div>
             <div class="tg-card">
               <div class="tg-icon">👤</div>
-              <p class="tg-name">Adulto</p>
-              <p class="tg-desc">Diretto e pragmatico, si concentra sull'utilità pratica del concetto.</p>
-              <div class="tg-cost">⚡ 2 crediti</div>
+              <p class="tg-name" data-i18n="target.adult.label">Adulto</p>
+              <p class="tg-desc" data-i18n="how.tg.adult">Diretto e pragmatico, si concentra sull'utilità pratica del concetto.</p>
+              <div class="tg-cost"><span>⚡ 2</span> <span data-i18n="app.credits.plural">crediti</span></div>
             </div>
             <div class="tg-card">
               <div class="tg-icon">🧠</div>
-              <p class="tg-name">Esperto</p>
-              <p class="tg-desc">Terminologia tecnica, meccanismi profondi, spiega i "perché" dietro ai fenomeni.</p>
-              <div class="tg-cost">⚡ 2 crediti</div>
+              <p class="tg-name" data-i18n="target.expert.label">Esperto</p>
+              <p class="tg-desc" data-i18n="how.tg.expert">Terminologia tecnica, meccanismi profondi, spiega i "perché" dietro ai fenomeni.</p>
+              <div class="tg-cost"><span>⚡ 2</span> <span data-i18n="app.credits.plural">crediti</span></div>
             </div>
             <div class="tg-card">
               <div class="tg-icon">🧪</div>
-              <p class="tg-name">Scienziato</p>
-              <p class="tg-desc">Massimo rigore scientifico, limiti delle conoscenze attuali, terminologia specialistica.</p>
-              <div class="tg-cost">⚡ 3 crediti</div>
+              <p class="tg-name" data-i18n="target.scientist.label">Scienziato</p>
+              <p class="tg-desc" data-i18n="how.tg.scientist">Massimo rigore scientifico, limiti delle conoscenze attuali, terminologia specialistica.</p>
+              <div class="tg-cost"><span>⚡ 3</span> <span data-i18n="app.credits.plural">crediti</span></div>
             </div>
           </div>
 
           <ul class="step-points" style="margin-top:14px;">
-            <li><span class="icon">🔄</span><span>Puoi cambiare target in qualsiasi momento: la risposta si rigenera automaticamente con le nuove impostazioni.</span></li>
-            <li><span class="icon">🎯</span><span>Non esiste una scelta "giusta": prova lo stesso concetto su due target diversi per confrontare le prospettive.</span></li>
+            <li><span class="icon">🔄</span><span data-i18n="how.s2.p1">Puoi cambiare target in qualsiasi momento: la risposta si rigenera automaticamente con le nuove impostazioni.</span></li>
+            <li><span class="icon">🎯</span><span data-i18n="how.s2.p2">Non esiste una scelta "giusta": prova lo stesso concetto su due target diversi per confrontare le prospettive.</span></li>
           </ul>
         </div>
 
@@ -423,45 +424,45 @@
           <div class="step-top">
             <div class="step-num">3</div>
             <div>
-              <p class="step-title">Scegli la lunghezza</p>
-              <p class="step-sub">La lunghezza definisce quanto sarà estesa e approfondita la risposta. Selezionandola, la generazione parte automaticamente senza premere nessun altro bottone.</p>
+              <p class="step-title" data-i18n="how.s3.title">Scegli la lunghezza</p>
+              <p class="step-sub" data-i18n="how.s3.sub">La lunghezza definisce quanto sarà estesa e approfondita la risposta. Selezionandola, la generazione parte automaticamente senza premere nessun altro bottone.</p>
             </div>
           </div>
 
           <table class="len-table">
             <thead>
               <tr>
-                <th>Lunghezza</th>
-                <th>Descrizione</th>
-                <th>Tempo stimato</th>
-                <th>Costo extra</th>
+                <th data-i18n="how.table.length">Lunghezza</th>
+                <th data-i18n="how.table.desc">Descrizione</th>
+                <th data-i18n="how.table.time">Tempo stimato</th>
+                <th data-i18n="how.table.extra">Costo extra</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>🧾 Breve</td>
-                <td>Risposta rapida ed essenziale, massimo 4-5 frasi.</td>
-                <td>~1 min lettura</td>
-                <td style="color:#5cf2a8;">+0 crediti</td>
+                <td data-i18n="how.table.shortLabel">🧾 Breve</td>
+                <td data-i18n="how.table.shortDesc">Risposta rapida ed essenziale, massimo 4-5 frasi.</td>
+                <td data-i18n="how.table.shortTime">~1 min lettura</td>
+                <td style="color:#5cf2a8;" data-i18n="how.table.noExtra">+0 crediti</td>
               </tr>
               <tr>
-                <td>⚖️ Medio</td>
-                <td>Equilibrata, con esempi e un riepilogo finale.</td>
-                <td>~2–3 min lettura</td>
-                <td style="color:#5cf2a8;">+0 crediti</td>
+                <td data-i18n="how.table.mediumLabel">⚖️ Medio</td>
+                <td data-i18n="how.table.mediumDesc">Equilibrata, con esempi e un riepilogo finale.</td>
+                <td data-i18n="how.table.mediumTime">~2–3 min lettura</td>
+                <td style="color:#5cf2a8;" data-i18n="how.table.noExtra">+0 crediti</td>
               </tr>
               <tr>
-                <td>📚 Lungo</td>
-                <td>Completa, strutturata con titoli e paragrafi, esempi approfonditi.</td>
-                <td>~5–8 min lettura</td>
-                <td style="color:#f5a623;">+1 credito</td>
+                <td data-i18n="how.table.longLabel">📚 Lungo</td>
+                <td data-i18n="how.table.longDesc">Completa, strutturata con titoli e paragrafi, esempi approfonditi.</td>
+                <td data-i18n="how.table.longTime">~5–8 min lettura</td>
+                <td style="color:#f5a623;" data-i18n="how.table.extraCost">+1 credito</td>
               </tr>
             </tbody>
           </table>
 
           <ul class="step-points" style="margin-top:14px;">
-            <li><span class="icon">⚡</span><span>La generazione parte in automatico non appena selezioni la lunghezza.</span></li>
-            <li><span class="icon">🔄</span><span>Vuoi cambiare? Clicca su un altro target o lunghezza: la risposta si rigenera.</span></li>
+            <li><span class="icon">⚡</span><span data-i18n="how.s3.p1">La generazione parte in automatico non appena selezioni la lunghezza.</span></li>
+            <li><span class="icon">🔄</span><span data-i18n="how.s3.p2">Vuoi cambiare? Clicca su un altro target o lunghezza: la risposta si rigenera.</span></li>
           </ul>
         </div>
 
@@ -470,15 +471,15 @@
           <div class="step-top">
             <div class="step-num">4</div>
             <div>
-              <p class="step-title">Leggi la risposta e copia</p>
-              <p class="step-sub">La risposta arriva in tempo reale tramite streaming: vedi i paragrafi mentre vengono scritti. Al termine, puoi copiarla con un click.</p>
+              <p class="step-title" data-i18n="how.s4.title">Leggi la risposta e copia</p>
+              <p class="step-sub" data-i18n="how.s4.sub">La risposta arriva in tempo reale tramite streaming: vedi i paragrafi mentre vengono scritti. Al termine, puoi copiarla con un click.</p>
             </div>
           </div>
           <ul class="step-points">
-            <li><span class="icon">📡</span><span><b>Streaming in tempo reale</b>: il testo appare progressivamente, non devi aspettare che sia tutto pronto.</span></li>
-            <li><span class="icon">📝</span><span><b>Formattazione automatica</b>: titoli, liste, grassetti e blocchi di codice vengono renderizzati in Markdown.</span></li>
-            <li><span class="icon">⧉</span><span><b>Copia</b>: il bottone "Copia" salva tutto il testo generato negli appunti in formato testo semplice.</span></li>
-            <li><span class="icon">🔁</span><span><b>Rigenera</b>: vuoi una versione diversa? Cambia target o lunghezza per una nuova risposta sullo stesso tema.</span></li>
+            <li><span class="icon">📡</span><span data-i18n-html="how.s4.p1"><b>Streaming in tempo reale</b>: il testo appare progressivamente, non devi aspettare che sia tutto pronto.</span></li>
+            <li><span class="icon">📝</span><span data-i18n-html="how.s4.p2"><b>Formattazione automatica</b>: titoli, liste, grassetti e blocchi di codice vengono renderizzati in Markdown.</span></li>
+            <li><span class="icon">⧉</span><span data-i18n-html="how.s4.p3"><b>Copia</b>: il bottone "Copia" salva tutto il testo generato negli appunti in formato testo semplice.</span></li>
+            <li><span class="icon">🔁</span><span data-i18n-html="how.s4.p4"><b>Rigenera</b>: vuoi una versione diversa? Cambia target o lunghezza per una nuova risposta sullo stesso tema.</span></li>
           </ul>
         </div>
 
@@ -487,34 +488,34 @@
           <div class="step-top">
             <div class="step-num" style="background:linear-gradient(135deg,rgba(255,196,0,.8),rgba(255,120,0,.7));">⚡</div>
             <div>
-              <p class="step-title">Come funzionano i crediti</p>
-              <p class="step-sub">Ogni generazione costa un certo numero di crediti in base al target e alla lunghezza scelti. I crediti si scalano automaticamente a ogni risposta completata.</p>
+              <p class="step-title" data-i18n="how.s5.title">Come funzionano i crediti</p>
+              <p class="step-sub" data-i18n="how.s5.sub">Ogni generazione costa un certo numero di crediti in base al target e alla lunghezza scelti. I crediti si scalano automaticamente a ogni risposta completata.</p>
             </div>
           </div>
 
           <div class="credit-grid">
             <div class="credit-box">
-              <p class="credit-box-title">🧒👨🎓 Target base</p>
-              <p>Bambino, Ragazzo, Universitario costano <b style="color:var(--text);">1 credito</b> a generazione.</p>
+              <p class="credit-box-title" data-i18n="how.s5.box1title">🧒👨🎓 Target base</p>
+              <p data-i18n-html="how.s5.box1body">Bambino, Ragazzo, Universitario costano <b style="color:var(--text);">1 credito</b> a generazione.</p>
             </div>
             <div class="credit-box">
-              <p class="credit-box-title">👤🧠 Target avanzati</p>
-              <p>Adulto ed Esperto costano <b style="color:var(--text);">2 crediti</b> a generazione.</p>
+              <p class="credit-box-title" data-i18n="how.s5.box2title">👤🧠 Target avanzati</p>
+              <p data-i18n-html="how.s5.box2body">Adulto ed Esperto costano <b style="color:var(--text);">2 crediti</b> a generazione.</p>
             </div>
             <div class="credit-box">
-              <p class="credit-box-title">🧪 Target Scienziato</p>
-              <p>Scienziato costa <b style="color:var(--text);">3 crediti</b>: è il livello più elaborato.</p>
+              <p class="credit-box-title" data-i18n="how.s5.box3title">🧪 Target Scienziato</p>
+              <p data-i18n-html="how.s5.box3body">Scienziato costa <b style="color:var(--text);">3 crediti</b>: è il livello più elaborato.</p>
             </div>
             <div class="credit-box">
-              <p class="credit-box-title">📚 Risposta Lunga</p>
-              <p>La lunghezza "Lungo" aggiunge <b style="color:var(--text);">+1 credito</b> extra. Breve e Medio non costano nulla in più.</p>
+              <p class="credit-box-title" data-i18n="how.s5.box4title">📚 Risposta Lunga</p>
+              <p data-i18n-html="how.s5.box4body">La lunghezza "Lungo" aggiunge <b style="color:var(--text);">+1 credito</b> extra. Breve e Medio non costano nulla in più.</p>
             </div>
           </div>
 
           <ul class="step-points" style="margin-top:14px;">
-            <li><span class="icon">👁️</span><span>I tuoi crediti disponibili sono sempre visibili in alto nell'app, in tempo reale.</span></li>
-            <li><span class="icon">🛒</span><span>Esauriti i crediti? Vai su <a href="/prezzi.html" style="color:rgba(124,92,255,.9);">Prezzi</a> per ricaricare con un pacchetto (simulazione mock).</span></li>
-            <li><span class="icon">🎁</span><span>Al momento della registrazione ricevi crediti di benvenuto per provare l'app gratuitamente.</span></li>
+            <li><span class="icon">👁️</span><span data-i18n="how.s5.p1">I tuoi crediti disponibili sono sempre visibili in alto nell'app, in tempo reale.</span></li>
+            <li><span class="icon">🛒</span><span data-i18n-html="how.s5.p2">Esauriti i crediti? Vai su <a href="/prezzi.html" style="color:rgba(124,92,255,.9);">Prezzi</a> per ricaricare con un pacchetto (simulazione mock).</span></li>
+            <li><span class="icon">🎁</span><span data-i18n="how.s5.p3">Al momento della registrazione ricevi crediti di benvenuto per provare l'app gratuitamente.</span></li>
           </ul>
         </div>
 
@@ -523,18 +524,18 @@
           <div class="step-top">
             <div class="step-num" style="background:linear-gradient(135deg,rgba(38,198,255,.8),rgba(124,92,255,.7));">👤</div>
             <div>
-              <p class="step-title">Il tuo profilo</p>
-              <p class="step-sub">La pagina Profilo ti permette di personalizzare la tua esperienza su Simplif-AI e di gestire i tuoi dati account.</p>
+              <p class="step-title" data-i18n="how.s6.title">Il tuo profilo</p>
+              <p class="step-sub" data-i18n="how.s6.sub">La pagina Profilo ti permette di personalizzare la tua esperienza su Simplif-AI e di gestire i tuoi dati account.</p>
             </div>
           </div>
           <ul class="step-points">
-            <li><span class="icon">📋</span><span><b>Dati personali</b>: nome, cognome, data di nascita, città, professione e bio.</span></li>
-            <li><span class="icon">🔒</span><span><b>Sicurezza</b>: puoi aggiornare email e password in qualsiasi momento.</span></li>
-            <li><span class="icon">🧠</span><span><b>Profilo di apprendimento</b>: indica livello di istruzione, settore, interessi e obiettivo d'uso. Questi dati ci aiutano a migliorare l'esperienza (non influenzano la generazione attuale).</span></li>
-            <li><span class="icon">🚪</span><span><b>Disconnessione</b>: il bottone "Esci" si trova in fondo alla pagina Profilo.</span></li>
+            <li><span class="icon">📋</span><span data-i18n-html="how.s6.p1"><b>Dati personali</b>: nome, cognome, data di nascita, città, professione e bio.</span></li>
+            <li><span class="icon">🔒</span><span data-i18n-html="how.s6.p2"><b>Sicurezza</b>: puoi aggiornare email e password in qualsiasi momento.</span></li>
+            <li><span class="icon">🧠</span><span data-i18n-html="how.s6.p3"><b>Profilo di apprendimento</b>: indica livello di istruzione, settore, interessi e obiettivo d'uso. Questi dati ci aiutano a migliorare l'esperienza (non influenzano la generazione attuale).</span></li>
+            <li><span class="icon">🚪</span><span data-i18n-html="how.s6.p4"><b>Disconnessione</b>: il bottone "Esci" si trova in fondo alla pagina Profilo.</span></li>
           </ul>
           <div style="margin-top:14px;">
-            <a class="btn" href="/profilo.html">Vai al profilo →</a>
+            <a class="btn" href="/profilo.html" data-i18n="how.s6.goProfile">Vai al profilo →</a>
           </div>
         </div>
 
@@ -543,35 +544,35 @@
           <div class="step-top">
             <div class="step-num" style="background:linear-gradient(135deg,rgba(92,255,196,.7),rgba(38,198,255,.7));">?</div>
             <div>
-              <p class="step-title">Domande frequenti</p>
-              <p class="step-sub">Risposte rapide alle domande più comuni sull'uso di Simplif-AI.</p>
+              <p class="step-title" data-i18n="how.s7.title">Domande frequenti</p>
+              <p class="step-sub" data-i18n="how.s7.sub">Risposte rapide alle domande più comuni sull'uso di Simplif-AI.</p>
             </div>
           </div>
 
           <div class="faq-list">
             <div class="faq-item">
-              <div class="faq-q">Posso cambiare target o lunghezza dopo aver generato? <span class="faq-chevron">▼</span></div>
-              <div class="faq-a">Sì: cliccando su un nuovo target o una nuova lunghezza la risposta si rigenera automaticamente con le nuove impostazioni. Attenzione: ogni rigenerazione consuma crediti.</div>
+              <div class="faq-q"><span data-i18n="how.faq.q1">Posso cambiare target o lunghezza dopo aver generato?</span> <span class="faq-chevron">▼</span></div>
+              <div class="faq-a" data-i18n="how.faq.a1">Sì: cliccando su un nuovo target o una nuova lunghezza la risposta si rigenera automaticamente con le nuove impostazioni. Attenzione: ogni rigenerazione consuma crediti.</div>
             </div>
             <div class="faq-item">
-              <div class="faq-q">Perché la risposta a volte si ferma prima del previsto? <span class="faq-chevron">▼</span></div>
-              <div class="faq-a">Le risposte hanno un limite massimo di token (unità di testo) per mantenere velocità e qualità. Per risposte più lunghe usa la lunghezza "Lungo" con target Esperto o Scienziato. Aggiungi "approfondisci con esempi" nella domanda per guidare il modello.</div>
+              <div class="faq-q"><span data-i18n="how.faq.q2">Perché la risposta a volte si ferma prima del previsto?</span> <span class="faq-chevron">▼</span></div>
+              <div class="faq-a" data-i18n="how.faq.a2">Le risposte hanno un limite massimo di token (unità di testo) per mantenere velocità e qualità. Per risposte più lunghe usa la lunghezza "Lungo" con target Esperto o Scienziato. Aggiungi "approfondisci con esempi" nella domanda per guidare il modello.</div>
             </div>
             <div class="faq-item">
-              <div class="faq-q">I crediti vengono scalati anche se la risposta è incompleta? <span class="faq-chevron">▼</span></div>
-              <div class="faq-a">I crediti vengono scalati al completamento della generazione. Se si verifica un errore prima del completamento, i crediti non vengono sottratti.</div>
+              <div class="faq-q"><span data-i18n="how.faq.q3">I crediti vengono scalati anche se la risposta è incompleta?</span> <span class="faq-chevron">▼</span></div>
+              <div class="faq-a" data-i18n="how.faq.a3">I crediti vengono scalati al completamento della generazione. Se si verifica un errore prima del completamento, i crediti non vengono sottratti.</div>
             </div>
             <div class="faq-item">
-              <div class="faq-q">Posso usare Simplif-AI da smartphone? <span class="faq-chevron">▼</span></div>
-              <div class="faq-a">Sì: l'interfaccia è completamente responsive. Su mobile trovi il menu hamburger in alto a destra per navigare tra le sezioni.</div>
+              <div class="faq-q"><span data-i18n="how.faq.q4">Posso usare Simplif-AI da smartphone?</span> <span class="faq-chevron">▼</span></div>
+              <div class="faq-a" data-i18n="how.faq.a4">Sì: l'interfaccia è completamente responsive. Su mobile trovi il menu hamburger in alto a destra per navigare tra le sezioni.</div>
             </div>
             <div class="faq-item">
-              <div class="faq-q">Qual è la differenza tra Esperto e Scienziato? <span class="faq-chevron">▼</span></div>
-              <div class="faq-a">Esperto usa terminologia tecnica e approfondisce i meccanismi come farebbe un professionista del settore. Scienziato va oltre: usa rigore scientifico formale, cita limiti e incertezze delle conoscenze attuali, e mantiene uno stile da paper accademico.</div>
+              <div class="faq-q"><span data-i18n="how.faq.q5">Qual è la differenza tra Esperto e Scienziato?</span> <span class="faq-chevron">▼</span></div>
+              <div class="faq-a" data-i18n="how.faq.a5">Esperto usa terminologia tecnica e approfondisce i meccanismi come farebbe un professionista del settore. Scienziato va oltre: usa rigore scientifico formale, cita limiti e incertezze delle conoscenze attuali, e mantiene uno stile da paper accademico.</div>
             </div>
             <div class="faq-item">
-              <div class="faq-q">Come faccio a ricaricare i crediti? <span class="faq-chevron">▼</span></div>
-              <div class="faq-a">Vai su <a href="/prezzi.html" style="color:rgba(124,92,255,.9);">Prezzi</a> e scegli un pacchetto. Al momento il sistema di pagamento è una simulazione (mock): nessun addebito reale viene effettuato.</div>
+              <div class="faq-q"><span data-i18n="how.faq.q6">Come faccio a ricaricare i crediti?</span> <span class="faq-chevron">▼</span></div>
+              <div class="faq-a" data-i18n-html="how.faq.a6">Vai su <a href="/prezzi.html" style="color:rgba(124,92,255,.9);">Prezzi</a> e scegli un pacchetto. Al momento il sistema di pagamento è una simulazione (mock): nessun addebito reale viene effettuato.</div>
             </div>
           </div>
         </div>
@@ -579,13 +580,13 @@
         <!-- CTA finale -->
         <div class="card reveal">
           <div class="card-inner cta-finale">
-            <span class="pilltag">🚀 PRONTO?</span>
-            <div class="h1" style="margin-top:10px;">Inizia adesso</div>
-            <p class="sub">Scrivi la tua prima domanda e scegli come vuoi essere spiegato il mondo.</p>
+            <span class="pilltag" data-i18n="how.ctaPill">🚀 PRONTO?</span>
+            <div class="h1" style="margin-top:10px;" data-i18n="how.ctaTitle">Inizia adesso</div>
+            <p class="sub" data-i18n="how.ctaSub">Scrivi la tua prima domanda e scegli come vuoi essere spiegato il mondo.</p>
             <div style="height:14px;"></div>
             <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-              <a class="btn btn-primary" href="/app.html">Chiedimi qualcosa →</a>
-              <a class="btn" href="/prezzi.html">Aggiungi crediti</a>
+              <a class="btn btn-primary" href="/app.html" data-i18n="how.askSomething">Chiedimi qualcosa →</a>
+              <a class="btn" href="/prezzi.html" data-i18n="app.addCredits">Aggiungi crediti</a>
             </div>
           </div>
         </div>
@@ -595,7 +596,7 @@
     <div style="height:32px;"></div>
 
     <div style="text-align:center; margin-bottom:16px;">
-      <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="font-size:13px;">↑ Torna su</button>
+      <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="font-size:13px;" data-i18n="back.top">↑ Torna su</button>
     </div>
 
     <footer class="site-footer">
@@ -603,13 +604,101 @@
       <div class="footer-links">
         <a href="/privacy-policy.html">Privacy Policy</a>
         <a href="/cookies-policy.html">Cookie Policy</a>
-        <a href="/contatti.html">Contatti</a>
+        <a href="/contatti.html" data-i18n="footer.contact">Contatti</a>
       </div>
-      <span style="width:100%;text-align:center;font-size:11px;opacity:.6;">Creato da <a href="https://massimodassano.it" target="_blank" rel="noopener">Massimo Dassano</a></span>
+      <span style="width:100%;text-align:center;font-size:11px;opacity:.6;"><span data-i18n="footer.credit">Creato da</span> <a href="https://massimodassano.it" target="_blank" rel="noopener">Massimo Dassano</a></span>
     </footer>
   </div>
 
   <script>
+    window.SAI_I18N_EN = {
+      'nav.home': 'Home', 'nav.app': 'Ask something', 'nav.how': 'How it works', 'nav.pricing': 'Pricing',
+      'nav.profile': 'Profile', 'nav.spiegazioni': 'Explanations', 'nav.menu': 'Open menu',
+      'footer.contact': 'Contact', 'footer.credit': 'Created by', 'back.top': '↑ Back to top',
+      'how.pill': '🧭 HOW IT WORKS',
+      'how.heroTitle': 'Everything you need to know',
+      'how.heroSub': 'From question to answer in 3 steps. Discover targets, lengths, credits and how to customize your experience.',
+      'how.seeSteps': 'See the steps ↓',
+      'how.index': '📍 Index',
+      'how.nav1': 'Write the question', 'how.nav2': 'Choose the target', 'how.nav3': 'Choose the length',
+      'how.nav4': 'Read and copy', 'how.nav5': 'Credits', 'how.nav6': 'Profile', 'how.nav7': 'FAQ',
+      'how.tipTitle': '💡 Tip',
+      'how.tipBody': 'Add context to your question: <em>"I\'m studying for an exam"</em>, <em>"I need a practical example"</em>, <em>"explain it step by step"</em>. It greatly improves the quality of the answer.',
+      'how.readyQ': 'Ready to try?',
+      'how.askSomething': 'Ask something →',
+      'how.s1.title': 'Write the question',
+      'how.s1.sub': 'Enter any concept, topic or question. It can be a single word ("photosynthesis") or a detailed sentence. The more context you give, the more relevant the answer will be.',
+      'how.s1.p1': 'You can also write long, multi-line questions.',
+      'how.s1.p2': 'Add a goal: "with practical examples", "in 5 points", "comparing A and B".',
+      'how.s1.p3': 'For technical topics, specify the context: university exam, personal curiosity, work presentation.',
+      'how.s1.p4': "You can write in English, Italian or any other language: the answer will be in the same language as the question.",
+      'how.s2.title': 'Choose the target',
+      'how.s2.sub': 'The target determines the tone, depth and vocabulary of the answer. Choose the level at which you want the concept explained. Each target has a different credit cost.',
+      'target.child.label': 'Child', 'how.tg.child': 'Very simple language, analogies with everyday objects, short sentences.',
+      'target.teen.label': 'Teen', 'how.tg.teen': 'Colloquial, modern tone, examples from everyday life and technology.',
+      'target.student.label': 'University student', 'how.tg.student': 'Formal language, logical structure, definitions and academic steps.',
+      'target.adult.label': 'Adult', 'how.tg.adult': 'Direct and pragmatic, focused on the practical usefulness of the concept.',
+      'target.expert.label': 'Expert', 'how.tg.expert': 'Technical terminology, deep mechanisms, explains the "whys" behind phenomena.',
+      'target.scientist.label': 'Scientist', 'how.tg.scientist': 'Maximum scientific rigor, limitations of current knowledge, specialist terminology.',
+      'app.credits.singular': 'credit', 'app.credits.plural': 'credits',
+      'how.s2.p1': 'You can change the target at any time: the answer regenerates automatically with the new settings.',
+      'how.s2.p2': 'There\'s no "right" choice: try the same concept on two different targets to compare perspectives.',
+      'how.s3.title': 'Choose the length',
+      'how.s3.sub': 'The length defines how extensive and in-depth the answer will be. Once selected, generation starts automatically without pressing any other button.',
+      'how.table.length': 'Length', 'how.table.desc': 'Description', 'how.table.time': 'Estimated time', 'how.table.extra': 'Extra cost',
+      'how.table.shortLabel': '🧾 Short', 'how.table.shortDesc': 'Quick, essential answer, max 4-5 sentences.', 'how.table.shortTime': '~1 min read',
+      'how.table.noExtra': '+0 credits',
+      'how.table.mediumLabel': '⚖️ Medium', 'how.table.mediumDesc': 'Balanced, with examples and a final summary.', 'how.table.mediumTime': '~2–3 min read',
+      'how.table.longLabel': '📚 Long', 'how.table.longDesc': 'Complete, structured with titles and paragraphs, in-depth examples.', 'how.table.longTime': '~5–8 min read',
+      'how.table.extraCost': '+1 credit',
+      'how.s3.p1': 'Generation starts automatically as soon as you select the length.',
+      'how.s3.p2': 'Want to change it? Click on another target or length: the answer regenerates.',
+      'how.s4.title': 'Read the answer and copy it',
+      'how.s4.sub': 'The answer arrives in real time via streaming: you see the paragraphs as they are written. When it\'s done, you can copy it with one click.',
+      'how.s4.p1': '<b>Real-time streaming</b>: text appears progressively, you don\'t have to wait for it all to be ready.',
+      'how.s4.p2': '<b>Automatic formatting</b>: titles, lists, bold text and code blocks are rendered in Markdown.',
+      'how.s4.p3': '<b>Copy</b>: the "Copy" button saves all the generated text to the clipboard as plain text.',
+      'how.s4.p4': '<b>Regenerate</b>: want a different version? Change the target or length for a new answer on the same topic.',
+      'how.s5.title': 'How credits work',
+      'how.s5.sub': 'Each generation costs a certain number of credits depending on the chosen target and length. Credits are deducted automatically for every completed answer.',
+      'how.s5.box1title': '🧒👨🎓 Basic targets',
+      'how.s5.box1body': 'Child, Teen, University student cost <b style="color:var(--text);">1 credit</b> per generation.',
+      'how.s5.box2title': '👤🧠 Advanced targets',
+      'how.s5.box2body': 'Adult and Expert cost <b style="color:var(--text);">2 credits</b> per generation.',
+      'how.s5.box3title': '🧪 Scientist target',
+      'how.s5.box3body': 'Scientist costs <b style="color:var(--text);">3 credits</b>: it\'s the most elaborate level.',
+      'how.s5.box4title': '📚 Long answer',
+      'how.s5.box4body': 'The "Long" length adds <b style="color:var(--text);">+1 extra credit</b>. Short and Medium cost nothing extra.',
+      'how.s5.p1': 'Your available credits are always visible at the top of the app, in real time.',
+      'how.s5.p2': 'Out of credits? Go to <a href="/prezzi.html" style="color:rgba(124,92,255,.9);">Pricing</a> to top up with a package (mock simulation).',
+      'how.s5.p3': 'When you sign up you get welcome credits to try the app for free.',
+      'how.s6.title': 'Your profile',
+      'how.s6.sub': 'The Profile page lets you customize your Simplif-AI experience and manage your account data.',
+      'how.s6.p1': '<b>Personal data</b>: first name, last name, date of birth, city, occupation and bio.',
+      'how.s6.p2': '<b>Security</b>: you can update your email and password at any time.',
+      'how.s6.p3': '<b>Learning profile</b>: indicate education level, field, interests and goal. This data helps us improve the experience (it doesn\'t affect the current generation).',
+      'how.s6.p4': '<b>Sign out</b>: the "Sign out" button is at the bottom of the Profile page.',
+      'how.s6.goProfile': 'Go to profile →',
+      'how.s7.title': 'Frequently asked questions',
+      'how.s7.sub': 'Quick answers to the most common questions about using Simplif-AI.',
+      'how.faq.q1': 'Can I change the target or length after generating?',
+      'how.faq.a1': 'Yes: clicking a new target or length regenerates the answer automatically with the new settings. Note: every regeneration uses credits.',
+      'how.faq.q2': 'Why does the answer sometimes stop earlier than expected?',
+      'how.faq.a2': 'Answers have a maximum token limit (text units) to keep speed and quality high. For longer answers use the "Long" length with the Expert or Scientist target. Add "go deeper with examples" to your question to guide the model.',
+      'how.faq.q3': 'Are credits deducted even if the answer is incomplete?',
+      'how.faq.a3': 'Credits are deducted when generation completes. If an error occurs before completion, credits are not deducted.',
+      'how.faq.q4': 'Can I use Simplif-AI from my smartphone?',
+      'how.faq.a4': 'Yes: the interface is fully responsive. On mobile you\'ll find the hamburger menu at the top right to navigate between sections.',
+      'how.faq.q5': 'What\'s the difference between Expert and Scientist?',
+      'how.faq.a5': 'Expert uses technical terminology and explores mechanisms like a professional in the field would. Scientist goes further: it uses formal scientific rigor, cites limitations and uncertainties in current knowledge, and keeps an academic-paper style.',
+      'how.faq.q6': 'How do I top up credits?',
+      'how.faq.a6': 'Go to <a href="/prezzi.html" style="color:rgba(124,92,255,.9);">Pricing</a> and choose a package. The payment system is currently a simulation (mock): no real charge is made.',
+      'how.ctaPill': '🚀 READY?',
+      'how.ctaTitle': 'Start now',
+      'how.ctaSub': 'Write your first question and choose how you want the world explained to you.',
+      'app.addCredits': 'Add credits'
+    };
+
     // Reveal on scroll
     const io = new IntersectionObserver((entries) => {
       entries.forEach(e => { if(e.isIntersecting) e.target.classList.add("in"); });

@@ -19,6 +19,20 @@
     })();
   </script>
 
+  <!-- Lingua: helper disponibili subito -->
+  <script>
+    window.saiLang = function () {
+      try { return localStorage.getItem('sai_lang') || 'it'; } catch (_) { return 'it'; }
+    };
+    window.saiT = function (key, fallback) {
+      if (window.saiLang() === 'en') {
+        var d = window.SAI_I18N_EN || {};
+        if (d[key] !== undefined) return d[key];
+      }
+      return fallback !== undefined ? fallback : key;
+    };
+  </script>
+
   <style>
     /* ── Hero intro ── */
     .spieg-hero {
@@ -268,54 +282,55 @@
         </div>
       </a>
       <nav id="mainNav">
-        <a href="/index.html" data-nav="home">Home</a>
-        <a href="/app.html" data-nav="app">Chiedimi qualcosa</a>
-        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
-        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
-        <a href="/profilo.html" data-nav="profile">Profilo</a>
-        <a href="/spiegazioni.html" data-nav="spiegazioni">Spiegazioni</a>
+        <a href="/index.html" data-nav="home" data-i18n="nav.home">Home</a>
+        <a href="/app.html" data-nav="app" data-i18n="nav.app">Chiedimi qualcosa</a>
+        <a href="/come-funziona.html" data-nav="how" data-i18n="nav.how">Come funziona</a>
+        <a href="/prezzi.html" data-nav="pricing" data-i18n="nav.pricing">Prezzi</a>
+        <a href="/profilo.html" data-nav="profile" data-i18n="nav.profile">Profilo</a>
+        <a href="/spiegazioni.html" data-nav="spiegazioni" data-i18n="nav.spiegazioni">Spiegazioni</a>
       </nav>
       <div style="display:flex;align-items:center;gap:8px;">
         <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema"><span class="icon-sun">☀️</span><span class="icon-moon">🌙</span></button>
-        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+        <button id="langBtn" class="theme-btn" type="button" aria-label="Cambia lingua / Switch language"><span class="icon-lang-it">🇮🇹</span><span class="icon-lang-en">🇬🇧</span></button>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu" data-i18n-aria="nav.menu">
           <span></span><span></span><span></span>
         </button>
       </div>
     </header>
 
     <div class="mobile-nav" id="mobileNav">
-      <a href="/index.html">Home</a>
-      <a href="/app.html">Chiedimi qualcosa</a>
-      <a href="/come-funziona.html">Come funziona</a>
-      <a href="/prezzi.html">Prezzi</a>
-      <a href="/profilo.html">Profilo</a>
-      <a href="/spiegazioni.html">Spiegazioni</a>
+      <a href="/index.html" data-i18n="nav.home">Home</a>
+      <a href="/app.html" data-i18n="nav.app">Chiedimi qualcosa</a>
+      <a href="/come-funziona.html" data-i18n="nav.how">Come funziona</a>
+      <a href="/prezzi.html" data-i18n="nav.pricing">Prezzi</a>
+      <a href="/profilo.html" data-i18n="nav.profile">Profilo</a>
+      <a href="/spiegazioni.html" data-i18n="nav.spiegazioni">Spiegazioni</a>
     </div>
 
     <div style="margin-top:24px; padding-bottom:60px;">
 
       <!-- Hero -->
       <div class="spieg-hero">
-        <h2>📚 Spiegazioni della community</h2>
-        <p>Esplora le risposte generate dagli utenti. Clicca su una domanda per leggere la risposta completa.</p>
-        <div id="totalCount" style="margin-top:18px; font-size:36px; font-weight:900; background:linear-gradient(135deg,#7c5cff,#26c6ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1;">—<span style="display:block; font-size:12px; font-weight:600; color:var(--muted); -webkit-text-fill-color:var(--muted); margin-top:5px;">spiegazioni generate</span></div>
+        <h2 data-i18n="spieg.title">📚 Spiegazioni della community</h2>
+        <p data-i18n="spieg.sub">Esplora le risposte generate dagli utenti. Clicca su una domanda per leggere la risposta completa.</p>
+        <div id="totalCount" style="margin-top:18px; font-size:36px; font-weight:900; background:linear-gradient(135deg,#7c5cff,#26c6ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1;">—<span style="display:block; font-size:12px; font-weight:600; color:var(--muted); -webkit-text-fill-color:var(--muted); margin-top:5px;" data-i18n="spieg.generatedCount">spiegazioni generate</span></div>
       </div>
 
       <!-- Ricerca -->
       <div class="search-wrap">
         <span class="search-icon">🔍</span>
-        <input class="search-input" id="searchInput" type="search" placeholder="Cerca una parola nelle domande..." autocomplete="off" />
+        <input class="search-input" id="searchInput" type="search" placeholder="Cerca una parola nelle domande..." autocomplete="off" data-i18n-placeholder="spieg.searchPlaceholder" />
       </div>
 
       <!-- Filtri target -->
       <div class="filter-bar" id="filterBar">
-        <div class="filter-pill active" data-filter="">Tutte</div>
-        <div class="filter-pill" data-filter="Bambino">🧒 Bambino</div>
-        <div class="filter-pill" data-filter="Ragazzo">👦 Ragazzo</div>
-        <div class="filter-pill" data-filter="Studente universitario">🎓 Studente</div>
-        <div class="filter-pill" data-filter="Adulto">👤 Adulto</div>
-        <div class="filter-pill" data-filter="Esperto">🧠 Esperto</div>
-        <div class="filter-pill" data-filter="Scienziato">🧪 Scienziato</div>
+        <div class="filter-pill active" data-filter="" data-i18n="spieg.filterAll">Tutte</div>
+        <div class="filter-pill" data-filter="Bambino" data-i18n="target.child.pill">🧒 Bambino</div>
+        <div class="filter-pill" data-filter="Ragazzo" data-i18n="target.teen.pill">👦 Ragazzo</div>
+        <div class="filter-pill" data-filter="Studente universitario" data-i18n="spieg.filterStudent">🎓 Studente</div>
+        <div class="filter-pill" data-filter="Adulto" data-i18n="target.adult.pill">👤 Adulto</div>
+        <div class="filter-pill" data-filter="Esperto" data-i18n="target.expert.pill">🧠 Esperto</div>
+        <div class="filter-pill" data-filter="Scienziato" data-i18n="target.scientist.pill">🧪 Scienziato</div>
       </div>
 
       <div class="card">
@@ -326,7 +341,7 @@
             <div class="skeleton-card" id="sk3"><div class="sk-line" style="width:80%"></div><div class="sk-line" style="width:75%"></div><div class="sk-line" style="width:48%"></div></div>
           </div>
           <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
-            <button class="btn" id="loadMoreBtn" type="button">Carica altro</button>
+            <button class="btn" id="loadMoreBtn" type="button" data-i18n="spieg.loadMore">Carica altro</button>
           </div>
         </div>
       </div>
@@ -346,7 +361,7 @@
     <div class="modal-body" id="modalBody"></div>
     <div class="modal-footer">
       <span id="modalChars" style="color:var(--muted);font-size:13px;"></span>
-      <button class="btn" id="modalCopy" type="button">⧉ Copia risposta</button>
+      <button class="btn" id="modalCopy" type="button" data-i18n="spieg.copyAnswer">⧉ Copia risposta</button>
     </div>
   </dialog>
 
@@ -355,6 +370,25 @@
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
   <script src="/shared.js?v=2" defer></script>
   <script>
+    window.SAI_I18N_EN = {
+      'nav.home': 'Home', 'nav.app': 'Ask something', 'nav.how': 'How it works', 'nav.pricing': 'Pricing',
+      'nav.profile': 'Profile', 'nav.spiegazioni': 'Explanations', 'nav.menu': 'Open menu',
+      'spieg.title': '📚 Community explanations',
+      'spieg.sub': 'Explore the answers generated by users. Click a question to read the full answer.',
+      'spieg.generatedCount': 'explanations generated',
+      'spieg.searchPlaceholder': 'Search a word in the questions...',
+      'spieg.filterAll': 'All',
+      'target.child.pill': '🧒 Child', 'target.teen.pill': '👦 Teen', 'spieg.filterStudent': '🎓 Student',
+      'target.adult.pill': '👤 Adult', 'target.expert.pill': '🧠 Expert', 'target.scientist.pill': '🧪 Scientist',
+      'spieg.loadMore': 'Load more',
+      'spieg.copyAnswer': '⧉ Copy answer',
+      'spieg.copied': '✓ Copied!',
+      'spieg.wordsCount': '~{n} words',
+      'spieg.today': 'Today', 'spieg.yesterday': 'Yesterday', 'spieg.daysAgo': '{n} days ago',
+      'spieg.empty': "No explanations yet. Be the first!",
+      'spieg.generateOne': 'Generate an answer'
+    };
+
     const SUPABASE_URL  = 'https://lmmiowagyqypdrdcemdo.supabase.co';
     const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc';
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
@@ -380,7 +414,19 @@
     const modalChars   = document.getElementById('modalChars');
     const modalCopy    = document.getElementById('modalCopy');
 
-    const LENGTH_LABELS = { breve: 'Breve', medio: 'Medio', lungo: 'Lungo' };
+    const LENGTH_LABELS_IT = { breve: 'Breve', medio: 'Medio', lungo: 'Lungo' };
+    const LENGTH_LABELS_EN = { breve: 'Short', medio: 'Medium', lungo: 'Long' };
+    function lengthLabel(key) {
+      return (window.saiLang() === 'en' ? LENGTH_LABELS_EN[key] : LENGTH_LABELS_IT[key]) || key;
+    }
+
+    const TARGET_LABELS_EN = {
+      'Bambino': 'Child', 'Ragazzo': 'Teen', 'Studente universitario': 'University student',
+      'Adulto': 'Adult', 'Esperto': 'Expert', 'Scienziato': 'Scientist'
+    };
+    function targetLabelDisplay(label) {
+      return (window.saiLang() === 'en' && TARGET_LABELS_EN[label]) || label;
+    }
 
     /* Colore accent per target */
     const TARGET_COLORS = {
@@ -398,10 +444,10 @@
     function formatDate(isoStr) {
       const d = new Date(isoStr);
       const diffDays = Math.floor((new Date() - d) / 86400000);
-      if (diffDays === 0) return 'Oggi';
-      if (diffDays === 1) return 'Ieri';
-      if (diffDays < 7)  return diffDays + ' giorni fa';
-      return d.toLocaleDateString('it-IT', { day:'2-digit', month:'short', year:'numeric' });
+      if (diffDays === 0) return window.saiT('spieg.today', 'Oggi');
+      if (diffDays === 1) return window.saiT('spieg.yesterday', 'Ieri');
+      if (diffDays < 7)  return window.saiT('spieg.daysAgo', '{n} giorni fa').replace('{n}', diffDays);
+      return d.toLocaleDateString(window.saiLang() === 'en' ? 'en-US' : 'it-IT', { day:'2-digit', month:'short', year:'numeric' });
     }
 
     function escHtml(str) {
@@ -417,9 +463,9 @@
 
     function metaHtml(row) {
       const c = targetColor(row.target_label);
-      const lenLabel = LENGTH_LABELS[row.length_key] || row.length_key || '';
+      const lenLabel = lengthLabel(row.length_key);
       let h = '';
-      if (row.target_label) h += `<span class="badge badge-target" style="--badge-rgb:${c.rgb}">${escHtml(row.target_icon)} ${escHtml(row.target_label)}</span>`;
+      if (row.target_label) h += `<span class="badge badge-target" style="--badge-rgb:${c.rgb}">${escHtml(row.target_icon)} ${escHtml(targetLabelDisplay(row.target_label))}</span>`;
       if (lenLabel)         h += `<span class="badge badge-len">${escHtml(lenLabel)}</span>`;
       h += `<span class="badge badge-date">${formatDate(row.created_at)}</span>`;
       return h;
@@ -431,8 +477,8 @@
       modalMeta.innerHTML = metaHtml(row);
       modalBody.innerHTML = DOMPurify.sanitize(marked.parse(currentModalText));
       const words = currentModalText.split(/\s+/).filter(Boolean).length;
-      modalChars.textContent = `~${words} parole`;
-      modalCopy.textContent = '⧉ Copia risposta';
+      modalChars.textContent = window.saiT('spieg.wordsCount', '~{n} parole').replace('{n}', words);
+      modalCopy.textContent = window.saiT('spieg.copyAnswer', '⧉ Copia risposta');
       modal.showModal();
       modalBody.scrollTop = 0;
     }
@@ -442,8 +488,8 @@
     modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
     modalCopy.addEventListener('click', () => {
       navigator.clipboard.writeText(currentModalText).then(() => {
-        modalCopy.textContent = '✓ Copiato!';
-        setTimeout(() => { modalCopy.textContent = '⧉ Copia risposta'; }, 2000);
+        modalCopy.textContent = window.saiT('spieg.copied', '✓ Copiato!');
+        setTimeout(() => { modalCopy.textContent = window.saiT('spieg.copyAnswer', '⧉ Copia risposta'); }, 2000);
       });
     });
 
@@ -491,8 +537,8 @@
         listWrap.innerHTML = `
           <div class="empty-state">
             <div class="empty-icon">📭</div>
-            <p>Nessuna spiegazione ancora. Sii il primo!</p>
-            <a href="/app.html" class="btn btn-primary">Genera una risposta</a>
+            <p>${window.saiT('spieg.empty', 'Nessuna spiegazione ancora. Sii il primo!')}</p>
+            <a href="/app.html" class="btn btn-primary">${window.saiT('spieg.generateOne', 'Genera una risposta')}</a>
           </div>`;
         loadMoreWrap.style.display = 'none';
         return;
@@ -518,11 +564,13 @@
     sb.from('spiegazioni').select('id', { count: 'exact', head: true }).then(({ count }) => {
       if (count !== null) {
         const el = document.getElementById('totalCount');
-        el.innerHTML = `${count.toLocaleString('it-IT')}<span style="display:block;font-size:12px;font-weight:600;color:var(--muted);-webkit-text-fill-color:var(--muted);margin-top:5px;">spiegazioni generate</span>`;
+        el.innerHTML = `${count.toLocaleString(window.saiLang() === 'en' ? 'en-US' : 'it-IT')}<span style="display:block;font-size:12px;font-weight:600;color:var(--muted);-webkit-text-fill-color:var(--muted);margin-top:5px;">${window.saiT('spieg.generatedCount', 'spiegazioni generate')}</span>`;
       }
     });
 
     loadPage(false);
+
+    document.addEventListener('sai:langchange', function(){ loadPage(true); });
 
     loadMoreBtn.addEventListener('click', function() {
       loadMoreBtn.disabled = true;

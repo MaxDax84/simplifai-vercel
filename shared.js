@@ -65,3 +65,81 @@
     if (a.dataset.nav === key) a.classList.add('nav-active');
   });
 })();
+
+/* ── 5. Lingua IT/EN ──
+ * Traduzione client-side: gli elementi con data-i18n(-html|-placeholder|-title|-aria)
+ * vengono scambiati con le stringhe di window.SAI_I18N_EN (dizionario definito
+ * inline in ogni pagina) quando la lingua attiva è 'en'. Il testo italiano
+ * originale viene messo in cache sull'elemento stesso al primo giro, cosi'
+ * il toggle non richiede reload. Per i contenuti generati via JS (liste,
+ * card…) le pagine possono chiamare window.saiT(key, testoItaliano) al
+ * render e riascoltare l'evento 'sai:langchange' per ridisegnarli. */
+(function () {
+  var ATTR_MAP = {
+    'data-i18n-placeholder': 'placeholder',
+    'data-i18n-title': 'title',
+    'data-i18n-aria': 'aria-label',
+    'data-i18n-label': 'label'
+  };
+
+  function dict() { return window.SAI_I18N_EN || {}; }
+
+  function applyI18n(lang) {
+    document.documentElement.setAttribute('data-lang', lang);
+    document.documentElement.lang = lang;
+    var d = dict();
+
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      if (!el.hasAttribute('data-i18n-it')) el.setAttribute('data-i18n-it', el.textContent);
+      var key = el.getAttribute('data-i18n');
+      el.textContent = (lang === 'en' && d[key] !== undefined) ? d[key] : el.getAttribute('data-i18n-it');
+    });
+
+    document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+      if (!el.hasAttribute('data-i18n-it-html')) el.setAttribute('data-i18n-it-html', el.innerHTML);
+      var key = el.getAttribute('data-i18n-html');
+      el.innerHTML = (lang === 'en' && d[key] !== undefined) ? d[key] : el.getAttribute('data-i18n-it-html');
+    });
+
+    Object.keys(ATTR_MAP).forEach(function (dataAttr) {
+      var realAttr  = ATTR_MAP[dataAttr];
+      var cacheAttr = 'data-i18n-it-' + realAttr.replace('aria-label', 'aria');
+      document.querySelectorAll('[' + dataAttr + ']').forEach(function (el) {
+        if (!el.hasAttribute(cacheAttr)) el.setAttribute(cacheAttr, el.getAttribute(realAttr) || '');
+        var key = el.getAttribute(dataAttr);
+        el.setAttribute(realAttr, (lang === 'en' && d[key] !== undefined) ? d[key] : el.getAttribute(cacheAttr));
+      });
+    });
+
+    document.dispatchEvent(new CustomEvent('sai:langchange', { detail: { lang: lang } }));
+  }
+
+  /* saiLang/saiT possono già esistere: alcune pagine (es. app.html) li definiscono
+   * prima, nell'head, perché servono già durante il rendering iniziale (prima che
+   * questo script deferred venga eseguito). Qui li definiamo solo se mancano. */
+  if (!window.saiLang) {
+    window.saiLang = function () {
+      try { return localStorage.getItem('sai_lang') || 'it'; } catch (_) { return 'it'; }
+    };
+  }
+  if (!window.saiT) {
+    window.saiT = function (key, fallback) {
+      if (window.saiLang() === 'en') {
+        var d = dict();
+        if (d[key] !== undefined) return d[key];
+      }
+      return fallback !== undefined ? fallback : key;
+    };
+  }
+
+  var lang = window.saiLang();
+  applyI18n(lang);
+
+  var btn = document.getElementById('langBtn');
+  if (!btn) return;
+  btn.addEventListener('click', function () {
+    lang = lang === 'it' ? 'en' : 'it';
+    try { localStorage.setItem('sai_lang', lang); } catch (_) {}
+    applyI18n(lang);
+  });
+})();

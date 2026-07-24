@@ -20,6 +20,20 @@
     })();
   </script>
 
+  <!-- Lingua: helper disponibili subito -->
+  <script>
+    window.saiLang = function () {
+      try { return localStorage.getItem('sai_lang') || 'it'; } catch (_) { return 'it'; }
+    };
+    window.saiT = function (key, fallback) {
+      if (window.saiLang() === 'en') {
+        var d = window.SAI_I18N_EN || {};
+        if (d[key] !== undefined) return d[key];
+      }
+      return fallback !== undefined ? fallback : key;
+    };
+  </script>
+
   <style>
     .avatar{
       width: 72px; height: 72px;
@@ -346,29 +360,30 @@
       </a>
 
       <nav id="mainNav">
-        <a href="/index.html" data-nav="home">Home</a>
-        <a href="/app.html" data-nav="app">Chiedimi qualcosa</a>
-        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
-        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
-        <a href="/profilo.html" data-nav="profile">Profilo</a>
-        <a href="/spiegazioni.html" data-nav="spiegazioni">Spiegazioni</a>
+        <a href="/index.html" data-nav="home" data-i18n="nav.home">Home</a>
+        <a href="/app.html" data-nav="app" data-i18n="nav.app">Chiedimi qualcosa</a>
+        <a href="/come-funziona.html" data-nav="how" data-i18n="nav.how">Come funziona</a>
+        <a href="/prezzi.html" data-nav="pricing" data-i18n="nav.pricing">Prezzi</a>
+        <a href="/profilo.html" data-nav="profile" data-i18n="nav.profile">Profilo</a>
+        <a href="/spiegazioni.html" data-nav="spiegazioni" data-i18n="nav.spiegazioni">Spiegazioni</a>
       </nav>
 
       <div style="display:flex;align-items:center;gap:8px;">
         <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema"><span class="icon-sun">☀️</span><span class="icon-moon">🌙</span></button>
-        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+        <button id="langBtn" class="theme-btn" type="button" aria-label="Cambia lingua / Switch language"><span class="icon-lang-it">🇮🇹</span><span class="icon-lang-en">🇬🇧</span></button>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu" data-i18n-aria="nav.menu">
           <span></span><span></span><span></span>
         </button>
       </div>
     </header>
 
     <div class="mobile-nav" id="mobileNav">
-      <a href="/index.html">Home</a>
-      <a href="/app.html">Chiedimi qualcosa</a>
-      <a href="/come-funziona.html">Come funziona</a>
-      <a href="/prezzi.html">Prezzi</a>
-      <a href="/profilo.html">Profilo</a>
-      <a href="/spiegazioni.html">Spiegazioni</a>
+      <a href="/index.html" data-i18n="nav.home">Home</a>
+      <a href="/app.html" data-i18n="nav.app">Chiedimi qualcosa</a>
+      <a href="/come-funziona.html" data-i18n="nav.how">Come funziona</a>
+      <a href="/prezzi.html" data-i18n="nav.pricing">Prezzi</a>
+      <a href="/profilo.html" data-i18n="nav.profile">Profilo</a>
+      <a href="/spiegazioni.html" data-i18n="nav.spiegazioni">Spiegazioni</a>
     </div>
 
     <!-- Hero profilo -->
@@ -389,7 +404,7 @@
               <span id="heroEmail" style="color:var(--muted);font-size:13px;"></span>
               <br>
               <span class="credit-badge" style="margin-top:6px; display:inline-flex;">
-                ⚡ Crediti: <b id="heroCredits">—</b>
+                <span data-i18n="profile.credits">⚡ Crediti:</span> <b id="heroCredits">—</b>
               </span>
             </div>
           </div>
@@ -399,9 +414,9 @@
 
     <!-- Tab nav -->
     <div class="tab-nav" id="profileTabNav">
-      <button class="tab-btn active" data-tab="account" type="button">👤 Account</button>
-      <button class="tab-btn" data-tab="preferenze" type="button">🧠 Preferenze</button>
-      <button class="tab-btn" data-tab="libreria" type="button">⭐ Libreria</button>
+      <button class="tab-btn active" data-tab="account" type="button" data-i18n="profile.tabAccount">👤 Account</button>
+      <button class="tab-btn" data-tab="preferenze" type="button" data-i18n="profile.tabPreferences">🧠 Preferenze</button>
+      <button class="tab-btn" data-tab="libreria" type="button" data-i18n="profile.tabLibrary">⭐ Libreria</button>
     </div>
 
     <!-- Tab: Account (dati personali + sicurezza) -->
@@ -410,15 +425,15 @@
       <!-- 1. DATI PERSONALI -->
       <div class="card">
         <div class="card-inner">
-          <div class="section-title">👤 Dati personali</div>
+          <div class="section-title" data-i18n="profile.personalData">👤 Dati personali</div>
 
           <div class="row2">
             <div>
-              <div class="label">Nome</div>
+              <div class="label" data-i18n="auth.firstNameNoStar">Nome</div>
               <input class="field" id="fNome" placeholder="Mario" />
             </div>
             <div>
-              <div class="label">Cognome</div>
+              <div class="label" data-i18n="auth.lastNameNoStar">Cognome</div>
               <input class="field" id="fCognome" placeholder="Rossi" />
             </div>
           </div>
@@ -427,11 +442,11 @@
 
           <div class="row2">
             <div>
-              <div class="label">Data di nascita</div>
+              <div class="label" data-i18n="auth.birthDateNoStar">Data di nascita</div>
               <input class="field" id="fNascita" type="date" />
             </div>
             <div>
-              <div class="label">Città</div>
+              <div class="label" data-i18n="auth.city">Città</div>
               <input class="field" id="fCitta" placeholder="Milano" />
             </div>
           </div>
@@ -440,43 +455,43 @@
 
           <div class="row2">
             <div>
-              <div class="label">Professione</div>
-              <input class="field" id="fProfessione" placeholder="es. Insegnante, Ingegnere, Studente..." />
+              <div class="label" data-i18n="profile.occupation">Professione</div>
+              <input class="field" id="fProfessione" placeholder="es. Insegnante, Ingegnere, Studente..." data-i18n-placeholder="profile.occupationPlaceholder" />
             </div>
             <div>
-              <div class="label">Nazione</div>
+              <div class="label" data-i18n="auth.country">Nazione</div>
               <select class="field" id="fNazione">
-                <option value="">Seleziona...</option>
-                <option value="IT">🇮🇹 Italia</option>
-                <optgroup label="Europa">
-                  <option value="AT">Austria</option>
-                  <option value="BE">Belgio</option>
-                  <option value="CH">Svizzera</option>
-                  <option value="DE">Germania</option>
-                  <option value="ES">Spagna</option>
-                  <option value="FR">Francia</option>
-                  <option value="GB">Regno Unito</option>
-                  <option value="GR">Grecia</option>
-                  <option value="HR">Croazia</option>
-                  <option value="NL">Paesi Bassi</option>
-                  <option value="PL">Polonia</option>
-                  <option value="PT">Portogallo</option>
-                  <option value="RO">Romania</option>
-                  <option value="SE">Svezia</option>
-                  <option value="SM">San Marino</option>
-                  <option value="VA">Città del Vaticano</option>
+                <option value="" data-i18n="auth.select">Seleziona...</option>
+                <option value="IT" data-i18n="auth.country.IT">🇮🇹 Italia</option>
+                <optgroup label="Europa" data-i18n-label="auth.europe">
+                  <option value="AT" data-i18n="auth.country.AT">Austria</option>
+                  <option value="BE" data-i18n="auth.country.BE">Belgio</option>
+                  <option value="CH" data-i18n="auth.country.CH">Svizzera</option>
+                  <option value="DE" data-i18n="auth.country.DE">Germania</option>
+                  <option value="ES" data-i18n="auth.country.ES">Spagna</option>
+                  <option value="FR" data-i18n="auth.country.FR">Francia</option>
+                  <option value="GB" data-i18n="auth.country.GB">Regno Unito</option>
+                  <option value="GR" data-i18n="auth.country.GR">Grecia</option>
+                  <option value="HR" data-i18n="auth.country.HR">Croazia</option>
+                  <option value="NL" data-i18n="auth.country.NL">Paesi Bassi</option>
+                  <option value="PL" data-i18n="auth.country.PL">Polonia</option>
+                  <option value="PT" data-i18n="auth.country.PT">Portogallo</option>
+                  <option value="RO" data-i18n="auth.country.RO">Romania</option>
+                  <option value="SE" data-i18n="auth.country.SE">Svezia</option>
+                  <option value="SM" data-i18n="auth.country.SM">San Marino</option>
+                  <option value="VA" data-i18n="auth.country.VA">Città del Vaticano</option>
                 </optgroup>
-                <optgroup label="Resto del mondo">
-                  <option value="AR">Argentina</option>
-                  <option value="AU">Australia</option>
-                  <option value="BR">Brasile</option>
-                  <option value="CA">Canada</option>
-                  <option value="CN">Cina</option>
-                  <option value="IN">India</option>
-                  <option value="JP">Giappone</option>
-                  <option value="MX">Messico</option>
-                  <option value="US">Stati Uniti</option>
-                  <option value="ZZ">Altro</option>
+                <optgroup label="Resto del mondo" data-i18n-label="auth.restOfWorld">
+                  <option value="AR" data-i18n="auth.country.AR">Argentina</option>
+                  <option value="AU" data-i18n="auth.country.AU">Australia</option>
+                  <option value="BR" data-i18n="auth.country.BR">Brasile</option>
+                  <option value="CA" data-i18n="auth.country.CA">Canada</option>
+                  <option value="CN" data-i18n="auth.country.CN">Cina</option>
+                  <option value="IN" data-i18n="auth.country.IN">India</option>
+                  <option value="JP" data-i18n="auth.country.JP">Giappone</option>
+                  <option value="MX" data-i18n="auth.country.MX">Messico</option>
+                  <option value="US" data-i18n="auth.country.US">Stati Uniti</option>
+                  <option value="ZZ" data-i18n="auth.country.ZZ">Altro</option>
                 </optgroup>
               </select>
             </div>
@@ -484,7 +499,7 @@
 
           <div style="height:16px;"></div>
           <div class="save-row">
-            <button class="btn btn-primary" id="savePersonal" type="button">Salva dati personali</button>
+            <button class="btn btn-primary" id="savePersonal" type="button" data-i18n="profile.savePersonal">Salva dati personali</button>
             <span class="msg" id="msgPersonal"></span>
           </div>
         </div>
@@ -493,36 +508,36 @@
       <!-- 2. CAMBIO PASSWORD -->
       <div class="card">
         <div class="card-inner">
-          <div class="section-title">🔒 Sicurezza</div>
+          <div class="section-title" data-i18n="profile.security">🔒 Sicurezza</div>
 
           <div>
-            <div class="label">Email account</div>
-            <input class="field" id="fEmail" type="email" placeholder="La tua email" />
+            <div class="label" data-i18n="auth.accountEmail">Email account</div>
+            <input class="field" id="fEmail" type="email" placeholder="La tua email" data-i18n-placeholder="profile.yourEmail" />
           </div>
 
           <div style="height:8px;"></div>
           <div class="save-row">
-            <button class="btn btn-primary" id="saveEmail" type="button">Aggiorna email</button>
+            <button class="btn btn-primary" id="saveEmail" type="button" data-i18n="profile.updateEmail">Aggiorna email</button>
             <span class="msg" id="msgEmail"></span>
           </div>
 
           <div style="height:20px; border-top:1px solid var(--border); margin-top:8px;"></div>
 
           <div>
-            <div class="label">Nuova password</div>
-            <input class="field" id="fPwd1" type="password" placeholder="Nuova password (min. 6 caratteri)" />
+            <div class="label" data-i18n="auth.newPassword">Nuova password</div>
+            <input class="field" id="fPwd1" type="password" placeholder="Nuova password (min. 6 caratteri)" data-i18n-placeholder="profile.newPasswordPlaceholder" />
           </div>
 
           <div style="height:12px;"></div>
 
           <div>
-            <div class="label">Conferma nuova password</div>
-            <input class="field" id="fPwd2" type="password" placeholder="Ripeti la nuova password" />
+            <div class="label" data-i18n="auth.confirmPassword">Conferma nuova password</div>
+            <input class="field" id="fPwd2" type="password" placeholder="Ripeti la nuova password" data-i18n-placeholder="auth.repeatPassword" />
           </div>
 
           <div style="height:16px;"></div>
           <div class="save-row">
-            <button class="btn btn-primary" id="savePwd" type="button">Aggiorna password</button>
+            <button class="btn btn-primary" id="savePwd" type="button" data-i18n="profile.updatePassword">Aggiorna password</button>
             <span class="msg" id="msgPwd"></span>
           </div>
         </div>
@@ -536,18 +551,18 @@
       <!-- 3. PROFILAZIONE -->
       <div class="card">
         <div class="card-inner">
-          <div class="section-title">🧠 Profilo di apprendimento <span style="color:var(--muted);font-size:12px;font-weight:400;">(tutto opzionale)</span></div>
+          <div class="section-title"><span data-i18n="profile.learningProfile">🧠 Profilo di apprendimento</span> <span style="color:var(--muted);font-size:12px;font-weight:400;" data-i18n="profile.allOptional">(tutto opzionale)</span></div>
 
           <!-- Livello istruzione -->
           <div>
-            <div class="label">Livello di istruzione</div>
+            <div class="label" data-i18n="profile.educationLevel">Livello di istruzione</div>
             <select class="field" id="fIstruzione">
-              <option value="">— Seleziona —</option>
-              <option value="media">Licenza media</option>
-              <option value="diploma">Diploma superiore</option>
-              <option value="triennale">Laurea triennale</option>
-              <option value="magistrale">Laurea magistrale / Vecchio ordinamento</option>
-              <option value="dottorato">Dottorato / Post-laurea</option>
+              <option value="" data-i18n="profile.selectDash">— Seleziona —</option>
+              <option value="media" data-i18n="profile.edu.media">Licenza media</option>
+              <option value="diploma" data-i18n="profile.edu.diploma">Diploma superiore</option>
+              <option value="triennale" data-i18n="profile.edu.triennale">Laurea triennale</option>
+              <option value="magistrale" data-i18n="profile.edu.magistrale">Laurea magistrale / Vecchio ordinamento</option>
+              <option value="dottorato" data-i18n="profile.edu.dottorato">Dottorato / Post-laurea</option>
             </select>
           </div>
 
@@ -555,20 +570,20 @@
 
           <!-- Settore -->
           <div>
-            <div class="label">Settore lavorativo / di studio</div>
+            <div class="label" data-i18n="profile.field">Settore lavorativo / di studio</div>
             <select class="field" id="fSettore">
-              <option value="">— Seleziona —</option>
-              <option value="tecnologia">Tecnologia / Informatica</option>
-              <option value="medicina">Medicina / Salute</option>
-              <option value="economia">Economia / Finanza</option>
-              <option value="giurisprudenza">Giurisprudenza / Diritto</option>
-              <option value="ingegneria">Ingegneria</option>
-              <option value="scienze">Scienze naturali</option>
-              <option value="umanistico">Umanistico / Letterario</option>
-              <option value="arte">Arte / Design / Musica</option>
-              <option value="educazione">Educazione / Formazione</option>
-              <option value="commercio">Commercio / Marketing</option>
-              <option value="altro">Altro</option>
+              <option value="" data-i18n="profile.selectDash">— Seleziona —</option>
+              <option value="tecnologia" data-i18n="profile.sector.tech">Tecnologia / Informatica</option>
+              <option value="medicina" data-i18n="profile.sector.medicine">Medicina / Salute</option>
+              <option value="economia" data-i18n="profile.sector.economics">Economia / Finanza</option>
+              <option value="giurisprudenza" data-i18n="profile.sector.law">Giurisprudenza / Diritto</option>
+              <option value="ingegneria" data-i18n="profile.sector.engineering">Ingegneria</option>
+              <option value="scienze" data-i18n="profile.sector.science">Scienze naturali</option>
+              <option value="umanistico" data-i18n="profile.sector.humanities">Umanistico / Letterario</option>
+              <option value="arte" data-i18n="profile.sector.art">Arte / Design / Musica</option>
+              <option value="educazione" data-i18n="profile.sector.education">Educazione / Formazione</option>
+              <option value="commercio" data-i18n="profile.sector.commerce">Commercio / Marketing</option>
+              <option value="altro" data-i18n="auth.referral.other">Altro</option>
             </select>
           </div>
 
@@ -576,14 +591,14 @@
 
           <!-- Obiettivo d'uso -->
           <div>
-            <div class="label">Perché usi Simplif-AI?</div>
+            <div class="label" data-i18n="profile.whyUse">Perché usi Simplif-AI?</div>
             <div class="pills" id="pillsObiettivo">
-              <div class="pill-opt" data-val="studio">📚 Studio</div>
-              <div class="pill-opt" data-val="lavoro">💼 Lavoro</div>
-              <div class="pill-opt" data-val="curiosita">🔍 Curiosità personale</div>
-              <div class="pill-opt" data-val="ricerca">🧪 Ricerca</div>
-              <div class="pill-opt" data-val="insegnamento">👩‍🏫 Insegnamento</div>
-              <div class="pill-opt" data-val="altro">✏️ Altro</div>
+              <div class="pill-opt" data-val="studio" data-i18n="profile.goal.study">📚 Studio</div>
+              <div class="pill-opt" data-val="lavoro" data-i18n="profile.goal.work">💼 Lavoro</div>
+              <div class="pill-opt" data-val="curiosita" data-i18n="profile.goal.curiosity">🔍 Curiosità personale</div>
+              <div class="pill-opt" data-val="ricerca" data-i18n="profile.goal.research">🧪 Ricerca</div>
+              <div class="pill-opt" data-val="insegnamento" data-i18n="profile.goal.teaching">👩‍🏫 Insegnamento</div>
+              <div class="pill-opt" data-val="altro" data-i18n="profile.goal.other">✏️ Altro</div>
             </div>
           </div>
 
@@ -591,24 +606,24 @@
 
           <!-- Interessi -->
           <div>
-            <div class="label">Aree di interesse (seleziona tutte quelle che vuoi)</div>
+            <div class="label" data-i18n="profile.interests">Aree di interesse (seleziona tutte quelle che vuoi)</div>
             <div class="interests-grid" id="interestsGrid">
-              <label class="interest-item"><input type="checkbox" value="scienza" /> 🔬 Scienza</label>
-              <label class="interest-item"><input type="checkbox" value="tecnologia" /> 💻 Tecnologia</label>
-              <label class="interest-item"><input type="checkbox" value="storia" /> 🏛️ Storia</label>
-              <label class="interest-item"><input type="checkbox" value="arte" /> 🎨 Arte</label>
-              <label class="interest-item"><input type="checkbox" value="economia" /> 📈 Economia</label>
-              <label class="interest-item"><input type="checkbox" value="medicina" /> 🏥 Medicina</label>
-              <label class="interest-item"><input type="checkbox" value="diritto" /> ⚖️ Diritto</label>
-              <label class="interest-item"><input type="checkbox" value="filosofia" /> 🤔 Filosofia</label>
-              <label class="interest-item"><input type="checkbox" value="matematica" /> ➗ Matematica</label>
-              <label class="interest-item"><input type="checkbox" value="ambiente" /> 🌿 Ambiente</label>
-              <label class="interest-item"><input type="checkbox" value="psicologia" /> 🧬 Psicologia</label>
-              <label class="interest-item"><input type="checkbox" value="sport" /> ⚽ Sport</label>
-              <label class="interest-item"><input type="checkbox" value="musica" /> 🎵 Musica</label>
-              <label class="interest-item"><input type="checkbox" value="letteratura" /> 📚 Letteratura</label>
-              <label class="interest-item"><input type="checkbox" value="politica" /> 🗳️ Politica</label>
-              <label class="interest-item"><input type="checkbox" value="cucina" /> 🍽️ Cucina</label>
+              <label class="interest-item"><input type="checkbox" value="scienza" /> <span data-i18n="profile.int.science">🔬 Scienza</span></label>
+              <label class="interest-item"><input type="checkbox" value="tecnologia" /> <span data-i18n="profile.int.tech">💻 Tecnologia</span></label>
+              <label class="interest-item"><input type="checkbox" value="storia" /> <span data-i18n="profile.int.history">🏛️ Storia</span></label>
+              <label class="interest-item"><input type="checkbox" value="arte" /> <span data-i18n="profile.int.art">🎨 Arte</span></label>
+              <label class="interest-item"><input type="checkbox" value="economia" /> <span data-i18n="profile.int.economics">📈 Economia</span></label>
+              <label class="interest-item"><input type="checkbox" value="medicina" /> <span data-i18n="profile.int.medicine">🏥 Medicina</span></label>
+              <label class="interest-item"><input type="checkbox" value="diritto" /> <span data-i18n="profile.int.law">⚖️ Diritto</span></label>
+              <label class="interest-item"><input type="checkbox" value="filosofia" /> <span data-i18n="profile.int.philosophy">🤔 Filosofia</span></label>
+              <label class="interest-item"><input type="checkbox" value="matematica" /> <span data-i18n="profile.int.math">➗ Matematica</span></label>
+              <label class="interest-item"><input type="checkbox" value="ambiente" /> <span data-i18n="profile.int.environment">🌿 Ambiente</span></label>
+              <label class="interest-item"><input type="checkbox" value="psicologia" /> <span data-i18n="profile.int.psychology">🧬 Psicologia</span></label>
+              <label class="interest-item"><input type="checkbox" value="sport" /> <span data-i18n="profile.int.sport">⚽ Sport</span></label>
+              <label class="interest-item"><input type="checkbox" value="musica" /> <span data-i18n="profile.int.music">🎵 Musica</span></label>
+              <label class="interest-item"><input type="checkbox" value="letteratura" /> <span data-i18n="profile.int.literature">📚 Letteratura</span></label>
+              <label class="interest-item"><input type="checkbox" value="politica" /> <span data-i18n="profile.int.politics">🗳️ Politica</span></label>
+              <label class="interest-item"><input type="checkbox" value="cucina" /> <span data-i18n="profile.int.cooking">🍽️ Cucina</span></label>
             </div>
           </div>
 
@@ -616,11 +631,11 @@
 
           <!-- Frequenza uso -->
           <div>
-            <div class="label">Con che frequenza pensi di usare l'app?</div>
+            <div class="label" data-i18n="profile.frequency">Con che frequenza pensi di usare l'app?</div>
             <div class="pills" id="pillsFrequenza">
-              <div class="pill-opt" data-val="giornaliero">📅 Ogni giorno</div>
-              <div class="pill-opt" data-val="settimanale">📆 Qualche volta a settimana</div>
-              <div class="pill-opt" data-val="occasionale">🕐 Occasionalmente</div>
+              <div class="pill-opt" data-val="giornaliero" data-i18n="profile.freq.daily">📅 Ogni giorno</div>
+              <div class="pill-opt" data-val="settimanale" data-i18n="profile.freq.weekly">📆 Qualche volta a settimana</div>
+              <div class="pill-opt" data-val="occasionale" data-i18n="profile.freq.occasional">🕐 Occasionalmente</div>
             </div>
           </div>
 
@@ -628,22 +643,22 @@
 
           <!-- Come ha conosciuto -->
           <div>
-            <div class="label">Come hai conosciuto Simplif-AI?</div>
+            <div class="label" data-i18n="profile.howFound">Come hai conosciuto Simplif-AI?</div>
             <select class="field" id="fComeConosciuto">
-              <option value="">— Seleziona —</option>
-              <option value="amici">Amici / Passaparola</option>
-              <option value="social">Social media</option>
-              <option value="ricerca">Ricerca su Google</option>
-              <option value="scuola">Scuola / Università</option>
-              <option value="lavoro">Collega di lavoro</option>
-              <option value="altro">Altro</option>
+              <option value="" data-i18n="profile.selectDash">— Seleziona —</option>
+              <option value="amici" data-i18n="profile.found.friends">Amici / Passaparola</option>
+              <option value="social" data-i18n="profile.found.social">Social media</option>
+              <option value="ricerca" data-i18n="profile.found.search">Ricerca su Google</option>
+              <option value="scuola" data-i18n="auth.referral.school">Scuola / Università</option>
+              <option value="lavoro" data-i18n="profile.found.colleague">Collega di lavoro</option>
+              <option value="altro" data-i18n="auth.referral.other">Altro</option>
             </select>
           </div>
 
           <div style="height:16px;"></div>
 
           <div class="save-row">
-            <button class="btn btn-primary" id="saveProfiling" type="button">Salva profilo personale</button>
+            <button class="btn btn-primary" id="saveProfiling" type="button" data-i18n="profile.saveProfile">Salva profilo personale</button>
             <span class="msg" id="msgProfiling"></span>
           </div>
         </div>
@@ -658,18 +673,18 @@
       <!-- Risposte salvate -->
       <div class="card">
         <div class="card-inner">
-          <div class="section-title">⭐ Risposte salvate</div>
-          <p style="color:var(--muted);font-size:13px;margin:0 0 16px;">Le risposte che hai salvato dall'app. Clicca su un titolo per espanderla.</p>
-          <div id="savedList"><p style="color:var(--muted);font-size:13px;">Caricamento...</p></div>
+          <div class="section-title" data-i18n="profile.savedResponses">⭐ Risposte salvate</div>
+          <p style="color:var(--muted);font-size:13px;margin:0 0 16px;" data-i18n="profile.savedResponsesSub">Le risposte che hai salvato dall'app. Clicca su un titolo per espanderla.</p>
+          <div id="savedList"><p style="color:var(--muted);font-size:13px;" data-i18n="profile.loading">Caricamento...</p></div>
         </div>
       </div>
 
       <!-- Storico acquisti -->
       <div class="card">
         <div class="card-inner">
-          <div class="section-title">🧾 I miei acquisti</div>
-          <p style="color:var(--muted);font-size:13px;margin:0 0 16px;">Storico dei pacchetti crediti acquistati.</p>
-          <div id="purchasesList"><p style="color:var(--muted);font-size:13px;">Caricamento...</p></div>
+          <div class="section-title" data-i18n="profile.myPurchases">🧾 I miei acquisti</div>
+          <p style="color:var(--muted);font-size:13px;margin:0 0 16px;" data-i18n="profile.myPurchasesSub">Storico dei pacchetti crediti acquistati.</p>
+          <div id="purchasesList"><p style="color:var(--muted);font-size:13px;" data-i18n="profile.loading">Caricamento...</p></div>
         </div>
       </div>
 
@@ -680,26 +695,26 @@
 
       <div class="card danger-zone">
         <div class="card-inner">
-          <div class="section-title">🚪 Logout</div>
-          <p style="color:var(--muted);font-size:14px;margin:0 0 16px;">Disconnettiti dal tuo account su questo dispositivo.</p>
-          <button class="btn" id="logoutBtn" type="button" style="border-color:rgba(255,80,80,.35);color:#ff6b6b;">Esci dall'account</button>
+          <div class="section-title" data-i18n="profile.logout">🚪 Logout</div>
+          <p style="color:var(--muted);font-size:14px;margin:0 0 16px;" data-i18n="profile.logoutSub">Disconnettiti dal tuo account su questo dispositivo.</p>
+          <button class="btn" id="logoutBtn" type="button" style="border-color:rgba(255,80,80,.35);color:#ff6b6b;" data-i18n="profile.logoutBtn">Esci dall'account</button>
         </div>
       </div>
 
       <div class="card danger-zone" style="border-color:rgba(255,60,60,.35);">
         <div class="card-inner">
-          <div class="section-title">🗑️ Elimina account</div>
-          <p style="color:var(--muted);font-size:14px;margin:0 0 10px;line-height:1.55;">
+          <div class="section-title" data-i18n="profile.deleteAccount">🗑️ Elimina account</div>
+          <p style="color:var(--muted);font-size:14px;margin:0 0 10px;line-height:1.55;" data-i18n-html="profile.deleteWarning">
             Questa operazione è <strong style="color:var(--text);">permanente e irreversibile</strong>.
             Prima di procedere, leggi attentamente cosa comporta:
           </p>
           <ul style="list-style:none;padding:0;margin:0 0 18px;display:flex;flex-direction:column;gap:7px;">
-            <li style="display:flex;gap:8px;font-size:13px;color:var(--muted);align-items:flex-start;"><span>🗑️</span><span>Tutti i tuoi dati personali e di profilazione verranno eliminati definitivamente.</span></li>
-            <li style="display:flex;gap:8px;font-size:13px;align-items:flex-start;color:#ff8080;font-weight:700;"><span>⚡</span><span>Perderai immediatamente tutti i crediti ancora disponibili, senza rimborso.</span></li>
-            <li style="display:flex;gap:8px;font-size:13px;color:var(--muted);align-items:flex-start;"><span>🔒</span><span>L'account non potrà essere recuperato in nessun modo.</span></li>
+            <li style="display:flex;gap:8px;font-size:13px;color:var(--muted);align-items:flex-start;"><span>🗑️</span><span data-i18n="profile.delete.li1">Tutti i tuoi dati personali e di profilazione verranno eliminati definitivamente.</span></li>
+            <li style="display:flex;gap:8px;font-size:13px;align-items:flex-start;color:#ff8080;font-weight:700;"><span>⚡</span><span data-i18n="profile.delete.li2">Perderai immediatamente tutti i crediti ancora disponibili, senza rimborso.</span></li>
+            <li style="display:flex;gap:8px;font-size:13px;color:var(--muted);align-items:flex-start;"><span>🔒</span><span data-i18n="profile.delete.li3">L'account non potrà essere recuperato in nessun modo.</span></li>
           </ul>
           <button class="btn" id="openDeleteModalBtn" type="button"
-            style="border-color:rgba(255,60,60,.45);background:rgba(255,50,50,.08);color:#ff6b6b;">
+            style="border-color:rgba(255,60,60,.45);background:rgba(255,50,50,.08);color:#ff6b6b;" data-i18n="profile.deleteMyAccount">
             Elimina il mio account
           </button>
         </div>
@@ -709,20 +724,20 @@
     <div style="height:32px;"></div>
 
     <div style="text-align:center; margin-bottom:16px;">
-      <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="font-size:13px;">↑ Torna su</button>
+      <button class="btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="font-size:13px;" data-i18n="back.top">↑ Torna su</button>
     </div>
 
     <!-- ── Modal conferma eliminazione account ── -->
     <dialog class="delete-modal" id="deleteModal" aria-labelledby="deleteModalTitle">
       <div class="delete-modal-box">
-        <h3 id="deleteModalTitle">⚠️ Conferma eliminazione</h3>
-        <p>Stai per eliminare definitivamente il tuo account e <strong style="color:#ff8080;">perdere tutti i crediti residui</strong>. Questa azione non può essere annullata.</p>
+        <h3 id="deleteModalTitle" data-i18n="profile.modal.title">⚠️ Conferma eliminazione</h3>
+        <p data-i18n-html="profile.modal.body">Stai per eliminare definitivamente il tuo account e <strong style="color:#ff8080;">perdere tutti i crediti residui</strong>. Questa azione non può essere annullata.</p>
         <ul class="warn-list">
-          <li><span>🗑️</span><span>Dati personali e profilo eliminati.</span></li>
-          <li><span>⚡</span><span>Crediti persi senza possibilità di rimborso.</span></li>
-          <li><span>🚫</span><span>Accesso all'account revocato immediatamente.</span></li>
+          <li><span>🗑️</span><span data-i18n="profile.modal.li1">Dati personali e profilo eliminati.</span></li>
+          <li><span>⚡</span><span data-i18n="profile.modal.li2">Crediti persi senza possibilità di rimborso.</span></li>
+          <li><span>🚫</span><span data-i18n="profile.modal.li3">Accesso all'account revocato immediatamente.</span></li>
         </ul>
-        <div class="confirm-label">Digita <strong>ELIMINA</strong> per confermare</div>
+        <div class="confirm-label" data-i18n-html="profile.modal.confirmLabel">Digita <strong>ELIMINA</strong> per confermare</div>
         <input
           class="confirm-input"
           id="deleteConfirmInput"
@@ -730,11 +745,12 @@
           placeholder="Digita ELIMINA..."
           autocomplete="off"
           spellcheck="false"
+          data-i18n-placeholder="profile.modal.placeholder"
         />
         <div id="deleteErrorMsg" style="color:#ff6b6b;font-size:13px;margin:-10px 0 14px;min-height:16px;"></div>
         <div class="modal-actions">
-          <button class="btn btn-cancel" id="cancelDeleteBtn" type="button">Annulla</button>
-          <button class="btn btn-delete" id="confirmDeleteBtn" type="button">Elimina definitivamente</button>
+          <button class="btn btn-cancel" id="cancelDeleteBtn" type="button" data-i18n="profile.modal.cancel">Annulla</button>
+          <button class="btn btn-delete" id="confirmDeleteBtn" type="button" data-i18n="profile.modal.confirmDelete">Elimina definitivamente</button>
         </div>
       </div>
     </dialog>
@@ -744,14 +760,118 @@
       <div class="footer-links">
         <a href="/privacy-policy.html">Privacy Policy</a>
         <a href="/cookies-policy.html">Cookie Policy</a>
-        <a href="/contatti.html">Contatti</a>
+        <a href="/contatti.html" data-i18n="footer.contact">Contatti</a>
       </div>
-      <span style="width:100%;text-align:center;font-size:11px;opacity:.6;">Creato da <a href="https://massimodassano.it" target="_blank" rel="noopener">Massimo Dassano</a></span>
+      <span style="width:100%;text-align:center;font-size:11px;opacity:.6;"><span data-i18n="footer.credit">Creato da</span> <a href="https://massimodassano.it" target="_blank" rel="noopener">Massimo Dassano</a></span>
     </footer>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script>
+    window.SAI_I18N_EN = {
+      'nav.home': 'Home', 'nav.app': 'Ask something', 'nav.how': 'How it works', 'nav.pricing': 'Pricing',
+      'nav.profile': 'Profile', 'nav.spiegazioni': 'Explanations', 'nav.menu': 'Open menu',
+      'footer.contact': 'Contact', 'footer.credit': 'Created by', 'back.top': '↑ Back to top',
+      'app.credits.plural': 'credits',
+      'auth.country': 'Country', 'auth.select': 'Select...', 'auth.europe': 'Europe', 'auth.restOfWorld': 'Rest of the world',
+      'auth.country.IT': '🇮🇹 Italy', 'auth.country.AT': 'Austria', 'auth.country.BE': 'Belgium',
+      'auth.country.CH': 'Switzerland', 'auth.country.DE': 'Germany', 'auth.country.ES': 'Spain',
+      'auth.country.FR': 'France', 'auth.country.GB': 'United Kingdom', 'auth.country.GR': 'Greece',
+      'auth.country.HR': 'Croatia', 'auth.country.NL': 'Netherlands', 'auth.country.PL': 'Poland',
+      'auth.country.PT': 'Portugal', 'auth.country.RO': 'Romania', 'auth.country.SE': 'Sweden',
+      'auth.country.SM': 'San Marino', 'auth.country.VA': 'Vatican City',
+      'auth.country.AR': 'Argentina', 'auth.country.AU': 'Australia', 'auth.country.BR': 'Brazil',
+      'auth.country.CA': 'Canada', 'auth.country.CN': 'China', 'auth.country.IN': 'India',
+      'auth.country.JP': 'Japan', 'auth.country.MX': 'Mexico', 'auth.country.US': 'United States',
+      'auth.country.ZZ': 'Other',
+      'auth.accountEmail': 'Account email', 'auth.newPassword': 'New password', 'auth.confirmPassword': 'Confirm password',
+      'auth.repeatPassword': 'Repeat the password',
+      'auth.firstNameNoStar': 'First name', 'auth.lastNameNoStar': 'Last name', 'auth.birthDateNoStar': 'Date of birth', 'auth.city': 'City',
+      'auth.referral.other': 'Other', 'auth.referral.school': 'School / University',
+      'auth.msg.passwordMin6': 'The password must be at least 6 characters.',
+      'auth.msg.passwordMismatch': "Passwords don't match.",
+      'profile.credits': '⚡ Credits:',
+      'profile.tabAccount': '👤 Account', 'profile.tabPreferences': '🧠 Preferences', 'profile.tabLibrary': '⭐ Library',
+      'profile.personalData': '👤 Personal data',
+      'profile.occupation': 'Occupation', 'profile.occupationPlaceholder': 'e.g. Teacher, Engineer, Student...',
+      'profile.savePersonal': 'Save personal data',
+      'profile.security': '🔒 Security',
+      'profile.yourEmail': 'Your email',
+      'profile.updateEmail': 'Update email',
+      'profile.newPasswordPlaceholder': 'New password (min. 6 characters)',
+      'profile.updatePassword': 'Update password',
+      'profile.learningProfile': '🧠 Learning profile',
+      'profile.allOptional': '(all optional)',
+      'profile.educationLevel': 'Education level',
+      'profile.selectDash': '— Select —',
+      'profile.edu.media': 'Middle school', 'profile.edu.diploma': 'High school diploma',
+      'profile.edu.triennale': "Bachelor's degree", 'profile.edu.magistrale': "Master's degree",
+      'profile.edu.dottorato': 'PhD / Postgraduate',
+      'profile.field': 'Work / study field',
+      'profile.sector.tech': 'Technology / IT', 'profile.sector.medicine': 'Medicine / Health',
+      'profile.sector.economics': 'Economics / Finance', 'profile.sector.law': 'Law',
+      'profile.sector.engineering': 'Engineering', 'profile.sector.science': 'Natural sciences',
+      'profile.sector.humanities': 'Humanities / Literature', 'profile.sector.art': 'Art / Design / Music',
+      'profile.sector.education': 'Education / Training', 'profile.sector.commerce': 'Commerce / Marketing',
+      'profile.whyUse': 'Why do you use Simplif-AI?',
+      'profile.goal.study': '📚 Study', 'profile.goal.work': '💼 Work', 'profile.goal.curiosity': '🔍 Personal curiosity',
+      'profile.goal.research': '🧪 Research', 'profile.goal.teaching': '👩‍🏫 Teaching', 'profile.goal.other': '✏️ Other',
+      'profile.interests': 'Areas of interest (select as many as you like)',
+      'profile.int.science': '🔬 Science', 'profile.int.tech': '💻 Technology', 'profile.int.history': '🏛️ History',
+      'profile.int.art': '🎨 Art', 'profile.int.economics': '📈 Economics', 'profile.int.medicine': '🏥 Medicine',
+      'profile.int.law': '⚖️ Law', 'profile.int.philosophy': '🤔 Philosophy', 'profile.int.math': '➗ Mathematics',
+      'profile.int.environment': '🌿 Environment', 'profile.int.psychology': '🧬 Psychology', 'profile.int.sport': '⚽ Sport',
+      'profile.int.music': '🎵 Music', 'profile.int.literature': '📚 Literature', 'profile.int.politics': '🗳️ Politics',
+      'profile.int.cooking': '🍽️ Cooking',
+      'profile.frequency': 'How often do you think you\'ll use the app?',
+      'profile.freq.daily': '📅 Every day', 'profile.freq.weekly': '📆 A few times a week', 'profile.freq.occasional': '🕐 Occasionally',
+      'profile.howFound': 'How did you find out about Simplif-AI?',
+      'profile.found.friends': 'Friends / Word of mouth', 'profile.found.social': 'Social media',
+      'profile.found.search': 'Google search', 'profile.found.colleague': 'Work colleague',
+      'profile.saveProfile': 'Save personal profile',
+      'profile.savedResponses': '⭐ Saved answers',
+      'profile.savedResponsesSub': "The answers you've saved from the app. Click a title to expand it.",
+      'profile.loading': 'Loading...',
+      'profile.myPurchases': '🧾 My purchases',
+      'profile.myPurchasesSub': 'History of purchased credit packages.',
+      'profile.logout': '🚪 Logout',
+      'profile.logoutSub': 'Sign out of your account on this device.',
+      'profile.logoutBtn': "Sign out",
+      'profile.deleteAccount': '🗑️ Delete account',
+      'profile.deleteWarning': 'This operation is <strong style="color:var(--text);">permanent and irreversible</strong>. Before proceeding, carefully read what it involves:',
+      'profile.delete.li1': 'All your personal and profiling data will be permanently deleted.',
+      'profile.delete.li2': "You will immediately lose all remaining credits, with no refund.",
+      'profile.delete.li3': 'The account cannot be recovered in any way.',
+      'profile.deleteMyAccount': 'Delete my account',
+      'profile.modal.title': '⚠️ Confirm deletion',
+      'profile.modal.body': 'You are about to permanently delete your account and <strong style="color:#ff8080;">lose all remaining credits</strong>. This action cannot be undone.',
+      'profile.modal.li1': 'Personal data and profile deleted.',
+      'profile.modal.li2': 'Credits lost with no possibility of refund.',
+      'profile.modal.li3': 'Account access revoked immediately.',
+      'profile.modal.confirmLabel': 'Type <strong>DELETE</strong> to confirm',
+      'profile.modal.placeholder': 'Type DELETE...',
+      'profile.modal.cancel': 'Cancel',
+      'profile.modal.confirmDelete': 'Delete permanently',
+      'profile.modal.typeToConfirm': 'Type DELETE to proceed.',
+      'profile.modal.sessionExpired': 'Session expired. Reload the page.',
+      'profile.modal.deleting': 'Deleting…',
+      'profile.modal.deleteError': 'Error deleting account: ',
+      'profile.yourProfile': 'Your profile',
+      'profile.msg.error': 'Error: ',
+      'profile.msg.saved': 'Saved!',
+      'profile.msg.invalidEmail': 'Enter a valid email.',
+      'profile.msg.confirmEmailChange': 'Check your email to confirm the change.',
+      'profile.msg.enterNewPassword': 'Enter the new password.',
+      'profile.msg.passwordUpdated': 'Password updated!',
+      'profile.msg.profileSaved': 'Profile saved!',
+      'profile.msg.loadError': 'Loading error.',
+      'profile.msg.noSaved': 'No saved answers.',
+      'profile.msg.noPurchases': 'No purchases yet.',
+      'profile.billing.monthly': 'Monthly', 'profile.billing.yearly': 'Yearly', 'profile.billing.once': 'One-time',
+      'profile.cancelled': 'Cancelled', 'profile.active': 'Active', 'profile.cancel': 'Cancel', 'profile.delete': 'Delete',
+      'profile.confirmCancelSub': "Are you sure you want to cancel this subscription? You'll be able to keep using your remaining credits, but the plan won't renew."
+    };
+
     const SUPABASE_URL  = "https://lmmiowagyqypdrdcemdo.supabase.co";
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -827,7 +947,7 @@
       const cognome = profile.cognome || "";
       const initials = ((nome[0]||"") + (cognome[0]||"")).toUpperCase() || (email?.[0]||"?").toUpperCase();
       document.getElementById("avatarEl").textContent = initials;
-      document.getElementById("heroName").textContent = (nome || cognome) ? `${nome} ${cognome}`.trim() : "Il tuo profilo";
+      document.getElementById("heroName").textContent = (nome || cognome) ? `${nome} ${cognome}`.trim() : window.saiT('profile.yourProfile', 'Il tuo profilo');
       document.getElementById("heroEmail").textContent = email || "";
       document.getElementById("heroCredits").textContent = profile.credits ?? 0;
 
@@ -937,44 +1057,44 @@
         updated_at:  new Date().toISOString()
       });
       btn.disabled = false;
-      if(error) showMsg("msgPersonal", "Errore: " + error.message, "err");
+      if(error) showMsg("msgPersonal", window.saiT('profile.msg.error', 'Errore: ') + error.message, "err");
       else {
-        showMsg("msgPersonal", "Salvato!", "ok");
+        showMsg("msgPersonal", window.saiT('profile.msg.saved', 'Salvato!'), "ok");
         /* Aggiorna hero */
         const nome = document.getElementById("fNome").value.trim();
         const cognome = document.getElementById("fCognome").value.trim();
         const initials = ((nome[0]||"")+(cognome[0]||"")).toUpperCase() || document.getElementById("heroEmail").textContent[0].toUpperCase();
         document.getElementById("avatarEl").textContent = initials;
-        document.getElementById("heroName").textContent = (nome||cognome) ? `${nome} ${cognome}`.trim() : "Il tuo profilo";
+        document.getElementById("heroName").textContent = (nome||cognome) ? `${nome} ${cognome}`.trim() : window.saiT('profile.yourProfile', 'Il tuo profilo');
       }
     });
 
     /* Aggiorna email */
     document.getElementById("saveEmail").addEventListener("click", async () => {
       const newEmail = document.getElementById("fEmail").value.trim();
-      if(!newEmail){ showMsg("msgEmail", "Inserisci un'email valida.", "err"); return; }
+      if(!newEmail){ showMsg("msgEmail", window.saiT('profile.msg.invalidEmail', "Inserisci un'email valida."), "err"); return; }
       const btn = document.getElementById("saveEmail");
       btn.disabled = true;
       const { error } = await sb.auth.updateUser({ email: newEmail });
       btn.disabled = false;
-      if(error) showMsg("msgEmail", "Errore: " + error.message, "err");
-      else showMsg("msgEmail", "Controlla la tua email per confermare il cambio.", "ok");
+      if(error) showMsg("msgEmail", window.saiT('profile.msg.error', 'Errore: ') + error.message, "err");
+      else showMsg("msgEmail", window.saiT('profile.msg.confirmEmailChange', 'Controlla la tua email per confermare il cambio.'), "ok");
     });
 
     /* Cambio password */
     document.getElementById("savePwd").addEventListener("click", async () => {
       const p1 = document.getElementById("fPwd1").value;
       const p2 = document.getElementById("fPwd2").value;
-      if(!p1){ showMsg("msgPwd", "Inserisci la nuova password.", "err"); return; }
-      if(p1.length < 6){ showMsg("msgPwd", "La password deve avere almeno 6 caratteri.", "err"); return; }
-      if(p1 !== p2){ showMsg("msgPwd", "Le password non coincidono.", "err"); return; }
+      if(!p1){ showMsg("msgPwd", window.saiT('profile.msg.enterNewPassword', 'Inserisci la nuova password.'), "err"); return; }
+      if(p1.length < 6){ showMsg("msgPwd", window.saiT('auth.msg.passwordMin6', 'La password deve avere almeno 6 caratteri.'), "err"); return; }
+      if(p1 !== p2){ showMsg("msgPwd", window.saiT('auth.msg.passwordMismatch', 'Le password non coincidono.'), "err"); return; }
       const btn = document.getElementById("savePwd");
       btn.disabled = true;
       const { error } = await sb.auth.updateUser({ password: p1 });
       btn.disabled = false;
-      if(error) showMsg("msgPwd", "Errore: " + error.message, "err");
+      if(error) showMsg("msgPwd", window.saiT('profile.msg.error', 'Errore: ') + error.message, "err");
       else {
-        showMsg("msgPwd", "Password aggiornata!", "ok");
+        showMsg("msgPwd", window.saiT('profile.msg.passwordUpdated', 'Password aggiornata!'), "ok");
         document.getElementById("fPwd1").value = "";
         document.getElementById("fPwd2").value = "";
       }
@@ -996,8 +1116,8 @@
         updated_at:         new Date().toISOString()
       });
       btn.disabled = false;
-      if(error) showMsg("msgProfiling", "Errore: " + error.message, "err");
-      else showMsg("msgProfiling", "Profilo salvato!", "ok");
+      if(error) showMsg("msgProfiling", window.saiT('profile.msg.error', 'Errore: ') + error.message, "err");
+      else showMsg("msgProfiling", window.saiT('profile.msg.profileSaved', 'Profilo salvato!'), "ok");
     });
 
     /* ── Tab switching ── */
@@ -1030,17 +1150,17 @@
         .order('created_at', { ascending: false });
 
       if(error || !data || !data.length){
-        el.innerHTML = '<p style="color:var(--muted);font-size:13px;">' + (error ? 'Errore caricamento.' : 'Nessuna risposta salvata.') + '</p>';
+        el.innerHTML = '<p style="color:var(--muted);font-size:13px;">' + (error ? window.saiT('profile.msg.loadError','Errore caricamento.') : window.saiT('profile.msg.noSaved','Nessuna risposta salvata.')) + '</p>';
         return;
       }
 
       el.innerHTML = data.map(function(item){
-        var date = new Date(item.created_at).toLocaleDateString('it-IT', { day:'2-digit', month:'short', year:'numeric' });
+        var date = new Date(item.created_at).toLocaleDateString(window.saiLang() === 'en' ? 'en-US' : 'it-IT', { day:'2-digit', month:'short', year:'numeric' });
         return '<div class="saved-item" data-id="' + item.id + '">' +
           '<div class="saved-item-header">' +
             '<span class="saved-item-title">' + escHtml(item.title) + '</span>' +
             '<span class="saved-item-date">' + date + '</span>' +
-            '<button class="saved-item-del" data-del="' + item.id + '" title="Elimina" type="button">✕</button>' +
+            '<button class="saved-item-del" data-del="' + item.id + '" title="' + window.saiT('profile.delete','Elimina') + '" type="button">✕</button>' +
           '</div>' +
           '<div class="saved-item-body">' + escHtml(item.response_text) + '</div>' +
         '</div>';
@@ -1063,7 +1183,7 @@
           await sb.from('saved_responses').delete().eq('id', id).eq('user_id', currentUserId);
           btn.closest('.saved-item').remove();
           if(!el.querySelector('.saved-item'))
-            el.innerHTML = '<p style="color:var(--muted);font-size:13px;">Nessuna risposta salvata.</p>';
+            el.innerHTML = '<p style="color:var(--muted);font-size:13px;">' + window.saiT('profile.msg.noSaved','Nessuna risposta salvata.') + '</p>';
         });
       });
     }
@@ -1076,12 +1196,16 @@
         .order('created_at', { ascending: false });
 
       if(error || !data || !data.length){
-        el.innerHTML = '<p style="color:var(--muted);font-size:13px;">' + (error ? 'Errore caricamento.' : 'Nessun acquisto ancora.') + '</p>';
+        el.innerHTML = '<p style="color:var(--muted);font-size:13px;">' + (error ? window.saiT('profile.msg.loadError','Errore caricamento.') : window.saiT('profile.msg.noPurchases','Nessun acquisto ancora.')) + '</p>';
         return;
       }
 
       var now = Date.now();
-      var typeLabel = { monthly: 'Mensile', yearly: 'Annuale', once: 'Una tantum' };
+      var typeLabel = {
+        monthly: window.saiT('profile.billing.monthly', 'Mensile'),
+        yearly: window.saiT('profile.billing.yearly', 'Annuale'),
+        once: window.saiT('profile.billing.once', 'Una tantum')
+      };
 
       function isActiveSub(p){
         if(p.cancelled_at) return false;
@@ -1091,20 +1215,20 @@
       }
 
       el.innerHTML = data.map(function(p){
-        var date = new Date(p.created_at).toLocaleDateString('it-IT', { day:'2-digit', month:'short', year:'numeric' });
+        var date = new Date(p.created_at).toLocaleDateString(window.saiLang() === 'en' ? 'en-US' : 'it-IT', { day:'2-digit', month:'short', year:'numeric' });
         var amt = p.amount_eur != null ? '€' + parseFloat(p.amount_eur).toFixed(2) : '—';
         var badge = '';
         var cancelBtn = '';
         if(p.cancelled_at){
-          badge = '<span class="sub-badge cancelled">Annullato</span>';
+          badge = '<span class="sub-badge cancelled">' + window.saiT('profile.cancelled','Annullato') + '</span>';
         } else if(isActiveSub(p)){
-          badge = '<span class="sub-badge active">Attivo</span>';
-          cancelBtn = '<button class="btn btn-cancel-sub" data-cancel="' + p.id + '" type="button">Annulla</button>';
+          badge = '<span class="sub-badge active">' + window.saiT('profile.active','Attivo') + '</span>';
+          cancelBtn = '<button class="btn btn-cancel-sub" data-cancel="' + p.id + '" type="button">' + window.saiT('profile.cancel','Annulla') + '</button>';
         }
         return '<div class="purchase-row" data-purchase-id="' + p.id + '">' +
           '<div>' +
             '<div class="purchase-name">' + escHtml(p.package_name) + ' ' + badge + '</div>' +
-            '<div class="purchase-meta">' + (typeLabel[p.billing_type] || p.billing_type) + ' · ' + date + ' · +' + p.credits_added + ' crediti</div>' +
+            '<div class="purchase-meta">' + (typeLabel[p.billing_type] || p.billing_type) + ' · ' + date + ' · +' + p.credits_added + ' ' + window.saiT('app.credits.plural','crediti') + '</div>' +
           '</div>' +
           '<div style="display:flex;align-items:center;gap:10px;">' +
             '<div class="purchase-amt">' + amt + '</div>' +
@@ -1116,7 +1240,7 @@
       /* Gestione annullamento */
       el.querySelectorAll('[data-cancel]').forEach(function(btn){
         btn.addEventListener('click', async function(){
-          if(!confirm('Sei sicuro di voler annullare questo abbonamento? Potrai continuare a usare i crediti rimanenti ma il piano non si rinnoverà.')) return;
+          if(!confirm(window.saiT('profile.confirmCancelSub', 'Sei sicuro di voler annullare questo abbonamento? Potrai continuare a usare i crediti rimanenti ma il piano non si rinnoverà.'))) return;
           btn.disabled = true;
           btn.textContent = '...';
           var id = btn.dataset.cancel;
@@ -1126,14 +1250,14 @@
             .eq('user_id', currentUserId);
           if(error){
             btn.disabled = false;
-            btn.textContent = 'Annulla';
-            alert('Errore: ' + error.message);
+            btn.textContent = window.saiT('profile.cancel','Annulla');
+            alert(window.saiT('profile.msg.error', 'Errore: ') + error.message);
           } else {
             /* Aggiorna UI senza ricaricare */
             var row = el.querySelector('[data-purchase-id="' + id + '"]');
             if(row){
               row.querySelector('.sub-badge').className = 'sub-badge cancelled';
-              row.querySelector('.sub-badge').textContent = 'Annullato';
+              row.querySelector('.sub-badge').textContent = window.saiT('profile.cancelled','Annullato');
               btn.remove();
             }
           }
@@ -1175,7 +1299,7 @@
         errorMsg.textContent = "";
         confirmBtn.classList.remove("ready");
         confirmBtn.disabled = false;
-        confirmBtn.textContent = "Elimina definitivamente";
+        confirmBtn.textContent = window.saiT('profile.modal.confirmDelete', 'Elimina definitivamente');
       });
 
       openBtn.addEventListener("click", openModal);
@@ -1196,16 +1320,16 @@
       // Conferma ed esegui la cancellazione
       confirmBtn.addEventListener("click", async () => {
         if(input.value.trim().toUpperCase() !== "ELIMINA"){
-          errorMsg.textContent = "Digita ELIMINA per procedere.";
+          errorMsg.textContent = window.saiT('profile.modal.typeToConfirm', 'Digita ELIMINA per procedere.');
           return;
         }
         if(!currentUserId){
-          errorMsg.textContent = "Sessione scaduta. Ricarica la pagina.";
+          errorMsg.textContent = window.saiT('profile.modal.sessionExpired', 'Sessione scaduta. Ricarica la pagina.');
           return;
         }
 
         confirmBtn.disabled = true;
-        confirmBtn.textContent = "Eliminazione in corso…";
+        confirmBtn.textContent = window.saiT('profile.modal.deleting', 'Eliminazione in corso…');
         errorMsg.textContent = "";
 
         try {
@@ -1217,7 +1341,7 @@
            */
           const { error: rpcErr } = await sb.rpc('soft_delete_user');
 
-          if(rpcErr) throw new Error("Errore eliminazione account: " + rpcErr.message);
+          if(rpcErr) throw new Error(window.saiT('profile.modal.deleteError', 'Errore eliminazione account: ') + rpcErr.message);
 
           // Sign out locale e redirect
           await sb.auth.signOut();
@@ -1226,7 +1350,7 @@
         } catch(err) {
           errorMsg.textContent = err.message;
           confirmBtn.disabled = false;
-          confirmBtn.textContent = "Elimina definitivamente";
+          confirmBtn.textContent = window.saiT('profile.modal.confirmDelete', 'Elimina definitivamente');
         }
       });
     })();
