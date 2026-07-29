@@ -39,13 +39,23 @@ function buildPrompt(query, targetPrompt, mode, previousText, maxChars, uiLang) 
   var safeMode = mode === "continue" ? "continue" : "start";
   var prev = String(previousText || "").slice(0, 24000);
   var budget = Math.max(1400, Math.floor(maxChars * 0.9));
-  var fallbackLangName = UI_LANG_NAMES[uiLang] || null;
-  var langRule = fallbackLangName
-    ? "- Rispondi nella stessa lingua in cui e scritta la DOMANDA/CONCETTO, qualunque lingua sia. Se la lingua della domanda e ambigua, troppo breve o non chiaramente identificabile, rispondi in " + fallbackLangName + " (lingua dell'interfaccia scelta dall'utente)."
-    : "- Rispondi nella stessa lingua in cui e scritta la DOMANDA/CONCETTO, qualunque lingua sia.";
+  var langName = UI_LANG_NAMES[uiLang] || null;
+
+  // Direttiva lingua: se conosciamo la lingua dell'interfaccia, quella e' il
+  // default vincolante (l'auto-rilevamento su testo breve/maiuscolo/keyword
+  // non e' affidabile). Solo una domanda scritta in modo chiaro e univoco in
+  // un'altra lingua specifica fa scattare l'eccezione.
+  var langDirectiveTop = langName
+    ? "LINGUA RISPOSTA OBBLIGATORIA: " + langName.toUpperCase() + ". Rispondi SEMPRE in " + langName + ", anche se la domanda contiene parole in un'altra lingua, sigle, maiuscole o e' molto breve. Fai eccezione SOLO se l'intera domanda e' scritta in modo chiaro e inequivocabile in un'altra lingua specifica: in quel caso rispondi in quella lingua."
+    : "LINGUA RISPOSTA: rispondi nella stessa lingua in cui e' scritta la DOMANDA/CONCETTO, qualunque lingua sia.";
+  var langRule = langName
+    ? "- Rispondi in " + langName + " (vedi LINGUA RISPOSTA OBBLIGATORIA sopra)."
+    : "- Rispondi nella stessa lingua in cui e' scritta la DOMANDA/CONCETTO, qualunque lingua sia.";
 
   if (safeMode === "continue") {
     return [
+      langDirectiveTop,
+      "",
       "Continua la spiegazione.",
       "",
       "DOMANDA/CONCETTO: " + query,
@@ -72,6 +82,8 @@ function buildPrompt(query, targetPrompt, mode, previousText, maxChars, uiLang) 
   }
 
   return [
+    langDirectiveTop,
+    "",
     "Spiega il seguente concetto: " + query,
     "",
     "TARGET/STILE:",
