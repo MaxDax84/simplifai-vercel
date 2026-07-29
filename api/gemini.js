@@ -33,10 +33,16 @@ function clamp(n, min, max, fallback) {
   return Math.min(Math.max(x, min), max);
 }
 
-function buildPrompt(query, targetPrompt, mode, previousText, maxChars) {
+var UI_LANG_NAMES = { it: "italiano", en: "inglese" };
+
+function buildPrompt(query, targetPrompt, mode, previousText, maxChars, uiLang) {
   var safeMode = mode === "continue" ? "continue" : "start";
   var prev = String(previousText || "").slice(0, 24000);
   var budget = Math.max(1400, Math.floor(maxChars * 0.9));
+  var fallbackLangName = UI_LANG_NAMES[uiLang] || null;
+  var langRule = fallbackLangName
+    ? "- Rispondi nella stessa lingua in cui e scritta la DOMANDA/CONCETTO, qualunque lingua sia. Se la lingua della domanda e ambigua, troppo breve o non chiaramente identificabile, rispondi in " + fallbackLangName + " (lingua dell'interfaccia scelta dall'utente)."
+    : "- Rispondi nella stessa lingua in cui e scritta la DOMANDA/CONCETTO, qualunque lingua sia.";
 
   if (safeMode === "continue") {
     return [
@@ -53,7 +59,7 @@ function buildPrompt(query, targetPrompt, mode, previousText, maxChars) {
       "---",
       "",
       "ISTRUZIONI:",
-      "- Rispondi nella stessa lingua in cui e scritta la DOMANDA/CONCETTO, qualunque lingua sia.",
+      langRule,
       "- Continua dal punto esatto in cui si e interrotta.",
       "- Non ripetere introduzioni o sezioni gia fatte.",
       "- Mantieni lo stesso tono e livello del target.",
@@ -72,7 +78,7 @@ function buildPrompt(query, targetPrompt, mode, previousText, maxChars) {
     targetPrompt,
     "",
     "ISTRUZIONI:",
-    "- Rispondi nella stessa lingua in cui e scritta la DOMANDA/CONCETTO, qualunque lingua sia.",
+    langRule,
     "- Risposta chiara, ben strutturata.",
     "- Usa titoli e liste quando utile.",
     "- Chiudi sempre le frasi.",
@@ -156,6 +162,8 @@ export default async function handler(req) {
     var targetPrompt = String((body && body.targetPrompt) || "").trim();
     var mode = body && body.mode;
     var previousText = (body && body.previousText) || "";
+    var uiLangRaw = String((body && body.uiLang) || "").toLowerCase();
+    var uiLang = (uiLangRaw === "en" || uiLangRaw === "it") ? uiLangRaw : null;
 
     if (!query || !targetPrompt) return jsonError("Parametri mancanti: query/targetPrompt.", 400);
 
@@ -183,7 +191,7 @@ export default async function handler(req) {
     }
 
     async function runRound(roundMode, currentText) {
-      var prompt = buildPrompt(query, targetPrompt, roundMode, currentText, maxChars);
+      var prompt = buildPrompt(query, targetPrompt, roundMode, currentText, maxChars, uiLang);
       var upstream = await callGroqWithRetry(apiKey, prompt, maxTokens);
 
       if (!upstream.body) throw new Error("Upstream body nullo.");
