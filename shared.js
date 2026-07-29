@@ -144,30 +144,33 @@
   });
 })();
 
-/* ── 6. Condivisione sito (solo mobile) ──
- * Pulsante creato via JS solo se il browser supporta navigator.share():
- * niente pulsante morto sui browser che non la supportano. La visibilita'
- * su mobile-only e' gestita da CSS (.share-btn, vedi theme.css). Condivide
- * sempre l'homepage, non la pagina/spiegazione corrente. */
+/* ── 6. Condivisione sito nel menu hamburger (solo mobile) ──
+ * Voce aggiunta in fondo al menu mobile, creata via JS solo se il
+ * browser supporta navigator.share(): niente pulsante morto sui browser
+ * che non la supportano. Il menu hamburger e' gia' mobile-only, quindi
+ * non serve altra logica di visibilita'. Condivide sempre l'homepage,
+ * non la pagina/spiegazione corrente. */
 (function () {
   if (typeof navigator === 'undefined' || typeof navigator.share !== 'function') return;
-  var navToggle = document.getElementById('navToggle');
-  if (!navToggle || !navToggle.parentNode) return;
+  var mobileNav = document.getElementById('mobileNav');
+  if (!mobileNav) return;
 
   var SHARE_URL = 'https://www.simplif-ai.it/';
 
   var btn = document.createElement('button');
   btn.type = 'button';
-  btn.className = 'theme-btn share-btn';
-  btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>';
+  btn.className = 'share-menu-btn';
+  btn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg><span></span>';
+  var labelEl = btn.querySelector('span');
 
   function updateLabel() {
-    btn.setAttribute('aria-label', window.saiLang() === 'en' ? 'Share Simplif-AI' : 'Condividi Simplif-AI');
+    labelEl.textContent = window.saiLang() === 'en' ? 'Share' : 'Condividi';
   }
   updateLabel();
   document.addEventListener('sai:langchange', updateLabel);
 
   btn.addEventListener('click', function () {
+    document.body.classList.remove('nav-open');
     navigator.share({
       title: 'Simplif-AI',
       text: window.saiLang() === 'en'
@@ -177,5 +180,5 @@
     }).catch(function () { /* utente ha annullato o share non riuscita: nessun errore da mostrare */ });
   });
 
-  navToggle.parentNode.insertBefore(btn, navToggle);
+  mobileNav.appendChild(btn);
 })();

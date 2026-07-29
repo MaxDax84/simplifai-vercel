@@ -528,18 +528,33 @@ body.nav-open .mobile-nav{
 @media (max-width: 820px){
   #mainNav, header nav{ display:none; }
   .nav-toggle{ display:flex; }
-  .theme-btn.share-btn{ display:inline-flex; }
   /* Nasconde il sottotitolo del brand per evitare header troppo alto */
   .brand span{ display:none; }
   /* Header compatto: meno margine sotto */
   header{ margin-bottom:14px; }
 }
 
-/* Pulsante condivisione: creato via JS (shared.js), visibile solo su mobile
-   e solo se il browser supporta navigator.share(). Selettore composto per
-   avere specificita' maggiore di .theme-btn (che imposta display:inline-flex)
-   indipendentemente dall'ordine nel file. */
-.theme-btn.share-btn{ display:none; }
+/* Voce "Condividi" nel menu hamburger: creata via JS (shared.js) solo se
+   il browser supporta navigator.share(). Stile allineato ai link
+   .mobile-nav a, ma e' un <button> (nessuna azione di navigazione). */
+.mobile-nav .share-menu-btn{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:22px;
+  font-weight:900;
+  color:var(--text);
+  background:none;
+  border:none;
+  font-family:inherit;
+  cursor:pointer;
+  padding:10px 16px;
+  border-radius:14px;
+}
+.mobile-nav .share-menu-btn:hover{
+  background: rgba(255,255,255,.06);
+}
+html[data-theme="light"] .mobile-nav .share-menu-btn{ color:#0d1133; }
 
 /* ================= FOOTER ================= */
 
