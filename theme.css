@@ -22,6 +22,10 @@
 *{ box-sizing:border-box; }
 html, body{ height:100%; }
 
+html{
+  overflow-x: hidden;
+}
+
 body{
   margin:0;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
@@ -31,7 +35,12 @@ body{
     radial-gradient(950px 680px at 108% 8%, rgba(255,43,214,0.09), transparent 55%),
     radial-gradient(850px 520px at 50% 115%, rgba(139,92,246,0.10), transparent 60%),
     var(--bg);              /* ✅ UNIFORME */
+  background-attachment: fixed;   /* sfondo ancorato al viewport, il contenuto scorre sopra */
   position:relative;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;   /* niente rimbalzo/ondeggiamento laterale su mobile */
+  width: 100%;
+  max-width: 100vw;
 }
 
 body::before{
