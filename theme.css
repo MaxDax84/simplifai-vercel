@@ -37,10 +37,7 @@ body{
     var(--bg);              /* ✅ UNIFORME */
   background-attachment: fixed;   /* sfondo ancorato al viewport, il contenuto scorre sopra */
   position:relative;
-  overflow-x: hidden;
   overscroll-behavior-x: none;   /* niente rimbalzo/ondeggiamento laterale su mobile */
-  width: 100%;
-  max-width: 100vw;
 }
 
 body::before{
