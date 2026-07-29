@@ -9,7 +9,7 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#0F1530">
+  <meta name="theme-color" content="#05070d">
   <link rel="stylesheet" href="/theme.css?v=2">
 
   <script>
@@ -43,7 +43,7 @@
       text-transform:uppercase; letter-spacing:1.2px; font-weight:700;
     }
     .promo-inline-field::placeholder{ text-transform:none; letter-spacing:0; font-weight:400; }
-    .promo-inline-field:focus{ border-color:rgba(124,92,255,.5); box-shadow:0 0 0 3px rgba(124,92,255,.15); }
+    .promo-inline-field:focus{ border-color:rgba(139,92,246,.5); box-shadow:0 0 0 3px rgba(139,92,246,.15); }
     html[data-theme="light"] .promo-inline-field{ background:rgba(255,255,255,.80); border-color:rgba(13,17,51,.15); color:#0d1133; }
     .promo-applied{
       display:flex; align-items:center; gap:8px; margin-top:10px;
@@ -71,8 +71,8 @@
       transition:border-color .15s, box-shadow .15s;
     }
     .field:focus{
-      border-color:rgba(124,92,255,.50);
-      box-shadow:0 0 0 4px rgba(124,92,255,.15);
+      border-color:rgba(139,92,246,.50);
+      box-shadow:0 0 0 4px rgba(139,92,246,.15);
     }
     html[data-theme="light"] .field{
       background:rgba(255,255,255,.80);
@@ -129,8 +129,8 @@
 
     /* ── Plan box ── */
     .planbox{
-      border:1px solid rgba(124,92,255,.35);
-      background:rgba(124,92,255,.10);
+      border:1px solid rgba(139,92,246,.35);
+      background:rgba(139,92,246,.10);
       border-radius:16px; padding:16px 18px;
       margin-bottom:18px;
     }
@@ -147,10 +147,10 @@
     }
     .credits-badge{
       display:inline-flex; align-items:center; gap:5px;
-      background:rgba(124,92,255,.15);
-      border:1px solid rgba(124,92,255,.30);
+      background:rgba(139,92,246,.15);
+      border:1px solid rgba(139,92,246,.30);
       border-radius:999px; padding:5px 13px;
-      font-size:13px; font-weight:700; color:#a98bff;
+      font-size:13px; font-weight:700; color:#b39dff;
     }
     html[data-theme="light"] .credits-badge{ color:#5b36d1; }
 
@@ -208,7 +208,7 @@
     .cta .btn-pay{
       width:100%; padding:15px 20px; font-size:15px; font-weight:800;
       border-radius:16px; border:none; cursor:pointer;
-      background:linear-gradient(135deg,#7c5cff 0%,#26c6ff 100%);
+      background:linear-gradient(135deg,#00e5ff 0%,#8b5cf6 100%);
       color:#fff; display:flex; align-items:center;
       justify-content:center; gap:8px;
       transition:opacity .15s, transform .1s;
@@ -233,8 +233,8 @@
     .processing-inner{ text-align:center; padding:64px 24px 56px; }
     .spinner-ring{
       width:72px; height:72px; border-radius:50%;
-      border:5px solid rgba(124,92,255,.15);
-      border-top-color:#7c5cff;
+      border:5px solid rgba(139,92,246,.15);
+      border-top-color:#00e5ff;
       animation:spin 1s linear infinite;
       margin:0 auto 30px;
     }
@@ -245,14 +245,14 @@
     .processing-sub{ color:var(--muted); font-size:14px; margin:0; line-height:1.6; }
     .processing-bar-wrap{
       width:100%; max-width:260px; height:4px;
-      background:rgba(124,92,255,.15);
+      background:rgba(139,92,246,.15);
       border-radius:999px;
       margin:24px auto 0;
       overflow:hidden;
     }
     .processing-bar{
       height:100%; width:0%;
-      background:linear-gradient(90deg,#7c5cff,#26c6ff);
+      background:linear-gradient(90deg,#00e5ff,#8b5cf6);
       border-radius:999px;
       animation:fill-bar 3s ease-in-out forwards;
     }
@@ -281,10 +281,10 @@
     }
     .success-credits-pill{
       display:inline-flex; align-items:center; gap:7px;
-      background:rgba(124,92,255,.12);
-      border:1px solid rgba(124,92,255,.28);
+      background:rgba(139,92,246,.12);
+      border:1px solid rgba(139,92,246,.28);
       border-radius:999px; padding:8px 22px;
-      font-size:17px; font-weight:800; color:#a98bff;
+      font-size:17px; font-weight:800; color:#b39dff;
       margin-bottom:14px;
     }
     html[data-theme="light"] .success-credits-pill{ color:#5b36d1; }
@@ -293,7 +293,7 @@
     .success-countdown{ font-size:13px; color:var(--muted2); margin-bottom:22px; }
     .success-cta .btn{
       font-size:15px; padding:14px 36px;
-      background:linear-gradient(135deg,#7c5cff,#26c6ff);
+      background:linear-gradient(135deg,#00e5ff,#8b5cf6);
       border:none; color:#fff; border-radius:14px;
       font-weight:800; cursor:pointer; display:inline-flex;
       align-items:center; gap:8px;

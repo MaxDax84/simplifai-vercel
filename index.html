@@ -28,7 +28,7 @@
   <meta name="twitter:title" content="Simplif-AI – Concetti complessi spiegati in modo semplice" />
   <meta name="twitter:description" content="Spiega qualsiasi concetto nel modo giusto per te. 6 livelli di profondità, 3 lunghezze. 10 crediti gratuiti." />
   <meta name="twitter:image" content="https://www.simplif-ai.it/og-image.png?v=2" />
-  <meta name="theme-color" content="#16214d" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#05070d" media="(prefers-color-scheme: dark)" />
   <meta name="theme-color" content="#eef0ff" media="(prefers-color-scheme: light)" />
   <!-- JSON-LD -->
   <script type="application/ld+json">
@@ -118,6 +118,17 @@
       font-weight: 950;
       letter-spacing: -1.2px;
       margin: 0 0 14px;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent2) 55%, var(--accent3) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 30px rgba(0,229,255,.35)) drop-shadow(0 0 60px rgba(139,92,246,.18));
+    }
+    html[data-theme="light"] .big{
+      -webkit-text-fill-color: initial;
+      background: none;
+      color: var(--text);
+      filter: none;
     }
 
     .tag{
@@ -146,7 +157,10 @@
       padding: 16px 26px;
       font-size: 15px;
       min-height: 52px;
-      box-shadow: 0 18px 60px rgba(0,0,0,.22);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.5) inset,
+        0 6px 0 rgba(0,110,130,.85),
+        0 16px 40px rgba(0,229,255,.3);
     }
 
     header{

@@ -9,7 +9,7 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#0F1530">
+  <meta name="theme-color" content="#05070d">
   <link rel="stylesheet" href="/theme.css?v=2">
 
   <script>
@@ -36,8 +36,8 @@
   <style>
     /* ── Hero intro ── */
     .spieg-hero {
-      background: linear-gradient(135deg, rgba(124,92,255,.15) 0%, rgba(38,198,255,.08) 100%);
-      border: 1px solid rgba(124,92,255,.2);
+      background: linear-gradient(135deg, rgba(139,92,246,.15) 0%, rgba(0,229,255,.08) 100%);
+      border: 1px solid rgba(139,92,246,.2);
       border-radius: 20px;
       padding: 32px 28px 28px;
       margin-bottom: 20px;
@@ -69,8 +69,8 @@
     }
     .search-input::placeholder { color: var(--muted); }
     .search-input:focus {
-      border-color: rgba(124,92,255,.5);
-      box-shadow: 0 0 0 3px rgba(124,92,255,.12);
+      border-color: rgba(139,92,246,.5);
+      box-shadow: 0 0 0 3px rgba(139,92,246,.12);
     }
     .search-icon {
       position: absolute; left: 14px; top: 50%;
@@ -94,8 +94,8 @@
     }
     .filter-pill:hover { background: rgba(255,255,255,.07); }
     .filter-pill.active {
-      border-color: rgba(124,92,255,.6);
-      background: rgba(124,92,255,.18);
+      border-color: rgba(139,92,246,.6);
+      background: rgba(139,92,246,.18);
       color: var(--text);
     }
 
@@ -105,7 +105,7 @@
     .spieg-card {
       background: rgba(255,255,255,.03);
       border: 1px solid var(--border);
-      border-left: 3px solid var(--accent-color, rgba(124,92,255,.5));
+      border-left: 3px solid var(--accent-color, rgba(139,92,246,.5));
       border-radius: 14px;
       padding: 16px 18px;
       cursor: pointer;
@@ -116,7 +116,7 @@
       align-items: center;
     }
     .spieg-card:hover {
-      background: rgba(124,92,255,.06);
+      background: rgba(139,92,246,.06);
       transform: translateY(-1px);
     }
     .spieg-card-main { min-width: 0; }
@@ -153,13 +153,13 @@
       border: 1px solid var(--border);
     }
     .badge-target {
-      background: rgba(var(--badge-rgb, 124,92,255), .14);
-      border-color: rgba(var(--badge-rgb, 124,92,255), .3);
+      background: rgba(var(--badge-rgb, 139,92,246), .14);
+      border-color: rgba(var(--badge-rgb, 139,92,246), .3);
       color: var(--text);
     }
     .badge-len  {
-      background: rgba(38,198,255,.10);
-      border-color: rgba(38,198,255,.25);
+      background: rgba(0,229,255,.10);
+      border-color: rgba(0,229,255,.25);
       color: var(--text);
     }
     .badge-date {
@@ -189,7 +189,7 @@
     .modal-header {
       padding: 22px 24px 18px;
       border-bottom: 1px solid var(--border);
-      background: linear-gradient(135deg, rgba(124,92,255,.08), rgba(38,198,255,.04));
+      background: linear-gradient(135deg, rgba(139,92,246,.08), rgba(0,229,255,.04));
     }
     .modal-header-top {
       display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px;
@@ -313,7 +313,7 @@
       <div class="spieg-hero">
         <h2 data-i18n="spieg.title">📚 Spiegazioni della community</h2>
         <p data-i18n="spieg.sub">Esplora le risposte generate dagli utenti. Clicca su una domanda per leggere la risposta completa.</p>
-        <div id="totalCount" style="margin-top:18px; font-size:36px; font-weight:900; background:linear-gradient(135deg,#7c5cff,#26c6ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1;">—<span style="display:block; font-size:12px; font-weight:600; color:var(--muted); -webkit-text-fill-color:var(--muted); margin-top:5px;" data-i18n="spieg.generatedCount">spiegazioni generate</span></div>
+        <div id="totalCount" style="margin-top:18px; font-size:36px; font-weight:900; background:linear-gradient(135deg,#8b5cf6,#00e5ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1;">—<span style="display:block; font-size:12px; font-weight:600; color:var(--muted); -webkit-text-fill-color:var(--muted); margin-top:5px;" data-i18n="spieg.generatedCount">spiegazioni generate</span></div>
       </div>
 
       <!-- Ricerca -->
@@ -432,13 +432,13 @@
     const TARGET_COLORS = {
       'Bambino':                  { rgb: '255,159,67',  hex: '#ff9f43' },
       'Ragazzo':                  { rgb: '46,204,113',  hex: '#2ecc71' },
-      'Studente universitario':   { rgb: '38,198,255',  hex: '#26c6ff' },
-      'Adulto':                   { rgb: '124,92,255',  hex: '#7c5cff' },
+      'Studente universitario':   { rgb: '0,229,255',  hex: '#00e5ff' },
+      'Adulto':                   { rgb: '139,92,246',  hex: '#8b5cf6' },
       'Esperto':                  { rgb: '255,107,107', hex: '#ff6b6b' },
       'Scienziato':               { rgb: '0,210,211',   hex: '#00d2d3' },
     };
     function targetColor(label) {
-      return TARGET_COLORS[label] || { rgb: '124,92,255', hex: '#7c5cff' };
+      return TARGET_COLORS[label] || { rgb: '139,92,246', hex: '#8b5cf6' };
     }
 
     function formatDate(isoStr) {
