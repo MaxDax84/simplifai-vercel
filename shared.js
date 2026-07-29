@@ -143,3 +143,39 @@
     applyI18n(lang);
   });
 })();
+
+/* ── 6. Condivisione sito (solo mobile) ──
+ * Pulsante creato via JS solo se il browser supporta navigator.share():
+ * niente pulsante morto sui browser che non la supportano. La visibilita'
+ * su mobile-only e' gestita da CSS (.share-btn, vedi theme.css). Condivide
+ * sempre l'homepage, non la pagina/spiegazione corrente. */
+(function () {
+  if (typeof navigator === 'undefined' || typeof navigator.share !== 'function') return;
+  var navToggle = document.getElementById('navToggle');
+  if (!navToggle || !navToggle.parentNode) return;
+
+  var SHARE_URL = 'https://www.simplif-ai.it/';
+
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'theme-btn share-btn';
+  btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>';
+
+  function updateLabel() {
+    btn.setAttribute('aria-label', window.saiLang() === 'en' ? 'Share Simplif-AI' : 'Condividi Simplif-AI');
+  }
+  updateLabel();
+  document.addEventListener('sai:langchange', updateLabel);
+
+  btn.addEventListener('click', function () {
+    navigator.share({
+      title: 'Simplif-AI',
+      text: window.saiLang() === 'en'
+        ? 'Complex concepts explained simply. Check out Simplif-AI:'
+        : 'Concetti complessi spiegati in modo semplice. Guarda Simplif-AI:',
+      url: SHARE_URL
+    }).catch(function () { /* utente ha annullato o share non riuscita: nessun errore da mostrare */ });
+  });
+
+  navToggle.parentNode.insertBefore(btn, navToggle);
+})();
