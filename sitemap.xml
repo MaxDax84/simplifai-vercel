@@ -23,6 +23,12 @@
   </url>
 
   <url>
+    <loc>https://www.simplif-ai.it/spiegazioni.html</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
     <loc>https://www.simplif-ai.it/contatti.html</loc>
     <lastmod>2025-10-01</lastmod>
     <changefreq>yearly</changefreq>

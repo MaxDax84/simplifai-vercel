@@ -58,7 +58,7 @@ function welcomeHtml(nome, credits) {
   var displayName = nome || "utente";
   var creditsText = credits > 0 ? credits + " crediti omaggio" : "account attivato";
   var creditsLabel = credits > 0
-    ? "<strong style='color:#7c5cff;'>⚡ " + credits + " crediti omaggio</strong> da usare subito."
+    ? "<strong style='color:#8b5cf6;'>⚡ " + credits + " crediti omaggio</strong> da usare subito."
     : "Il tuo account è pronto. Inizia subito!";
 
   return "<!DOCTYPE html><html lang='it'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Benvenuto su Simplif-AI</title></head>"
@@ -68,7 +68,7 @@ function welcomeHtml(nome, credits) {
     // Logo
     + "<div style='text-align:center;margin-bottom:24px;'>"
     + "<table cellpadding='0' cellspacing='0' style='margin:0 auto;'><tr>"
-    + "<td style='width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#7c5cff,#26c6ff);'></td>"
+    + "<td style='width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#8b5cf6,#00e5ff);'></td>"
     + "<td style='padding-left:10px;font-size:20px;font-weight:900;color:#0d1133;vertical-align:middle;'>Simplif-AI</td>"
     + "</tr></table></div>"
 
@@ -79,8 +79,8 @@ function welcomeHtml(nome, credits) {
 
     // Credits badge (solo se crediti > 0)
     + (credits > 0
-        ? "<div style='background:linear-gradient(135deg,rgba(124,92,255,.09),rgba(38,198,255,.09));border:1px solid rgba(124,92,255,.28);border-radius:14px;padding:18px 20px;margin-bottom:28px;text-align:center;'>"
-          + "<div style='font-size:36px;font-weight:900;color:#7c5cff;'>⚡ " + credits + " crediti</div>"
+        ? "<div style='background:linear-gradient(135deg,rgba(139,92,246,.09),rgba(0,229,255,.09));border:1px solid rgba(139,92,246,.28);border-radius:14px;padding:18px 20px;margin-bottom:28px;text-align:center;'>"
+          + "<div style='font-size:36px;font-weight:900;color:#8b5cf6;'>⚡ " + credits + " crediti</div>"
           + "<p style='color:#777;font-size:13px;margin:6px 0 0;'>Validi 12 mesi dalla data di registrazione</p>"
           + "</div>"
         : "")
@@ -95,7 +95,7 @@ function welcomeHtml(nome, credits) {
     + "</table>"
 
     // CTA
-    + "<a href='" + APP_URL + "/app.html' style='display:block;text-align:center;background:linear-gradient(135deg,#7c5cff,#26c6ff);color:#0b1020;font-weight:900;font-size:16px;padding:16px 24px;border-radius:14px;text-decoration:none;'>🚀 Inizia a esplorare →</a>"
+    + "<a href='" + APP_URL + "/app.html' style='display:block;text-align:center;background:linear-gradient(135deg,#8b5cf6,#00e5ff);color:#0b1020;font-weight:900;font-size:16px;padding:16px 24px;border-radius:14px;text-decoration:none;'>🚀 Inizia a esplorare →</a>"
     + "</div>"
 
     // Footer
@@ -131,7 +131,7 @@ function purchaseHtml(nome, pkg) {
     // Logo
     + "<div style='text-align:center;margin-bottom:24px;'>"
     + "<table cellpadding='0' cellspacing='0' style='margin:0 auto;'><tr>"
-    + "<td style='width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#7c5cff,#26c6ff);'></td>"
+    + "<td style='width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#8b5cf6,#00e5ff);'></td>"
     + "<td style='padding-left:10px;font-size:20px;font-weight:900;color:#0d1133;vertical-align:middle;'>Simplif-AI</td>"
     + "</tr></table></div>"
 
@@ -153,12 +153,12 @@ function purchaseHtml(nome, pkg) {
     + "</div>"
 
     // Info crediti
-    + "<div style='background:rgba(124,92,255,.06);border:1px solid rgba(124,92,255,.2);border-radius:12px;padding:14px 16px;margin-bottom:24px;'>"
+    + "<div style='background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.2);border-radius:12px;padding:14px 16px;margin-bottom:24px;'>"
     + "<p style='margin:0;font-size:13px;color:#555;line-height:1.6;'>💡 I crediti si accumulano: ogni nuova ricarica estende la validità dell'intero saldo di altri 12 mesi. Non perderai mai i crediti già acquistati.</p>"
     + "</div>"
 
     // CTA
-    + "<a href='" + APP_URL + "/app.html' style='display:block;text-align:center;background:linear-gradient(135deg,#7c5cff,#26c6ff);color:#0b1020;font-weight:900;font-size:16px;padding:16px 24px;border-radius:14px;text-decoration:none;'>Usa i tuoi crediti ora →</a>"
+    + "<a href='" + APP_URL + "/app.html' style='display:block;text-align:center;background:linear-gradient(135deg,#8b5cf6,#00e5ff);color:#0b1020;font-weight:900;font-size:16px;padding:16px 24px;border-radius:14px;text-decoration:none;'>Usa i tuoi crediti ora →</a>"
     + "</div>"
 
     // Footer
