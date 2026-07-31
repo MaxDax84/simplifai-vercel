@@ -9,6 +9,54 @@
  *  4. Navbar active (rilevamento automatico dal pathname)
  */
 
+/* ── 0. Opzioni nazione (condivise tra auth.html e profilo.html) ──
+ * Prima la stessa lista di ~30 <option> era copiata parola per parola
+ * in entrambe le pagine — un rischio di disallineamento se una delle
+ * due veniva aggiornata (nuovo paese, traduzione) e l'altra no. Deve
+ * girare PRIMA della sezione i18n qui sotto, cosi' i data-i18n delle
+ * opzioni appena inserite vengono comunque tradotti. */
+(function () {
+  var selects = document.querySelectorAll('select[data-country-options]');
+  if (!selects.length) return;
+
+  var html =
+    '<option value="IT" data-i18n="auth.country.IT">🇮🇹 Italia</option>' +
+    '<optgroup label="Europa" data-i18n-label="auth.europe">' +
+      '<option value="AT" data-i18n="auth.country.AT">Austria</option>' +
+      '<option value="BE" data-i18n="auth.country.BE">Belgio</option>' +
+      '<option value="CH" data-i18n="auth.country.CH">Svizzera</option>' +
+      '<option value="DE" data-i18n="auth.country.DE">Germania</option>' +
+      '<option value="ES" data-i18n="auth.country.ES">Spagna</option>' +
+      '<option value="FR" data-i18n="auth.country.FR">Francia</option>' +
+      '<option value="GB" data-i18n="auth.country.GB">Regno Unito</option>' +
+      '<option value="GR" data-i18n="auth.country.GR">Grecia</option>' +
+      '<option value="HR" data-i18n="auth.country.HR">Croazia</option>' +
+      '<option value="NL" data-i18n="auth.country.NL">Paesi Bassi</option>' +
+      '<option value="PL" data-i18n="auth.country.PL">Polonia</option>' +
+      '<option value="PT" data-i18n="auth.country.PT">Portogallo</option>' +
+      '<option value="RO" data-i18n="auth.country.RO">Romania</option>' +
+      '<option value="SE" data-i18n="auth.country.SE">Svezia</option>' +
+      '<option value="SM" data-i18n="auth.country.SM">San Marino</option>' +
+      '<option value="VA" data-i18n="auth.country.VA">Città del Vaticano</option>' +
+    '</optgroup>' +
+    '<optgroup label="Resto del mondo" data-i18n-label="auth.restOfWorld">' +
+      '<option value="AR" data-i18n="auth.country.AR">Argentina</option>' +
+      '<option value="AU" data-i18n="auth.country.AU">Australia</option>' +
+      '<option value="BR" data-i18n="auth.country.BR">Brasile</option>' +
+      '<option value="CA" data-i18n="auth.country.CA">Canada</option>' +
+      '<option value="CN" data-i18n="auth.country.CN">Cina</option>' +
+      '<option value="IN" data-i18n="auth.country.IN">India</option>' +
+      '<option value="JP" data-i18n="auth.country.JP">Giappone</option>' +
+      '<option value="MX" data-i18n="auth.country.MX">Messico</option>' +
+      '<option value="US" data-i18n="auth.country.US">Stati Uniti</option>' +
+      '<option value="ZZ" data-i18n="auth.country.ZZ">Altro</option>' +
+    '</optgroup>';
+
+  selects.forEach(function (sel) {
+    sel.insertAdjacentHTML('beforeend', html);
+  });
+})();
+
 /* ── 1. Mobile nav ── */
 (function () {
   var toggle    = document.getElementById('navToggle');
@@ -179,3 +227,15 @@
 
   mobileNav.appendChild(btn);
 })();
+
+/* ── 7. Abbonamento attivo? (condiviso tra app.html e profilo.html) ──
+ * Prima ogni pagina ricalcolava per conto suo le stesse soglie
+ * (31 giorni per il mensile, 366 per l'annuale) — rischio che finiscano
+ * per divergere in futuro se una delle due viene aggiornata e l'altra no. */
+window.saiIsActiveSub = function (purchase) {
+  if (!purchase || purchase.cancelled_at) return false;
+  var elapsed = Date.now() - new Date(purchase.created_at).getTime();
+  if (purchase.billing_type === 'monthly') return elapsed <= 31 * 24 * 3600 * 1000;
+  if (purchase.billing_type === 'yearly')  return elapsed <= 366 * 24 * 3600 * 1000;
+  return false;
+};

@@ -1275,17 +1275,7 @@
       if(!currentUserId) return 'free';
       var { data } = await sb.from('purchases').select('billing_type, created_at, cancelled_at').eq('user_id', currentUserId);
       if(!data || !data.length) return 'free';
-      var now = Date.now();
-      var hasSub = data.some(function(p){
-        if(p.cancelled_at) return false;
-        if(p.billing_type === 'monthly'){
-          return (now - new Date(p.created_at).getTime()) <= 31*24*3600*1000;
-        }
-        if(p.billing_type === 'yearly'){
-          return (now - new Date(p.created_at).getTime()) <= 366*24*3600*1000;
-        }
-        return false;
-      });
+      var hasSub = data.some(window.saiIsActiveSub);
       if(hasSub) return 'subscriber';
       return 'purchaser';
     }
@@ -1431,7 +1421,7 @@
     })();
   </script>
   <div id="saveToast"></div>
-  <script src="/shared.js?v=5" defer></script>
+  <script src="/shared.js?v=6" defer></script>
 </body>
 </html>
 
