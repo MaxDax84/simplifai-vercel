@@ -1228,7 +1228,7 @@
         return '<div class="purchase-row" data-purchase-id="' + p.id + '">' +
           '<div>' +
             '<div class="purchase-name">' + escHtml(p.package_name) + ' ' + badge + '</div>' +
-            '<div class="purchase-meta">' + (typeLabel[p.billing_type] || p.billing_type) + ' · ' + date + ' · +' + p.credits_added + ' ' + window.saiT('app.credits.plural','crediti') + '</div>' +
+            '<div class="purchase-meta">' + escHtml(typeLabel[p.billing_type] || p.billing_type) + ' · ' + date + ' · +' + p.credits_added + ' ' + window.saiT('app.credits.plural','crediti') + '</div>' +
           '</div>' +
           '<div style="display:flex;align-items:center;gap:10px;">' +
             '<div class="purchase-amt">' + amt + '</div>' +
