@@ -590,6 +590,9 @@
       'app.anon.one': "You're exploring Simplif-AI without an account — you have <strong>1 free question</strong> left.",
       'app.anon.many': "You're exploring Simplif-AI without an account — you have <strong>{n} free questions</strong> left.",
       'app.status.noCredits': 'Not enough credits (you need {cost}, you have {have}). Top up to continue.',
+      'app.status.noCreditsServer': 'Insufficient credits. Redirecting to pricing...',
+      'app.status.sessionInvalid': 'Invalid session. Please sign in again.',
+      'app.status.anonLimitServer': 'Free question limit reached. Sign up to continue.',
       'app.status.writeQuestion': 'Write a question to generate an answer.',
       'app.status.pickTarget': 'Select a target.',
       'app.status.pickLength': 'Select a length.',
@@ -655,12 +658,14 @@
       creditsValueEl.textContent = userCredits;
       updateCostBadge();
 
-      /* Verifica scadenza crediti */
+      /* Verifica scadenza crediti (RPC server-side: la colonna credits
+         non è più scrivibile direttamente dal client) */
       var expiry = rows?.[0]?.credits_expiry;
       if (expiry && new Date(expiry) < new Date()) {
         userCredits = 0;
         creditsValueEl.textContent = "0 (scaduti)";
-        await sb.from('profiles').update({ credits: 0, updated_at: new Date().toISOString() }).eq('id', currentUserId);
+        const { error: expireErr } = await sb.rpc('check_and_expire_credits');
+        if (expireErr) console.error("Errore reset crediti scaduti:", expireErr.message);
       }
 
       /* Realtime: mantieni il contatore sincronizzato tra tab */
@@ -941,11 +946,21 @@
       activeController = new AbortController();
       const controller = activeController;
       const timeoutId  = setTimeout(() => controller.abort(), 60000); // 60s timeout
+
+      const headers = {"Content-Type":"application/json"};
+      if(currentUserId){
+        // I crediti si scalano server-side: serve il token di sessione
+        // perché /api/gemini possa identificare l'utente e verificarli.
+        const { data: sessionData } = await sb.auth.getSession();
+        const token = sessionData?.session?.access_token;
+        if(token) headers["Authorization"] = `Bearer ${token}`;
+      }
+
       let res;
       try {
         res = await fetch("/api/gemini", {
           method:"POST",
-          headers:{"Content-Type":"application/json"},
+          headers,
           body: JSON.stringify(payload),
           signal: controller.signal
         });
@@ -958,7 +973,14 @@
 
       const rem = res.headers.get("x-credits-remaining"),
             lim = res.headers.get("x-credits-limit");
-      if(rem) creditsValueEl.textContent = lim ? `${rem}/${lim}` : rem;
+      if(rem){
+        // Saldo autoritativo: arriva dal server (RPC spend_credits), non
+        // da un calcolo locale — aggiorna sia la UI sia la variabile usata
+        // per i controlli pre-generazione.
+        const remNum = Number(rem);
+        if(Number.isFinite(remNum)) userCredits = remNum;
+        creditsValueEl.textContent = lim ? `${rem}/${lim}` : rem;
+      }
 
       if(!res.ok){
         let msg = `Errore API (HTTP ${res.status})`;
@@ -1086,6 +1108,10 @@
           maxTokens,
           maxChars,
           uiLang: window.saiLang(),
+          // Il server valida questi due valori e calcola il costo reale:
+          // il client non manda mai "quanto scalare", solo target/lunghezza.
+          targetCost: t.cost,
+          lengthExtra: l.costExtra,
         };
     
         accumulatedText = "";
@@ -1103,25 +1129,34 @@
         saveToHistory(q.value.trim());
         renderHistory();
 
-        /* Aggiornamento post-generazione */
+        /* Aggiornamento post-generazione. Per gli utenti loggati i crediti
+           sono già stati scalati server-side (dentro /api/gemini, prima
+           di chiamare Groq) e userCredits è già stato aggiornato in
+           streamGemini() leggendo l'header X-Credits-Remaining. */
         if(userIsAnon){
           incAnonCount();
           updateAnonUI();
-        } else if(currentUserId && userCredits !== null){
-          const cost = computeCost();
-          userCredits = Math.max(0, userCredits - cost);
-          creditsValueEl.textContent = userCredits;
+        } else if(currentUserId){
           updateCostBadge();
-          const { error: creditErr } = await sb.from('profiles')
-            .update({ credits: userCredits, updated_at: new Date().toISOString() })
-            .eq('id', currentUserId);
-          if(creditErr) console.error("Errore aggiornamento crediti:", creditErr.message);
         }
 
       } catch(e){
         skeletonEl.style.display = "none";
         if(!accumulatedText.trim()){
-          setStatus(window.saiT('app.status.overload', 'Ops! Il server è momentaneamente sovraccarico. I tuoi crediti non sono stati scalati — riprova tra qualche secondo 🔄'), false);
+          /* e.message arriva sempre in italiano dal server (vedi api/gemini.js):
+             qui lo usiamo solo per instradare verso il messaggio localizzato giusto. */
+          if(e?.message === "Crediti insufficienti."){
+            setStatus(window.saiT('app.status.noCreditsServer', 'Crediti insufficienti. Ti reindirizzo alla pagina prezzi...'), false);
+            setTimeout(() => window.location.replace("/prezzi.html?reason=no_credits"), 2000);
+          } else if(e?.message === "Sessione non valida. Rieffettua l'accesso."){
+            setStatus(window.saiT('app.status.sessionInvalid', "Sessione non valida. Rieffettua l'accesso."), false);
+            setTimeout(() => window.location.replace("/auth.html"), 2000);
+          } else if(e?.message === "Limite domande gratuite raggiunto. Registrati per continuare."){
+            setStatus(window.saiT('app.status.anonLimitServer', 'Limite domande gratuite raggiunto. Registrati per continuare.'), false);
+            setTimeout(() => window.location.replace("/auth.html?tab=signup"), 2000);
+          } else {
+            setStatus(window.saiT('app.status.overload', 'Ops! Il server è momentaneamente sovraccarico. I tuoi crediti non sono stati scalati — riprova tra qualche secondo 🔄'), false);
+          }
         }
 
       } finally{

@@ -6,13 +6,101 @@ export const config = { runtime: "edge" };
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_MODEL = "llama-3.3-70b-versatile";
 
+const SUPABASE_URL  = process.env.SUPABASE_URL;
+const SUPABASE_ANON = process.env.SUPABASE_ANON_KEY;
+
 function corsHeaders(extra) {
   extra = extra || {};
   return Object.assign({
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    // Senza questo, il browser scarta X-Credits-Remaining lato client
+    // (i custom header non sono esposti a fetch() di default via CORS).
+    "Access-Control-Expose-Headers": "X-Credits-Remaining",
   }, extra);
+}
+
+// ── Autenticazione + consumo crediti server-side ──────────────────────────
+// Prima non c'era NESSUN controllo qui: chiunque poteva chiamare questo
+// endpoint direttamente (curl/fetch) e ottenere generazioni gratuite
+// illimitate, bypassando del tutto Supabase e i crediti. Ora, se la
+// richiesta arriva con un Authorization Bearer (utente loggato), i crediti
+// vengono verificati e scalati PRIMA di chiamare Groq tramite la funzione
+// Postgres spend_credits() (SECURITY DEFINER, vedi
+// supabase/migrations/spend_credits_server_side.sql) — il costo non è mai
+// un numero arbitrario mandato dal client, ma target_cost/length_extra
+// validati contro i soli valori reali che esistono in app.html.
+
+async function getSupabaseUser(authHeader) {
+  if (!authHeader || !authHeader.startsWith("Bearer ") || !SUPABASE_URL || !SUPABASE_ANON) return null;
+  var res = await fetch(SUPABASE_URL + "/auth/v1/user", {
+    headers: {
+      "Authorization": authHeader,
+      "apikey": SUPABASE_ANON,
+    },
+  });
+  if (!res.ok) return null;
+  var user = await res.json();
+  return user && user.id ? user : null;
+}
+
+async function spendCredits(authHeader, targetCost, lengthExtra) {
+  var res = await fetch(SUPABASE_URL + "/rest/v1/rpc/spend_credits", {
+    method: "POST",
+    headers: {
+      "Authorization": authHeader,
+      "apikey": SUPABASE_ANON,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ p_target_cost: targetCost, p_length_extra: lengthExtra }),
+  });
+
+  if (res.ok) {
+    var credits = await res.json();
+    return { ok: true, credits: Number(credits) };
+  }
+
+  var errBody = "";
+  try { errBody = await res.text(); } catch (e) { errBody = ""; }
+  var insufficient = errBody.indexOf("insufficient_credits") !== -1;
+  return { ok: false, insufficient: insufficient, message: errBody };
+}
+
+// ── Rate-limit domande gratuite anonime (via Upstash Redis) ───────────────
+// Se le env var Upstash non sono configurate (integrazione non ancora
+// installata su Vercel), la funzione non blocca nulla: il comportamento
+// resta quello di oggi finché il Fase 2 del piano non viene attivata.
+
+function getClientIp(req) {
+  var xff = req.headers.get("x-forwarded-for") || "";
+  var ip = xff.split(",")[0].trim();
+  return ip || "unknown";
+}
+
+async function checkAnonRateLimit(req) {
+  var url = process.env.UPSTASH_REDIS_REST_URL;
+  var token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return true; // Upstash non ancora collegato: nessun limite server-side
+
+  var key = "sai_anon:" + getClientIp(req);
+  try {
+    var res = await fetch(url + "/pipeline", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify([["INCR", key], ["EXPIRE", key, "31536000"]]),
+    });
+    if (!res.ok) return true; // fail-open: un errore infra non deve bloccare gli utenti
+
+    var results = await res.json();
+    var count = results && results[0] && Number(results[0].result);
+    return Number.isFinite(count) ? count <= 2 : true;
+  } catch (e) {
+    return true; // fail-open
+  }
 }
 
 function jsonError(message, status, extra) {
@@ -182,6 +270,38 @@ export default async function handler(req) {
     var maxTokens = clamp(body && body.maxTokens, 512, 8000, 3500);
     var maxChars = clamp(body && body.maxChars, 500, 50000, 6000);
 
+    var authHeader = req.headers.get("Authorization") || "";
+    var creditsRemaining = null;
+
+    if (authHeader.startsWith("Bearer ")) {
+      // Utente loggato: i crediti si scalano QUI, prima di spendere un
+      // solo token su Groq. targetCost/lengthExtra vengono validati
+      // dentro spend_credits() contro i soli valori reali esistenti.
+      var user = await getSupabaseUser(authHeader);
+      if (!user) return jsonError("Sessione non valida. Rieffettua l'accesso.", 401);
+
+      var targetCost = Number(body && body.targetCost);
+      var lengthExtra = Number(body && body.lengthExtra);
+      if (![1, 2, 3].includes(targetCost) || ![0, 1].includes(lengthExtra)) {
+        return jsonError("Parametri costo non validi.", 400);
+      }
+
+      var spend = await spendCredits(authHeader, targetCost, lengthExtra);
+      if (!spend.ok) {
+        return jsonError(
+          spend.insufficient ? "Crediti insufficienti." : "Impossibile verificare i crediti. Riprova.",
+          spend.insufficient ? 402 : 401
+        );
+      }
+      creditsRemaining = spend.credits;
+    } else {
+      // Utente anonimo: limite domande gratuite (solo se Upstash e' collegato).
+      var allowed = await checkAnonRateLimit(req);
+      if (!allowed) {
+        return jsonError("Limite domande gratuite raggiunto. Registrati per continuare.", 429);
+      }
+    }
+
     var encoder = new TextEncoder();
     var decoder = new TextDecoder();
 
@@ -261,12 +381,12 @@ export default async function handler(req) {
 
     return new Response(readable, {
       status: 200,
-      headers: corsHeaders({
+      headers: corsHeaders(Object.assign({
         "Content-Type": "text/event-stream; charset=utf-8",
         "Cache-Control": "no-cache, no-transform",
         "Connection": "keep-alive",
         "X-SimplifAI-API": "groq-proxy",
-      }),
+      }, creditsRemaining !== null ? { "X-Credits-Remaining": String(creditsRemaining) } : {})),
     });
   } catch(e) {
     return jsonError((e && e.message) || "Errore sconosciuto", 500);
