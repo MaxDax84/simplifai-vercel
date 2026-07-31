@@ -540,7 +540,7 @@
     </footer>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
     const SUPABASE_URL  = "https://lmmiowagyqypdrdcemdo.supabase.co";
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
@@ -624,7 +624,7 @@
       sb.rpc('validate_promo_code', { p_code: activePromoCode }).then(({ data }) => {
         if(data && data.valid && checkFreePromoAllowed(data.discount))
           applyPromoUI(activePromoCode, data.discount);
-      });
+      }).catch((err) => console.warn('Errore validazione codice promo:', err.message));
     }
 
     /* Applica codice dal campo inline */
