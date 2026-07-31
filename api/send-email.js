@@ -21,20 +21,20 @@ const SUPABASE_URL   = "https://lmmiowagyqypdrdcemdo.supabase.co";
 const SUPABASE_ANON  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
+// "*" era inutile (le chiamate arrivano solo da app.html/checkout.html, stesso
+// dominio) e apriva un endpoint autenticato a qualunque altro sito. Riflette
+// solo i domini reali del progetto.
 
-function cors(extra) {
+const ALLOWED_ORIGINS = ["https://www.simplif-ai.it", "https://simplif-ai.it"];
+
+function corsFor(origin, extra) {
+  var allowOrigin = ALLOWED_ORIGINS.indexOf(origin) !== -1 ? origin : ALLOWED_ORIGINS[0];
   return Object.assign({
-    "Access-Control-Allow-Origin":  "*",
+    "Access-Control-Allow-Origin":  allowOrigin,
+    "Vary": "Origin",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
   }, extra || {});
-}
-
-function jsonRes(body, status) {
-  return new Response(JSON.stringify(body), {
-    status: status || 200,
-    headers: cors({ "Content-Type": "application/json; charset=utf-8" }),
-  });
 }
 
 // ── Auth: verifica JWT Supabase ───────────────────────────────────────────────
@@ -180,6 +180,18 @@ function detailRow(label, value) {
 // ── Handler principale ────────────────────────────────────────────────────────
 
 export default async function handler(req) {
+  // Chiuse sull'origin di QUESTA richiesta (non stato condiviso a livello di
+  // modulo, che sarebbe incorretto con richieste concorrenti sullo stesso
+  // isolate edge).
+  var origin = req.headers.get("origin");
+  function cors(extra) { return corsFor(origin, extra); }
+  function jsonRes(body, status) {
+    return new Response(JSON.stringify(body), {
+      status: status || 200,
+      headers: cors({ "Content-Type": "application/json; charset=utf-8" }),
+    });
+  }
+
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: cors() });
   }

@@ -9,10 +9,17 @@ const GROQ_MODEL = "llama-3.3-70b-versatile";
 const SUPABASE_URL  = process.env.SUPABASE_URL;
 const SUPABASE_ANON = process.env.SUPABASE_ANON_KEY;
 
-function corsHeaders(extra) {
+// "*" era inutile per il sito stesso (le chiamate da app.html sono same-origin,
+// non serve CORS) e apriva l'endpoint a qualunque altro sito. Riflette solo i
+// domini reali del progetto.
+const ALLOWED_ORIGINS = ["https://www.simplif-ai.it", "https://simplif-ai.it"];
+
+function corsHeadersFor(origin, extra) {
   extra = extra || {};
+  var allowOrigin = ALLOWED_ORIGINS.indexOf(origin) !== -1 ? origin : ALLOWED_ORIGINS[0];
   return Object.assign({
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": allowOrigin,
+    "Vary": "Origin",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
     // Senza questo, il browser scarta X-Credits-Remaining lato client
@@ -101,18 +108,6 @@ async function checkAnonRateLimit(req) {
   } catch (e) {
     return true; // fail-open
   }
-}
-
-function jsonError(message, status, extra) {
-  status = status || 500;
-  extra = extra || {};
-  return new Response(JSON.stringify({ error: message }), {
-    status: status,
-    headers: corsHeaders(Object.assign({
-      "Content-Type": "application/json; charset=utf-8",
-      "X-SimplifAI-API": "groq-proxy",
-    }, extra)),
-  });
 }
 
 function clamp(n, min, max, fallback) {
@@ -244,6 +239,23 @@ async function callGroqWithRetry(apiKey, prompt, maxTokens) {
 }
 
 export default async function handler(req) {
+  // Chiuse sull'origin di QUESTA richiesta (non stato condiviso a livello di
+  // modulo, che sarebbe incorretto con richieste concorrenti sullo stesso
+  // isolate edge).
+  var origin = req.headers.get("origin");
+  function corsHeaders(extra) { return corsHeadersFor(origin, extra); }
+  function jsonError(message, status, extra) {
+    status = status || 500;
+    extra = extra || {};
+    return new Response(JSON.stringify({ error: message }), {
+      status: status,
+      headers: corsHeaders(Object.assign({
+        "Content-Type": "application/json; charset=utf-8",
+        "X-SimplifAI-API": "groq-proxy",
+      }, extra)),
+    });
+  }
+
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders({ "X-SimplifAI-API": "groq-proxy" }) });
   }
