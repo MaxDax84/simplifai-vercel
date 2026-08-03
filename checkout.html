@@ -19,6 +19,20 @@
     })();
   </script>
 
+  <!-- Lingua: helper disponibili subito (prima ancora che parta lo script principale) -->
+  <script>
+    window.saiLang = function () {
+      try { return localStorage.getItem('sai_lang') || 'it'; } catch (_) { return 'it'; }
+    };
+    window.saiT = function (key, fallback) {
+      if (window.saiLang() === 'en') {
+        var d = window.SAI_I18N_EN || {};
+        if (d[key] !== undefined) return d[key];
+      }
+      return fallback !== undefined ? fallback : key;
+    };
+  </script>
+
   <style>
     /* ── Layout ── */
     .hero{ text-align:center; padding:22px 18px; }
@@ -308,42 +322,43 @@
         <div class="logo"><img src="/logo-icon.png" alt="Simplif-AI" width="38" height="38" /></div>
         <div>
           <h1>Simplif-AI</h1>
-          <span>Concetti complessi spiegati in modo semplice. Scegli tu quanto.</span>
+          <span data-i18n="brand.tagline">Concetti complessi spiegati in modo semplice. Scegli tu quanto.</span>
         </div>
       </a>
 
       <nav id="mainNav">
-        <a href="/index.html" data-nav="home">Home</a>
-        <a href="/app.html" data-nav="app">Chiedimi qualcosa</a>
-        <a href="/come-funziona.html" data-nav="how">Come funziona</a>
-        <a href="/prezzi.html" data-nav="pricing">Prezzi</a>
-        <a href="/profilo.html" data-nav="profile">Profilo</a>
-        <a href="/spiegazioni.html" data-nav="spiegazioni">Spiegazioni</a>
+        <a href="/index.html" data-nav="home" data-i18n="nav.home">Home</a>
+        <a href="/app.html" data-nav="app" data-i18n="nav.app">Chiedimi qualcosa</a>
+        <a href="/come-funziona.html" data-nav="how" data-i18n="nav.how">Come funziona</a>
+        <a href="/prezzi.html" data-nav="pricing" data-i18n="nav.pricing">Prezzi</a>
+        <a href="/profilo.html" data-nav="profile" data-i18n="nav.profile">Profilo</a>
+        <a href="/spiegazioni.html" data-nav="spiegazioni" data-i18n="nav.spiegazioni">Spiegazioni</a>
       </nav>
 
       <div style="display:flex;align-items:center;gap:8px;">
-        <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema"><span class="icon-sun">☀️</span><span class="icon-moon">🌙</span></button>
-        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu">
+        <button id="themeBtn" class="theme-btn" type="button" aria-label="Cambia tema" data-i18n-aria="nav.theme"><span class="icon-sun">☀️</span><span class="icon-moon">🌙</span></button>
+        <button id="langBtn" class="theme-btn" type="button" aria-label="Cambia lingua / Switch language"><span class="icon-lang-it">🇮🇹</span><span class="icon-lang-en">🇬🇧</span></button>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Apri menu" data-i18n-aria="nav.menu">
           <span></span><span></span><span></span>
         </button>
       </div>
     </header>
 
     <div class="mobile-nav" id="mobileNav">
-      <a href="/index.html">Home</a>
-      <a href="/app.html">Chiedimi qualcosa</a>
-      <a href="/come-funziona.html">Come funziona</a>
-      <a href="/prezzi.html">Prezzi</a>
-      <a href="/profilo.html">Profilo</a>
-      <a href="/spiegazioni.html">Spiegazioni</a>
+      <a href="/index.html" data-i18n="nav.home">Home</a>
+      <a href="/app.html" data-i18n="nav.app">Chiedimi qualcosa</a>
+      <a href="/come-funziona.html" data-i18n="nav.how">Come funziona</a>
+      <a href="/prezzi.html" data-i18n="nav.pricing">Prezzi</a>
+      <a href="/profilo.html" data-i18n="nav.profile">Profilo</a>
+      <a href="/spiegazioni.html" data-i18n="nav.spiegazioni">Spiegazioni</a>
     </div>
 
     <!-- Hero -->
     <div class="card" id="heroCard" style="margin-top:16px;">
       <div class="card-inner hero">
-        <span class="pilltag">🧾 CHECKOUT</span>
-        <div class="h1">Completa il tuo acquisto</div>
-        <p class="sub">I crediti vengono aggiunti istantaneamente al tuo account.</p>
+        <span class="pilltag" data-i18n="checkout.pilltag">🧾 CHECKOUT</span>
+        <div class="h1" data-i18n="checkout.title">Completa il tuo acquisto</div>
+        <p class="sub" data-i18n="checkout.subtitle">I crediti vengono aggiunti istantaneamente al tuo account.</p>
       </div>
     </div>
 
@@ -356,7 +371,7 @@
 
           <!-- Metodi di pagamento -->
           <div class="payment-methods">
-            <span class="payment-methods-label">Accettiamo:</span>
+            <span class="payment-methods-label" data-i18n="checkout.accept">Accettiamo:</span>
             <span class="pm-badge visa">VISA</span>
             <span class="pm-badge mastercard">MC</span>
             <span class="pm-badge stripe">stripe</span>
@@ -364,29 +379,29 @@
 
           <div class="security-badge">
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1L2 3v3.5c0 2.7 1.9 5.2 4.5 5.8C9.1 11.7 11 9.2 11 6.5V3L6.5 1Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M4.5 6.5l1.5 1.5 2.5-2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Pagamento sicuro e protetto (simulazione)
+            <span data-i18n="checkout.secure">Pagamento sicuro e protetto (simulazione)</span>
           </div>
 
-          <div class="section-title">💳 Dati di pagamento</div>
+          <div class="section-title" data-i18n="checkout.paymentData">💳 Dati di pagamento</div>
 
           <div class="row2">
             <div>
-              <div class="label">Nome</div>
+              <div class="label" data-i18n="checkout.firstName">Nome</div>
               <input class="field" id="fieldNome" placeholder="Mario" value="Mario" autocomplete="given-name" />
             </div>
             <div>
-              <div class="label">Cognome</div>
+              <div class="label" data-i18n="checkout.lastName">Cognome</div>
               <input class="field" id="fieldCognome" placeholder="Rossi" value="Rossi" autocomplete="family-name" />
             </div>
           </div>
 
-          <div class="label">Email</div>
+          <div class="label" data-i18n="checkout.email">Email</div>
           <div class="field-wrap">
             <span class="field-icon">✉️</span>
             <input class="field" id="fieldEmail" type="email" placeholder="mario@email.com" value="mario@email.com" autocomplete="email" />
           </div>
 
-          <div class="label">Numero carta</div>
+          <div class="label" data-i18n="checkout.cardNumber">Numero carta</div>
           <div class="field-wrap">
             <span class="field-icon">💳</span>
             <input class="field" id="fieldCarta" placeholder="4242 4242 4242 4242"
@@ -395,7 +410,7 @@
 
           <div class="row2">
             <div>
-              <div class="label">Scadenza</div>
+              <div class="label" data-i18n="checkout.expiry">Scadenza</div>
               <input class="field" id="fieldExp" placeholder="MM/AA" value="12/28" maxlength="5" inputmode="numeric" />
             </div>
             <div>
@@ -408,7 +423,7 @@
           </div>
 
           <div class="cta-back" style="margin-top:18px;">
-            <a class="btn" href="/prezzi.html" style="font-size:13px;background:transparent;border:1px solid var(--border);color:var(--text-muted);">← Torna ai prezzi</a>
+            <a class="btn" href="/prezzi.html" style="font-size:13px;background:transparent;border:1px solid var(--border);color:var(--text-muted);" data-i18n="checkout.backToPricing">← Torna ai prezzi</a>
           </div>
 
         </div>
@@ -417,7 +432,7 @@
       <!-- ── DESTRA: Riepilogo ordine ── -->
       <div class="card shell-summary">
         <div class="card-inner">
-          <div class="section-title">📦 Riepilogo ordine</div>
+          <div class="section-title" data-i18n="checkout.orderSummary">📦 Riepilogo ordine</div>
 
           <!-- Planbox -->
           <div class="planbox">
@@ -425,59 +440,59 @@
               <div class="plan-name" id="planLabel">PRO</div>
               <div class="plan-pill" id="planBilling">Mensile</div>
             </div>
-            <div class="credits-badge">⚡ <span id="planCreditsNum">150</span> crediti</div>
+            <div class="credits-badge">⚡ <span id="planCreditsNum">150</span> <span data-i18n="checkout.creditsWord">crediti</span></div>
             <div class="promo-badge" id="promoBadge">
               🏷️ <span id="promoBadgeLabel"></span>
             </div>
             <ul class="benefits" style="margin-top:10px;">
-              <li><span class="chk">✓</span><span><b id="benefitCreditsNum">150</b> crediti disponibili subito</span></li>
-              <li><span class="chk">✓</span><span>Crediti validi per 12 mesi dall'acquisto</span></li>
-              <li><span class="chk">✓</span><span>Accesso completo a tutte le funzioni</span></li>
+              <li><span class="chk">✓</span><span><b id="benefitCreditsNum">150</b> <span data-i18n="checkout.benefit1">crediti disponibili subito</span></span></li>
+              <li><span class="chk">✓</span><span data-i18n="checkout.benefit2">Crediti validi per 12 mesi dall'acquisto</span></li>
+              <li><span class="chk">✓</span><span data-i18n="checkout.benefit3">Accesso completo a tutte le funzioni</span></li>
             </ul>
           </div>
 
           <!-- Breakdown prezzi -->
           <div class="order-row" id="originalRow">
-            <span class="row-label">Prezzo di listino</span>
+            <span class="row-label" data-i18n="checkout.listPrice">Prezzo di listino</span>
             <span class="row-val" id="orderOriginal">€9,99</span>
           </div>
           <div class="order-row discount" id="discountRow" style="display:none;">
-            <span class="row-label">Sconto &nbsp;<span id="discountCode" style="opacity:.75;font-size:11px;"></span></span>
+            <span class="row-label"><span data-i18n="checkout.discount">Sconto</span> &nbsp;<span id="discountCode" style="opacity:.75;font-size:11px;"></span></span>
             <span class="row-val" id="discountAmt"></span>
           </div>
           <div class="order-sep"></div>
           <div class="order-row total">
-            <span class="row-label">Totale</span>
+            <span class="row-label" data-i18n="checkout.total">Totale</span>
             <span class="row-val" id="orderTotal">€9,99</span>
           </div>
 
           <!-- Promo code inline -->
           <div class="order-sep"></div>
-          <div style="font-size:13px;font-weight:700;margin-bottom:2px;">🏷️ Hai un codice sconto?</div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:2px;" data-i18n="checkout.havePromo">🏷️ Hai un codice sconto?</div>
           <div id="promoInputWrap">
             <div class="promo-inline-wrap">
-              <input id="promoInlineField" class="promo-inline-field" type="text" placeholder="es. Sconto50" autocomplete="off" spellcheck="false" maxlength="32" />
-              <button id="promoInlineBtn" class="btn btn-primary" type="button" style="white-space:nowrap;padding:9px 14px;font-size:13px;">Applica</button>
+              <input id="promoInlineField" class="promo-inline-field" type="text" placeholder="es. Sconto50" autocomplete="off" spellcheck="false" maxlength="32" data-i18n-placeholder="checkout.promoPlaceholder" />
+              <button id="promoInlineBtn" class="btn btn-primary" type="button" style="white-space:nowrap;padding:9px 14px;font-size:13px;" data-i18n="checkout.apply">Applica</button>
             </div>
             <div id="promoInlineMsg" class="promo-inline-msg"></div>
           </div>
           <div id="promoAppliedWrap" style="display:none;">
             <div class="promo-applied">
               <span id="promoAppliedLabel"></span>
-              <button class="promo-remove-btn" id="promoRemoveInlineBtn" type="button" title="Rimuovi">✕</button>
+              <button class="promo-remove-btn" id="promoRemoveInlineBtn" type="button" title="Rimuovi" data-i18n-title="checkout.remove">✕</button>
             </div>
           </div>
 
           <!-- CTA -->
           <div class="checkout-msg" id="checkoutMsg" style="margin-top:10px;"></div>
           <div class="cta" style="margin-top:10px;">
-            <button class="btn-pay" type="button" id="confirmBtn">
+            <button class="btn-pay" type="button" id="confirmBtn" data-i18n="checkout.completePurchase">
               🔒 Completa acquisto
             </button>
           </div>
-          <div class="cta-sub">Nessun dato reale viene trasmesso. Simulazione UI.</div>
+          <div class="cta-sub" data-i18n="checkout.noRealData">Nessun dato reale viene trasmesso. Simulazione UI.</div>
 
-          <div class="stripe-note">
+          <div class="stripe-note" data-i18n-html="checkout.stripeNote">
             💡 In produzione il pagamento avviene via <strong>Stripe</strong> con crittografia end-to-end. Nessun dato carta viene mai memorizzato.
           </div>
         </div>
@@ -489,8 +504,8 @@
       <div class="card">
         <div class="card-inner processing-inner">
           <div class="spinner-ring"></div>
-          <p class="processing-title">Acquisto in corso…</p>
-          <p class="processing-sub">Stiamo elaborando il tuo pagamento.<br>Ci vorrà solo un momento, non chiudere la pagina.</p>
+          <p class="processing-title" data-i18n="checkout.processingTitle">Acquisto in corso…</p>
+          <p class="processing-sub" data-i18n-html="checkout.processingSub">Stiamo elaborando il tuo pagamento.<br>Ci vorrà solo un momento, non chiudere la pagina.</p>
           <div class="processing-bar-wrap">
             <div class="processing-bar" id="processingBar"></div>
           </div>
@@ -509,7 +524,7 @@
             </svg>
           </div>
 
-          <p class="success-title">Ricarica effettuata, possiamo continuare a divertirci! 🎉</p>
+          <p class="success-title" data-i18n="checkout.successTitle">Ricarica effettuata, possiamo continuare a divertirci! 🎉</p>
 
           <div class="success-credits-pill">
             ⚡ <span id="successCreditsAdded">+150 crediti aggiunti</span>
@@ -521,7 +536,7 @@
           <p class="success-countdown" id="successCountdown"></p>
 
           <div class="success-cta">
-            <a class="btn" href="/app.html">Chiedimi qualcosa &nbsp;→</a>
+            <a class="btn" href="/app.html" data-i18n="checkout.askSomething">Chiedimi qualcosa &nbsp;→</a>
           </div>
         </div>
       </div>
@@ -534,12 +549,72 @@
       <div class="footer-links">
         <a href="/privacy-policy.html">Privacy Policy</a>
         <a href="/cookies-policy.html">Cookie Policy</a>
-        <a href="/contatti.html">Contatti</a>
+        <a href="/contatti.html" data-i18n="footer.contact">Contatti</a>
       </div>
-      <span style="width:100%;text-align:center;font-size:11px;opacity:.6;">Creato da <a href="https://massimodassano.it" target="_blank" rel="noopener">Massimo Dassano</a></span>
+      <span style="width:100%;text-align:center;font-size:11px;opacity:.6;"><span data-i18n="footer.credit">Creato da</span> <a href="https://massimodassano.it" target="_blank" rel="noopener">Massimo Dassano</a></span>
     </footer>
   </div>
 
+  <script>
+    window.SAI_I18N_EN = {
+      'nav.home': 'Home',
+      'nav.app': 'Ask something',
+      'nav.how': 'How it works',
+      'nav.pricing': 'Pricing',
+      'nav.profile': 'Profile',
+      'nav.spiegazioni': 'Explanations',
+      'nav.theme': 'Change theme',
+      'nav.menu': 'Open menu',
+      'brand.tagline': 'Complex concepts explained simply. You choose how much.',
+      'checkout.pilltag': '🧾 CHECKOUT',
+      'checkout.title': 'Complete your purchase',
+      'checkout.subtitle': 'Credits are added to your account instantly.',
+      'checkout.accept': 'We accept:',
+      'checkout.secure': 'Safe and secure payment (simulation)',
+      'checkout.paymentData': '💳 Payment details',
+      'checkout.firstName': 'First name',
+      'checkout.lastName': 'Last name',
+      'checkout.email': 'Email',
+      'checkout.cardNumber': 'Card number',
+      'checkout.expiry': 'Expiry',
+      'checkout.backToPricing': '← Back to pricing',
+      'checkout.orderSummary': '📦 Order summary',
+      'checkout.creditsWord': 'credits',
+      'checkout.benefit1': 'credits available right away',
+      'checkout.benefit2': 'Credits valid for 12 months from purchase',
+      'checkout.benefit3': 'Full access to all features',
+      'checkout.listPrice': 'List price',
+      'checkout.discount': 'Discount',
+      'checkout.total': 'Total',
+      'checkout.havePromo': '🏷️ Got a discount code?',
+      'checkout.promoPlaceholder': 'e.g. Discount50',
+      'checkout.apply': 'Apply',
+      'checkout.remove': 'Remove',
+      'checkout.completePurchase': '🔒 Complete purchase',
+      'checkout.noRealData': 'No real data is transmitted. UI simulation.',
+      'checkout.stripeNote': '💡 In production, payment goes through <strong>Stripe</strong> with end-to-end encryption. Card data is never stored.',
+      'checkout.processingTitle': 'Purchase in progress…',
+      'checkout.processingSub': 'We\'re processing your payment.<br>This will only take a moment, please don\'t close the page.',
+      'checkout.successTitle': 'Top-up complete, let\'s keep the fun going! 🎉',
+      'checkout.askSomething': 'Ask something &nbsp;→',
+      'checkout.billingOnce': 'One-time',
+      'checkout.enterCode': 'Enter a code.',
+      'checkout.invalidCode': '❌ Invalid or expired code.',
+      'checkout.mustSelectMini': '❌ This code is valid only for the Mini package. Select it from the pricing page to apply it.',
+      'checkout.sessionNotFound': 'Session not found. Reload the page.',
+      'checkout.creditsUpdateError': 'Could not update credits: ',
+      'checkout.creditsAdded': '+{n} credits added',
+      'checkout.accountUpdated': 'Your account has been updated successfully.',
+      'checkout.totalCredits': 'Total credits in your account: ',
+      'checkout.redirectCountdown': 'You\'ll be redirected to the app in {n} seconds…',
+      'checkout.unknownError': 'Unknown error.',
+      'checkout.free': 'FREE',
+      'checkout.discountLabel': '{code} — {n}% off',
+      'checkout.appliedLabel': '🏷️ {code} — −{n}%',
+      'footer.contact': 'Contact',
+      'footer.credit': 'Created by'
+    };
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
     const SUPABASE_URL  = "https://lmmiowagyqypdrdcemdo.supabase.co";
@@ -566,7 +641,7 @@
 
     /* Popola riepilogo statico */
     document.getElementById('planLabel').textContent      = pkg.label;
-    document.getElementById('planBilling').textContent    = pkg.billing;
+    document.getElementById('planBilling').textContent    = window.saiT('checkout.billingOnce', pkg.billing);
     document.getElementById('planCreditsNum').textContent = pkg.credits;
     document.getElementById('orderOriginal').textContent  = pkg.price;
     document.getElementById('orderTotal').textContent     = pkg.price;
@@ -586,16 +661,18 @@
       document.getElementById('discountRow').style.display = '';
 
       const totalEl = document.getElementById('orderTotal');
-      if(isFree){ totalEl.textContent = 'GRATIS'; totalEl.classList.add('free'); }
+      if(isFree){ totalEl.textContent = window.saiT('checkout.free', 'GRATIS'); totalEl.classList.add('free'); }
       else { totalEl.textContent = fmtPrice(discounted); totalEl.classList.remove('free'); }
 
-      document.getElementById('promoBadgeLabel').textContent = code + ' — ' + discount + '% di sconto';
+      document.getElementById('promoBadgeLabel').textContent =
+        window.saiT('checkout.discountLabel', '{code} — {n}% di sconto').replace('{code}', code).replace('{n}', discount);
       document.getElementById('promoBadge').style.display = '';
 
       /* UI campo promo */
       document.getElementById('promoInputWrap').style.display   = 'none';
       document.getElementById('promoAppliedWrap').style.display = '';
-      document.getElementById('promoAppliedLabel').textContent  = '🏷️ ' + code + ' — −' + discount + '%';
+      document.getElementById('promoAppliedLabel').textContent  =
+        window.saiT('checkout.appliedLabel', '🏷️ {code} — −{n}%').replace('{code}', code).replace('{n}', discount);
     }
 
     function removePromoUI(){
@@ -631,21 +708,21 @@
     async function handleApplyPromo(){
       const code = document.getElementById('promoInlineField').value.trim().toUpperCase();
       const msgEl = document.getElementById('promoInlineMsg');
-      if(!code){ msgEl.style.color = '#ff6b6b'; msgEl.textContent = 'Inserisci un codice.'; return; }
+      if(!code){ msgEl.style.color = '#ff6b6b'; msgEl.textContent = window.saiT('checkout.enterCode', 'Inserisci un codice.'); return; }
       document.getElementById('promoInlineBtn').disabled = true;
       document.getElementById('promoInlineBtn').textContent = '…';
       msgEl.textContent = '';
       const { data, error } = await sb.rpc('validate_promo_code', { p_code: code });
       document.getElementById('promoInlineBtn').disabled = false;
-      document.getElementById('promoInlineBtn').textContent = 'Applica';
+      document.getElementById('promoInlineBtn').textContent = window.saiT('checkout.apply', 'Applica');
       if(error || !data || !data.valid){
         msgEl.style.color = '#ff6b6b';
-        msgEl.textContent = '❌ Codice non valido o scaduto.';
+        msgEl.textContent = window.saiT('checkout.invalidCode', '❌ Codice non valido o scaduto.');
         return;
       }
       if(!checkFreePromoAllowed(data.discount)){
         msgEl.style.color = '#ff6b6b';
-        msgEl.textContent = '❌ Questo codice è valido solo per il pacchetto Mini. Selezionalo dalla pagina prezzi per applicarlo.';
+        msgEl.textContent = window.saiT('checkout.mustSelectMini', '❌ Questo codice è valido solo per il pacchetto Mini. Selezionalo dalla pagina prezzi per applicarlo.');
         return;
       }
       applyPromoUI(code, data.discount);
@@ -684,14 +761,17 @@
     function startCountdown() {
       let secs = 10;
       const el = document.getElementById('successCountdown');
-      el.textContent = 'Verrai reindirizzato all\'app tra ' + secs + ' secondi…';
+      function render(){
+        el.textContent = window.saiT('checkout.redirectCountdown', 'Verrai reindirizzato all\'app tra {n} secondi…').replace('{n}', secs);
+      }
+      render();
       const t = setInterval(() => {
         secs--;
         if (secs <= 0) {
           clearInterval(t);
           window.location.href = '/app.html';
         } else {
-          el.textContent = 'Verrai reindirizzato all\'app tra ' + secs + ' secondi…';
+          render();
         }
       }, 1000);
     }
@@ -706,7 +786,7 @@
     /* Conferma acquisto */
     const confirmBtn = document.getElementById("confirmBtn");
     confirmBtn.addEventListener("click", async () => {
-      if (!currentUserId) { showMsg("Sessione non trovata. Ricarica la pagina.", "error"); return; }
+      if (!currentUserId) { showMsg(window.saiT('checkout.sessionNotFound', 'Sessione non trovata. Ricarica la pagina.'), "error"); return; }
 
       confirmBtn.disabled = true;
       showMsg("");
@@ -734,7 +814,7 @@
         ]);
 
         const { data: newCredits, error: rpcErr } = rpcResult;
-        if (rpcErr) throw new Error("Impossibile aggiornare i crediti: " + rpcErr.message);
+        if (rpcErr) throw new Error(window.saiT('checkout.creditsUpdateError', 'Impossibile aggiornare i crediti: ') + rpcErr.message);
 
         /* Log acquisto nella tabella purchases */
         var bType = pkgKey.endsWith('-monthly') ? 'monthly' : pkgKey.endsWith('-yearly') ? 'yearly' : 'once';
@@ -755,9 +835,10 @@
         /* 3. Nascondi "in corso", mostra successo */
         hide('processingSection');
         show('successSection');
-        document.getElementById('successCreditsAdded').textContent = '+' + pkg.credits + ' crediti aggiunti';
-        document.getElementById('successSub').textContent   = 'Il tuo account è stato aggiornato con successo.';
-        document.getElementById('successTotal').textContent = 'Crediti totali nel tuo account: ' + newCredits;
+        document.getElementById('successCreditsAdded').textContent =
+          window.saiT('checkout.creditsAdded', '+{n} crediti aggiunti').replace('{n}', pkg.credits);
+        document.getElementById('successSub').textContent   = window.saiT('checkout.accountUpdated', 'Il tuo account è stato aggiornato con successo.');
+        document.getElementById('successTotal').textContent = window.saiT('checkout.totalCredits', 'Crediti totali nel tuo account: ') + newCredits;
 
         /* 4. Countdown 3s + redirect automatico */
         startCountdown();
@@ -767,9 +848,9 @@
         hide('processingSection');
         show('heroCard');
         show('mainShell', 'grid');
-        showMsg(e?.message || "Errore sconosciuto.", "error");
+        showMsg(e?.message || window.saiT('checkout.unknownError', 'Errore sconosciuto.'), "error");
         confirmBtn.disabled = false;
-        confirmBtn.innerHTML = '🔒 Completa acquisto';
+        confirmBtn.innerHTML = window.saiT('checkout.completePurchase', '🔒 Completa acquisto');
       }
     });
   </script>
