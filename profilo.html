@@ -1205,10 +1205,7 @@
           btn.disabled = true;
           btn.textContent = '...';
           var id = btn.dataset.cancel;
-          var { error } = await sb.from('purchases')
-            .update({ cancelled_at: new Date().toISOString() })
-            .eq('id', id)
-            .eq('user_id', currentUserId);
+          var { error } = await sb.rpc('cancel_purchase', { purchase_id: id });
           if(error){
             btn.disabled = false;
             btn.textContent = window.saiT('profile.cancel','Annulla');
