@@ -11,3 +11,6 @@ node_modules/
 .next/
 dist/
 .vercel
+
+# Cache locale CLI Supabase
+supabase/.temp/
