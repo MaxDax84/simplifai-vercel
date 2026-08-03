@@ -87,7 +87,7 @@
     ]
   }
   </script>
-  <link rel="stylesheet" href="/theme.css?v=4">
+  <link rel="stylesheet" href="/theme.css?v=5">
 
   <!-- FOUC prevention: applica il tema prima del paint -->
   <script>
@@ -235,6 +235,36 @@
       </div>
     </section>
 
+    <!-- ══════════════════ ESEMPIO LIVE ══════════════════ -->
+    <section class="example-section">
+      <p class="example-section-title" data-i18n="example.title">Vedi un esempio vero</p>
+      <p class="example-question" data-i18n="example.question">🌤️ "Perché il cielo è blu?"</p>
+
+      <div class="example-tabs" role="tablist">
+        <button type="button" class="example-tab is-active" data-level="child" data-i18n="example.tab.child">🧒 Bambino</button>
+        <button type="button" class="example-tab" data-level="adult" data-i18n="example.tab.adult">👤 Adulto</button>
+        <button type="button" class="example-tab" data-level="scientist" data-i18n="example.tab.scientist">🧪 Scienziato</button>
+      </div>
+
+      <div class="card example-card">
+        <div class="card-inner">
+          <p class="example-answer is-active" data-level="child" data-i18n-html="example.answer.child">
+            Il cielo sembra blu perché la luce del sole, quando entra nell'aria, si scontra con le piccole molecole dell'atmosfera. La luce blu rimbalza in tutte le direzioni molto più delle altre luci colorate, un po' come una pallina che rimbalza più veloce di un pallone pesante. Per questo, quando guardi in alto, vedi il blu arrivare da ogni parte!
+          </p>
+          <p class="example-answer" data-level="adult" data-i18n-html="example.answer.adult">
+            Il fenomeno si chiama <strong>scattering di Rayleigh</strong>: la luce solare bianca contiene tutti i colori, ma attraversando l'atmosfera le molecole d'aria diffondono la luce blu molto più delle altre, perché ha una lunghezza d'onda più corta. Il risultato è che il blu arriva da ogni direzione del cielo, mentre la luce rosso/gialla del sole prosegue quasi dritta verso i tuoi occhi.
+          </p>
+          <p class="example-answer" data-level="scientist" data-i18n-html="example.answer.scientist">
+            Lo <strong>scattering di Rayleigh</strong> descrive la diffusione elastica della radiazione da parte di particelle molto più piccole della lunghezza d'onda incidente (N₂ e O₂ atmosferici). L'intensità diffusa è proporzionale a 1/λ⁴, quindi le lunghezze d'onda corte (blu, ~450-490 nm) sono disperse circa 5-6 volte più di quelle lunghe (rosso, ~620-750 nm). Il modello spiega anche perché all'alba/tramonto, con un percorso ottico molto più lungo, le componenti blu vengono quasi rimosse dal fascio diretto e dominano i toni rosso-arancio.
+          </p>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:18px;">
+        <a class="btn btn-primary" href="/app.html?q=Perch%C3%A9+il+cielo+%C3%A8+blu%3F" data-i18n="example.cta">Prova con la tua domanda →</a>
+      </div>
+    </section>
+
     <!-- ══════════════════ FAQ ══════════════════ -->
     <section class="faq-section">
       <p class="faq-section-title" data-i18n="faq.title">Domande frequenti</p>
@@ -317,6 +347,15 @@
       'home.chip2': '⚙️ How does an engine work?',
       'home.chip3': '🧬 Genes and DNA',
       'home.chip4': '🌤️ Why is the sky blue?',
+      'example.title': 'See a real example',
+      'example.question': '🌤️ "Why is the sky blue?"',
+      'example.tab.child': '🧒 Kid',
+      'example.tab.adult': '👤 Adult',
+      'example.tab.scientist': '🧪 Scientist',
+      'example.answer.child': "The sky looks blue because sunlight, when it enters the air, bumps into the tiny molecules in the atmosphere. Blue light bounces off in every direction much more than the other colors, a bit like a small ball bouncing faster than a heavy one. That's why, when you look up, you see blue light coming from everywhere!",
+      'example.answer.adult': "It's called <strong>Rayleigh scattering</strong>: sunlight contains every color, but as it passes through the atmosphere, air molecules scatter blue light far more than the others because it has a shorter wavelength. The result is that blue reaches you from every direction in the sky, while the red/yellow light of the sun keeps going almost straight to your eyes.",
+      'example.answer.scientist': "<strong>Rayleigh scattering</strong> describes the elastic scattering of radiation by particles much smaller than the incident wavelength (atmospheric N₂ and O₂). Scattered intensity is proportional to 1/λ⁴, so short wavelengths (blue, ~450-490 nm) are scattered roughly 5-6 times more than long ones (red, ~620-750 nm). This also explains why, at sunrise/sunset, the much longer optical path removes blue components from the direct beam almost entirely, letting red-orange tones dominate.",
+      'example.cta': 'Try it with your own question →',
       'faq.title': 'Frequently asked questions',
       'faq.q1': 'How does Simplif-AI work?',
       'faq.a1': 'Simplif-AI is a service that explains any concept the right way for you. Write a question or a topic, choose the <strong>simplicity level</strong> and the <strong>length</strong> of the answer, and read a tailor-made explanation. Generating answers uses a <strong>credit</strong> system: every new signup includes 10 free credits, and extra packages are available anytime from the Pricing section.',
@@ -334,6 +373,18 @@
       'footer.contact': 'Contact',
       'footer.credit': 'Created by'
     };
+  </script>
+  <script>
+    document.querySelectorAll('.example-tabs').forEach(function(tabs){
+      tabs.addEventListener('click', function(e){
+        var btn = e.target.closest('.example-tab');
+        if(!btn) return;
+        var level = btn.dataset.level;
+        var section = tabs.closest('.example-section');
+        section.querySelectorAll('.example-tab').forEach(function(t){ t.classList.toggle('is-active', t === btn); });
+        section.querySelectorAll('.example-answer').forEach(function(a){ a.classList.toggle('is-active', a.dataset.level === level); });
+      });
+    });
   </script>
   <script src="/shared.js?v=6" defer></script>
 </body>
