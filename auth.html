@@ -181,6 +181,30 @@
       background: rgba(255,255,255,.04);
       color: var(--text);
     }
+    .btn-google{
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .btn-google:hover{
+      background: rgba(255,255,255,.06);
+      border-color: rgba(0,229,255,.35);
+    }
+    .google-consent{
+      font-size: 11px;
+      color: var(--muted2);
+      text-align: center;
+      margin: 8px 0 0;
+      line-height: 1.5;
+    }
+    .google-consent a{ color: var(--muted2); text-decoration: underline; }
     .forgot-link{
       display: block;
       text-align: right;
@@ -396,6 +420,16 @@
           <button class="btn btn-primary btn-auth" type="submit" id="signupBtn" data-i18n="auth.createAccount">Crea account</button>
         </form>
 
+        <button class="btn btn-google" id="googleBtn" type="button">
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62Z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18Z"/><path fill="#FBBC05" d="M3.97 10.72A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.18.29-1.72V4.95H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.05l3.01-2.33Z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58Z"/></svg>
+          <span data-i18n="auth.google">Continua con Google</span>
+        </button>
+        <p class="google-consent" data-i18n-html="auth.googleConsent">
+          Continuando accetti i <a href="/terms-of-service.html" target="_blank" rel="noopener">Termini di Servizio</a>,
+          la <a href="/privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a> e la
+          <a href="/dpa.html" target="_blank" rel="noopener">DPA</a>.
+        </p>
+
         <div class="divider" data-i18n="auth.or">oppure</div>
 
         <button class="btn btn-magic" id="magicBtn" type="button" data-i18n="auth.magicLink">✉ Ricevi link magico via email</button>
@@ -467,6 +501,8 @@
       'auth.referral.other': 'Other',
       'auth.createAccount': 'Create account',
       'auth.or': 'or',
+      'auth.google': 'Continue with Google',
+      'auth.googleConsent': 'By continuing you agree to the <a href="/terms-of-service.html" target="_blank" rel="noopener">Terms of Service</a>, <a href="/privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a> and <a href="/dpa.html" target="_blank" rel="noopener">DPA</a>.',
       'auth.magicLink': '✉ Get a magic link by email',
       'auth.sendLink': 'Send link',
       'auth.err.name': 'Enter your first name.',
@@ -508,6 +544,7 @@
       if (!data?.session) return;
       const h = window.location.hash;
       if (h.includes('access_token') || h.includes('type=')) return;
+      if (new URLSearchParams(window.location.search).has('code')) return;
       window.location.replace("/app.html");
     });
 
@@ -551,6 +588,17 @@
     const magicForm = document.getElementById("magicForm");
     magicBtn.addEventListener("click", () => {
       magicForm.style.display = magicForm.style.display === "none" ? "" : "none";
+    });
+
+    /* Login/registrazione con Google */
+    const googleBtn = document.getElementById("googleBtn");
+    googleBtn.addEventListener("click", async () => {
+      googleBtn.disabled = true;
+      await sb.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.origin + "/auth.html" }
+      });
+      /* Il browser viene reindirizzato a Google: nessun altro codice da eseguire qui. */
     });
 
     /* Messaggi */
@@ -879,10 +927,36 @@
         }
 
         /*
-         * Accesso via magic link o altra fonte hash-based (nessun credito pendente).
-         * Redireziona all'app solo se siamo arrivati qui via hash di callback.
+         * Accesso via OAuth (Google), magic link o altra fonte di callback.
+         * Se è il primo accesso in assoluto (created_at === last_sign_in_at,
+         * con qualche secondo di tolleranza per il tempo del round-trip OAuth),
+         * completiamo il profilo con nome/cognome da Google e mandiamo il
+         * benvenuto — i crediti li ha già assegnati il trigger handle_new_user.
          */
-        if (window.location.hash.includes('access_token')) {
+        var isCallback = window.location.hash.includes('access_token')
+          || new URLSearchParams(window.location.search).has('code');
+        if (isCallback) {
+          var createdAt   = session.user.created_at ? new Date(session.user.created_at).getTime() : 0;
+          var lastSignIn  = session.user.last_sign_in_at ? new Date(session.user.last_sign_in_at).getTime() : 0;
+          var isFirstLogin = createdAt && lastSignIn && Math.abs(lastSignIn - createdAt) < 60000;
+
+          if (isFirstLogin) {
+            var meta = session.user.user_metadata || {};
+            var fullName = (meta.full_name || meta.name || '').trim();
+            var parts = fullName.split(/\s+/);
+            var googleProfile = {
+              nome: parts[0] || '',
+              cognome: parts.slice(1).join(' ') || ''
+            };
+            try {
+              await sb.from('profiles').update(googleProfile).eq('id', session.user.id).is('nome', null);
+            } catch(e) { console.warn("google profile upsert error:", e); }
+
+            var profileRes2 = await sb.from('profiles').select('credits').eq('id', session.user.id).single();
+            if (profileRes2.data && profileRes2.data.credits > 0) {
+              sendEmailFireAndForget("welcome", { credits: 10 });
+            }
+          }
           window.location.replace("/app.html");
         }
       }
