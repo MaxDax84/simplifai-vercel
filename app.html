@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#05070d">
-  <link rel="stylesheet" href="/theme.css?v=5">
+  <link rel="stylesheet" href="/theme.css?v=6">
 
   <!-- FOUC prevention -->
   <script>
@@ -946,7 +946,7 @@
     }
     
     // SSE robusto: eventi separati da riga vuota, multi data:, CRLF ok
-    async function streamGemini(payload, onTextChunk){
+    async function streamGroq(payload, onTextChunk){
       activeController = new AbortController();
       const controller = activeController;
       const timeoutId  = setTimeout(() => controller.abort(), 60000); // 60s timeout
@@ -954,7 +954,7 @@
       const headers = {"Content-Type":"application/json"};
       if(currentUserId){
         // I crediti si scalano server-side: serve il token di sessione
-        // perché /api/gemini possa identificare l'utente e verificarli.
+        // perché /api/groq possa identificare l'utente e verificarli.
         const { data: sessionData } = await sb.auth.getSession();
         const token = sessionData?.session?.access_token;
         if(token) headers["Authorization"] = `Bearer ${token}`;
@@ -962,7 +962,7 @@
 
       let res;
       try {
-        res = await fetch("/api/gemini", {
+        res = await fetch("/api/groq", {
           method:"POST",
           headers,
           body: JSON.stringify(payload),
@@ -1009,14 +1009,9 @@
           if(!data || data === "[DONE]") continue;
           try{
             const json = JSON.parse(data);
-            const parts = json?.candidates?.[0]?.content?.parts;
-            if(Array.isArray(parts)){
-              for(const p of parts){
-                if(p?.text){
-                  receivedAny = true;
-                  onTextChunk(p.text);
-                }
-              }
+            if(json?.text){
+              receivedAny = true;
+              onTextChunk(json.text);
             }
           }catch(e){
             console.warn("SSE parse error:", e.message, "| data:", data.slice(0, 120));
@@ -1122,7 +1117,7 @@
         responseEl.innerHTML = "";
         skeletonEl.style.display = "flex";   // mostra skeleton
 
-        await streamGemini(payload, (chunk) => {
+        await streamGroq(payload, (chunk) => {
           accumulatedText += chunk;
           renderMarkdownSafe(accumulatedText);
         });
@@ -1134,9 +1129,9 @@
         renderHistory();
 
         /* Aggiornamento post-generazione. Per gli utenti loggati i crediti
-           sono già stati scalati server-side (dentro /api/gemini, prima
+           sono già stati scalati server-side (dentro /api/groq, prima
            di chiamare Groq) e userCredits è già stato aggiornato in
-           streamGemini() leggendo l'header X-Credits-Remaining. */
+           streamGroq() leggendo l'header X-Credits-Remaining. */
         if(userIsAnon){
           incAnonCount();
           updateAnonUI();
@@ -1147,7 +1142,7 @@
       } catch(e){
         skeletonEl.style.display = "none";
         if(!accumulatedText.trim()){
-          /* e.message arriva sempre in italiano dal server (vedi api/gemini.js):
+          /* e.message arriva sempre in italiano dal server (vedi api/groq.js):
              qui lo usiamo solo per instradare verso il messaggio localizzato giusto. */
           if(e?.message === "Crediti insufficienti."){
             setStatus(window.saiT('app.status.noCreditsServer', 'Crediti insufficienti. Ti reindirizzo alla pagina prezzi...'), false);

@@ -1,5 +1,4 @@
-// NOTA: questo file usa Groq (llama-3.3-70b-versatile) ma mantiene il nome
-// "gemini.js" per non cambiare i riferimenti nell'HTML. Chiave env: GROQ_API_KEY.
+// Proxy edge verso Groq (llama-3.3-70b-versatile). Chiave env: GROQ_API_KEY.
 
 export const config = { runtime: "edge" };
 
@@ -324,9 +323,7 @@ export default async function handler(req) {
     async function emitText(text) {
       var t = String(text || "");
       if (!t) return;
-      // Emette nel formato Gemini che app.html si aspetta
-      var json = { candidates: [{ content: { parts: [{ text: t }] } }] };
-      await writer.write(encoder.encode("data: " + JSON.stringify(json) + "\n\n"));
+      await writer.write(encoder.encode("data: " + JSON.stringify({ text: t }) + "\n\n"));
     }
 
     async function closeStream() {

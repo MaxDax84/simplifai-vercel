@@ -77,7 +77,19 @@ header{
   background: rgba(5,7,13,.78);
   backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
-  padding: 10px 0;
+  /* header vive dentro .wrap (colonna centrata min(1100px,92vw)): lo
+     sfondo sticky va esteso a tutta la larghezza dello schermo mentre il
+     contenuto (logo/nav) resta allineato alla stessa colonna del resto
+     della pagina — altrimenti in scroll la barra appare come un rettangolo
+     che si ferma prima dei bordi invece di coprire tutto lo schermo. */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  box-sizing: border-box;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: calc((100vw - min(1100px, 92vw)) / 2);
+  padding-right: calc((100vw - min(1100px, 92vw)) / 2);
   margin-top: -10px;
   border-bottom: 1px solid transparent;
   transition: border-color .25s ease, box-shadow .25s ease;
