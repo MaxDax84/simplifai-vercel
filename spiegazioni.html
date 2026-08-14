@@ -162,11 +162,6 @@
       border-color: rgba(0,229,255,.25);
       color: var(--text);
     }
-    .badge-date {
-      background: transparent; border-color: transparent;
-      color: var(--muted); font-weight: 400;
-    }
-
     /* ── Modal ── */
     dialog.spieg-modal {
       background: var(--bg, #0f0f1a);
@@ -384,7 +379,6 @@
       'spieg.copyAnswer': '⧉ Copy answer',
       'spieg.copied': '✓ Copied!',
       'spieg.wordsCount': '~{n} words',
-      'spieg.today': 'Today', 'spieg.yesterday': 'Yesterday', 'spieg.daysAgo': '{n} days ago',
       'spieg.empty': "No explanations yet. Be the first!",
       'spieg.generateOne': 'Generate an answer'
     };
@@ -441,15 +435,6 @@
       return TARGET_COLORS[label] || { rgb: '139,92,246', hex: '#8b5cf6' };
     }
 
-    function formatDate(isoStr) {
-      const d = new Date(isoStr);
-      const diffDays = Math.floor((new Date() - d) / 86400000);
-      if (diffDays === 0) return window.saiT('spieg.today', 'Oggi');
-      if (diffDays === 1) return window.saiT('spieg.yesterday', 'Ieri');
-      if (diffDays < 7)  return window.saiT('spieg.daysAgo', '{n} giorni fa').replace('{n}', diffDays);
-      return d.toLocaleDateString(window.saiLang() === 'en' ? 'en-US' : 'it-IT', { day:'2-digit', month:'short', year:'numeric' });
-    }
-
     function escHtml(str) {
       return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
@@ -467,7 +452,6 @@
       let h = '';
       if (row.target_label) h += `<span class="badge badge-target" style="--badge-rgb:${c.rgb}">${escHtml(row.target_icon)} ${escHtml(targetLabelDisplay(row.target_label))}</span>`;
       if (lenLabel)         h += `<span class="badge badge-len">${escHtml(lenLabel)}</span>`;
-      h += `<span class="badge badge-date">${formatDate(row.created_at)}</span>`;
       return h;
     }
 
