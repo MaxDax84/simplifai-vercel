@@ -13,6 +13,7 @@
   --shadow: 0 14px 50px rgba(0,0,0,.5);
   --radius: 16px;
   --ease: cubic-bezier(.2,.8,.2,1);
+  --header-h: 64px;  /* altezza riservata per l'header, ora fuori dal flusso (position:fixed) */
 
   /* Card tones */
   --card: rgba(255,255,255,.055);      /* “card chiara” (come sezione 1/2) */
@@ -28,6 +29,7 @@ html{
 
 body{
   margin:0;
+  padding-top: var(--header-h);   /* compensa l'header, ora position:fixed e fuori dal flusso */
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
   color: var(--text);
   background:
@@ -70,27 +72,24 @@ header{
   align-items:center;
   justify-content:space-between;
   gap: 12px;
-  margin-bottom: 22px;
-  position: sticky;
+  /* Fissato al bordo superiore dello schermo (non piu' sticky): resta
+     ancorato a top:0 fin dal primo frame, senza il piccolo "salto"
+     durante lo scroll iniziale che si vedeva con position:sticky.
+     Uscendo dal flusso, lo spazio che occupava e' riservato altrove
+     tramite padding-top:var(--header-h) su body. */
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
   background: rgba(5,7,13,.78);
   backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
-  /* header vive dentro .wrap (colonna centrata min(1100px,92vw)): lo
-     sfondo sticky va esteso a tutta la larghezza dello schermo mentre il
-     contenuto (logo/nav) resta allineato alla stessa colonna del resto
-     della pagina — altrimenti in scroll la barra appare come un rettangolo
-     che si ferma prima dei bordi invece di coprire tutto lo schermo. */
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
   box-sizing: border-box;
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: calc((100vw - min(1100px, 92vw)) / 2);
   padding-right: calc((100vw - min(1100px, 92vw)) / 2);
-  margin-top: -10px;
   border-bottom: 1px solid transparent;
   transition: border-color .25s ease, box-shadow .25s ease;
 }
@@ -542,8 +541,6 @@ body.nav-open .mobile-nav{
   .nav-toggle{ display:flex; }
   /* Nasconde il sottotitolo del brand per evitare header troppo alto */
   .brand span{ display:none; }
-  /* Header compatto: meno margine sotto */
-  header{ margin-bottom:14px; }
 }
 
 /* Voce "Condividi" nel menu hamburger: creata via JS (shared.js) solo se

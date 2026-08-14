@@ -4,7 +4,7 @@
  *
  * Contiene:
  *  1. Mobile nav toggle
- *  2. Sticky header
+ *  2. Header fisso (bordo al superamento dello scroll)
  *  3. Theme toggle (☀️ / 🌙)
  *  4. Navbar active (rilevamento automatico dal pathname)
  */
@@ -72,7 +72,7 @@
   });
 })();
 
-/* ── 2. Sticky header ── */
+/* ── 2. Header fisso (bordo al superamento dello scroll) ── */
 (function () {
   var h = document.querySelector('header');
   if (!h) return;
