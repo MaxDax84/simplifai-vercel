@@ -328,6 +328,14 @@
         <div class="filter-pill" data-filter="Scienziato" data-i18n="target.scientist.pill">🧪 Scienziato</div>
       </div>
 
+      <!-- Filtri lunghezza -->
+      <div class="filter-bar" id="filterBarLen">
+        <div class="filter-pill active" data-filter="" data-i18n="spieg.filterAllLen">Tutte le lunghezze</div>
+        <div class="filter-pill" data-filter="breve" data-i18n="spieg.filterShort">Breve</div>
+        <div class="filter-pill" data-filter="medio" data-i18n="spieg.filterMedium">Medio</div>
+        <div class="filter-pill" data-filter="lungo" data-i18n="spieg.filterLong">Lungo</div>
+      </div>
+
       <div class="card">
         <div class="card-inner">
           <div id="listWrap" class="spieg-list">
@@ -375,6 +383,8 @@
       'spieg.filterAll': 'All',
       'target.child.pill': '🧒 Child', 'target.teen.pill': '👦 Teen', 'spieg.filterStudent': '🎓 Student',
       'target.adult.pill': '👤 Adult', 'target.expert.pill': '🧠 Expert', 'target.scientist.pill': '🧪 Scientist',
+      'spieg.filterAllLen': 'All lengths',
+      'spieg.filterShort': 'Short', 'spieg.filterMedium': 'Medium', 'spieg.filterLong': 'Long',
       'spieg.loadMore': 'Load more',
       'spieg.copyAnswer': '⧉ Copy answer',
       'spieg.copied': '✓ Copied!',
@@ -392,6 +402,7 @@
     const PAGE_SIZE = 20;
     let offset = 0;
     let activeFilter = '';
+    let activeLengthFilter = '';
     let searchQuery = '';
     let searchTimer = null;
     let currentModalText = '';
@@ -510,8 +521,9 @@
         .order('created_at', { ascending: false })
         .range(offset, offset + PAGE_SIZE - 1);
 
-      if (activeFilter) q = q.eq('target_label', activeFilter);
-      if (searchQuery)  q = q.ilike('query', '%' + searchQuery + '%');
+      if (activeFilter)       q = q.eq('target_label', activeFilter);
+      if (activeLengthFilter) q = q.eq('length_key', activeLengthFilter);
+      if (searchQuery)        q = q.ilike('query', '%' + searchQuery + '%');
 
       const { data, error } = await q;
       removeSkeletons();
@@ -535,12 +547,23 @@
 
 
     /* Filtri */
-    document.getElementById('filterBar').addEventListener('click', e => {
+    const filterBarEl = document.getElementById('filterBar');
+    filterBarEl.addEventListener('click', e => {
       const pill = e.target.closest('.filter-pill');
       if (!pill) return;
-      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      filterBarEl.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
       pill.classList.add('active');
       activeFilter = pill.dataset.filter;
+      loadPage(true);
+    });
+
+    const filterBarLenEl = document.getElementById('filterBarLen');
+    filterBarLenEl.addEventListener('click', e => {
+      const pill = e.target.closest('.filter-pill');
+      if (!pill) return;
+      filterBarLenEl.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      activeLengthFilter = pill.dataset.filter;
       loadPage(true);
     });
 
