@@ -10,7 +10,7 @@
  * per identificare l'utente destinatario.
  */
 
-export const config = { runtime: "edge" };
+export const config = { runtime: "edge", regions: ["fra1"] };
 
 // ── Costanti ──────────────────────────────────────────────────────────────────
 

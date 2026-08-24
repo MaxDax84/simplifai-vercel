@@ -1,6 +1,6 @@
 // Proxy edge verso Groq (llama-3.3-70b-versatile). Chiave env: GROQ_API_KEY.
 
-export const config = { runtime: "edge" };
+export const config = { runtime: "edge", regions: ["fra1"] };
 
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_MODEL = "llama-3.3-70b-versatile";
