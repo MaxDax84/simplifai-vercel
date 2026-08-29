@@ -751,7 +751,7 @@
           headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
           body: JSON.stringify({
             type: "purchase",
-            pkg: { label: pkg.label, credits: pkg.credits, price: pkg.price },
+            pkg_key: pkgKey,
           }),
         }).catch(function(e){ console.warn("send-email failed:", e); });
       } catch(e) { console.warn("sendPurchaseEmail error:", e); }
@@ -804,8 +804,8 @@
 
       try {
         const rpcCall = (activePromoCode && activePromoDiscount > 0)
-          ? sb.rpc('apply_promo_and_add_credits', { p_code: activePromoCode, p_amount: pkg.credits })
-          : sb.rpc('add_credits', { amount: pkg.credits });
+          ? sb.rpc('apply_promo_and_add_credits', { p_code: activePromoCode, p_package_key: pkgKey })
+          : sb.rpc('add_credits', { p_package_key: pkgKey });
 
         /* 2. Attendi almeno 3 secondi E il completamento del pagamento */
         const [rpcResult] = await Promise.all([

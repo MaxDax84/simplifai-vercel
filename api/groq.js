@@ -73,10 +73,12 @@ async function spendCredits(authHeader, targetCost, lengthExtra) {
   return { ok: false, insufficient: insufficient, message: errBody };
 }
 
-// ── Rate-limit domande gratuite anonime (via Upstash Redis) ───────────────
-// Se le env var Upstash non sono configurate (integrazione non ancora
-// installata su Vercel), la funzione non blocca nulla: il comportamento
-// resta quello di oggi finché il Fase 2 del piano non viene attivata.
+// ── Rate-limit domande gratuite anonime ────────────────────────────────────
+// Usa Upstash Redis se configurato su Vercel; altrimenti (verificato: non lo
+// è in produzione) usa una funzione Postgres su Supabase come fallback, così
+// il limite è SEMPRE applicato lato server e non "fail-open" di default.
+// Prima di questo fix, senza Upstash chiunque poteva chiamare questo
+// endpoint senza limiti, consumando la chiave Groq a pagamento.
 
 function getClientIp(req) {
   var xff = req.headers.get("x-forwarded-for") || "";
@@ -84,12 +86,12 @@ function getClientIp(req) {
   return ip || "unknown";
 }
 
-async function checkAnonRateLimit(req) {
+async function checkAnonRateLimitUpstash(ip) {
   var url = process.env.UPSTASH_REDIS_REST_URL;
   var token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return true; // Upstash non ancora collegato: nessun limite server-side
+  if (!url || !token) return null; // non configurato: prova il fallback
 
-  var key = "sai_anon:" + getClientIp(req);
+  var key = "sai_anon:" + ip;
   try {
     var res = await fetch(url + "/pipeline", {
       method: "POST",
@@ -99,14 +101,40 @@ async function checkAnonRateLimit(req) {
       },
       body: JSON.stringify([["INCR", key], ["EXPIRE", key, "31536000"]]),
     });
-    if (!res.ok) return true; // fail-open: un errore infra non deve bloccare gli utenti
+    if (!res.ok) return null; // errore infra: prova il fallback
 
     var results = await res.json();
     var count = results && results[0] && Number(results[0].result);
-    return Number.isFinite(count) ? count <= 2 : true;
+    return Number.isFinite(count) ? count <= 2 : null;
   } catch (e) {
-    return true; // fail-open
+    return null;
   }
+}
+
+async function checkAnonRateLimitSupabase(ip) {
+  if (!SUPABASE_URL || !SUPABASE_ANON) return true; // config mancante: non bloccare
+  try {
+    var res = await fetch(SUPABASE_URL + "/rest/v1/rpc/check_anon_rate_limit", {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_ANON,
+        "Authorization": "Bearer " + SUPABASE_ANON,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ p_ip: ip }),
+    });
+    if (!res.ok) return true; // fail-open solo se anche il fallback DB è irraggiungibile
+    return await res.json();
+  } catch (e) {
+    return true;
+  }
+}
+
+async function checkAnonRateLimit(req) {
+  var ip = getClientIp(req);
+  var upstashResult = await checkAnonRateLimitUpstash(ip);
+  if (upstashResult !== null) return upstashResult;
+  return checkAnonRateLimitSupabase(ip);
 }
 
 function clamp(n, min, max, fallback) {

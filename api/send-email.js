@@ -27,6 +27,18 @@ const SUPABASE_ANON  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmF
 
 const ALLOWED_ORIGINS = ["https://www.simplif-ai.it", "https://simplif-ai.it"];
 
+// Catalogo reale pacchetti (stesso elenco di checkout.html / add_credits
+// lato DB). L'email di conferma acquisto non si fida più dei valori
+// label/credits/price mandati dal client: li ricava da qui in base a
+// pkg_key.
+const PACKAGES = {
+  "mini-once": { label: "Mini", credits: 25,   price: "€1,99" },
+  "base-once": { label: "Base", credits: 80,   price: "€4,99" },
+  "plus-once": { label: "Plus", credits: 200,  price: "€7,99" },
+  "pro-once":  { label: "Pro",  credits: 500,  price: "€14,99" },
+  "max-once":  { label: "Max",  credits: 1400, price: "€34,99" },
+};
+
 function corsFor(origin, extra) {
   var allowOrigin = ALLOWED_ORIGINS.indexOf(origin) !== -1 ? origin : ALLOWED_ORIGINS[0];
   return Object.assign({
@@ -50,6 +62,29 @@ async function getSupabaseUser(authHeader) {
   if (!res.ok) return null;
   var user = await res.json();
   return user && user.id ? user : null;
+}
+
+// ── Rate limit: max 3 email dello stesso tipo per utente ogni 60 minuti ──────
+// Prima non c'era alcun limite: un utente autenticato poteva richiamare
+// questo endpoint in loop e inondare la propria casella / consumare la
+// quota Resend dell'account.
+
+async function checkEmailRateLimit(authHeader, type) {
+  try {
+    var res = await fetch(SUPABASE_URL + "/rest/v1/rpc/check_email_rate_limit", {
+      method: "POST",
+      headers: {
+        "Authorization": authHeader,
+        "apikey": SUPABASE_ANON,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ p_type: type, p_max: 3, p_window_minutes: 60 }),
+    });
+    if (!res.ok) return true; // fail-open su errore infra: non bloccare invii legittimi
+    return await res.json();
+  } catch (e) {
+    return true;
+  }
 }
 
 // ── Template: email di benvenuto ──────────────────────────────────────────────
@@ -213,35 +248,43 @@ export default async function handler(req) {
   var type  = body && body.type;
   var email = user.email;
 
-  // Recupera nome dal profilo Supabase
+  if (type !== "welcome" && type !== "purchase") {
+    return jsonRes({ error: "Tipo email non supportato: " + type }, 400);
+  }
+
+  var allowed = await checkEmailRateLimit(authHeader, type);
+  if (!allowed) return jsonRes({ error: "Troppe richieste. Riprova più tardi." }, 429);
+
+  // Recupera nome (e crediti reali, per "welcome") dal profilo Supabase.
+  // I crediti mostrati nell'email di benvenuto non sono più quelli
+  // dichiarati dal client (arbitrari), ma il valore reale sul DB.
   var nome = "";
+  var realCredits = 0;
   try {
-    var profileRes = await fetch(SUPABASE_URL + "/rest/v1/profiles?id=eq." + user.id + "&select=nome", {
+    var profileRes = await fetch(SUPABASE_URL + "/rest/v1/profiles?id=eq." + user.id + "&select=nome,credits", {
       headers: { "apikey": SUPABASE_ANON, "Authorization": authHeader },
     });
     var profileData = await profileRes.json();
     nome = (profileData && profileData[0] && profileData[0].nome) || "";
+    realCredits = (profileData && profileData[0] && Number(profileData[0].credits)) || 0;
   } catch (e) { /* non bloccante */ }
 
   var subject, html;
 
   if (type === "welcome") {
-    var credits = Number(body.credits) || 0;
-    subject = credits > 0
-      ? "🎉 Benvenuto su Simplif-AI – I tuoi " + credits + " crediti omaggio ti aspettano!"
+    subject = realCredits > 0
+      ? "🎉 Benvenuto su Simplif-AI – I tuoi " + realCredits + " crediti omaggio ti aspettano!"
       : "🎉 Benvenuto su Simplif-AI!";
-    html = welcomeHtml(nome, credits);
-
-  } else if (type === "purchase") {
-    var pkg = body.pkg;
-    if (!pkg || !pkg.label || !pkg.credits || !pkg.price) {
-      return jsonRes({ error: "Dati pacchetto mancanti." }, 400);
-    }
-    subject = "✅ Acquisto confermato – " + pkg.credits + " crediti aggiunti al tuo account";
-    html = purchaseHtml(nome, pkg);
+    html = welcomeHtml(nome, realCredits);
 
   } else {
-    return jsonRes({ error: "Tipo email non supportato: " + type }, 400);
+    // type === "purchase": i dati del pacchetto vengono ricavati dal
+    // catalogo server-side in base a pkg_key, mai da label/credits/price
+    // mandati dal client.
+    var pkg = PACKAGES[body.pkg_key];
+    if (!pkg) return jsonRes({ error: "Pacchetto non valido." }, 400);
+    subject = "✅ Acquisto confermato – " + pkg.credits + " crediti aggiunti al tuo account";
+    html = purchaseHtml(nome, pkg);
   }
 
   // Invia via Resend
