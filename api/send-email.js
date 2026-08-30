@@ -17,8 +17,8 @@ export const config = { runtime: "edge", regions: ["fra1"] };
 const RESEND_API     = "https://api.resend.com/emails";
 const FROM           = "Simplif-AI <info@simplif-ai.it>";
 const APP_URL        = "https://simplif-ai.it";
-const SUPABASE_URL   = "https://lmmiowagyqypdrdcemdo.supabase.co";
-const SUPABASE_ANON  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtbWlvd2FneXF5cGRyZGNlbWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3ODg3NDQsImV4cCI6MjA4ODM2NDc0NH0.0DJYe_MFImUsRIrrAtJOY2Jkua-wDCFPOLC-MCkdvoc";
+const SUPABASE_URL   = process.env.SUPABASE_URL;
+const SUPABASE_ANON  = process.env.SUPABASE_ANON_KEY;
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
 // "*" era inutile (le chiamate arrivano solo da app.html/checkout.html, stesso
@@ -87,10 +87,20 @@ async function checkEmailRateLimit(authHeader, type) {
   }
 }
 
+// ── Escaping HTML ────────────────────────────────────────────────────────────
+// nome arriva dal profilo utente (impostabile liberamente in fase di
+// registrazione) e finiva concatenato senza escaping nell'HTML dell'email:
+// un utente poteva iniettare markup nella propria email di conferma.
+
+function escHtml(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
 // ── Template: email di benvenuto ──────────────────────────────────────────────
 
 function welcomeHtml(nome, credits) {
-  var displayName = nome || "utente";
+  var displayName = escHtml(nome) || "utente";
   var creditsText = credits > 0 ? credits + " crediti omaggio" : "account attivato";
   var creditsLabel = credits > 0
     ? "<strong style='color:#8b5cf6;'>⚡ " + credits + " crediti omaggio</strong> da usare subito."
@@ -154,7 +164,7 @@ function row(icon, title, desc) {
 // ── Template: conferma acquisto ───────────────────────────────────────────────
 
 function purchaseHtml(nome, pkg) {
-  var displayName = nome || "utente";
+  var displayName = escHtml(nome) || "utente";
   var expiryDate  = new Date();
   expiryDate.setFullYear(expiryDate.getFullYear() + 1);
   var expiryStr = expiryDate.toLocaleDateString("it-IT", { day: "2-digit", month: "long", year: "numeric" });

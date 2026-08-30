@@ -297,8 +297,15 @@ export default async function handler(req) {
     var body;
     try { body = await req.json(); } catch(e) { return jsonError("Body JSON non valido.", 400); }
 
-    var query = String((body && body.query) || "").trim();
-    var targetPrompt = String((body && body.targetPrompt) || "").trim();
+    // Il client tronca query a 500 caratteri prima di inviarla, ma una
+    // chiamata diretta all'endpoint (bypassando la UI) potrebbe mandare un
+    // payload enorme: i token in input a Groq non sono coperti dai crediti
+    // addebitati (validati solo su targetCost/lengthExtra), quindi vanno
+    // limitati anche qui. targetPrompt e' normalmente costruito da stringhe
+    // statiche in app.html (poche centinaia di caratteri): il tetto qui
+    // sotto e' generoso solo come difesa in profondita'.
+    var query = String((body && body.query) || "").trim().slice(0, 1000);
+    var targetPrompt = String((body && body.targetPrompt) || "").trim().slice(0, 3000);
     var mode = body && body.mode;
     var previousText = (body && body.previousText) || "";
     var uiLangRaw = String((body && body.uiLang) || "").toLowerCase();
